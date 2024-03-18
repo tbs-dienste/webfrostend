@@ -30,7 +30,7 @@ const TimeTracker = () => {
     if (isTracking) {
       const interval = 1000; // 1 Sekunde
       timer = setInterval(() => {
-        setElapsedTime((prevElapsedTime) => prevElapsedTime + interval);
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + interval / (1000 * 60 * 60)); // Umrechnung in Stunden
       }, interval);
     }
     return () => clearInterval(timer);
@@ -85,7 +85,7 @@ const TimeTracker = () => {
   return (
     <div className="time-tracker-container">
       <h1>Time Tracker</h1>
-      <p className="time-display">Bereits gearbeitete Zeit: {elapsedTime} ms</p>
+      <p className="time-display">Bereits gearbeitete Zeit: {elapsedTime.toFixed(2)} Stunden</p>
       <div className="buttons-container">
         {!isTracking ? (
           <button onClick={handleStart}>Start</button>
