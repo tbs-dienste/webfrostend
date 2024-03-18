@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Importiere Link aus react-router-dom
+import { Link } from 'react-router-dom';
 import './Kunden.scss';
 
 const Kunden = () => {
   const [kunden, setKunden] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const storedKunden = localStorage.getItem('kunden');
@@ -18,26 +19,48 @@ const Kunden = () => {
     localStorage.setItem('kunden', JSON.stringify(updatedKunden));
   };
 
+  const filteredKunden = kunden.filter((kunde) => {
+    const fullName = `${kunde.vorname} ${kunde.nachname}`;
+    return (
+      kunde.kundennummer.toString().includes(searchTerm) ||
+      fullName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
-    <div className="kunde">
-      <h2>Gespeicherte Kunden</h2>
+    <div className="kunden-container">
+      <h2 className="kunden-title">Gespeicherte Kunden</h2>
+      <div className="search-bar">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Kundennummer, Vorname oder Nachname"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="kunden-liste">
-        {kunden.length > 0 ? (
-          kunden.map((kunde) => (
+        {filteredKunden.length > 0 ? (
+          filteredKunden.map((kunde) => (
             <div key={kunde.id} className="kunden-box">
-              <p>{kunde.vorname} {kunde.nachname}</p>
+              <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
+              <p className="kunden-name">{kunde.vorname} {kunde.nachname}</p>
               {/* Weitere Daten anzeigen */}
-              <Link to={`/zeiterfassung/${kunde.id}`}>
-                <button>Arbeitszeit</button>
-              </Link>
-              <Link to={`/rechnung/${kunde.id}`}>
-                <button>Rechnung erstellen</button>
-              </Link>
-              <button onClick={() => handleKundeLöschen(kunde.id)}>Kunde löschen</button>
+              <div className="kunden-buttons">
+                <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
+                  Arbeitszeit
+                </Link>
+                <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
+                  Rechnung erstellen
+                </Link>
+                <button onClick={() => handleKundeLöschen(kunde.id)} className="kunden-button">
+                  Kunde löschen
+                </button>
+              </div>
             </div>
           ))
         ) : (
-          <p>Keine Kunden gespeichert</p>
+          <p className="no-results">Keine Kunden gefunden</p>
         )}
       </div>
     </div>

@@ -25,8 +25,12 @@ const KundeErfassen = () => {
   }, []);
 
   const handleKundeHinzufügen = () => {
+    // Generiere eine zufällige Kundennummer
+    const newKundennummer = generateRandomKundennummer();
+
     const newKunde = {
       id: kunden.length + 1,
+      kundennummer: newKundennummer, // Verwende die generierte Kundennummer
       vorname,
       zweiterVorname,
       nachname,
@@ -65,11 +69,15 @@ const KundeErfassen = () => {
     window.location.href = '/dankesnachricht';
   };
 
+  const generateRandomKundennummer = () => {
+    return Math.floor(Math.random() * 1000000) + 1; // Generiert eine zufällige Zahl zwischen 1 und 1.000.000
+  };
+
   return (
     <div className="kunde-erfassen">
       <h2>Kontakt</h2>
       <div className="formular">
-      <div className="formular-gruppe">
+        <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
           <select
             id="geschlecht"
@@ -192,7 +200,6 @@ const KundeErfassen = () => {
         </div>
         <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
       </div>
-     
     </div>
   );
 };

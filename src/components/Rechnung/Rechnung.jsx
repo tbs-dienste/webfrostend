@@ -55,8 +55,7 @@ const Rechnung = () => {
     doc.setFontSize(12); // Setze die Schriftgröße
 
     // Kundennummer
-    const kundennummer = generateRandomKundennummer();
-    doc.text(`Kundennummer: ${kundennummer}`, startX, startY);
+    doc.text(`Kundennummer: ${kunde.kundennummer}`, startX, startY); // Anzeigen der Kundennummer
 
     // Anrede
     doc.text(`${anrede}`, startX, startY + lineHeight);
@@ -88,10 +87,7 @@ const Rechnung = () => {
     doc.save('rechnung.pdf');
   };
 
-  // Funktion zum Generieren einer zufälligen Kundennummer
-  const generateRandomKundennummer = () => {
-    return Math.floor(Math.random() * 1000000) + 1; // Generiert eine zufällige Zahl zwischen 1 und 1.000.000
-  };
+ 
 
   return (
     <div>
@@ -103,7 +99,7 @@ const Rechnung = () => {
         </div>
         <div className='rechnung-content'>
           <div className='rechnung-details'>
-            <p>Kundennummer: {generateRandomKundennummer()}</p> {/* Anzeigen der zufälligen Kundennummer */}
+            <p>Kundennummer: {kunde.kundennummer}</p> {/* Anzeigen der Kundennummer */}
             <p>{anrede}</p>
             <p>{kunde.nachname} {kunde.vorname}</p>
             <p>{kunde.strasseHausnummer}</p>
