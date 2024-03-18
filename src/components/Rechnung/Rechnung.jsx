@@ -5,7 +5,6 @@ import logo from '../../logo.png'; // Pfad zum Logo
 import './Rechnung.scss'; // Importieren Sie das SCSS-Styling
 import 'jspdf-autotable';
 
-
 const Rechnung = () => {
   const { id } = useParams(); // Extrahiere die ID aus dem URL-Parameter
   const [kunde, setKunde] = useState(null);
@@ -50,13 +49,15 @@ const Rechnung = () => {
 
     // Fügen Sie die Rechnungsinformationen hinzu
     const startX = 10; // Start-X-Position für den Text
-    const startY = 80; // Start-Y-Position für den Text
+    let startY = 80; // Start-Y-Position für den Text
     const lineHeight = 10; // Zeilenhöhe für den Text
 
     doc.setFontSize(12); // Setze die Schriftgröße
 
     // Kundennummer
-    doc.text(`Kundennummer: ${generateRandomKundennummer()}`, startX, startY);
+    const kundennummer = generateRandomKundennummer();
+    doc.text(`Kundennummer: ${kundennummer}`, startX, startY);
+
     // Anrede
     doc.text(`${anrede}`, startX, startY + lineHeight);
     // Name des Kunden
@@ -69,6 +70,19 @@ const Rechnung = () => {
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
     const tableRows = workSessions.map(session => [session.start, session.end, session.duration, session.price]);
     doc.autoTable(tableColumns, tableRows, { startY: startY + 6 * lineHeight });
+
+    // Berechnen Sie Gesamtpreis und Gesamtstunden
+    const totalPrice = workSessions.reduce((total, session) => total + parseFloat(session.price), 0);
+    const totalHours = workSessions.reduce((total, session) => total + parseFloat(session.duration), 0);
+
+    // Berechnen Sie die MWST 7.7% vom Gesamtpreis
+    const mwst = totalPrice * 0.077;
+
+    // Fügen Sie Gesamtpreis, Gesamtstunden und MWST hinzu
+    startY += (6 + workSessions.length) * lineHeight;
+    doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, startX, startY + 20); // 20px unterhalb der Tabelle
+    doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, startX, startY + 2 * lineHeight + 20); // 20px unterhalb der Tabelle
+    doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, startX, startY + 3 * lineHeight + 20); // 20px unterhalb der Tabelle
 
     // Speichern Sie das PDF-Dokument
     doc.save('rechnung.pdf');
