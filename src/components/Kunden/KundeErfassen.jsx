@@ -15,6 +15,7 @@ const KundeErfassen = () => {
   const [email, setEmail] = useState('');
   const [telefon, setTelefon] = useState('');
   const [mobil, setMobil] = useState('');
+  const [geschlecht, setGeschlecht] = useState('');
 
   useEffect(() => {
     const storedKunden = localStorage.getItem('kunden');
@@ -38,7 +39,9 @@ const KundeErfassen = () => {
       email,
       telefon,
       mobil,
-      arbeitszeiten: []
+      geschlecht,
+      arbeitszeiten: [],
+      rechnungen: [], 
     };
 
     setKunden([...kunden, newKunde]);
@@ -57,6 +60,7 @@ const KundeErfassen = () => {
     setEmail('');
     setTelefon('');
     setMobil('');
+    setGeschlecht(''); // Zurücksetzen des Geschlechts
 
     window.location.href = '/dankesnachricht';
   };
@@ -65,6 +69,19 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kontakt</h2>
       <div className="formular">
+      <div className="formular-gruppe">
+          <label htmlFor="geschlecht">Geschlecht:</label>
+          <select
+            id="geschlecht"
+            value={geschlecht}
+            onChange={(e) => setGeschlecht(e.target.value)}
+          >
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+            <option value="divers">Divers</option>
+          </select>
+        </div>
+        
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
           <input

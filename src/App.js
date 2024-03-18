@@ -62,16 +62,19 @@ function App() {
             }
           />
 
-
-          <Route
-            path="/rechnung"
+<Route
+            path="/rechnung/:id"
             element={
               <>
                 <Navbar />
                 <Rechnung />
+
               </>
             }
           />
+
+
+         
 
           <Route
             path="/kunden"

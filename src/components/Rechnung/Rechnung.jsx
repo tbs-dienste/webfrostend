@@ -1,67 +1,75 @@
-// Rechnung.jsx
-
 import React, { useState, useEffect } from 'react';
-import './Rechnung.scss';
+import { useParams } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import logo from '../../logo.png'; // Pfad zum Logo
 
 const Rechnung = () => {
-  const [kunden, setKunden] = useState([]);
-  const [selectedKunde, setSelectedKunde] = useState('');
-  const [betrag, setBetrag] = useState('');
-  const [datum, setDatum] = useState('');
-  const [positionen, setPositionen] = useState([]);
-  const [positionName, setPositionName] = useState('');
-  const [positionBetrag, setPositionBetrag] = useState('');
+  const { id } = useParams(); // Extrahiere die ID aus dem URL-Parameter
+  const [kunde, setKunde] = useState(null);
 
   useEffect(() => {
-    const storedKunden = localStorage.getItem('kunden');
-    if (storedKunden) {
-      setKunden(JSON.parse(storedKunden));
-    }
-  }, []);
+    // Lade die Kundendaten aus dem Local Storage
+    const storedKunden = JSON.parse(localStorage.getItem('kunden'));
+    // Suche nach dem Kunden mit der entsprechenden ID
+    const selectedKunde = storedKunden.find(kunde => kunde.id === parseInt(id)); // Konvertiere die ID in eine Zahl, um sicherzustellen, dass der Vergleich korrekt ist
+    // Setze den gefundenen Kunden in den State
+    setKunde(selectedKunde);
 
-  const handlePositionHinzufügen = () => {
-    setPositionen([...positionen, { name: positionName, betrag: positionBetrag }]);
-    setPositionName('');
-    setPositionBetrag('');
+    // Printe das Geschlecht des Kunden in die Konsole
+    console.log('Geschlecht des Kunden:', selectedKunde.geschlecht);
+  }, [id]); // Führe diesen Effekt bei Änderungen der ID aus
+
+  if (!kunde) {
+    return <p>Kunde nicht gefunden.</p>;
+  }
+
+  // Definiere die Anrede basierend auf dem Geschlecht
+  let anrede;
+  if (kunde.geschlecht === 'männlich') {
+    anrede = 'Herr';
+  } else if (kunde.geschlecht === 'weiblich') {
+    anrede = 'Frau';
+  } else {
+    anrede = ''; // Anrede für andere Geschlechter
+  }
+
+  // Funktion zum Generieren einer zufälligen Kundennummer
+  const generateRandomKundennummer = () => {
+    return Math.floor(Math.random() * 1000000) + 1; // Generiert eine zufällige Zahl zwischen 1 und 1.000.000
   };
 
-  const handleRechnungErstellen = () => {
-    console.log("Rechnung erstellen für Kunde:", selectedKunde);
-    console.log("Betrag:", betrag);
-    console.log("Datum:", datum);
-    console.log("Positionen:", positionen);
-
-    setSelectedKunde('');
-    setBetrag('');
-    setDatum('');
-    setPositionen([]);
-    setPositionName('');
-    setPositionBetrag('');
+  // Funktion zum Generieren der PDF-Rechnung
+  const generatePDF = () => {
+    // Erstellen Sie ein neues PDF-Dokument
+    const doc = new jsPDF();
+    
+    // Logo oben links einfügen
+    doc.addImage(logo, 'PNG', 10, 10, 50, 50); // X-Position: 10, Y-Position: 10, Breite: 50, Höhe: 50
+    
+    // Fügen Sie die Rechnungsinformationen hinzu
+    doc.text(`Kundennummer: ${generateRandomKundennummer()}`, 10, 80);
+    doc.text(`${anrede}`, 10, 90);
+    doc.text(`${kunde.nachname} ${kunde.vorname}`, 10, 100);
+    doc.text(`${kunde.strasseHausnummer}`, 10, 110);
+    doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 10, 120);
+    
+    // Speichern Sie das PDF-Dokument
+    doc.save('rechnung.pdf');
   };
 
   return (
-    <div className="rechnung">
-      <h2>Rechnung erstellen</h2>
-      <div className="formular">
-        <div className="formular-gruppe">
-          <label htmlFor="kunde">Kunde:</label>
-          <select
-            id="kunde"
-            value={selectedKunde}
-            onChange={(e) => setSelectedKunde(e.target.value)}
-          >
-            <option value="">Bitte wählen</option>
-            {kunden.map((kunde, index) => (
-              <option key={index} value={kunde.vorname + ' ' + kunde.nachname}>
-                {kunde.vorname} {kunde.nachname}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Weitere Formularelemente hier */}
-        <button onClick={handlePositionHinzufügen}>Position hinzufügen</button>
-        <button onClick={handleRechnungErstellen}>Rechnung erstellen</button>
+    <div>
+      <h2>Rechnung</h2>
+      <p>Kundennummer: {generateRandomKundennummer()}</p> {/* Anzeigen der zufälligen Kundennummer */}
+      <div className='anschrift'>
+        <p>{anrede}</p>
+        <p>{kunde.nachname} {kunde.vorname}</p>
+        <p>{kunde.strasseHausnummer}</p>
+        <p>{kunde.postleitzahl} {kunde.ort}</p>
+        {/* Weitere Anschriftsdetails hier einfügen */}
       </div>
+      {/* Weitere Rechnungsdetails hier einfügen */}
+      <button onClick={generatePDF}>Rechnung als PDF herunterladen</button>
     </div>
   );
 };

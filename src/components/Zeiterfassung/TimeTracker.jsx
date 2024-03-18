@@ -8,11 +8,12 @@ const TimeTracker = () => {
 
   // Nutze die ID des Kunden, um die Arbeitszeiten für jeden Kunden separat zu speichern
   const [startTime, setStartTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [endTime, setEndTime] = useState(null);
   const [isTracking, setIsTracking] = useState(false);
   const [workSessions, setWorkSessions] = useState([]);
   const [hourlyRate, setHourlyRate] = useState(20);
   const [isEditing, setIsEditing] = useState(false);
+  const [showInputFields, setShowInputFields] = useState(false);
 
   useEffect(() => {
     const storedSessions = localStorage.getItem(`workSessions_${id}`); // Verwende die ID des Kunden im localStorage-Key
@@ -25,17 +26,6 @@ const TimeTracker = () => {
     }
   }, [id]); // Füge die ID als Abhängigkeit hinzu
 
-  useEffect(() => {
-    let timer;
-    if (isTracking) {
-      const interval = 1000; // 1 Sekunde
-      timer = setInterval(() => {
-        setElapsedTime((prevElapsedTime) => prevElapsedTime + interval / (1000 * 60 * 60)); // Umrechnung in Stunden
-      }, interval);
-    }
-    return () => clearInterval(timer);
-  }, [isTracking]);
-
   const handleStart = () => {
     setStartTime(new Date());
     setIsTracking(true);
@@ -43,14 +33,21 @@ const TimeTracker = () => {
 
   const handleStop = () => {
     setIsTracking(false);
-    const endTime = new Date();
-    const duration = (endTime - startTime) / (1000 * 60 * 60); // Dauer in Stunden
-    const sessionPrice = roundTo5Cents(duration * hourlyRate);
-    const newSession = { id: Date.now(), start: startTime.toLocaleString(), end: endTime.toLocaleString(), duration: duration.toFixed(2), price: sessionPrice.toFixed(2) };
-    const newWorkSessions = [...workSessions, newSession];
-    localStorage.setItem(`workSessions_${id}`, JSON.stringify(newWorkSessions));
-    setWorkSessions(newWorkSessions);
-    setElapsedTime(0);
+    setEndTime(new Date());
+  };
+
+  const handleSaveSession = () => {
+    if (startTime && endTime) {
+      const duration = (endTime - startTime) / (1000 * 60 * 60); // Dauer in Stunden
+      const sessionPrice = roundTo5Cents(duration * hourlyRate);
+      const newSession = { id: Date.now(), start: startTime.toLocaleString(), end: endTime.toLocaleString(), duration: duration.toFixed(2), price: sessionPrice.toFixed(2) };
+      const newWorkSessions = [...workSessions, newSession].sort((a, b) => new Date(a.start) - new Date(b.start));
+      localStorage.setItem(`workSessions_${id}`, JSON.stringify(newWorkSessions));
+      setWorkSessions(newWorkSessions);
+      setStartTime(null);
+      setEndTime(null);
+      setShowInputFields(false);
+    }
   };
 
   const handleDeleteSession = (id) => {
@@ -64,7 +61,12 @@ const TimeTracker = () => {
     setIsEditing(false); // Beenden des Bearbeitungsmodus nach dem Speichern
   };
 
+  const handleAddWorkTime = () => {
+    setShowInputFields(true);
+  };
+
   const totalAmount = roundTo5Cents(workSessions.reduce((total, session) => total + parseFloat(session.price), 0));
+  const totalDuration = workSessions.reduce((total, session) => total + parseFloat(session.duration), 0);
 
   // PDF-Generierungsfunktion
   const generatePDF = () => {
@@ -85,12 +87,25 @@ const TimeTracker = () => {
   return (
     <div className="time-tracker-container">
       <h1>Time Tracker</h1>
-      <p className="time-display">Bereits gearbeitete Zeit: {elapsedTime.toFixed(2)} Stunden</p>
       <div className="buttons-container">
-        {!isTracking ? (
-          <button onClick={handleStart}>Start</button>
+        {!showInputFields && !isTracking ? (
+          <>
+            <button onClick={handleStart}>Start</button>
+            <button onClick={handleAddWorkTime}>Arbeitszeit nachtragen</button>
+          </>
         ) : (
-          <button onClick={handleStop}>Stop</button>
+          <>
+            {showInputFields && (
+              <>
+                <input type="datetime-local" value={startTime ? startTime.toISOString().slice(0, -8) : ''} onChange={(e) => setStartTime(new Date(e.target.value))} />
+                <input type="datetime-local" value={endTime ? endTime.toISOString().slice(0, -8) : ''} onChange={(e) => setEndTime(new Date(e.target.value))} />
+                <button onClick={handleSaveSession}>Speichern</button>
+              </>
+            )}
+            {!showInputFields && isTracking ? (
+              <button onClick={handleStop}>Stop</button>
+            ) : null}
+          </>
         )}
         <button onClick={() => setIsEditing(true)}>Stundensatz bearbeiten</button>
         {isEditing && (
@@ -115,6 +130,8 @@ const TimeTracker = () => {
             </li>
           ))}
         </ul>
+        <p><strong>Gesamtarbeitszeit:</strong> {totalDuration.toFixed(2)} Stunden</p>
+        <p><strong>Gesamtpreis:</strong> {totalAmount.toFixed(2)} €</p>
       </div>
     </div>
   );

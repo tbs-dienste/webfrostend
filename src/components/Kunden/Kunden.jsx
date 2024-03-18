@@ -30,6 +30,9 @@ const Kunden = () => {
               <Link to={`/zeiterfassung/${kunde.id}`}>
                 <button>Arbeitszeit</button>
               </Link>
+              <Link to={`/rechnung/${kunde.id}`}>
+                <button>Rechnung erstellen</button>
+              </Link>
               <button onClick={() => handleKundeLöschen(kunde.id)}>Kunde löschen</button>
             </div>
           ))
