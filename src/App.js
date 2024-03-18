@@ -1,23 +1,117 @@
-import logo from './logo.svg';
-import './App.css';
+// App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Navbar from './components/Navbar/Navbar';
+
+import Home from './components/Home/Home';
+
+import Login from './components/Login/Login';
+import Dienstleistungen from './components/Dienstleistung/Dienstleistungen';
+import ServiceDetail from './components/ServiceDetail/ServiceDetail';
+import TimeTracker from './components/Zeiterfassung/TimeTracker';
+import KundeErfassen from './components/Kunden/KundeErfassen';
+import Rechnung from './components/Rechnung/Rechnung';
+import Kunden from './components/Kunden/Kunden';
+
+
+const isAdmin = localStorage.getItem('isAdmin');
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Navbar />
+                <Home />
+              </>
+            }
+          />
+
+          <Route
+            path="/dienstleistungen"
+            element={
+              <>
+                <Navbar />
+                <Dienstleistungen />
+              </>
+            }
+          />
+          <Route
+            path="/zeiterfassung/:id"
+            element={
+              <>
+                <Navbar />
+                <TimeTracker />
+
+              </>
+            }
+          />
+
+
+          <Route
+            path="/rechnung"
+            element={
+              <>
+                <Navbar />
+                <Rechnung />
+              </>
+            }
+          />
+
+          <Route
+            path="/kunden"
+            element={
+              <>
+                <Navbar />
+                <Kunden />
+              </>
+            }
+          />
+
+          <Route
+            path="/kundeerfassen"
+            element={
+              <>
+                <Navbar />
+                <KundeErfassen />
+              </>
+            }
+          />
+
+
+
+          <Route path="/service/:id" element={<ServiceDetail />} />
+
+
+
+          {isAdmin ? (
+            <Route
+              path="/anmeldungen"
+              element={
+                <>
+                  <Navbar />
+
+                </>
+              }
+            />
+          ) : (
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Navbar />
+                  <Login />
+                </>
+              }
+            />
+          )}
+
+        </Routes>
+      </Router>
     </div>
   );
 }

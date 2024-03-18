@@ -1,0 +1,143 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0a8e77;
+  color: #fbdf84;
+  height: 100px;
+  position: relative;
+
+  .links {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #fbdf84;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    padding-left: 50px;
+    padding-right: 50px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.3s, background-color 0.3s;
+
+    &:hover {
+      color: #0a8e77;
+      background-color: #fbdf84;
+    }
+  }
+
+  .active {
+    color: #0a8e77;
+    background-color: #fbdf84;
+  }
+
+  .logo {
+    max-height: 100px;
+  }
+
+  .burger-menu {
+    display: none;
+    cursor: pointer;
+
+    div {
+      width: 30px;
+      height: 3px;
+      background-color: white;
+      margin: 6px 0;
+      transition: 0.4s;
+    }
+
+    &.active {
+      div:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+        width: 45px;
+      }
+
+      div:nth-child(2) {
+        opacity: 0;
+      }
+
+      div:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+        width: 45px;
+        margin-top: -8px;
+      }
+    }
+  }
+
+  .logout-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 25px;
+    color: #fbdf84;
+    transition: color 0.3s;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s, background-color 0.3s;
+
+    &:hover {
+      color: #0a8e77;
+      background-color: #fbdf84;
+    }
+  }
+
+  .admin {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    padding-left: 50px;
+    padding-right: 50px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .links {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 100px;
+      left: 0;
+      right: 0;
+      background-color: #0a8e77;
+      height: 100%;
+
+      &.burger-menu-active {
+        display: flex;
+        height: 100%;
+        background-color: white;
+      }
+    }
+
+    body.burger-menu-active {
+      background-color: #fbdf84;
+      height: 100%;
+    }
+
+    .burger-menu {
+      display: flex;
+      flex-direction: column;
+      background-color: #0a8e77;
+      width: 50px;
+
+      &.burger-menu-active {
+        display: flex;
+        background-color: #0a8e77;
+        height: 100%;
+      }
+    }
+  }
+}
