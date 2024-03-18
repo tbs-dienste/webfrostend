@@ -12,6 +12,7 @@ import TimeTracker from './components/Zeiterfassung/TimeTracker';
 import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
 import Kunden from './components/Kunden/Kunden';
+import Dankesnachricht from './components/Kunden/Dankesnachricht';
 
 
 const isAdmin = localStorage.getItem('isAdmin');
@@ -27,6 +28,16 @@ function App() {
               <>
                 <Navbar />
                 <Home />
+              </>
+            }
+          />
+
+          <Route
+            path="/dankesnachricht"
+            element={
+              <>
+                <Navbar />
+                <Dankesnachricht />
               </>
             }
           />

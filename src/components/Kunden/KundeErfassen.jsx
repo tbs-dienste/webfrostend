@@ -57,11 +57,13 @@ const KundeErfassen = () => {
     setEmail('');
     setTelefon('');
     setMobil('');
+
+    window.location.href = '/dankesnachricht';
   };
 
   return (
     <div className="kunde-erfassen">
-      <h2>Kunde erfassen</h2>
+      <h2>Kontakt</h2>
       <div className="formular">
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
@@ -171,16 +173,9 @@ const KundeErfassen = () => {
             onChange={(e) => setMobil(e.target.value)}
           />
         </div>
-        <button onClick={handleKundeHinzufügen}>Kunde hinzufügen</button>
+        <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
       </div>
-      <h3>Gespeicherte Kunden:</h3>
-      <ul>
-        {kunden.map((kunde) => (
-          <li key={kunde.id}>
-            {kunde.vorname} {kunde.nachname}
-          </li>
-        ))}
-      </ul>
+     
     </div>
   );
 };
