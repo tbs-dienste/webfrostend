@@ -1,80 +1,53 @@
 // Rechnung.scss
 
-.rechnung {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  
-    h2 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-  
-    .formular {
-      margin-bottom: 20px;
-  
-      .formular-gruppe {
-        margin-bottom: 15px;
-  
-        label {
-          display: block;
-          font-weight: bold;
-          margin-bottom: 5px;
-        }
-  
-        input,
-        select {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 3px;
-          font-size: 16px;
-  
-          &:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-          }
-        }
-      }
-  
-      button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 3px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #0056b3;
-        }
-      }
-    }
-  
-    .rechnung-preview {
-      border-top: 1px solid #ccc;
-      padding-top: 20px;
-  
-      h3 {
-        font-size: 20px;
-        margin-bottom: 10px;
-      }
-  
-      ul {
-        list-style: none;
-        padding: 0;
-  
-        li {
-          font-size: 16px;
-          margin-bottom: 5px;
-        }
-      }
-    }
-  }
-  
+.rechnung-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+.rechnung-header {
+  display: flex;
+  align-items: center;
+}
+
+.logoRechnung {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.rechnung-title {
+  font-size: 24px;
+  color: #333;
+}
+
+.rechnung-content {
+  margin-top: 20px;
+}
+
+.rechnung-details {
+  margin-bottom: 20px;
+}
+
+.rechnung-details p {
+  margin: 5px 0;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

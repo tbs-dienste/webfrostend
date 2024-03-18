@@ -14,6 +14,7 @@ const TimeTracker = () => {
   const [hourlyRate, setHourlyRate] = useState(20);
   const [isEditing, setIsEditing] = useState(false);
   const [showInputFields, setShowInputFields] = useState(false);
+  const [currentSession, setCurrentSession] = useState(null); // Hinzugefügt, um die aktuelle Sitzung zu verfolgen
 
   useEffect(() => {
     const storedSessions = localStorage.getItem(`workSessions_${id}`); // Verwende die ID des Kunden im localStorage-Key
@@ -26,6 +27,31 @@ const TimeTracker = () => {
     }
   }, [id]); // Füge die ID als Abhängigkeit hinzu
 
+  useEffect(() => {
+    if (isTracking) {
+      const interval = setInterval(() => {
+        // Aktualisiere die laufende Arbeitszeit alle 1 Minute
+        setCurrentSession(getCurrentSession());
+      }, 60000); // 60000 Millisekunden = 1 Minute
+      return () => clearInterval(interval);
+    }
+  }, [isTracking]);
+
+  const getCurrentSession = () => {
+    if (startTime) {
+      const currentDuration = (new Date() - startTime) / (1000 * 60 * 60);
+      const sessionPrice = roundTo5Cents(currentDuration * hourlyRate);
+      return {
+        id: Date.now(),
+        start: startTime.toLocaleString(),
+        end: new Date().toLocaleString(),
+        duration: currentDuration.toFixed(2),
+        price: sessionPrice.toFixed(2)
+      };
+    }
+    return null;
+  };
+
   const handleStart = () => {
     setStartTime(new Date());
     setIsTracking(true);
@@ -34,6 +60,15 @@ const TimeTracker = () => {
   const handleStop = () => {
     setIsTracking(false);
     setEndTime(new Date());
+    if (startTime) {
+      const currentSession = getCurrentSession();
+      setCurrentSession(null); // Setze die aktuelle Sitzung zurück
+      if (currentSession) {
+        const newWorkSessions = [...workSessions, currentSession].sort((a, b) => new Date(a.start) - new Date(b.start));
+        localStorage.setItem(`workSessions_${id}`, JSON.stringify(newWorkSessions));
+        setWorkSessions(newWorkSessions);
+      }
+    }
   };
 
   const handleSaveSession = () => {
@@ -77,6 +112,9 @@ const TimeTracker = () => {
             {workSessions.map((session, index) => (
               <Text key={index}>{session.start} - {session.end} - {session.duration} Stunden - {session.price} €</Text>
             ))}
+            {currentSession && (
+              <Text>{currentSession.start} - {currentSession.end} - {currentSession.duration} Stunden - {currentSession.price} €</Text>
+            )}
             <Text>Gesamt: {totalAmount.toFixed(2)} €</Text>
           </View>
         </Page>
@@ -129,6 +167,11 @@ const TimeTracker = () => {
               <button onClick={() => handleDeleteSession(session.id)}>Löschen</button>
             </li>
           ))}
+          {currentSession && (
+            <li>
+              {currentSession.start} - {currentSession.end} - {currentSession.duration} Stunden - {currentSession.price} € 
+            </li>
+          )}
         </ul>
         <p><strong>Gesamtarbeitszeit:</strong> {totalDuration.toFixed(2)} Stunden</p>
         <p><strong>Gesamtpreis:</strong> {totalAmount.toFixed(2)} €</p>

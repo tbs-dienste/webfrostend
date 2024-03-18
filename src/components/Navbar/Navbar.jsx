@@ -53,14 +53,7 @@ function Navbar() {
           Kunden
         </Link>
 
-        <Link
-          to="/rechnung"
-          className={`nav-link ${currentPath === '/rechnung' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Rechnungen
-        </Link>
-
+        
 
         <Link
           to="/kundeerfassen"
