@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-import { useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom';
+import './TimeTracker.scss'; // Importiere das SCSS-Styling
 
 const TimeTracker = () => {
   const { id } = useParams(); // Lese die ID aus der URL
@@ -82,10 +83,10 @@ const TimeTracker = () => {
   };
 
   return (
-    <div>
+    <div className="time-tracker-container">
       <h1>Time Tracker</h1>
-      <p>Bereits gearbeitete Zeit: {elapsedTime} ms</p>
-      <div>
+      <p className="time-display">Bereits gearbeitete Zeit: {elapsedTime} ms</p>
+      <div className="buttons-container">
         {!isTracking ? (
           <button onClick={handleStart}>Start</button>
         ) : (
@@ -93,22 +94,25 @@ const TimeTracker = () => {
         )}
         <button onClick={() => setIsEditing(true)}>Stundensatz bearbeiten</button>
         {isEditing && (
-          <>
+          <div className="edit-rate-container">
             <input type="number" value={hourlyRate} onChange={(e) => setHourlyRate(parseFloat(e.target.value))} />
             <button onClick={handleSaveHourlyRate}>Speichern</button>
-          </>
+          </div>
         )}
       </div>
-      <PDFDownloadLink document={generatePDF()} fileName="work_sessions.pdf">
+      <PDFDownloadLink document={generatePDF()} fileName="work_sessions.pdf" className="pdf-download-link">
         {({ blob, url, loading, error }) =>
           loading ? 'PDF wird generiert...' : 'PDF herunterladen'
         }
       </PDFDownloadLink>
-      <div>
+      <div className="work-sessions-container">
         <h2>Arbeitssitzungen</h2>
         <ul>
           {workSessions.map(session => (
-            <li key={session.id}>{session.start} - {session.end} - {session.duration} Stunden - {session.price} € <button onClick={() => handleDeleteSession(session.id)}>Löschen</button></li>
+            <li key={session.id}>
+              {session.start} - {session.end} - {session.duration} Stunden - {session.price} € 
+              <button onClick={() => handleDeleteSession(session.id)}>Löschen</button>
+            </li>
           ))}
         </ul>
       </div>
