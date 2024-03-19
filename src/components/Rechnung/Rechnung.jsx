@@ -62,11 +62,14 @@ const Rechnung = () => {
     // Barcode im PDF einfügen
     const barcodeDataURL = document.getElementById('barcode').getElementsByTagName('canvas')[0].toDataURL();
     doc.addImage(barcodeDataURL, 'JPEG', 10, startY, 50, 20); // X-Position: 10, Y-Position: startY, Breite: 50, Höhe: 20
+    doc.text(`Kundennummer: ${selectedKunde.kundennummer}`, 10, startY + 40); // Y-Position: startY + 45
     // Kundeninformationen unter dem Barcode im PDF anzeigen
+
+    doc.text(`${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'}`, 10, startY + 20);
     doc.text(`${selectedKunde.nachname} ${selectedKunde.vorname}`, 10, startY + 25); // Y-Position: startY + 25
-    doc.text(`${selectedKunde.strasseHausnummer}`, 10, startY + 35); // Y-Position: startY + 35
-    doc.text(`${selectedKunde.postleitzahl} ${selectedKunde.ort}`, 10, startY + 45)
-    doc.text(`Kundennummer: ${selectedKunde.kundennummer}`, 10, startY + 55); // Y-Position: startY + 45
+    doc.text(`${selectedKunde.strasseHausnummer}`, 10, startY + 30); // Y-Position: startY + 35
+    doc.text(`${selectedKunde.postleitzahl} ${selectedKunde.ort}`, 10, startY + 35)
+  
 
     // Arbeitszeiten als Tabelle hinzufügen
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
@@ -101,6 +104,7 @@ const Rechnung = () => {
         <div className="rechnung-details">
           {selectedKunde && (
             <>
+               <p>{selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau'} </p>
               <p>{selectedKunde.nachname}, {selectedKunde.vorname}</p>
               <p>{selectedKunde.strasseHausnummer}</p>
               <p>{selectedKunde.postleitzahl} {selectedKunde.ort}</p>
