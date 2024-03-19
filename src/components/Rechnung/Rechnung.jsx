@@ -4,71 +4,80 @@ import jsPDF from 'jspdf';
 import logo from '../../logo.png'; // Pfad zum Logo
 import './Rechnung.scss'; // Importieren Sie das SCSS-Styling
 import 'jspdf-autotable';
+import JsBarcode from 'jsbarcode'; // Import JsBarcode für die Barcode-Generierung
 
 const Rechnung = () => {
-  const { id } = useParams(); // Extrahiere die ID aus dem URL-Parameter
-  const [kunde, setKunde] = useState(null);
+  const [kunden, setKunden] = useState([]);
   const [workSessions, setWorkSessions] = useState([]);
+  const { id } = useParams();
 
   useEffect(() => {
-    // Lade die Kundendaten aus dem Local Storage
-    const storedKunden = JSON.parse(localStorage.getItem('kunden'));
-    // Suche nach dem Kunden mit der entsprechenden ID
-    const selectedKunde = storedKunden.find(kunde => kunde.id === parseInt(id)); // Konvertiere die ID in eine Zahl, um sicherzustellen, dass der Vergleich korrekt ist
-    // Setze den gefundenen Kunden in den State
-    setKunde(selectedKunde);
+    // Kundendaten aus dem Local Storage abrufen
+    const storedKunden = JSON.parse(localStorage.getItem('kunden')) || [];
+    setKunden(storedKunden);
+    
+    // Arbeitszeiten aus dem Local Storage abrufen
+    const storedSessions = JSON.parse(localStorage.getItem(`workSessions_${id}`)) || [];
+    setWorkSessions(storedSessions);
+  }, [id]);
 
-    // Lade die Arbeitszeiten aus dem Local Storage
-    const storedSessions = JSON.parse(localStorage.getItem(`workSessions_${id}`));
-    if (storedSessions) {
-      setWorkSessions(storedSessions);
+  useEffect(() => {
+    // Barcode generieren, wenn ein neuer Kunde erstellt wird
+    if (kunden.length > 0) {
+      const latestKunde = kunden[kunden.length - 1];
+      generateBarcode(latestKunde.id.toString());
+      // Kundendaten und Barcode im Local Storage speichern
+      localStorage.setItem('kunden', JSON.stringify(kunden));
     }
-  }, [id]); // Führe diesen Effekt bei Änderungen der ID aus
+  }, [kunden]);
 
-  if (!kunde) {
-    return <p>Kunde nicht gefunden.</p>;
-  }
+  const createNewKunde = () => {
+    // Neue Kunden-ID generieren
+    const newId = kunden.length > 0 ? kunden[kunden.length - 1].id + 1 : 1;
+    // Neuen Kunden erstellen
+    const newKunde = {
+      id: newId,
+      name: `Kunde ${newId}`,
+      // Weitere Kundendaten hier hinzufügen...
+    };
+    // Neuen Kunden zur Liste hinzufügen
+    setKunden([...kunden, newKunde]);
+  };
 
-  // Definiere die Anrede basierend auf dem Geschlecht
-  let anrede;
-  if (kunde.geschlecht === 'männlich') {
-    anrede = 'Herr';
-  } else if (kunde.geschlecht === 'weiblich') {
-    anrede = 'Frau';
-  } else {
-    anrede = ''; // Anrede für andere Geschlechter
-  }
+  const generateBarcode = (customerId) => {
+    const canvas = document.createElement('canvas');
+    JsBarcode(canvas, customerId, { format: 'CODE128' });
+    // Barcode-Canvas-Element im Dokument einfügen
+    const barcodeElement = document.getElementById('barcode');
+    barcodeElement.innerHTML = '';
+    barcodeElement.appendChild(canvas);
+  };
 
-  // Funktion zum Generieren der PDF-Rechnung
   const generatePDF = () => {
-    // Erstellen Sie ein neues PDF-Dokument
     const doc = new jsPDF();
 
     // Logo oben links einfügen
     doc.addImage(logo, 'PNG', 10, 10, 50, 50); // X-Position: 10, Y-Position: 10, Breite: 50, Höhe: 50
 
+    // Barcode generieren
+    generateBarcode(id);
+
     // Fügen Sie die Rechnungsinformationen hinzu
-    const startX = 10; // Start-X-Position für den Text
     let startY = 80; // Start-Y-Position für den Text
     const lineHeight = 10; // Zeilenhöhe für den Text
 
     doc.setFontSize(12); // Setze die Schriftgröße
 
-    // Kundennummer
-    doc.text(`Kundennummer: ${kunde.kundennummer}`, startX, startY); // Anzeigen der Kundennummer
-
-    // Anrede
-    doc.text(`${anrede}`, startX, startY + lineHeight);
-    // Name des Kunden
-    doc.text(`${kunde.nachname} ${kunde.vorname}`, startX, startY + 2 * lineHeight);
-    // Anschrift des Kunden
-    doc.text(`${kunde.strasseHausnummer}`, startX, startY + 3 * lineHeight);
-    doc.text(`${kunde.postleitzahl} ${kunde.ort}`, startX, startY + 4 * lineHeight);
+    // Barcode im PDF einfügen
+    const barcodeDataURL = document.getElementById('barcode').getElementsByTagName('canvas')[0].toDataURL();
+    doc.addImage(barcodeDataURL, 'JPEG', 10, startY, 50, 20); // X-Position: 10, Y-Position: startY, Breite: 50, Höhe: 20
+    // Kundennummer unter dem Barcode im PDF anzeigen
+    doc.text(`Kundennummer: ${id}`, 10, startY + 25); // Y-Position: startY + 25
 
     // Arbeitszeiten als Tabelle hinzufügen
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
     const tableRows = workSessions.map(session => [session.start, session.end, session.duration, session.price]);
-    doc.autoTable(tableColumns, tableRows, { startY: startY + 6 * lineHeight });
+    doc.autoTable(tableColumns, tableRows, { startY: startY + 35 });
 
     // Berechnen Sie Gesamtpreis und Gesamtstunden
     const totalPrice = workSessions.reduce((total, session) => total + parseFloat(session.price), 0);
@@ -78,57 +87,51 @@ const Rechnung = () => {
     const mwst = totalPrice * 0.077;
 
     // Fügen Sie Gesamtpreis, Gesamtstunden und MWST hinzu
-    startY += (6 + workSessions.length) * lineHeight;
-    doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, startX, startY + 20); // 20px unterhalb der Tabelle
-    doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, startX, startY + 2 * lineHeight + 20); // 20px unterhalb der Tabelle
-    doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, startX, startY + 3 * lineHeight + 20); // 20px unterhalb der Tabelle
+    startY += (2 + workSessions.length) * lineHeight;
+    doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, 10, startY + 45); // 45px unterhalb der Tabelle
+    doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, 10, startY + 2 * lineHeight + 45); // 45px unterhalb der Tabelle
+    doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, 10, startY + 3 * lineHeight + 45); // 45px unterhalb der Tabelle
 
     // Speichern Sie das PDF-Dokument
     doc.save('rechnung.pdf');
   };
 
- 
-
   return (
-    <div>
+    <div className="rechnung-container">
       <h2 className="rechnung-title">Rechnung</h2>
-      <div className='rechnung-container'>
-        <div className='rechnung-header'>
-          <img src={logo} alt='Logo' className='logoRechnung' />
-          <h3>Rechnung</h3>
+      <div className="rechnung-content">
+        <div className="rechnung-header">
+          <img src={logo} alt="Logo" className="logoRechnung" />
+          <div id="barcode"></div> {/* Container für den Barcode */}
         </div>
-        <div className='rechnung-content'>
-          <div className='rechnung-details'>
-            <p>Kundennummer: {kunde.kundennummer}</p> {/* Anzeigen der Kundennummer */}
-            <p>{anrede}</p>
-            <p>{kunde.nachname} {kunde.vorname}</p>
-            <p>{kunde.strasseHausnummer}</p>
-            <p>{kunde.postleitzahl} {kunde.ort}</p>
-          </div>
-          <div className="work-sessions-table">
-            <h4>Arbeitszeiten</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Startzeit</th>
-                  <th>Endzeit</th>
-                  <th>Dauer (Stunden)</th>
-                  <th>Preis (€)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {workSessions.map((session, index) => (
-                  <tr key={index}>
-                    <td>{session.start}</td>
-                    <td>{session.end}</td>
-                    <td>{session.duration}</td>
-                    <td>{session.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="rechnung-details">
+          <p>Kundennummer: {id}</p> {/* Anzeigen der Kundennummer */}
+          {/* Weitere Kundendetails hier */}
+          <button onClick={createNewKunde}>Neuen Kunden erstellen</button>
           <button onClick={generatePDF}>Rechnung als PDF herunterladen</button>
+        </div>
+        <div className="arbeitszeiten">
+          <h3>Arbeitszeiten</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Startzeit</th>
+                <th>Endzeit</th>
+                <th>Dauer (Stunden)</th>
+                <th>Preis (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workSessions.map((session, index) => (
+                <tr key={index}>
+                  <td>{session.start}</td>
+                  <td>{session.end}</td>
+                  <td>{session.duration}</td>
+                  <td>{session.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

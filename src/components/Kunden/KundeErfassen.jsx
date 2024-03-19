@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import JsBarcode from 'jsbarcode';
 import './KundeErfassen.scss';
 
 const KundeErfassen = () => {
@@ -16,6 +17,7 @@ const KundeErfassen = () => {
   const [telefon, setTelefon] = useState('');
   const [mobil, setMobil] = useState('');
   const [geschlecht, setGeschlecht] = useState('');
+  const [kundennummer, setKundennummer] = useState('');
 
   useEffect(() => {
     const storedKunden = localStorage.getItem('kunden');
@@ -25,12 +27,11 @@ const KundeErfassen = () => {
   }, []);
 
   const handleKundeHinzufügen = () => {
-    // Generiere eine zufällige Kundennummer
     const newKundennummer = generateRandomKundennummer();
 
     const newKunde = {
       id: kunden.length + 1,
-      kundennummer: newKundennummer, // Verwende die generierte Kundennummer
+      kundennummer: newKundennummer,
       vorname,
       zweiterVorname,
       nachname,
@@ -45,13 +46,12 @@ const KundeErfassen = () => {
       mobil,
       geschlecht,
       arbeitszeiten: [],
-      rechnungen: [], 
+      rechnungen: [],
     };
 
     setKunden([...kunden, newKunde]);
     localStorage.setItem('kunden', JSON.stringify([...kunden, newKunde]));
 
-    // Zurücksetzen der Felder
     setVorname('');
     setZweiterVorname('');
     setNachname('');
@@ -64,14 +64,26 @@ const KundeErfassen = () => {
     setEmail('');
     setTelefon('');
     setMobil('');
-    setGeschlecht(''); // Zurücksetzen des Geschlechts
+    setGeschlecht('');
+    setKundennummer(newKundennummer);
 
     window.location.href = '/dankesnachricht';
   };
 
   const generateRandomKundennummer = () => {
-    return Math.floor(Math.random() * 1000000) + 1; // Generiert eine zufällige Zahl zwischen 1 und 1.000.000
+    return Math.floor(Math.random() * 1000000) + 1;
   };
+
+  useEffect(() => {
+    // Wenn die Kundennummer geändert wird, speichern Sie den Strichcode im Local Storage
+    if (kundennummer) {
+      const canvas = document.createElement('canvas');
+      JsBarcode(canvas, kundennummer);
+      const dataURL = canvas.toDataURL('image/png');
+      localStorage.setItem(`kunden_${kundennummer}_barcode`, dataURL);
+    }
+  }, [kundennummer]);
+
 
   return (
     <div className="kunde-erfassen">
@@ -205,3 +217,4 @@ const KundeErfassen = () => {
 };
 
 export default KundeErfassen;
+
