@@ -16,7 +16,7 @@ const Rechnung = () => {
     // Kundendaten aus dem Local Storage abrufen
     const storedKunden = JSON.parse(localStorage.getItem('kunden')) || [];
     setKunden(storedKunden);
-    
+
     // Arbeitszeiten aus dem Local Storage abrufen
     const storedSessions = JSON.parse(localStorage.getItem(`workSessions_${id}`)) || [];
     setWorkSessions(storedSessions);
@@ -48,33 +48,56 @@ const Rechnung = () => {
     const doc = new jsPDF();
 
     // Logo oben links einfügen
-    doc.addImage(logo, 'PNG', 10, 10, 50, 50); // X-Position: 10, Y-Position: 10, Breite: 50, Höhe: 50
+    doc.addImage(logo, 'PNG', 15, 15, 50, 20); // X-Position: 15, Y-Position: 15, Breite: 50, Höhe: 20
 
     // Barcode generieren
     generateBarcode(selectedKunde.kundennummer.toString());
 
-    // Fügen Sie die Rechnungsinformationen hinzu
-    let startY = 80; // Start-Y-Position für den Text
-    const lineHeight = 10; // Zeilenhöhe für den Text
-
-    doc.setFontSize(12); // Setze die Schriftgröße
-
     // Barcode im PDF einfügen
     const barcodeDataURL = document.getElementById('barcode').getElementsByTagName('canvas')[0].toDataURL();
-    doc.addImage(barcodeDataURL, 'JPEG', 10, startY, 50, 20); // X-Position: 10, Y-Position: startY, Breite: 50, Höhe: 20
-    doc.text(`Kundennummer: ${selectedKunde.kundennummer}`, 10, startY + 40); // Y-Position: startY + 45
-    // Kundeninformationen unter dem Barcode im PDF anzeigen
+    const barcodeWidth = 50;
+    const barcodeHeight = 20;
+    const logoWidth = 50; // Breite des Logos
+    const pdfWidth = doc.internal.pageSize.getWidth();
 
-    doc.text(`${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'}`, 10, startY + 20);
-    doc.text(`${selectedKunde.nachname} ${selectedKunde.vorname}`, 10, startY + 25); // Y-Position: startY + 25
-    doc.text(`${selectedKunde.strasseHausnummer}`, 10, startY + 30); // Y-Position: startY + 35
-    doc.text(`${selectedKunde.postleitzahl} ${selectedKunde.ort}`, 10, startY + 35)
-  
+    // Position des Barcodes (ganz rechts oben)
+    const barcodeX = pdfWidth - barcodeWidth - 15; // 15px Abstand vom rechten Rand
+    doc.addImage(barcodeDataURL, 'JPEG', barcodeX, 15, barcodeWidth, barcodeHeight);
+
+    // Rechnungsdatum und -nummer
+    const invoiceInfoX = pdfWidth - barcodeWidth - 15; // Unter dem Barcode
+    const invoiceInfoY = 40; // Abstand vom oberen Rand
+    const today = new Date();
+    const invoiceDate = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`;
+    doc.setFontSize(12); // Setze die Schriftgröße für die Rechnungsinformationen
+    doc.text(`Rechnungsdatum: ${invoiceDate}`, invoiceInfoX, invoiceInfoY);
+    doc.text(`Rechnungsnummer: ${Math.floor(Math.random() * 100000)}`, invoiceInfoX, invoiceInfoY + 5);
+
+    // Adresse des Kunden unter dem Barcode
+    const addressX = 15; // Abstand vom linken Rand
+    const addressY = 50; // Abstand vom oberen Rand nach dem Logo und Barcode
+    doc.setFontSize(10); // Setze die Schriftgröße für die Adresse
+    doc.text(`${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname}`, addressX, addressY);
+    doc.text(selectedKunde.vorname, addressX, addressY + 5);
+    doc.text(selectedKunde.strasseHausnummer, addressX, addressY + 10);
+    doc.text(`${selectedKunde.postleitzahl} ${selectedKunde.ort}`, addressX, addressY + 15);
+
+    // Trennlinie zwischen Adresse und Rechnungsinformationen
+    doc.setLineWidth(0.5);
+    doc.line(15, 45, pdfWidth - 15, 45);
+
+    // Text zur Rechnung hinzufügen
+    const descriptionX = 15; // Abstand vom linken Rand
+    const descriptionY = 80; // Abstand vom oberen Rand
+    const description = `Sehr geehrte/r ${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname},\n\nVielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.\n\n Sollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.`;
+    doc.setFontSize(10); // Setze die Schriftgröße für die Beschreibung
+    doc.text(description, descriptionX, descriptionY);
 
     // Arbeitszeiten als Tabelle hinzufügen
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
     const tableRows = workSessions.map(session => [session.start, session.end, session.duration, session.price]);
-    doc.autoTable(tableColumns, tableRows, { startY: startY + 55 });
+    const tableY = 100; // Position unterhalb der Beschreibung
+    doc.autoTable(tableColumns, tableRows, { startY: tableY });
 
     // Berechnen Sie Gesamtpreis und Gesamtstunden
     const totalPrice = workSessions.reduce((total, session) => total + parseFloat(session.price), 0);
@@ -84,14 +107,26 @@ const Rechnung = () => {
     const mwst = totalPrice * 0.077;
 
     // Fügen Sie Gesamtpreis, Gesamtstunden und MWST hinzu
-    startY += (2 + workSessions.length) * lineHeight;
-    doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, 10, startY + 65); // 65px unterhalb der Tabelle
-    doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, 10, startY + 2 * lineHeight + 65); // 65px unterhalb der Tabelle
-    doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, 10, startY + 3 * lineHeight + 65); // 65px unterhalb der Tabelle
+    const summaryX = pdfWidth - 70; // Abstand vom rechten Rand
+    const summaryY = doc.autoTable.previous.finalY + 10; // Position unterhalb der Tabelle
+
+
+    doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, summaryX, summaryY + 10);
+    doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, summaryX, summaryY + 5);
+    doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, summaryX, summaryY);
+
+    // Dankesnachricht und Grüße mit Unterschrift
+    const greetingX = 15; // Abstand vom linken Rand
+    const greetingY = doc.autoTable.previous.finalY + 20; // Position unterhalb der Tabelle
+    const greeting = `Mit freundlichen Grüßen,\n\nIhr Unternehmensteam\n\nUnterschrift: ________________________`;
+    doc.text(greeting, greetingX, greetingY);
 
     // Speichern Sie das PDF-Dokument
     doc.save('rechnung.pdf');
   };
+
+
+
 
   return (
     <div className="rechnung-container">
@@ -102,14 +137,16 @@ const Rechnung = () => {
           <div id="barcode"></div> {/* Container für den Barcode */}
         </div>
         <div className="rechnung-details">
-          {selectedKunde && (
+          {selectedKunde ? (
             <>
-               <p>{selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau'} </p>
+              <p>{selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau'}</p>
               <p>{selectedKunde.nachname}, {selectedKunde.vorname}</p>
               <p>{selectedKunde.strasseHausnummer}</p>
               <p>{selectedKunde.postleitzahl} {selectedKunde.ort}</p>
               <p>Kundennummer: {selectedKunde.kundennummer}</p>
             </>
+          ) : (
+            <p>Loading...</p>
           )}
           <button onClick={generatePDF}>Rechnung als PDF herunterladen</button>
         </div>
@@ -127,8 +164,7 @@ const Rechnung = () => {
             <tbody>
               {workSessions.map((session, index) => (
                 <tr key={index}>
-                  <td>{                    session.start}
-                  </td>
+                  <td>{session.start}</td>
                   <td>{session.end}</td>
                   <td>{session.duration}</td>
                   <td>{session.price}</td>
@@ -137,10 +173,20 @@ const Rechnung = () => {
             </tbody>
           </table>
         </div>
+        <p>
+          Sehr geehrte/r {selectedKunde ? (selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau') : 'Kunde'},{' '}
+          {selectedKunde ? selectedKunde.nachname : 'Name'},
+        </p>
+        <p>
+          Vielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.
+          Sollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.
+        </p>
+        <p>Mit freundlichen Grüßen,</p>
+        <p>Ihr Unternehmensteam</p>
+        <p>Unterschrift: ________________________</p>
       </div>
     </div>
   );
 };
 
 export default Rechnung;
-
