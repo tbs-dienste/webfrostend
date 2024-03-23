@@ -47,6 +47,7 @@ const KundeErfassen = () => {
       geschlecht,
       arbeitszeiten: [],
       rechnungen: [],
+      auftrag: [],
     };
 
     setKunden([...kunden, newKunde]);

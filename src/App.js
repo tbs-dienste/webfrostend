@@ -13,6 +13,8 @@ import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
 import Kunden from './components/Kunden/Kunden';
 import Dankesnachricht from './components/Kunden/Dankesnachricht';
+import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
+import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
 
 
 const isAdmin = localStorage.getItem('isAdmin');
@@ -92,6 +94,26 @@ function App() {
               <>
                 <Navbar />
                 <KundeErfassen />
+              </>
+            }
+          />
+
+<Route
+            path="/mitarbeitererfassen"
+            element={
+              <>
+                <Navbar />
+                <MitarbeiterErfassen />
+              </>
+            }
+          />
+
+<Route
+            path="/mitarbeiter"
+            element={
+              <>
+                <Navbar />
+                <MitarbeiterAnzeigen />
               </>
             }
           />

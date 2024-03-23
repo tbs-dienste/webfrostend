@@ -62,6 +62,22 @@ function Navbar() {
         >
           Kunde Erfassen
         </Link>
+
+        <Link
+          to="/mitarbeiter"
+          className={`nav-link ${currentPath === '/mitarbeiter' ? 'active' : ''}`}
+          onClick={() => setBurgerMenuActive(false)}
+        >
+          Mitarbeiter 
+        </Link>
+
+        <Link
+          to="/mitarbeitererfassen"
+          className={`nav-link ${currentPath === '/mitarbeitererfassen' ? 'active' : ''}`}
+          onClick={() => setBurgerMenuActive(false)}
+        >
+          Mitarbeiter Erfassen
+        </Link>
         
         {isAdmin ? (
           <>

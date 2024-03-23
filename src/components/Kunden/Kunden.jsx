@@ -53,6 +53,9 @@ const Kunden = () => {
                 <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
                   Rechnung erstellen
                 </Link>
+                <Link to={`/auftrag/${kunde.id}`} className="kunden-button">
+                  Auftrag
+                </Link>
                 <button onClick={() => handleKundeLöschen(kunde.id)} className="kunden-button">
                   Kunde löschen
                 </button>
