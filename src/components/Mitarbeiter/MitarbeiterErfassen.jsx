@@ -1,114 +1,200 @@
 import React, { useState, useEffect } from 'react';
+import JsBarcode from 'jsbarcode';
 import './MitarbeiterErfassen.scss';
 
-function MitarbeiterErfassen() {
+const MitarbeiterErfassen = () => {
+  const [mitarbeiter, setMitarbeiter] = useState([]);
+  const [geschlecht, setGeschlecht] = useState('');
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
-  const [iban, setIban] = useState('');
-  const [adresse, setAdresse] = useState('');
+  const [strasseHausnummer, setStrasseHausnummer] = useState('');
+  const [postleitzahl, setPostleitzahl] = useState('');
+  const [ort, setOrt] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobil, setMobil] = useState('');
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
-  const [mitarbeiterListe, setMitarbeiterListe] = useState([]);
+  const [iban, setIban] = useState('');
+  const [mitarbeiternummer, setMitarbeiternummer] = useState('');
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
     if (storedMitarbeiter) {
-      setMitarbeiterListe(JSON.parse(storedMitarbeiter));
+      setMitarbeiter(JSON.parse(storedMitarbeiter));
     }
   }, []);
 
-  const handleVornameChange = (event) => {
-    setVorname(event.target.value);
-  };
+  const handleMitarbeiterHinzufügen = () => {
+    const newMitarbeiternummer = generateRandomMitarbeiternummer();
 
-  const handleNachnameChange = (event) => {
-    setNachname(event.target.value);
-  };
-
-  const handleIbanChange = (event) => {
-    setIban(event.target.value);
-  };
-
-  const handleAdresseChange = (event) => {
-    setAdresse(event.target.value);
-  };
-
-  const handleBenutzernameChange = (event) => {
-    setBenutzername(event.target.value);
-  };
-
-  const handlePasswortChange = (event) => {
-    setPasswort(event.target.value);
-  };
-
-  const handleMitarbeiterErfassen = () => {
-    const neuerMitarbeiter = {
-      vorname: vorname,
-      nachname: nachname,
-      iban: iban,
-      adresse: adresse,
-      benutzername: benutzername,
-      passwort: passwort,
-      online: true, // Neuer Mitarbeiter ist standardmäßig online
-      
+    const newMitarbeiter = {
+      id: mitarbeiter.length + 1,
+      mitarbeiternummer: newMitarbeiternummer,
+      geschlecht,
+      vorname,
+      nachname,
+      strasseHausnummer,
+      postleitzahl,
+      ort,
+      email,
+      mobil,
+      benutzername,
+      passwort,
+      iban,
+      auftrag: [],
     };
-  
-    const neueMitarbeiterListe = [...mitarbeiterListe, neuerMitarbeiter];
-    setMitarbeiterListe(neueMitarbeiterListe);
-    localStorage.setItem('mitarbeiter', JSON.stringify(neueMitarbeiterListe));
-  
-    // Setze die Eingabefelder zurück
+
+    setMitarbeiter([...mitarbeiter, newMitarbeiter]);
+    localStorage.setItem('mitarbeiter', JSON.stringify([...mitarbeiter, newMitarbeiter]));
+
+    setGeschlecht('');
     setVorname('');
     setNachname('');
-    setIban('');
-    setAdresse('');
+    setStrasseHausnummer('');
+    setPostleitzahl('');
+    setOrt('');
+    setEmail('');
+    setMobil('');
     setBenutzername('');
     setPasswort('');
+    setIban('');
+    setMitarbeiternummer(newMitarbeiternummer);
+
+    window.location.href = '/mitarbeiter';
   };
-  
+
+  const generateRandomMitarbeiternummer = () => {
+    return Math.floor(Math.random() * 1000000) + 1;
+  };
+
+  useEffect(() => {
+    // Wenn die Kundennummer geändert wird, speichern Sie den Strichcode im Local Storage
+    if (mitarbeiternummer) {
+      const canvas = document.createElement('canvas');
+      JsBarcode(canvas, mitarbeiternummer);
+      const dataURL = canvas.toDataURL('image/png');
+      localStorage.setItem(`mitarbeiter_${mitarbeiternummer}_barcode`, dataURL);
+    }
+  }, [mitarbeiternummer]);
+
 
   return (
-    <div className="mitarbeiter-erfassen">
-      <h1>Mitarbeiter erfassen</h1>
-      <div>
-        <label>Vorname:</label>
-        <input type="text" value={vorname} onChange={handleVornameChange} />
-      </div>
-      <div>
-        <label>Nachname:</label>
-        <input type="text" value={nachname} onChange={handleNachnameChange} />
-      </div>
-      <div>
-        <label>IBAN:</label>
-        <input type="text" value={iban} onChange={handleIbanChange} />
-      </div>
-      <div>
-        <label>Adresse:</label>
-        <input type="text" value={adresse} onChange={handleAdresseChange} />
-      </div>
-      <div>
-        <label>Benutzername:</label>
-        <input type="text" value={benutzername} onChange={handleBenutzernameChange} />
-      </div>
-      <div>
-        <label>Passwort:</label>
-        <input type="password" value={passwort} onChange={handlePasswortChange} />
-      </div>
-      <button onClick={handleMitarbeiterErfassen}>Mitarbeiter erfassen</button>
-      <div>
-        <h2>Mitarbeiterliste</h2>
-        <ul>
-          {mitarbeiterListe.map((mitarbeiter, index) => (
-            <li key={index}>
-              Vorname: {mitarbeiter.vorname}, Nachname: {mitarbeiter.nachname}, IBAN: {mitarbeiter.iban}, Adresse: {mitarbeiter.adresse}, Benutzername: {mitarbeiter.benutzername}, Passwort: {mitarbeiter.passwort}, 
-              {mitarbeiter.online ? ' Online' : ' Offline'}, 
-             
-            </li>
-          ))}
-        </ul>
+    <div className="kunde-erfassen">
+      <h2>Kontakt</h2>
+      <div className="formular">
+        <div className="formular-gruppe">
+          <label htmlFor="geschlecht">Geschlecht:</label>
+          <select
+            id="geschlecht"
+            value={geschlecht}
+            onChange={(e) => setGeschlecht(e.target.value)}
+          >
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+            <option value="divers">Divers</option>
+          </select>
+        </div>
+        
+        <div className="formular-gruppe">
+          <label htmlFor="vorname">Vorname:</label>
+          <input
+            type="text"
+            id="vorname"
+            value={vorname}
+            onChange={(e) => setVorname(e.target.value)}
+          />
+        </div>
+        
+        <div className="formular-gruppe">
+          <label htmlFor="nachname">Nachname:</label>
+          <input
+            type="text"
+            id="nachname"
+            value={nachname}
+            onChange={(e) => setNachname(e.target.value)}
+          />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="strasseHausnummer">Strasse und Hausnummer:</label>
+          <input
+            type="text"
+            id="strasseHausnummer"
+            value={strasseHausnummer}
+            onChange={(e) => setStrasseHausnummer(e.target.value)}
+          />
+        </div>
+       
+        
+        <div className="formular-gruppe">
+          <label htmlFor="postleitzahl">Postleitzahl:</label>
+          <input
+            type="text"
+            id="postleitzahl"
+            value={postleitzahl}
+            onChange={(e) => setPostleitzahl(e.target.value)}
+          />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="ort">Ort:</label>
+          <input
+            type="text"
+            id="ort"
+            value={ort}
+            onChange={(e) => setOrt(e.target.value)}
+          />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="email">Email-Adresse:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        
+        <div className="formular-gruppe">
+          <label htmlFor="mobil">Mobil:</label>
+          <input
+            type="tel"
+            id="mobil"
+            value={mobil}
+            onChange={(e) => setMobil(e.target.value)}
+          />
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="benutzername">Benutzername:</label>
+          <input
+            type="text"
+            id="benutzername"
+            value={benutzername}
+            onChange={(e) => setBenutzername(e.target.value)}
+          />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="passwort">Passwort:</label>
+          <input
+            type="password"
+            id="passwort"
+            value={passwort}
+            onChange={(e) => setPasswort(e.target.value)}
+          />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="iban">Iban:</label>
+          <input
+            type="text"
+            id="iban"
+            value={iban}
+            onChange={(e) => setIban(e.target.value)}
+          />
+        </div>
+        <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
       </div>
     </div>
   );
-}
+};
 
 export default MitarbeiterErfassen;
+
