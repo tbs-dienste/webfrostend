@@ -14,8 +14,10 @@ const MitarbeiterErfassen = () => {
   const [mobil, setMobil] = useState('');
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
-  const [iban, setIban] = useState('');
   const [mitarbeiternummer, setMitarbeiternummer] = useState('');
+
+  // Vordefinierte IBAN mit "CH"
+  const [iban, setIban] = useState('CH');
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
@@ -57,7 +59,7 @@ const MitarbeiterErfassen = () => {
     setMobil('');
     setBenutzername('');
     setPasswort('');
-    setIban('');
+    setIban('CH'); // Setzen Sie den IBAN-Wert zurück auf "CH"
     setMitarbeiternummer(newMitarbeiternummer);
 
     window.location.href = '/mitarbeiter';
@@ -77,6 +79,27 @@ const MitarbeiterErfassen = () => {
     }
   }, [mitarbeiternummer]);
 
+  const handleIbanChange = (e) => {
+    let input = e.target.value.toUpperCase(); // Eingabe in Großbuchstaben umwandeln
+    input = input.replace(/\D/g, ''); // Nur Zahlen zulassen
+
+    // Formatierung der IBAN entsprechend der Vorgabe "CHXX XXXX XXXX XXXX XXXX X"
+    let formattedIban = 'CH';
+    for (let i = 0; i < input.length; i++) {
+      if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
+        formattedIban += ' '; // Leerzeichen einfügen nach den ersten beiden und dann nach jedem weiteren Block von vier Zahlen
+      }
+      formattedIban += input[i];
+    }
+
+    // Prüfen, ob die IBAN-Länge die Bedingungen erfüllt
+    if (formattedIban.length >= 26) {
+      formattedIban = formattedIban.substring(0, 26); // Schneiden Sie die IBAN auf 26 Zeichen, um keine weiteren Eingaben zuzulassen
+    }
+
+    setIban(formattedIban);
+  };
+
 
   return (
     <div className="kunde-erfassen">
@@ -94,7 +117,7 @@ const MitarbeiterErfassen = () => {
             <option value="divers">Divers</option>
           </select>
         </div>
-        
+
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
           <input
@@ -104,7 +127,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setVorname(e.target.value)}
           />
         </div>
-        
+
         <div className="formular-gruppe">
           <label htmlFor="nachname">Nachname:</label>
           <input
@@ -114,6 +137,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setNachname(e.target.value)}
           />
         </div>
+
         <div className="formular-gruppe">
           <label htmlFor="strasseHausnummer">Strasse und Hausnummer:</label>
           <input
@@ -123,8 +147,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setStrasseHausnummer(e.target.value)}
           />
         </div>
-       
-        
+
         <div className="formular-gruppe">
           <label htmlFor="postleitzahl">Postleitzahl:</label>
           <input
@@ -134,6 +157,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setPostleitzahl(e.target.value)}
           />
         </div>
+
         <div className="formular-gruppe">
           <label htmlFor="ort">Ort:</label>
           <input
@@ -143,6 +167,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setOrt(e.target.value)}
           />
         </div>
+
         <div className="formular-gruppe">
           <label htmlFor="email">Email-Adresse:</label>
           <input
@@ -152,7 +177,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        
+
         <div className="formular-gruppe">
           <label htmlFor="mobil">Mobil:</label>
           <input
@@ -172,6 +197,7 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setBenutzername(e.target.value)}
           />
         </div>
+
         <div className="formular-gruppe">
           <label htmlFor="passwort">Passwort:</label>
           <input
@@ -181,15 +207,18 @@ const MitarbeiterErfassen = () => {
             onChange={(e) => setPasswort(e.target.value)}
           />
         </div>
-        <div className="formular-gruppe">
+
+         <div className="formular-gruppe">
           <label htmlFor="iban">Iban:</label>
           <input
             type="text"
             id="iban"
             value={iban}
-            onChange={(e) => setIban(e.target.value)}
+            onChange={handleIbanChange} // Benutzerdefinierte Funktion zum Verarbeiten von IBAN-Änderungen
           />
         </div>
+
+
         <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
       </div>
     </div>
@@ -197,4 +226,3 @@ const MitarbeiterErfassen = () => {
 };
 
 export default MitarbeiterErfassen;
-
