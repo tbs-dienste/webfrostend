@@ -7,7 +7,7 @@ const MitarbeiterErfassen = () => {
   const [geschlecht, setGeschlecht] = useState('');
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
-  const [strasseHausnummer, setStrasseHausnummer] = useState('');
+  const [adresse, setadresse] = useState('');
   const [postleitzahl, setPostleitzahl] = useState('');
   const [ort, setOrt] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +35,7 @@ const MitarbeiterErfassen = () => {
       geschlecht,
       vorname,
       nachname,
-      strasseHausnummer,
+      adresse,
       postleitzahl,
       ort,
       email,
@@ -52,7 +52,7 @@ const MitarbeiterErfassen = () => {
     setGeschlecht('');
     setVorname('');
     setNachname('');
-    setStrasseHausnummer('');
+    setadresse('');
     setPostleitzahl('');
     setOrt('');
     setEmail('');
@@ -139,12 +139,12 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="strasseHausnummer">Strasse und Hausnummer:</label>
+          <label htmlFor="adresse">Strasse und Hausnummer:</label>
           <input
             type="text"
-            id="strasseHausnummer"
-            value={strasseHausnummer}
-            onChange={(e) => setStrasseHausnummer(e.target.value)}
+            id="adresse"
+            value={adresse}
+            onChange={(e) => setadresse(e.target.value)}
           />
         </div>
 

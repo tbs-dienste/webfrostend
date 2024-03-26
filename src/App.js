@@ -15,6 +15,7 @@ import Kunden from './components/Kunden/Kunden';
 import Dankesnachricht from './components/Kunden/Dankesnachricht';
 import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
 import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
+import WarumWerbungMachen from './components/Werbung/WarumWerbung';
 
 
 const isAdmin = localStorage.getItem('isAdmin');
@@ -114,6 +115,16 @@ function App() {
               <>
                 <Navbar />
                 <MitarbeiterAnzeigen />
+              </>
+            }
+          />
+
+<Route
+            path="/werbung"
+            element={
+              <>
+                <Navbar />
+                <WarumWerbungMachen />
               </>
             }
           />
