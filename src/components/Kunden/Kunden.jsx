@@ -23,7 +23,10 @@ const Kunden = () => {
     const fullName = `${kunde.vorname} ${kunde.nachname}`;
     return (
       kunde.kundennummer.toString().includes(searchTerm) ||
-      fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kunde.aufträge.some(auftrag =>
+        auftrag.auftragsnummer.toString().includes(searchTerm)
+      )
     );
   });
 
@@ -34,7 +37,7 @@ const Kunden = () => {
         <input
           type="text"
           className="search-input"
-          placeholder="Kundennummer, Vorname oder Nachname"
+          placeholder="Kundennummer, Vorname, Nachname oder Auftragsnummer"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -55,6 +58,9 @@ const Kunden = () => {
                 </Link>
                 <Link to={`/auftrag/${kunde.id}`} className="kunden-button">
                   Auftrag
+                </Link>
+                <Link to={`/kunden/${kunde.id}`} className="kunden-button">
+                  Kunden anzeigen
                 </Link>
                 <button onClick={() => handleKundeLöschen(kunde.id)} className="kunden-button">
                   Kunde löschen

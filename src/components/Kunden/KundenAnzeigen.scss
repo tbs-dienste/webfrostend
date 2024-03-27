@@ -1,0 +1,68 @@
+// KundenAnzeigen.scss
+
+.kunden-anzeigen {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+  
+      h2 {
+        font-size: 24px;
+        color: #333;
+      }
+    }
+  
+    .info {
+      p {
+        margin: 10px 0;
+        font-size: 16px;
+        line-height: 1.5;
+  
+        span {
+          font-weight: bold;
+          margin-right: 5px;
+        }
+      }
+  
+      h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+      }
+  
+      ul {
+        list-style: none;
+        padding: 0;
+  
+        li {
+          margin-bottom: 20px;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 20px;
+  
+          p {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.5;
+  
+            span {
+              font-weight: bold;
+              margin-right: 5px;
+            }
+          }
+        }
+      }
+  
+      .no-auftraege {
+        color: #888;
+        font-style: italic;
+      }
+    }
+  }
+  

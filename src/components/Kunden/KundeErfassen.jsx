@@ -18,6 +18,9 @@ const KundeErfassen = () => {
   const [mobil, setMobil] = useState('');
   const [geschlecht, setGeschlecht] = useState('');
   const [kundennummer, setKundennummer] = useState('');
+  const [selectedOption, setSelectedOption] = useState('kunde');
+  const [auftragsTyp, setAuftragsTyp] = useState('');
+  const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
 
   useEffect(() => {
     const storedKunden = localStorage.getItem('kunden');
@@ -28,9 +31,8 @@ const KundeErfassen = () => {
 
   const handleKundeHinzufügen = () => {
     const newKundennummer = generateRandomKundennummer();
-
     const newKunde = {
-      id: kunden.length + 1,
+      id: newKundennummer, // Die Kundennummer wird auch als ID verwendet
       kundennummer: newKundennummer,
       vorname,
       zweiterVorname,
@@ -45,9 +47,7 @@ const KundeErfassen = () => {
       telefon,
       mobil,
       geschlecht,
-      arbeitszeiten: [],
-      rechnungen: [],
-      auftrag: [],
+      aufträge: selectedOption === 'auftrag' ? [{ typ: auftragsTyp, beschreibung: auftragsBeschreibung, auftragsnummer: generateRandomAuftragsnummer() }] : [],
     };
 
     setKunden([...kunden, newKunde]);
@@ -67,6 +67,8 @@ const KundeErfassen = () => {
     setMobil('');
     setGeschlecht('');
     setKundennummer(newKundennummer);
+    setAuftragsTyp('');
+    setAuftragsBeschreibung('');
 
     window.location.href = '/dankesnachricht';
   };
@@ -75,8 +77,11 @@ const KundeErfassen = () => {
     return Math.floor(Math.random() * 1000000) + 1;
   };
 
+  const generateRandomAuftragsnummer = () => {
+    return 'AUF' + Math.floor(Math.random() * 1000000) + 1;
+  };
+
   useEffect(() => {
-    // Wenn die Kundennummer geändert wird, speichern Sie den Strichcode im Local Storage
     if (kundennummer) {
       const canvas = document.createElement('canvas');
       JsBarcode(canvas, kundennummer);
@@ -85,24 +90,10 @@ const KundeErfassen = () => {
     }
   }, [kundennummer]);
 
-
   return (
     <div className="kunde-erfassen">
       <h2>Kontakt</h2>
       <div className="formular">
-        <div className="formular-gruppe">
-          <label htmlFor="geschlecht">Geschlecht:</label>
-          <select
-            id="geschlecht"
-            value={geschlecht}
-            onChange={(e) => setGeschlecht(e.target.value)}
-          >
-            <option value="männlich">Männlich</option>
-            <option value="weiblich">Weiblich</option>
-            <option value="divers">Divers</option>
-          </select>
-        </div>
-        
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
           <input
@@ -211,6 +202,54 @@ const KundeErfassen = () => {
             onChange={(e) => setMobil(e.target.value)}
           />
         </div>
+        <div className="formular-gruppe">
+          <label htmlFor="geschlecht">Geschlecht:</label>
+          <select
+            id="geschlecht"
+            value={geschlecht}
+            onChange={(e) => setGeschlecht(e.target.value)}
+          >
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+            <option value="divers">Divers</option>
+          </select>
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="auftragsOptionen">Auftrag erfassen?</label>
+          <select
+            id="auftragsOptionen"
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+          >
+            <option value="kunde">Nein</option>
+            <option value="auftrag">Ja</option>
+          </select>
+        </div>
+        {selectedOption === 'auftrag' && (
+          <>
+            <div className="formular-gruppe">
+              <label htmlFor="auftragsTyp">Auftragstyp:</label>
+              <select
+                id="auftragsTyp"
+                value={auftragsTyp}
+                onChange={(e) => setAuftragsTyp(e.target.value)}
+              >
+                
+                <option value="Webseite">Webseite</option>
+                <option value="Diashow">Diashow</option>
+              </select>
+            </div>
+
+            <div className="formular-gruppe">
+              <label htmlFor="auftragsBeschreibung">Auftragsbeschreibung:</label>
+              <textarea
+                id="auftragsBeschreibung"
+                value={auftragsBeschreibung}
+                onChange={(e) => setAuftragsBeschreibung(e.target.value)}
+              ></textarea>
+            </div>
+          </>
+        )}
         <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
       </div>
     </div>

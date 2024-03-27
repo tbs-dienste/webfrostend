@@ -16,11 +16,14 @@ import Dankesnachricht from './components/Kunden/Dankesnachricht';
 import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
 import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
 import WarumWerbungMachen from './components/Werbung/WarumWerbung';
+import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
 
 
 const isAdmin = localStorage.getItem('isAdmin');
 
 function App() {
+
+  const kunden = JSON.parse(localStorage.getItem('kunden')) || [];
   return (
     <div className="App">
       <Router>
@@ -31,6 +34,15 @@ function App() {
               <>
                 <Navbar />
                 <Home />
+              </>
+            }
+          />
+<Route
+            path="/kunden/:id"
+            element={
+              <>
+                <Navbar />
+                <KundenAnzeigen kunden={kunden} />
               </>
             }
           />
