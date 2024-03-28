@@ -154,7 +154,14 @@ function App() {
 
 
 
-          <Route path="/service/:id" element={<ServiceDetail />} />
+          <Route path="/service/:id" 
+          element={
+            <>
+              <Navbar />
+              <ServiceDetail />
+            </>
+          }
+          />
 
 
 
