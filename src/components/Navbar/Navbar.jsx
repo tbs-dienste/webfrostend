@@ -25,109 +25,53 @@ function Navbar() {
 
   return (
     <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
-      <div className='logo-container'>
-        <img alt='logo' className='logo' src={logo} />
-      </div>
-
-      <div className={`links ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
-        <Link
-          to="/"
-          className={`nav-link ${currentPath === '/' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Home
-        </Link>
-        <Link
-          to="/dienstleistungen"
-          className={`nav-link ${currentPath === '/dienstleistungen' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Dienstleistungen
-        </Link>
-
-        <Link
-          to="/kunden"
-          className={`nav-link ${currentPath === '/kunden' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Kunden
-        </Link>
-
-        
-
-        <Link
-          to="/kundeerfassen"
-          className={`nav-link ${currentPath === '/kundeerfassen' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Kunde Erfassen
-        </Link>
-
-        <Link
-          to="/mitarbeiter"
-          className={`nav-link ${currentPath === '/mitarbeiter' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Mitarbeiter 
-        </Link>
-
-        <Link
-          to="/mitarbeitererfassen"
-          className={`nav-link ${currentPath === '/mitarbeitererfassen' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Mitarbeiter Erfassen
-        </Link>
-
-        <Link
-          to="/kurse"
-          className={`nav-link ${currentPath === '/kurse' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Kurse
-        </Link>
-
-
-        <Link
-          to="/werbung"
-          className={`nav-link ${currentPath === '/werbung' ? 'active' : ''}`}
-          onClick={() => setBurgerMenuActive(false)}
-        >
-          Werbung
-        </Link>
-        
-        {isAdmin ? (
-          <>
-            <Link
-              to="/anmeldungen"
-              className={`nav-link ${currentPath === '/anmeldungen' ? 'active' : ''}`}
-              onClick={() => setBurgerMenuActive(false)}
-            >
-              Anmeldungen
-            </Link>
-            <p className='admin'>Admin</p>
-            <button className="logout-button" onClick={handleLogout}>
-              <FaSignOutAlt />
-            </button>
-          </>
-        ) : (
-          <Link
-            to="/login"
-            className={`nav-link ${currentPath === '/login' ? 'active' : ''}`}
-            onClick={() => setBurgerMenuActive(false)}
-          >
-            Login
-          </Link>
-        )}
-        {/* Füge hier weitere Links hinzu, falls nötig */}
-      </div>
-
-      <div className={`burger-menu ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
-        <div></div>
-        <div></div>
-        <div></div>
+      <div className='container'>
+        {
+          /* 
+           <div className='logo-container'>
+          <img alt='logo' className='logo' src={logo} />
+        </div>
+          */
+        }
+       
+        <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div className={`nav-elements ${burgerMenuActive ? 'active' : ''}`}>
+          <ul>
+            <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kundeerfassen" text="Kunde Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            {isAdmin && <p className='admin'>Admin</p>}
+            {isAdmin ? (
+              <button className="logout-button" onClick={handleLogout}>
+                <FaSignOutAlt />
+              </button>
+            ) : (
+              <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            )}
+          </ul>
+        </div>
       </div>
     </div>
+  );
+}
+
+function NavItem({ to, text, currentPath, onClick }) {
+  return (
+    <li>
+      <Link to={to} className={currentPath === to ? 'active' : ''} onClick={onClick}>
+        {text}
+        {currentPath === to && <span className="active-indicator"></span>}
+      </Link>
+    </li>
   );
 }
 

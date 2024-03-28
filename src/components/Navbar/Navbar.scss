@@ -1,55 +1,45 @@
-.navbar {
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+
+}
+
+.logo {
+  height: 50px;
+  width: 50px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0a8e77;
-  color: #fbdf84;
+  height: 100%;
+}
+
+.navbar {
   height: 100px;
+  background-color: #0a8e77; /* Farbe von der normalen Navbar */
   position: relative;
-
-  .links {
-    display: flex;
-    align-items: center;
-    height: 100%;
-  }
-
-  .nav-link {
-    text-decoration: none;
-    color: #fbdf84;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    padding-left: 50px;
-    padding-right: 50px;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: color 0.3s, background-color 0.3s;
-
-    &:hover {
-      color: #0a8e77;
-      background-color: #fbdf84;
-    }
-  }
-
-  .active {
-    color: #0a8e77;
-    background-color: #fbdf84;
-  }
+  display: flex; /* Flexbox-Layout für die Navbar */
+  align-items: center; /* Vertikale Ausrichtung der Navbar-Elemente */
 
   .logo {
-    max-height: 100px;
+    max-height: 100%;
   }
 
-  .burger-menu {
+  .menu-icon {
     display: none;
-    cursor: pointer;
 
     div {
       width: 30px;
       height: 3px;
-      background-color: white;
+      background-color: #fbdf84; /* Farbe von der normalen Navbar */
       margin: 6px 0;
       transition: 0.4s;
     }
@@ -72,71 +62,76 @@
     }
   }
 
-  .logout-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 25px;
-    color: #fbdf84;
-    transition: color 0.3s;
-    margin-left: 20px;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s, background-color 0.3s;
+  .nav-elements {
+    ul {
+      display: flex; /* Flexbox-Layout für die Navbar-Elemente */
+      list-style-type: none;
 
-    &:hover {
-      color: #0a8e77;
-      background-color: #fbdf84;
-    }
-  }
+      li:not(:last-child) {
+        margin-right: 60px;
+      }
 
-  .admin {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    font-size: 25px;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    padding-left: 50px;
-    padding-right: 50px;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+      a {
+        font-size: 16px;
+        font-weight: 400;
+        color: #fbdf84; /* Farbe von der normalen Navbar */
+        text-decoration: none;
+        position: relative;
 
-  @media (max-width: 768px) {
-    .links {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      top: 100px;
-      left: 0;
-      right: 0;
-      background-color: #0a8e77;
-      height: 100%;
+        &.active {
+          color: #fbdf84; /* Farbe von der normalen Navbar */
+          font-weight: 500;
 
-      &.burger-menu-active {
-        display: flex;
-        height: 100%;
-        background-color: white;
+          &::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #574c4c;
+          }
+        }
+
+        &.active-indicator {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: #574c4c;
+        }
       }
     }
+  }
 
-    body.burger-menu-active {
-      background-color: #fbdf84;
-      height: 100%;
+  @media (max-width: 600px) {
+    .menu-icon {
+      display: block;
+      cursor: pointer;
     }
 
-    .burger-menu {
-      display: flex;
-      flex-direction: column;
+    .nav-elements {
+      position: absolute;
+      right: 0;
+      top: 60px;
       background-color: #0a8e77;
-      width: 50px;
+      width: 0px;
+      height: calc(100vh - 60px);
+      transition: all 0.3s ease-in;
+      overflow: hidden;
 
-      &.burger-menu-active {
-        display: flex;
-        background-color: #0a8e77;
-        height: 100%;
+      &.active {
+        width: 270px;
+
+        ul {
+          flex-direction: column;
+
+          li {
+            margin-right: unset;
+            margin-top: 22px;
+          }
+        }
       }
     }
   }
