@@ -17,6 +17,7 @@ import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
 import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
 import WarumWerbungMachen from './components/Werbung/WarumWerbung';
 import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
+import KursListe from './components/Kurse/KursListe';
 
 
 const isAdmin = localStorage.getItem('isAdmin');
@@ -53,6 +54,16 @@ function App() {
               <>
                 <Navbar />
                 <Dankesnachricht />
+              </>
+            }
+          />
+
+<Route
+            path="/kurse"
+            element={
+              <>
+                <Navbar />
+                <KursListe />
               </>
             }
           />

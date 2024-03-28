@@ -17,7 +17,7 @@ const MitarbeiterErfassen = () => {
   const [mitarbeiternummer, setMitarbeiternummer] = useState('');
 
   // Vordefinierte IBAN mit "CH"
-  const [iban, setIban] = useState('CH');
+  const [iban, setIban] = useState('BE');
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
@@ -59,7 +59,7 @@ const MitarbeiterErfassen = () => {
     setMobil('');
     setBenutzername('');
     setPasswort('');
-    setIban('CH'); // Setzen Sie den IBAN-Wert zurück auf "CH"
+    setIban('BE'); // Setzen Sie den IBAN-Wert zurück auf "CH"
     setMitarbeiternummer(newMitarbeiternummer);
 
     window.location.href = '/mitarbeiter';
@@ -84,7 +84,7 @@ const MitarbeiterErfassen = () => {
     input = input.replace(/\D/g, ''); // Nur Zahlen zulassen
 
     // Formatierung der IBAN entsprechend der Vorgabe "CHXX XXXX XXXX XXXX XXXX X"
-    let formattedIban = 'CH';
+    let formattedIban = 'BE';
     for (let i = 0; i < input.length; i++) {
       if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
         formattedIban += ' '; // Leerzeichen einfügen nach den ersten beiden und dann nach jedem weiteren Block von vier Zahlen

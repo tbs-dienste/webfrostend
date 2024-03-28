@@ -1,39 +1,50 @@
+// Dienstleistungen.scss
 .services-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-  text-align: center;
-}
 
-.service {
-  margin-bottom: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
+  h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
 
-.service h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
+  .services-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 
-.service p {
-  font-size: 1.2rem;
-}
+  .service {
+    width: calc(40% - 10px); /* 50% Breite mit 10px Abstand zwischen den Boxen */
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
 
-.btn-more {
-  display: inline-block;
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 1rem;
-  transition: background-color 0.3s;
-}
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
 
-.btn-more:hover {
-  background-color: #0056b3;
+    p {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .btn-more {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
 }

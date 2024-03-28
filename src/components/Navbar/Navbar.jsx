@@ -80,6 +80,15 @@ function Navbar() {
         </Link>
 
         <Link
+          to="/kurse"
+          className={`nav-link ${currentPath === '/kurse' ? 'active' : ''}`}
+          onClick={() => setBurgerMenuActive(false)}
+        >
+          Kurse
+        </Link>
+
+
+        <Link
           to="/werbung"
           className={`nav-link ${currentPath === '/werbung' ? 'active' : ''}`}
           onClick={() => setBurgerMenuActive(false)}
