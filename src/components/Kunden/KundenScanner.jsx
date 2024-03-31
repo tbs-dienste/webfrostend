@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserBarcodeReader } from '@zxing/library';
+import './KundenScanner.scss';
+
+// Importiere das transparente Bild für den Muster-Barcode
+import transparentBarcodePatternImage from './transparent-barcode-pattern.png';
 
 const KundenScanner = () => {
   const [error, setError] = useState(null);
@@ -52,10 +56,12 @@ const KundenScanner = () => {
   }, []);
 
   return (
-    <div className="kunde-scannen">
+    <div className="kunden-scanner-container">
       <div className="qr-scanner">
-        <video ref={videoRef} autoPlay style={{ width: '100%' }}></video>
-        <p>{error && error.message}</p>
+        <video ref={videoRef} autoPlay className="video-element"></video>
+        {/* Overlay mit dem transparenten Muster-Barcode */}
+        <img src={transparentBarcodePatternImage} alt="Transparent Barcode Pattern" className="transparent-barcode-pattern" />
+        {error && <p className="error-message">{error.message}</p>}
       </div>
     </div>
   );

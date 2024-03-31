@@ -1,0 +1,36 @@
+.kunden-scanner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .qr-scanner {
+    position: relative;
+  }
+  
+  .video-element {
+    width: 100%;
+  }
+  
+  .transparent-barcode-pattern {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.3; /* Anpassen der Opazität (Wert zwischen 0 und 1) */
+    pointer-events: none; /* Verhindert, dass das Bild Klicks abfängt */
+  }
+  
+  
+  .error-message {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
