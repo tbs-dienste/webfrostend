@@ -6,19 +6,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  font-family: 'Montserrat', sans-serif; // Ändern der Schriftart
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: auto; // Horizontales Scrollen ermöglichen
 
-  .logo {
-    max-height: 100%;
-  }
- 
   .menu-icon {
     display: none;
 
     div {
       width: 30px;
       height: 3px;
-      background-color: #fbdf84; /* Farbe von der normalen Navbar */
+      background-color: #fbdf84;
       margin: 6px 0;
       transition: 0.4s;
     }
@@ -43,7 +40,7 @@
 
   .nav-elements {
     ul {
-      display: flex; /* Flexbox-Layout für die Navbar-Elemente */
+      display: flex;
       list-style-type: none;
 
       li:not(:last-child) {
@@ -51,18 +48,18 @@
       }
 
       a {
-        height: 100px; // Setze die Höhe der Links auf 100px
-        display: flex; // Stelle sicher, dass die Links die Höhe vollständig ausfüllen
-        align-items: center; // Zentriere den Text vertikal
-        padding: 0 20px; // Füge horizontalen Abstand hinzu
-        font-size: 23px; // Größe des Textes auf 23px erhöhen
+        height: 100px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        font-size: 23px;
         font-weight: 400;
-        color: #fbdf84; /* Farbe von der normalen Navbar */
+        color: #fbdf84;
         text-decoration: none;
         position: relative;
 
         &.active {
-          color: #0a8e77; /* Farbe von der normalen Navbar */
+          color: #0a8e77;
           background-color: #fbdf84;
           font-weight: 500;
         }
@@ -79,15 +76,15 @@
     .nav-elements {
       position: absolute;
       right: 0;
-      top: 60px;
-      background-color: #0a8e77; /* Farbe von der normalen Navbar */
-      width: 0px;
-      height: calc(100vh - 60px);
+      top: 100px;
+      background-color: #0a8e77;
+      width: 0;
+      height: calc(100vh - 100px);
       transition: all 0.3s ease-in;
-      overflow: hidden;
+      overflow-y: auto; // Vertikales Scrollen ermöglichen
 
       &.active {
-        width: 100%; // Ändere die Breite auf 100%, um die Navbar auf kleinen Geräten vollständig anzuzeigen
+        width: 100%;
 
         ul {
           flex-direction: column;
