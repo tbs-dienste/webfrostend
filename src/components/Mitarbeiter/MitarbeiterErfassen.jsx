@@ -15,9 +15,8 @@ const MitarbeiterErfassen = () => {
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
   const [mitarbeiternummer, setMitarbeiternummer] = useState('');
-
-  // Vordefinierte IBAN mit "CH"
-  const [iban, setIban] = useState('BE');
+  const [land, setLand] = useState('CH'); // Default value for Switzerland
+  const [iban, setIban] = useState('CH'); // Default value for Switzerland
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
@@ -42,7 +41,7 @@ const MitarbeiterErfassen = () => {
       mobil,
       benutzername,
       passwort,
-      iban,
+      iban: land, // Use selected country code as IBAN
       auftrag: [],
     };
 
@@ -59,7 +58,6 @@ const MitarbeiterErfassen = () => {
     setMobil('');
     setBenutzername('');
     setPasswort('');
-    setIban('BE'); // Setzen Sie den IBAN-Wert zurück auf "CH"
     setMitarbeiternummer(newMitarbeiternummer);
 
     window.location.href = '/mitarbeiter';
@@ -84,7 +82,7 @@ const MitarbeiterErfassen = () => {
     input = input.replace(/\D/g, ''); // Nur Zahlen zulassen
 
     // Formatierung der IBAN entsprechend der Vorgabe "CHXX XXXX XXXX XXXX XXXX X"
-    let formattedIban = 'BE';
+    let formattedIban = land;
     for (let i = 0; i < input.length; i++) {
       if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
         formattedIban += ' '; // Leerzeichen einfügen nach den ersten beiden und dann nach jedem weiteren Block von vier Zahlen
@@ -98,6 +96,13 @@ const MitarbeiterErfassen = () => {
     }
 
     setIban(formattedIban);
+  };
+
+  const handleLandChange = (e) => {
+    const selectedLand = e.target.value;
+    setLand(selectedLand);
+    // Update IBAN placeholder based on selected country
+    setIban(selectedLand);
   };
 
 
@@ -208,13 +213,27 @@ const MitarbeiterErfassen = () => {
           />
         </div>
 
-         <div className="formular-gruppe">
+        <div className="formular-gruppe">
+          <label htmlFor="land">Land:</label>
+          <select
+            id="land"
+            value={land}
+            onChange={handleLandChange}
+          >
+            <option value="CH">Schweiz</option>
+            <option value="DE">Deutschland</option>
+            <option value="AT">Österreich</option>
+            <option value="UK">England</option>
+          </select>
+        </div>
+
+        <div className="formular-gruppe">
           <label htmlFor="iban">Iban:</label>
           <input
             type="text"
             id="iban"
             value={iban}
-            onChange={handleIbanChange} // Benutzerdefinierte Funktion zum Verarbeiten von IBAN-Änderungen
+            onChange={handleIbanChange}
           />
         </div>
 
