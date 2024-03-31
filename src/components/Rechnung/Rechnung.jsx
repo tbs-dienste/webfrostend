@@ -10,6 +10,8 @@ const Rechnung = () => {
   const [kunden, setKunden] = useState([]);
   const [workSessions, setWorkSessions] = useState([]);
   const [selectedKunde, setSelectedKunde] = useState(null); // Hinzugefügt, um den ausgewählten Kunden zu verfolgen
+  const [bearbeitenderMitarbeiter, setBearbeitenderMitarbeiter] = useState(''); // Mitarbeiter, der die Rechnung bearbeitet hat
+  const [mitarbeiterListe, setMitarbeiterListe] = useState([]); // Liste der Mitarbeiter aus dem Local Storage
   const { id } = useParams();
 
   useEffect(() => {
@@ -24,6 +26,10 @@ const Rechnung = () => {
     // Wählen Sie den Kunden anhand der ID aus
     const selected = storedKunden.find(kunde => kunde.id === parseInt(id));
     setSelectedKunde(selected);
+
+    // Mitarbeiterliste aus dem Local Storage abrufen
+    const storedMitarbeiterListe = JSON.parse(localStorage.getItem('mitarbeiter')) || [];
+    setMitarbeiterListe(storedMitarbeiterListe);
   }, [id]);
 
   useEffect(() => {
@@ -78,7 +84,6 @@ const Rechnung = () => {
     const addressX = 15; // Abstand vom linken Rand
     const addressY = 50; // Abstand vom oberen Rand nach dem Logo und Barcode
     doc.setFontSize(10); // Setze die Schriftgröße für die Adresse
-    doc.setTextColor('#333'); // Farbe für die Adresse
     doc.text(`${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname}`, addressX, addressY);
     doc.text(selectedKunde.vorname, addressX, addressY + 5);
     doc.text(selectedKunde.strasseHausnummer, addressX, addressY + 10);
@@ -86,71 +91,98 @@ const Rechnung = () => {
   
     // Trennlinie zwischen Adresse und Rechnungsinformationen
     doc.setLineWidth(0.5);
-    doc.setDrawColor('#0a8e77'); // Farbe für die Trennlinie
     doc.line(15, 45, pdfWidth - 15, 45);
+  
+    // Anzeige des bearbeitenden Mitarbeiters
+    const bearbeiterX = 15; // Abstand vom linken Rand
+    const bearbeiterY = invoiceInfoY + 30; // Position unterhalb der Rechnungsinformationen
+   
+    doc.setLineWidth(0.5);
+    doc.line(15, bearbeiterY + 5, pdfWidth - 15, bearbeiterY + 5);
+    doc.setTextColor('#333'); // Farbe für den bearbeitenden Mitarbeiter
+    doc.text(`Bearbeitender Mitarbeiter: ${bearbeitenderMitarbeiter}`, bearbeiterX, bearbeiterY);
+  
+    // Trennlinie zwischen Mitarbeiter und Text zur Rechnung
+    doc.setLineWidth(0.5);
+    doc.line(15, bearbeiterY + 5, pdfWidth - 15, bearbeiterY + 5);
   
     // Text zur Rechnung hinzufügen
     const descriptionX = 15; // Abstand vom linken Rand
-    const descriptionY = 80; // Abstand vom oberen Rand
-    const description = `Sehr geehrte/r ${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname},\n\nVielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.\n\n Sollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.`;
+    const descriptionY = bearbeiterY + 20; // Position unterhalb des bearbeitenden Mitarbeiters
+    const description = `Sehr geehrte/r ${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname},\n\nVielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.\n\nSollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.`;
     doc.setFontSize(10); // Setze die Schriftgröße für die Beschreibung
-    doc.setTextColor('#333'); // Farbe für die Beschreibung
     doc.text(description, descriptionX, descriptionY);
   
     // Arbeitszeiten als Tabelle hinzufügen
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
     const tableRows = workSessions.map(session => [session.start, session.end, session.duration, session.price]);
-    const tableY = 100; // Position unterhalb der Beschreibung
+    const tableY = descriptionY + 50; // Position unterhalb der Beschreibung
+  
+    // Stil für die Tabellenzellen definieren
+    const tableCellStyle = {
+      fillColor: '#ffffff', // Hintergrundfarbe der Zellen
+      textColor: '#333333', // Textfarbe der Zellen
+      lineWidth: 0.5, // Linienbreite der Zellen
+    };
+  
+    // Stil für die Tabellenüberschriften definieren
+    const tableHeaderStyle = {
+      fillColor: '#0a8e77', // Hintergrundfarbe der Überschriften
+      textColor: '#ffffff', // Textfarbe der Überschriften
+      lineWidth: 0.5, // Linienbreite der Überschriften
+    };
+  
     doc.autoTable({
       head: [tableColumns],
       body: tableRows,
       startY: tableY,
-      theme: 'grid',
-      headStyles: {
-        fillColor: '#0a8e77', // Hintergrundfarbe des Tabellenkopfs
-        textColor: '#fff' // Textfarbe des Tabellenkopfs
+      styles: {
+        cell: tableCellStyle,
+        head: tableHeaderStyle,
       },
-      bodyStyles: {
-        textColor: '#333' // Textfarbe des Tabelleninhalts
-      }
     });
   
+  
+
     // Berechnen Sie Gesamtpreis und Gesamtstunden
     const totalPrice = workSessions.reduce((total, session) => total + parseFloat(session.price), 0);
     const totalHours = workSessions.reduce((total, session) => total + parseFloat(session.duration), 0);
-  
+
     // Berechnen Sie die MWST 7.7% vom Gesamtpreis
     const mwst = totalPrice * 0.077;
-  
+
     // Fügen Sie Gesamtpreis, Gesamtstunden und MWST hinzu
     const summaryX = pdfWidth - 70; // Abstand vom rechten Rand
     const summaryY = doc.autoTable.previous.finalY + 10; // Position unterhalb der Tabelle
-    doc.setTextColor('#333'); // Farbe für die Zusammenfassung
+    doc.setTextColor('#0a8e77'); // Farbe für die Zusammenfassung
     doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, summaryX, summaryY + 10);
     doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, summaryX, summaryY + 5);
     doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, summaryX, summaryY);
-  
+
     // Hinweis: Rechnung zu zahlen in 30 Tagen
     const dueDateX = 15; // Abstand vom linken Rand
-    const dueDateY = summaryY + 30; // Position unterhalb der Zusammenfassung
+    const dueDateY = summaryY + 20; // Position unterhalb der Zusammenfassung
     const dueDate = `Rechnung zu zahlen in 30 Tagen`;
+    doc.setTextColor('#333'); // Farbe für den Hinweis
     doc.text(dueDate, dueDateX, dueDateY);
-  
+
     // Dankesnachricht und Grüße mit Unterschrift
     const greetingX = 15; // Abstand vom linken Rand
-    const greetingY = dueDateY + 20; // Position unterhalb der Zusammenfassung
-    const greeting = `Mit freundlichen Grüßen,\n\n\n\n\n\nTB's Solutions\n\n`;
+    const greetingY = dueDateY + 20; // Position unterhalb des Hinweises
+    const greeting = `Mit freundlichen Grüßen,\n\n\n\n${bearbeitenderMitarbeiter}\nTB's Solutions\n\n`;
     doc.setTextColor('#333'); // Farbe für die Grüße
     doc.text(greeting, greetingX, greetingY);
-  
+
     // Speichern Sie das PDF-Dokument
     doc.save('rechnung.pdf');
   };
-  
-  
-  
 
-
+  // Handler-Funktion zum Speichern des bearbeitenden Mitarbeiters im Local Storage
+  const handleBearbeitenderMitarbeiterChange = (e) => {
+    const selectedEmployee = e.target.value;
+    setBearbeitenderMitarbeiter(selectedEmployee);
+    localStorage.setItem('bearbeitenderMitarbeiter', selectedEmployee);
+  };
 
   return (
     <div className="rechnung-container">
@@ -163,8 +195,7 @@ const Rechnung = () => {
         <div className="rechnung-details">
           {selectedKunde ? (
             <>
-              <p>{selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau'}</p>
-              <p>{selectedKunde.nachname}, {selectedKunde.vorname}</p>
+              <p>{selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} {selectedKunde.nachname}, {selectedKunde.vorname}</p>
               <p>{selectedKunde.strasseHausnummer}</p>
               <p>{selectedKunde.postleitzahl} {selectedKunde.ort}</p>
               <p>Kundennummer: {selectedKunde.kundennummer}</p>
@@ -172,6 +203,15 @@ const Rechnung = () => {
           ) : (
             <p>Loading...</p>
           )}
+          <label htmlFor="bearbeiterSelect">Bearbeitender Mitarbeiter: </label>
+          <select id="bearbeiterSelect" onChange={handleBearbeitenderMitarbeiterChange} value={bearbeitenderMitarbeiter}>
+            <option value="">Bitte wählen</option>
+            {mitarbeiterListe.map((mitarbeiter, index) => (
+              <option key={index} value={`${mitarbeiter.vorname} ${mitarbeiter.nachname}`}>
+                {`${mitarbeiter.vorname} ${mitarbeiter.nachname}`}
+              </option>
+            ))}
+          </select>
           <button onClick={generatePDF}>Rechnung als PDF herunterladen</button>
         </div>
         <div className="arbeitszeiten">
@@ -197,17 +237,6 @@ const Rechnung = () => {
             </tbody>
           </table>
         </div>
-        <p>
-          Sehr geehrte/r {selectedKunde ? (selectedKunde.geschlecht === 'männlich' ? 'Herr' : 'Frau') : 'Kunde'},{' '}
-          {selectedKunde ? selectedKunde.nachname : 'Name'},
-        </p>
-        <p>
-          Vielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.
-          Sollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.
-        </p>
-        <p>Mit freundlichen Grüßen,</p>
-        <p>Ihr Unternehmensteam</p>
-        <p>Unterschrift: ________________________</p>
       </div>
     </div>
   );

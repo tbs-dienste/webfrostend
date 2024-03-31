@@ -1,103 +1,102 @@
+$time-tracker-primary-color: #0a8e77;
+$time-tracker-secondary-color: #fbdf84;
+$time-tracker-text-color: #333;
+
 .time-tracker-container {
-  width: 80%;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  color: $time-tracker-text-color;
+  padding: 20px;
 
   h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .time-display {
-    text-align: center;
-    font-size: 1.5rem;
+    font-size: 24px;
     margin-bottom: 20px;
   }
 
   .buttons-container {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
     margin-bottom: 20px;
 
     button {
-      margin: 0 10px;
+      margin-right: 10px;
+      margin-bottom: 10px;
       padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
+      font-size: 16px;
       cursor: pointer;
+      background-color: $time-tracker-primary-color;
+      color: white;
+      border: none;
+      border-radius: 4px;
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #0056b3;
+        background-color: darken($time-tracker-primary-color, 10%);
       }
     }
-  }
-
-  .edit-rate-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
 
     input {
       margin-right: 10px;
-      padding: 5px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 4px;
     }
   }
 
   .pdf-download-link {
-    display: block;
-    text-align: center;
+    display: inline-block;
     margin-bottom: 20px;
-    color: #007bff;
-    font-size: 1.2rem;
+    font-size: 16px;
+    color: $time-tracker-primary-color;
     text-decoration: none;
     cursor: pointer;
     transition: color 0.3s ease;
 
     &:hover {
-      color: #0056b3;
+      color: darken($time-tracker-primary-color, 10%);
     }
   }
 
   .work-sessions-container {
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
     ul {
-      list-style-type: none;
+      list-style: none;
       padding: 0;
-      margin: 0;
 
       li {
         margin-bottom: 10px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      }
+    }
 
-        button {
-          padding: 5px 10px;
-          font-size: 0.8rem;
-          background-color: #dc3545;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
+    p {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  }
 
-          &:hover {
-            background-color: #bd2130;
-          }
-        }
+  .edit-rate-container {
+    margin-top: 20px;
+
+    input {
+      margin-right: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: $time-tracker-primary-color;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken($time-tracker-primary-color, 10%);
       }
     }
   }
