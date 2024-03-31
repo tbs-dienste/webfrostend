@@ -44,87 +44,111 @@ const Rechnung = () => {
 
   const generatePDF = () => {
     if (!selectedKunde) return; // Sicherstellen, dass ein Kunde ausgewählt ist
-
+  
     const doc = new jsPDF();
-
+  
     // Logo oben links einfügen
     doc.addImage(logo, 'PNG', 15, 15, 50, 20); // X-Position: 15, Y-Position: 15, Breite: 50, Höhe: 20
-
+  
     // Barcode generieren
     generateBarcode(selectedKunde.kundennummer.toString());
-
+  
     // Barcode im PDF einfügen
     const barcodeDataURL = document.getElementById('barcode').getElementsByTagName('canvas')[0].toDataURL();
     const barcodeWidth = 50;
     const barcodeHeight = 20;
     const logoWidth = 50; // Breite des Logos
     const pdfWidth = doc.internal.pageSize.getWidth();
-
+  
     // Position des Barcodes (ganz rechts oben)
     const barcodeX = pdfWidth - barcodeWidth - 15; // 15px Abstand vom rechten Rand
     doc.addImage(barcodeDataURL, 'JPEG', barcodeX, 15, barcodeWidth, barcodeHeight);
-
+  
     // Rechnungsdatum und -nummer
     const invoiceInfoX = pdfWidth - barcodeWidth - 15; // Unter dem Barcode
     const invoiceInfoY = 40; // Abstand vom oberen Rand
     const today = new Date();
     const invoiceDate = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`;
     doc.setFontSize(12); // Setze die Schriftgröße für die Rechnungsinformationen
+    doc.setTextColor('#0a8e77'); // Farbe für die Rechnungsinformationen
     doc.text(`Rechnungsdatum: ${invoiceDate}`, invoiceInfoX, invoiceInfoY);
     doc.text(`Rechnungsnummer: ${Math.floor(Math.random() * 100000)}`, invoiceInfoX, invoiceInfoY + 5);
-
+  
     // Adresse des Kunden unter dem Barcode
     const addressX = 15; // Abstand vom linken Rand
     const addressY = 50; // Abstand vom oberen Rand nach dem Logo und Barcode
     doc.setFontSize(10); // Setze die Schriftgröße für die Adresse
+    doc.setTextColor('#333'); // Farbe für die Adresse
     doc.text(`${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname}`, addressX, addressY);
     doc.text(selectedKunde.vorname, addressX, addressY + 5);
     doc.text(selectedKunde.strasseHausnummer, addressX, addressY + 10);
     doc.text(`${selectedKunde.postleitzahl} ${selectedKunde.ort}`, addressX, addressY + 15);
-
+  
     // Trennlinie zwischen Adresse und Rechnungsinformationen
     doc.setLineWidth(0.5);
+    doc.setDrawColor('#0a8e77'); // Farbe für die Trennlinie
     doc.line(15, 45, pdfWidth - 15, 45);
-
+  
     // Text zur Rechnung hinzufügen
     const descriptionX = 15; // Abstand vom linken Rand
     const descriptionY = 80; // Abstand vom oberen Rand
     const description = `Sehr geehrte/r ${selectedKunde.geschlecht === 'Männlich' ? 'Herr' : 'Frau'} ${selectedKunde.nachname},\n\nVielen Dank für Ihre geschätzte Zusammenarbeit. Anbei finden Sie die Rechnung für erbrachte Dienstleistungen.\n\n Sollten Sie Fragen zu den aufgeführten Positionen haben, stehen wir Ihnen gerne zur Verfügung.`;
     doc.setFontSize(10); // Setze die Schriftgröße für die Beschreibung
+    doc.setTextColor('#333'); // Farbe für die Beschreibung
     doc.text(description, descriptionX, descriptionY);
-
+  
     // Arbeitszeiten als Tabelle hinzufügen
     const tableColumns = ['Startzeit', 'Endzeit', 'Dauer (Stunden)', 'Preis (€)'];
     const tableRows = workSessions.map(session => [session.start, session.end, session.duration, session.price]);
     const tableY = 100; // Position unterhalb der Beschreibung
-    doc.autoTable(tableColumns, tableRows, { startY: tableY });
-
+    doc.autoTable({
+      head: [tableColumns],
+      body: tableRows,
+      startY: tableY,
+      theme: 'grid',
+      headStyles: {
+        fillColor: '#0a8e77', // Hintergrundfarbe des Tabellenkopfs
+        textColor: '#fff' // Textfarbe des Tabellenkopfs
+      },
+      bodyStyles: {
+        textColor: '#333' // Textfarbe des Tabelleninhalts
+      }
+    });
+  
     // Berechnen Sie Gesamtpreis und Gesamtstunden
     const totalPrice = workSessions.reduce((total, session) => total + parseFloat(session.price), 0);
     const totalHours = workSessions.reduce((total, session) => total + parseFloat(session.duration), 0);
-
+  
     // Berechnen Sie die MWST 7.7% vom Gesamtpreis
     const mwst = totalPrice * 0.077;
-
+  
     // Fügen Sie Gesamtpreis, Gesamtstunden und MWST hinzu
     const summaryX = pdfWidth - 70; // Abstand vom rechten Rand
     const summaryY = doc.autoTable.previous.finalY + 10; // Position unterhalb der Tabelle
-
-
+    doc.setTextColor('#333'); // Farbe für die Zusammenfassung
     doc.text(`MWST (7.7%): ${mwst.toFixed(2)} €`, summaryX, summaryY + 10);
     doc.text(`Total Stunden: ${totalHours.toFixed(2)} Stunden`, summaryX, summaryY + 5);
     doc.text(`Total Preis: ${totalPrice.toFixed(2)} €`, summaryX, summaryY);
-
+  
+    // Hinweis: Rechnung zu zahlen in 30 Tagen
+    const dueDateX = 15; // Abstand vom linken Rand
+    const dueDateY = summaryY + 30; // Position unterhalb der Zusammenfassung
+    const dueDate = `Rechnung zu zahlen in 30 Tagen`;
+    doc.text(dueDate, dueDateX, dueDateY);
+  
     // Dankesnachricht und Grüße mit Unterschrift
     const greetingX = 15; // Abstand vom linken Rand
-    const greetingY = doc.autoTable.previous.finalY + 20; // Position unterhalb der Tabelle
-    const greeting = `Mit freundlichen Grüßen,\n\nIhr Unternehmensteam\n\nUnterschrift: ________________________`;
+    const greetingY = dueDateY + 20; // Position unterhalb der Zusammenfassung
+    const greeting = `Mit freundlichen Grüßen,\n\n\n\n\n\nTB's Solutions\n\n`;
+    doc.setTextColor('#333'); // Farbe für die Grüße
     doc.text(greeting, greetingX, greetingY);
-
+  
     // Speichern Sie das PDF-Dokument
     doc.save('rechnung.pdf');
   };
-
+  
+  
+  
 
 
 

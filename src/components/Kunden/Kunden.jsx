@@ -48,7 +48,6 @@ const Kunden = () => {
             <div key={kunde.id} className="kunden-box">
               <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
               <p className="kunden-name">{kunde.vorname} {kunde.nachname}</p>
-              {/* Weitere Daten anzeigen */}
               <div className="kunden-buttons">
                 <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
                   Arbeitszeit

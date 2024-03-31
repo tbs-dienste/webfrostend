@@ -1,64 +1,78 @@
 .kunden-container {
   padding: 20px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
-}
 
-.kunden-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.search-bar {
-  margin-bottom: 20px;
-
-  .search-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    outline: none;
+  .kunden-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
   }
-}
 
-.kunden-liste {
-  .kunden-box {
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    padding: 20px;
+  .search-bar {
     margin-bottom: 20px;
 
-    .kunden-nummer {
-      font-weight: bold;
+    .search-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
     }
+  }
 
-    .kunden-name {
-      margin-top: 10px;
-    }
+  .kunden-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px;
 
-    .kunden-buttons {
-      margin-top: 20px;
+    .kunden-box {
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
 
-      .kunden-button {
-        display: inline-block;
-        padding: 8px 16px;
-        margin-right: 10px;
-        border: none;
-        border-radius: 5px;
-        background-color: #007bff;
-        color: #fff;
-        text-decoration: none;
-        cursor: pointer;
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        &:hover {
-          background-color: #0056b3;
+      .kunden-nummer {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .kunden-name {
+        margin-bottom: 10px;
+      }
+
+      .kunden-buttons {
+        display: flex;
+        flex-wrap: wrap;
+
+        .kunden-button {
+          padding: 8px 16px;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          border: none;
+          border-radius: 5px;
+          background-color: #0a8e77;
+          color: #fff;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #08664e;
+          }
         }
       }
     }
   }
 
   .no-results {
-    font-style: italic;
+    font-size: 18px;
+    color: #999;
   }
 }
