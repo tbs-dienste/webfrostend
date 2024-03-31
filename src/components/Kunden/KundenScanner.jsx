@@ -6,14 +6,6 @@ const KundenScanner = () => {
   const videoRef = useRef(null);
   const codeReader = useRef(null);
 
-  useEffect(() => {
-    codeReader.current = new BrowserBarcodeReader();
-    startScan();
-    return () => {
-      stopScan();
-    };
-  }, []);
-
   const startScan = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -50,6 +42,14 @@ const KundenScanner = () => {
       window.location.href = `/kunden/${data}`;
     }
   };
+
+  useEffect(() => {
+    codeReader.current = new BrowserBarcodeReader();
+    startScan();
+    return () => {
+      stopScan();
+    };
+  }, []);
 
   return (
     <div className="kunde-scannen">
