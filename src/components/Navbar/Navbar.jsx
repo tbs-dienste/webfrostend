@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
 import { FaSignOutAlt } from 'react-icons/fa';
-import logo from './logo.png';
 
 function Navbar() {
   const currentPath = window.location.pathname;
@@ -24,7 +23,7 @@ function Navbar() {
   };
 
   return (
-    <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
+  <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
       <div className='container'>
         {
           /* 
@@ -49,11 +48,15 @@ function Navbar() {
             <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            {isAdmin && <p className='admin'>Admin</p>}
+            <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             {isAdmin ? (
+              <>
+ 
+              <p className='admin'>Admin</p>
               <button className="logout-button" onClick={handleLogout}>
                 <FaSignOutAlt />
               </button>
+              </>
             ) : (
               <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             )}

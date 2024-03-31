@@ -20,6 +20,8 @@ import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
 import KursListe from './components/Kurse/KursListe';
 
 
+
+
 const isAdmin = localStorage.getItem('isAdmin');
 
 function App() {
@@ -57,6 +59,8 @@ function App() {
               </>
             }
           />
+
+
 
 <Route
             path="/kurse"
