@@ -18,6 +18,7 @@ import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
 import WarumWerbungMachen from './components/Werbung/WarumWerbung';
 import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
 import KursListe from './components/Kurse/KursListe';
+import KundenScanner from './components/Kunden/KundenScanner';
 
 
 
@@ -163,6 +164,15 @@ function App() {
             <>
               <Navbar />
               <ServiceDetail />
+            </>
+          }
+          />
+
+<Route path="/kundenscanner" 
+          element={
+            <>
+              <Navbar />
+              <KundenScanner />
             </>
           }
           />
