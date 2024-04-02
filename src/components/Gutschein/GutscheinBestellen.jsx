@@ -9,27 +9,47 @@ const GutscheinBestellung = () => {
   ]);
   const [name, setName] = useState('');
   const [senderName, setSenderName] = useState('');
-  const [gueltigBis, setGueltigBis] = useState('');
+
+  const addOneYear = (dateString) => {
+    const currentDate = new Date(dateString);
+    currentDate.setFullYear(currentDate.getFullYear() + 1);
+    return currentDate.toISOString().split('T')[0];
+  };
+
+  const generateGutscheincode = () => {
+    // Dummy implementation: Generate a random alphanumeric code
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const codeLength = 8;
+    let code = '';
+    for (let i = 0; i < codeLength; i++) {
+      code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return code;
+  };
 
   const handleBestellung = (selectedGuthaben) => {
-    if (name && senderName && gueltigBis && selectedGuthaben) {
+    if (name && senderName && selectedGuthaben) {
+      const gueltigBisDate = addOneYear(new Date().toISOString().split('T')[0]);
+      const gutscheincode = generateGutscheincode();
       const gutschein = {
         id: selectedGuthaben.id,
         titel: `Gutschein ${selectedGuthaben.betrag} €`,
         preis: selectedGuthaben.betrag,
-        betrag: selectedGuthaben.betrag // Speichern Sie den Betrag im Gutscheinobjekt
+        betrag: selectedGuthaben.betrag, // Speichern Sie den Betrag im Gutscheinobjekt
+        gueltigBis: gueltigBisDate, // Gültigkeitsdatum setzen
+        gutscheincode: gutscheincode // Gutscheincode setzen
       };
-  
-      // Gutschein im Local Storage speichern
+
+      // Gutschein und Gutscheincode im Local Storage speichern
       localStorage.setItem('gutschein', JSON.stringify(gutschein));
-  
+
       // Optional: Feedback an den Benutzer geben, dass der Gutschein erfolgreich hinzugefügt wurde
-      alert('Der Gutschein wurde erfolgreich zum Warenkorb hinzugefügt.');
+      alert(`Der Gutschein ${gutschein.titel} wurde erfolgreich zum Warenkorb hinzugefügt. Ihr Gutscheincode lautet: ${gutschein.gutscheincode}`);
     } else {
       alert('Bitte füllen Sie alle Felder aus und wählen Sie ein Guthaben aus, bevor Sie bestellen.');
     }
   };
-  
+
   return (
     <div className="gutschein-bestellung">
       <h2>Gutschein bestellen</h2>
@@ -46,13 +66,6 @@ const GutscheinBestellung = () => {
         id="senderName"
         value={senderName}
         onChange={(e) => setSenderName(e.target.value)}
-      />
-      <label htmlFor="gueltigBis">Gültig bis:</label>
-      <input
-        type="date"
-        id="gueltigBis"
-        value={gueltigBis}
-        onChange={(e) => setGueltigBis(e.target.value)}
       />
       <p>Wählen Sie das gewünschte Guthaben aus:</p>
       <div className="guthaben-options">
