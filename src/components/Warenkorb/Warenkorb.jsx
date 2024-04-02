@@ -3,8 +3,9 @@ import './Warenkorb.scss'; // Importieren Sie das SCSS-Styling
 import { jsPDF } from 'jspdf';
 import JsBarcode from 'jsbarcode';
 
-const Warenkorb = ({ removeFromCart, updateQuantity, completeOrder }) => {
+const Warenkorb = ({ updateQuantity, completeOrder }) => {
   const [warenkorbProdukte, setWarenkorbProdukte] = useState([]);
+  const [gutscheinBetrag, setGutscheinBetrag] = useState(null);
 
   useEffect(() => {
     // GET-Anfrage auf den Gutschein im Local Storage
@@ -14,6 +15,7 @@ const Warenkorb = ({ removeFromCart, updateQuantity, completeOrder }) => {
 
     if (gutscheinImLocalStorage) {
       warenkorbProdukte.push(gutscheinImLocalStorage);
+      setGutscheinBetrag(gutscheinImLocalStorage.betrag);
     }
 
     if (kursImLocalStorage) {
@@ -29,13 +31,47 @@ const Warenkorb = ({ removeFromCart, updateQuantity, completeOrder }) => {
     setWarenkorbProdukte(warenkorbMitPreisAlsZahl);
   }, []);
 
-  const handleDownloadGutschein = () => {
-    // Implementierung zum Herunterladen des Gutscheins
-    // ...
+  const removeFromCart = (productId) => {
+    const updatedCart = warenkorbProdukte.filter(product => product.id !== productId);
+    setWarenkorbProdukte(updatedCart);
+  };
 
-    // Beispielcode zum Entfernen des Gutscheins aus dem Warenkorb nach dem Herunterladen
-    localStorage.removeItem('gutschein');
-    setWarenkorbProdukte([]);
+  const handleDownloadGutschein = () => {
+    // Erstellen Sie einen neuen PDF-Dokument mit jsPDF
+    const doc = new jsPDF();
+
+    // Gutschein-Text
+    const gutscheinText = `Dieser Gutschein berechtigt Sie zu einem Rabatt von ${gutscheinBetrag}€ auf Ihren Einkauf.`;
+    
+    // Positionen und Abstände für Text und Barcode
+    const textX = 20;
+    const textY = 20;
+    const barcodeMargin = 10;
+    const barcodeY = textY + 40;
+    
+    // Fügen Sie den Gutschein-Text hinzu
+    doc.text("Gutschein", textX, textY);
+    doc.text(gutscheinText, textX, textY + 10);
+
+    // Generieren Sie den Barcode aus der Gutschein-ID und dem Betrag
+    const barcodeValue = `${warenkorbProdukte[0].id}${gutscheinBetrag}`;
+    
+    // Barcode hinzufügen
+    JsBarcode(doc, barcodeValue, {
+      format: 'CODE128',
+      displayValue: false,
+      fontSize: 10,
+      margin: barcodeMargin
+    });
+
+    // Zeichnen Sie den Barcode auf den Gutschein
+    const canvas = document.createElement('canvas');
+    JsBarcode(canvas, barcodeValue, { format: 'CODE128' });
+    const imageData = canvas.toDataURL('image/png');
+    doc.addImage(imageData, 'PNG', textX, barcodeY, 100, 40);
+
+    // Speichern Sie das Dokument als PDF-Datei
+    doc.save('gutschein.pdf');
   };
 
   return (

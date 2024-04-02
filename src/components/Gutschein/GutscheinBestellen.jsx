@@ -16,7 +16,8 @@ const GutscheinBestellung = () => {
       const gutschein = {
         id: selectedGuthaben.id,
         titel: `Gutschein ${selectedGuthaben.betrag} €`,
-        preis: selectedGuthaben.betrag
+        preis: selectedGuthaben.betrag,
+        betrag: selectedGuthaben.betrag // Speichern Sie den Betrag im Gutscheinobjekt
       };
   
       // Gutschein im Local Storage speichern
