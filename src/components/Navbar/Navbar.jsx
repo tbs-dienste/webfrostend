@@ -23,7 +23,7 @@ function Navbar() {
   };
 
   return (
-  <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
+    <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
       <div className='container'>
         {
           /* 
@@ -32,7 +32,7 @@ function Navbar() {
         </div>
           */
         }
-       
+
         <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
           <div></div>
           <div></div>
@@ -42,21 +42,23 @@ function Navbar() {
           <ul>
             <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+
             <NavItem to="/kundeerfassen" text="Kunde Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+
             <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+
+
             {isAdmin ? (
               <>
- 
-              <p className='admin'>Admin</p>
-              <button className="logout-button" onClick={handleLogout}>
-                <FaSignOutAlt />
-              </button>
+                <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <p className='admin'>Admin</p>
+                <button className="logout-button" onClick={handleLogout}>
+                  <FaSignOutAlt />
+                </button>
               </>
             ) : (
               <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
