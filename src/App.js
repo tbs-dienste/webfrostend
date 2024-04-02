@@ -19,6 +19,8 @@ import WarumWerbungMachen from './components/Werbung/WarumWerbung';
 import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
 import KursListe from './components/Kurse/KursListe';
 import KundenScanner from './components/Kunden/KundenScanner';
+import Warenkorb from './components/Warenkorb/Warenkorb';
+import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
 
 
 
@@ -41,7 +43,7 @@ function App() {
               </>
             }
           />
-<Route
+          <Route
             path="/kunden/:id"
             element={
               <>
@@ -63,7 +65,7 @@ function App() {
 
 
 
-<Route
+          <Route
             path="/kurse"
             element={
               <>
@@ -93,7 +95,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/rechnung/:id"
             element={
               <>
@@ -105,7 +107,7 @@ function App() {
           />
 
 
-         
+
 
           <Route
             path="/kunden"
@@ -127,7 +129,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/mitarbeitererfassen"
             element={
               <>
@@ -137,7 +139,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/mitarbeiter"
             element={
               <>
@@ -147,7 +149,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/werbung"
             element={
               <>
@@ -159,22 +161,38 @@ function App() {
 
 
 
-          <Route path="/service/:id" 
-          element={
-            <>
-              <Navbar />
-              <ServiceDetail />
-            </>
-          }
+          <Route path="/service/:id"
+            element={
+              <>
+                <Navbar />
+                <ServiceDetail />
+              </>
+            }
           />
 
-<Route path="/kundenscanner" 
-          element={
-            <>
-              <Navbar />
-              <KundenScanner />
-            </>
-          }
+          <Route path="/kundenscanner"
+            element={
+              <>
+                <Navbar />
+                <KundenScanner />
+              </>
+            }
+          />
+          <Route path="/warenkorb"
+            element={
+              <>
+                <Navbar />
+                <Warenkorb />
+              </>
+            }
+          />
+          <Route path="/gutschein"
+            element={
+              <>
+                <Navbar />
+                <GutscheinBestellung />
+              </>
+            }
           />
 
 

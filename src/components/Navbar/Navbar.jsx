@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
-import { FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
 
 function Navbar() {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [warenkorbCount, setWarenkorbCount] = useState(0); // State für die Anzahl der Artikel im Warenkorb
 
   useEffect(() => {
     const adminStatus = localStorage.getItem('isAdmin');
     setIsAdmin(adminStatus === 'true');
+
+    // Lade die Anzahl der Artikel im Warenkorb aus dem localStorage
+    const savedWarenkorb = JSON.parse(localStorage.getItem('warenkorb')) || [];
+    setWarenkorbCount(savedWarenkorb.length);
   }, []);
 
   const toggleBurgerMenu = () => {
@@ -25,14 +30,6 @@ function Navbar() {
   return (
     <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
       <div className='container'>
-        {
-          /* 
-           <div className='logo-container'>
-          <img alt='logo' className='logo' src={logo} />
-        </div>
-          */
-        }
-
         <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
           <div></div>
           <div></div>
@@ -42,12 +39,11 @@ function Navbar() {
           <ul>
             <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-
             <NavItem to="/kundeerfassen" text="Kunde Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-
             <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-
+            {/* Hier wird das Warenkorb-Icon nur beim Warenkorb-Element angezeigt */}
+            <NavItem to="/warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
 
             {isAdmin ? (
               <>
@@ -70,11 +66,19 @@ function Navbar() {
   );
 }
 
-function NavItem({ to, text, currentPath, onClick }) {
+// Hier wird die Komponente so angepasst, dass sie entweder Text oder ein Icon rendern kann
+function NavItem({ to, text, icon, count, currentPath, onClick }) {
   return (
     <li>
       <Link to={to} className={currentPath === to ? 'active' : ''} onClick={onClick}>
-        {text}
+        {to === "/warenkorb" ? (
+          <span>
+            {icon}
+            {count > 0 && <span className="warenkorb-count">{count}</span>} {/* Anzeigen der Anzahl im Warenkorb */}
+          </span>
+        ) : (
+          text
+        )}
         {currentPath === to && <span className="active-indicator"></span>}
       </Link>
     </li>

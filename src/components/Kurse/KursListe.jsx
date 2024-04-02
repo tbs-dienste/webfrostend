@@ -7,7 +7,7 @@ const programmierKurse = [
     id: 1,
     titel: 'HTML für Anfänger',
     beschreibung: 'Grundlagen von HTML kennenlernen',
-    preis: '29.99',
+    preis: 29.99,
     zoomMeeting: 'Online Zoom Meeting: Jeden Montag um 18:00 Uhr',
     lerninhalte: [
       'Grundlegende HTML-Tags kennenlernen',
@@ -19,7 +19,7 @@ const programmierKurse = [
     id: 2,
     titel: 'JavaScript für Einsteiger',
     beschreibung: 'Grundlegende Konzepte von JavaScript verstehen',
-    preis: '39.99',
+    preis: 39.99,
     zoomMeeting: 'Online Zoom Meeting: Jeden Mittwoch um 19:00 Uhr',
     lerninhalte: [
       'Variablen, Datentypen und Operatoren',
@@ -31,7 +31,7 @@ const programmierKurse = [
     id: 3,
     titel: 'React.js Grundkurs',
     beschreibung: 'Lernen Sie die Grundlagen von React.js',
-    preis: '49.99',
+    preis: 49.99,
     zoomMeeting: 'Online Zoom Meeting: Jeden Freitag um 17:00 Uhr',
     lerninhalte: [
       'Einführung in React.js und JSX',
@@ -42,6 +42,14 @@ const programmierKurse = [
 ];
 
 class KursListe extends Component {
+  // Eine Funktion zum Hinzufügen eines Kurses zum Warenkorb
+  addToCart = (kurs) => {
+    const warenkorb = JSON.parse(localStorage.getItem('warenkorb')) || [];
+    const updatedWarenkorb = [...warenkorb, kurs];
+    localStorage.setItem('warenkorb', JSON.stringify(updatedWarenkorb));
+    alert('Kurs zum Warenkorb hinzugefügt!');
+  }
+
   render() {
     return (
       <div className="kurs-liste-container">
@@ -55,13 +63,11 @@ class KursListe extends Component {
             <div key={kurs.id} className="kurs">
               <h2 className="kurs-titel">{kurs.titel}</h2>
               <p className="kurs-beschreibung">{kurs.beschreibung}</p>
-              <p className="kurs-preis">Preis: €{kurs.preis}</p>
+              <p className="kurs-preis">Preis: €{kurs.preis.toFixed(2)}</p>
               <p className="kurs-meeting">{kurs.zoomMeeting}</p>
               <div className="kurs-button-container">
-                <div className="kurs-button-disabled" title="Bald verfügbar">
-                  Jetzt kaufen
-                </div>
-                <span style={{ color: 'red' }}>Bald verfügbar</span>
+                {/* Hier wird ein Button hinzugefügt, um den Kurs zum Warenkorb hinzuzufügen */}
+                <button onClick={() => this.addToCart(kurs)}>Zum Warenkorb hinzufügen</button>
               </div>
             </div>
           ))}

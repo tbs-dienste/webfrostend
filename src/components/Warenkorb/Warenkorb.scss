@@ -1,0 +1,53 @@
+.warenkorb-container {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .warenkorb-heading {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .warenkorb-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .warenkorb-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+  
+  .warenkorb-item:last-child {
+    border-bottom: none;
+  }
+  
+  .warenkorb-item-title {
+    font-weight: bold;
+  }
+  
+  .warenkorb-item-price {
+    color: #888;
+  }
+  
+  .warenkorb-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .warenkorb-total-label {
+    font-weight: bold;
+  }
+  
+  .warenkorb-total-price {
+    color: #333;
+    font-weight: bold;
+  }
+  
