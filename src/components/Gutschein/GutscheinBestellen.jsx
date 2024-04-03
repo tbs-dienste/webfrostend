@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './GutscheinBestellung.scss'; // Importieren Sie das SCSS-Styling
 
 const GutscheinBestellung = () => {
   const [guthabenOptionen] = useState([
@@ -37,10 +38,12 @@ const GutscheinBestellung = () => {
         preis: selectedGuthaben.betrag,
         betrag: selectedGuthaben.betrag, // Speichern Sie den Betrag im Gutscheinobjekt
         gueltigBis: gueltigBisDate, // Gültigkeitsdatum setzen
-        gutscheincode: gutscheincode // Gutscheincode setzen
+        gutscheincode: gutscheincode, // Gutscheincode setzen
+        empfaenger: name, // Empfängername hinzufügen
+        absender: senderName // Absendername hinzufügen
       };
 
-      // Gutschein und Gutscheincode im Local Storage speichern
+      // Gutscheininformationen im Local Storage speichern
       localStorage.setItem('gutschein', JSON.stringify(gutschein));
 
       // Optional: Feedback an den Benutzer geben, dass der Gutschein erfolgreich hinzugefügt wurde
@@ -53,31 +56,37 @@ const GutscheinBestellung = () => {
   return (
     <div className="gutschein-bestellung">
       <h2>Gutschein bestellen</h2>
-      <label htmlFor="name">Ihr Name:</label>
-      <input
-        type="text"
-        id="name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <label htmlFor="senderName">Absender des Gutscheins:</label>
-      <input
-        type="text"
-        id="senderName"
-        value={senderName}
-        onChange={(e) => setSenderName(e.target.value)}
-      />
-      <p>Wählen Sie das gewünschte Guthaben aus:</p>
-      <div className="guthaben-options">
-        {guthabenOptionen.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => handleBestellung(option)}
-          >
-            {option.text}
-          </button>
-        ))}
-      </div>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div className="form-group">
+          <label htmlFor="name">Ihr Name:</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="senderName">Absender des Gutscheins:</label>
+          <input
+            type="text"
+            id="senderName"
+            value={senderName}
+            onChange={(e) => setSenderName(e.target.value)}
+          />
+        </div>
+        <p>Wählen Sie das gewünschte Guthaben aus:</p>
+        <div className="guthaben-options">
+          {guthabenOptionen.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => handleBestellung(option)}
+            >
+              {option.text}
+            </button>
+          ))}
+        </div>
+      </form>
     </div>
   );
 };

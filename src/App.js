@@ -21,6 +21,7 @@ import KursListe from './components/Kurse/KursListe';
 import KundenScanner from './components/Kunden/KundenScanner';
 import Warenkorb from './components/Warenkorb/Warenkorb';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
+import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 
 
 
@@ -183,6 +184,15 @@ function App() {
               <>
                 <Navbar />
                 <Warenkorb />
+              </>
+            }
+          />
+
+<Route path="/gutscheine-liste"
+            element={
+              <>
+                <Navbar />
+                <AlleGutscheine />
               </>
             }
           />
