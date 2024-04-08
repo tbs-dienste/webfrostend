@@ -29,6 +29,22 @@ const KundeErfassen = () => {
     }
   }, []);
 
+  useEffect(() => {
+    // IP-Adresse des Kunden ermitteln
+    const userIP = localStorage.getItem('userIP');
+    if (!userIP) {
+      fetch('https://api.ipify.org/?format=json')
+        .then(response => response.json())
+        .then(data => {
+          localStorage.setItem('userIP', data.ip);
+        })
+        .catch(error => {
+          console.error('Fehler beim Abrufen der IP-Adresse:', error);
+        });
+    }
+  }, []);
+
+
   const handleKundeHinzufügen = () => {
     const newKundennummer = generateRandomKundennummer();
     const newKunde = {

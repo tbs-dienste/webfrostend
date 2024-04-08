@@ -1,6 +1,4 @@
-// KundenAnzeigen.jsx
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './KundenAnzeigen.scss';
 
@@ -8,6 +6,14 @@ const KundenAnzeigen = ({ kunden }) => {
   const { id } = useParams();
   const kundeId = parseInt(id);
   const selectedKunde = kunden.find(kunde => kunde.id === kundeId);
+  const [userIP, setUserIP] = useState('');
+
+  useEffect(() => {
+    const storedIP = localStorage.getItem('userIP');
+    if (storedIP) {
+      setUserIP(storedIP);
+    }
+  }, []);
 
   if (!selectedKunde) {
     return <div>Kein Kunde gefunden</div>;
@@ -36,6 +42,9 @@ const KundenAnzeigen = ({ kunden }) => {
         ) : (
           <p className="no-auftraege">Keine Aufträge für diesen Kunden</p> 
         )}
+      </div>
+      <div className="ip-info">
+        <p><span>IP-Adresse:</span> {userIP}</p>
       </div>
     </div>
   );
