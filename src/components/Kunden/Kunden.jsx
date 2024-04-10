@@ -1,4 +1,3 @@
-// Kunden.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +7,8 @@ const Kunden = () => {
   const [kunden, setKunden] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [customerIdToDelete, setCustomerIdToDelete] = useState(null);
 
   useEffect(() => {
     async function fetchKunden() {
@@ -25,9 +26,25 @@ const Kunden = () => {
     fetchKunden();
   }, []);
 
-  const handleKundeLöschen = (id) => {
-    const updatedKunden = kunden.filter(kunde => kunde.id !== id);
-    setKunden(updatedKunden);
+  const handleShowConfirmationModal = (id) => {
+    setShowConfirmationModal(true);
+    setCustomerIdToDelete(id);
+  };
+
+  const handleDeleteConfirmation = async () => {
+    try {
+      await axios.delete(`https://backend-1-cix8.onrender.com/api/v1/kunden/${customerIdToDelete}`);
+      const updatedKunden = kunden.filter(kunde => kunde.id !== customerIdToDelete);
+      setKunden(updatedKunden);
+      setShowConfirmationModal(false);
+    } catch (error) {
+      console.error('Error deleting kunde:', error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmationModal(false);
+    setCustomerIdToDelete(null);
   };
 
   return (
@@ -72,7 +89,7 @@ const Kunden = () => {
                     <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                       Kunden anzeigen
                     </Link>
-                    <button onClick={() => handleKundeLöschen(kunde.id)} className="kunden-button">
+                    <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
                       Kunde löschen
                     </button>
                   </div>
@@ -81,6 +98,17 @@ const Kunden = () => {
           ) : (
             <p>Keine Kunden gefunden.</p>
           )}
+        </div>
+      )}
+      {showConfirmationModal && (
+        <div className="confirmation-modal">
+          <div className="modal-content">
+            <p>Bist du sicher, dass du diesen Kunden löschen möchtest?</p>
+            <div>
+              <button onClick={handleDeleteConfirmation}>Ja</button>
+              <button onClick={handleCancelDelete}>Nein</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
