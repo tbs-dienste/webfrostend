@@ -1,51 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import './KundenAnzeigen.scss';
 
-const KundenAnzeigen = ({ kunden }) => {
+const KundenAnzeigen = () => {
   const { id } = useParams();
-  const kundeId = parseInt(id);
-  const selectedKunde = kunden.find(kunde => kunde.id === kundeId);
-  const [userIP, setUserIP] = useState('');
+  const [selectedKunde, setSelectedKunde] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedIP = localStorage.getItem('userIP');
-    if (storedIP) {
-      setUserIP(storedIP);
+    async function fetchKunde() {
+      try {
+        const response = await axios.get(`https://backend-1-cix8.onrender.com/api/v1/kunden/${id}`);
+        console.log('API-Daten:', response.data);
+        setSelectedKunde(response.data.data[0]); // Hier greifen wir auf das erste Element im Array zu
+      } catch (error) {
+        console.error('Error fetching kunde:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, []);
-
-  if (!selectedKunde) {
-    return <div>Kein Kunde gefunden</div>;
-  }
+  
+    fetchKunde();
+  }, [id]);
 
   return (
     <div className="kunden-anzeigen">
-      <div className="header">
-        <h2>Kundeninformationen</h2>
-      </div>
-      <div className="info">
-        <p><span>Kundennummer:</span> {selectedKunde.kundennummer}</p>
-        <p><span>Vorname:</span> {selectedKunde.vorname}</p>
-        <p><span>Nachname:</span> {selectedKunde.nachname}</p>
-        <h3>Aufträge</h3>
-        {selectedKunde.aufträge.length > 0 ? (
-          <ul>
-            {selectedKunde.aufträge.map((auftrag, index) => (
-              <li key={index}>
-                <p><span>Auftragstyp:</span> {auftrag.typ}</p>
-                <p><span>Beschreibung:</span> {auftrag.beschreibung}</p>
-                <p><span>Auftragsnummer:</span> {auftrag.auftragsnummer}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="no-auftraege">Keine Aufträge für diesen Kunden</p> 
-        )}
-      </div>
-      <div className="ip-info">
-        <p><span>IP-Adresse:</span> {userIP}</p>
-      </div>
+      {loading ? (
+        <p>Lade Kunden...</p>
+      ) : selectedKunde ? (
+        <div className="info">
+          <p><span>Kundennummer:</span> {selectedKunde.kundennummer}</p>
+          <p><span>Vorname:</span> {selectedKunde.vorname}</p>
+          <p><span>Nachname:</span> {selectedKunde.nachname}</p>
+          <p><span>Adresse:</span> {selectedKunde.strasseHausnummer}</p>
+          <p><span>Stadt:</span> {selectedKunde.stadt}</p>
+          <p><span>Kanton:</span> {selectedKunde.kanton}</p>
+          <p><span>Postleitzahl:</span> {selectedKunde.postleitzahl}</p>
+          <p><span>Email:</span> {selectedKunde.email}</p>
+          <p><span>Telefon:</span> {selectedKunde.telefon}</p>
+          <p><span>Mobil:</span> {selectedKunde.mobil}</p>
+          <p><span>Geschlecht:</span> {selectedKunde.geschlecht}</p>
+          <p><span>AuftragsTyp:</span> {selectedKunde.auftragsTyp}</p>
+          <p><span>AuftragsBeschreibung:</span> {selectedKunde.auftragsBeschreibung || "Kein Auftrag"}</p>
+        </div>
+      ) : (
+        <div>Kein Kunde gefunden</div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import JsBarcode from 'jsbarcode';
+import React, { useState } from 'react';
+import axios from 'axios';
 import './KundeErfassen.scss';
 
 const KundeErfassen = () => {
@@ -17,38 +17,12 @@ const KundeErfassen = () => {
   const [telefon, setTelefon] = useState('');
   const [mobil, setMobil] = useState('');
   const [geschlecht, setGeschlecht] = useState('');
-  const [kundennummer, setKundennummer] = useState('');
-  const [selectedOption, setSelectedOption] = useState('kunde');
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
-
-  useEffect(() => {
-    const storedKunden = localStorage.getItem('kunden');
-    if (storedKunden) {
-      setKunden(JSON.parse(storedKunden));
-    }
-  }, []);
-
-  useEffect(() => {
-    // IP-Adresse des Kunden ermitteln
-    const userIP = localStorage.getItem('userIP');
-    if (!userIP) {
-      fetch('https://api.ipify.org/?format=json')
-        .then(response => response.json())
-        .then(data => {
-          localStorage.setItem('userIP', data.ip);
-        })
-        .catch(error => {
-          console.error('Fehler beim Abrufen der IP-Adresse:', error);
-        });
-    }
-  }, []);
-
 
   const handleKundeHinzufügen = () => {
     const newKundennummer = generateRandomKundennummer();
     const newKunde = {
-      id: newKundennummer, // Die Kundennummer wird auch als ID verwendet
       kundennummer: newKundennummer,
       vorname,
       zweiterVorname,
@@ -63,31 +37,42 @@ const KundeErfassen = () => {
       telefon,
       mobil,
       geschlecht,
-      aufträge: selectedOption === 'auftrag' ? [{ typ: auftragsTyp, beschreibung: auftragsBeschreibung, auftragsnummer: generateRandomAuftragsnummer() }] : [],
+      auftraege: auftragsTyp ? [{
+        typ: auftragsTyp,
+        beschreibung: auftragsBeschreibung,
+        arbeitszeit: [],
+        auftragsnummer: generateRandomAuftragsnummer(),
+      }] : [],
     };
-
-    setKunden([...kunden, newKunde]);
-    localStorage.setItem('kunden', JSON.stringify([...kunden, newKunde]));
-
-    setVorname('');
-    setZweiterVorname('');
-    setNachname('');
-    setStrasseHausnummer('');
-    setAdresszeile2('');
-    setStadt('');
-    setKanton('');
-    setPostleitzahl('');
-    setOrt('');
-    setEmail('');
-    setTelefon('');
-    setMobil('');
-    setGeschlecht('');
-    setKundennummer(newKundennummer);
-    setAuftragsTyp('');
-    setAuftragsBeschreibung('');
-
-    window.location.href = '/dankesnachricht';
+  
+    axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
+      .then(response => {
+        console.log('Erfolgreich gesendet:', response.data);
+        setKunden([...kunden, newKunde]);
+  
+        setVorname('');
+        setZweiterVorname('');
+        setNachname('');
+        setStrasseHausnummer('');
+        setAdresszeile2('');
+        setStadt('');
+        setKanton('');
+        setPostleitzahl('');
+        setOrt('');
+        setEmail('');
+        setTelefon('');
+        setMobil('');
+        setGeschlecht('');
+        setAuftragsTyp('');
+        setAuftragsBeschreibung('');
+  
+        window.location.href = '/dankesnachricht';
+      })
+      .catch(error => {
+        console.error('Fehler beim Senden der Daten:', error);
+      });
   };
+  
 
   const generateRandomKundennummer = () => {
     return Math.floor(Math.random() * 1000000) + 1;
@@ -96,15 +81,6 @@ const KundeErfassen = () => {
   const generateRandomAuftragsnummer = () => {
     return 'AUF' + Math.floor(Math.random() * 1000000) + 1;
   };
-
-  useEffect(() => {
-    if (kundennummer) {
-      const canvas = document.createElement('canvas');
-      JsBarcode(canvas, kundennummer);
-      const dataURL = canvas.toDataURL('image/png');
-      localStorage.setItem(`kunden_${kundennummer}_barcode`, dataURL);
-    }
-  }, [kundennummer]);
 
   return (
     <div className="kunde-erfassen">
@@ -225,52 +201,39 @@ const KundeErfassen = () => {
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
           >
+            <option value="">Bitte auswählen</option>
             <option value="männlich">Männlich</option>
             <option value="weiblich">Weiblich</option>
             <option value="divers">Divers</option>
           </select>
         </div>
+      </div>
+      <h2>Auftrag</h2>
+      <div className="formular">
         <div className="formular-gruppe">
-          <label htmlFor="auftragsOptionen">Auftrag erfassen?</label>
+          <label htmlFor="auftragsTyp">Auftragstyp:</label>
           <select
-            id="auftragsOptionen"
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
+            id="auftragsTyp"
+            value={auftragsTyp}
+            onChange={(e) => setAuftragsTyp(e.target.value)}
           >
-            <option value="kunde">Nein</option>
-            <option value="auftrag">Ja</option>
+            <option value="">Bitte auswählen</option>
+            <option value="Webseite">Webseite</option>
+            <option value="Diashow">Diashow</option>
           </select>
         </div>
-        {selectedOption === 'auftrag' && (
-          <>
-            <div className="formular-gruppe">
-              <label htmlFor="auftragsTyp">Auftragstyp:</label>
-              <select
-                id="auftragsTyp"
-                value={auftragsTyp}
-                onChange={(e) => setAuftragsTyp(e.target.value)}
-              >
-                
-                <option value="Webseite">Webseite</option>
-                <option value="Diashow">Diashow</option>
-              </select>
-            </div>
-
-            <div className="formular-gruppe">
-              <label htmlFor="auftragsBeschreibung">Auftragsbeschreibung:</label>
-              <textarea
-                id="auftragsBeschreibung"
-                value={auftragsBeschreibung}
-                onChange={(e) => setAuftragsBeschreibung(e.target.value)}
-              ></textarea>
-            </div>
-          </>
-        )}
-        <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
+        <div className="formular-gruppe">
+          <label htmlFor="auftragsBeschreibung">Auftragsbeschreibung:</label>
+          <textarea
+            id="auftragsBeschreibung"
+            value={auftragsBeschreibung}
+            onChange={(e) => setAuftragsBeschreibung(e.target.value)}
+          ></textarea>
+        </div>
       </div>
+      <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
     </div>
   );
 };
 
 export default KundeErfassen;
-
