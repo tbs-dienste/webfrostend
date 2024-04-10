@@ -1,68 +1,72 @@
-// KundenAnzeigen.scss
-
 .kunden-anzeigen {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-  
-      h2 {
-        font-size: 24px;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 600px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+
+  .info {
+    p {
+      margin: 10px 0;
+      span {
+        font-weight: bold;
+        margin-right: 10px;
+        color: #555;
+      }
+      input[type="text"] {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: calc(100% - 20px);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: #333;
       }
     }
-  
-    .info {
-      p {
-        margin: 10px 0;
+
+    .edit-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-top: 20px;
+      button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
         font-size: 16px;
-        line-height: 1.5;
-  
-        span {
-          font-weight: bold;
-          margin-right: 5px;
+        font-weight: bold;
+        margin-left: 10px;
+        &:first-child {
+          margin-left: 0;
         }
-      }
-  
-      h3 {
-        font-size: 20px;
-        color: #333;
-        margin-bottom: 10px;
-      }
-  
-      ul {
-        list-style: none;
-        padding: 0;
-  
-        li {
-          margin-bottom: 20px;
-          border-bottom: 1px solid #ddd;
-          padding-bottom: 20px;
-  
-          p {
-            margin: 10px 0;
-            font-size: 16px;
-            line-height: 1.5;
-  
-            span {
-              font-weight: bold;
-              margin-right: 5px;
-            }
+        &.edit {
+          background-color: #007bff;
+          color: #fff;
+          border: 1px solid #007bff;
+          &:hover {
+            background-color: #0056b3;
+            border: 1px solid #0056b3;
+          }
+        }
+        &.save {
+          background-color: #28a745;
+          color: #fff;
+          &:hover {
+            background-color: #218838;
+          }
+        }
+        &.cancel {
+          background-color: #dc3545;
+          color: #fff;
+          &:hover {
+            background-color: #c82333;
           }
         }
       }
-  
-      .no-auftraege {
-        color: #888;
-        font-style: italic;
-      }
     }
   }
-  
+}

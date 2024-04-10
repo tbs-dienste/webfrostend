@@ -3,14 +3,9 @@ import axios from 'axios';
 import './KundeErfassen.scss';
 
 const KundeErfassen = () => {
-  const [kunden, setKunden] = useState([]);
   const [vorname, setVorname] = useState('');
-  const [zweiterVorname, setZweiterVorname] = useState('');
   const [nachname, setNachname] = useState('');
   const [strasseHausnummer, setStrasseHausnummer] = useState('');
-  const [adresszeile2, setAdresszeile2] = useState('');
-  const [stadt, setStadt] = useState('');
-  const [kanton, setKanton] = useState('');
   const [postleitzahl, setPostleitzahl] = useState('');
   const [ort, setOrt] = useState('');
   const [email, setEmail] = useState('');
@@ -20,71 +15,37 @@ const KundeErfassen = () => {
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
 
-  const handleKundeHinzufügen = () => {
-    const newKundennummer = generateRandomKundennummer();
+  const handleKontaktAufnehmen = () => {
     const newKunde = {
-      kundennummer: newKundennummer,
       vorname,
-      zweiterVorname,
       nachname,
       strasseHausnummer,
-      adresszeile2,
-      stadt,
-      kanton,
       postleitzahl,
       ort,
       email,
       telefon,
       mobil,
       geschlecht,
-      auftraege: auftragsTyp ? [{
-        typ: auftragsTyp,
-        beschreibung: auftragsBeschreibung,
-        arbeitszeit: [],
-        auftragsnummer: generateRandomAuftragsnummer(),
-      }] : [],
     };
   
     axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
       .then(response => {
-        console.log('Erfolgreich gesendet:', response.data);
-        setKunden([...kunden, newKunde]);
-  
-        setVorname('');
-        setZweiterVorname('');
-        setNachname('');
-        setStrasseHausnummer('');
-        setAdresszeile2('');
-        setStadt('');
-        setKanton('');
-        setPostleitzahl('');
-        setOrt('');
-        setEmail('');
-        setTelefon('');
-        setMobil('');
-        setGeschlecht('');
-        setAuftragsTyp('');
-        setAuftragsBeschreibung('');
-  
-        window.location.href = '/dankesnachricht';
+        console.log('Kontaktdaten erfolgreich gesendet:', response.data);
+        handleKontaktAufnehmen(response.data.data.id); // Datenstruktur anpassen, um die ID zu erhalten
+        window.location.href = '/dankesnachricht'; // Hier wird die Weiterleitung zur Dankesnachricht-Seite durchgeführt
       })
       .catch(error => {
-        console.error('Fehler beim Senden der Daten:', error);
+        console.error('Fehler beim Senden der Kontaktdaten:', error);
+        alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
       });
   };
   
 
-  const generateRandomKundennummer = () => {
-    return Math.floor(Math.random() * 1000000) + 1;
-  };
-
-  const generateRandomAuftragsnummer = () => {
-    return 'AUF' + Math.floor(Math.random() * 1000000) + 1;
-  };
+  
 
   return (
     <div className="kunde-erfassen">
-      <h2>Kontakt</h2>
+      <h2>Kontaktdaten</h2>
       <div className="formular">
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
@@ -93,15 +54,6 @@ const KundeErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
-          />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="zweiterVorname">Zweiter Vorname:</label>
-          <input
-            type="text"
-            id="zweiterVorname"
-            value={zweiterVorname}
-            onChange={(e) => setZweiterVorname(e.target.value)}
           />
         </div>
         <div className="formular-gruppe">
@@ -122,33 +74,7 @@ const KundeErfassen = () => {
             onChange={(e) => setStrasseHausnummer(e.target.value)}
           />
         </div>
-        <div className="formular-gruppe">
-          <label htmlFor="adresszeile2">2. Adresszeile:</label>
-          <input
-            type="text"
-            id="adresszeile2"
-            value={adresszeile2}
-            onChange={(e) => setAdresszeile2(e.target.value)}
-          />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="stadt">Stadt:</label>
-          <input
-            type="text"
-            id="stadt"
-            value={stadt}
-            onChange={(e) => setStadt(e.target.value)}
-          />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="kanton">Kanton:</label>
-          <input
-            type="text"
-            id="kanton"
-            value={kanton}
-            onChange={(e) => setKanton(e.target.value)}
-          />
-        </div>
+       
         <div className="formular-gruppe">
           <label htmlFor="postleitzahl">Postleitzahl:</label>
           <input
@@ -231,7 +157,7 @@ const KundeErfassen = () => {
           ></textarea>
         </div>
       </div>
-      <button onClick={handleKundeHinzufügen}>Kontakt aufnehmen</button>
+      <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
     </div>
   );
 };
