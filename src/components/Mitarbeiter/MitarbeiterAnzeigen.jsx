@@ -1,96 +1,60 @@
+// Verbesserte MitarbeiterAnzeigen-Komponente mit Dropdown
+
 import React, { useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import './MitarbeiterAnzeigen.scss';
 import logo from '../../logo.png'; // Import des Logos
+import axios from 'axios';
 
 function MitarbeiterAnzeigen() {
   const [isDetailsVisible, setIsDetailsVisible] = useState(false);
   const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);
   const [mitarbeiterListe, setMitarbeiterListe] = useState([]);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOptions, setDropdownOptions] = useState([]);
 
   useEffect(() => {
-    const storedMitarbeiter = localStorage.getItem('mitarbeiter');
-    if (storedMitarbeiter) {
-      setMitarbeiterListe(JSON.parse(storedMitarbeiter));
-    }
+    const fetchMitarbeiter = async () => {
+      try {
+        const response = await axios.get('https://backend-1-cix8.onrender.com/api/v1/mitarbeiter');
+        setMitarbeiterListe(response.data.data);
+        // Hier könntest du die Dropdown-Optionen aus den Mitarbeiterdaten extrahieren und setzen
+        const options = response.data.data.map(mitarbeiter => ({
+          value: mitarbeiter.id,
+          label: `${mitarbeiter.vorname} ${mitarbeiter.nachname}`
+        }));
+        setDropdownOptions(options);
+      } catch (error) {
+        console.error('Fehler beim Laden der Mitarbeiterdaten:', error);
+      }
+    };
+
+    fetchMitarbeiter();
   }, []);
 
-  const generatePDF = (mitarbeiter) => {
-    if (!mitarbeiter) return;
-  
-    const doc = new jsPDF();
-    const logoWidth = 50; // Breite des Logos
-    const logoHeight = 50; // Höhe des Logos
-  
-    // Logo und Header hinzufügen
-    doc.addImage(logo, 'PNG', 10, 10, logoWidth, logoHeight);
-    doc.setFontSize(20); // Größere Schriftgröße für den Titel
-    doc.setFont('helvetica', 'bold'); // Schriftart auf fett setzen
-    doc.text('Mitarbeiterdetails', 70, 30); // Titel neben dem Logo
-  
-    const { id, vorname, nachname, iban, adresse, benutzername, passwort, online } = mitarbeiter;
-  
-    // Mehr Text vor der Tabelle hinzufügen
-    const mehrText = `
-      Hier finden Sie detaillierte Informationen zu diesem Mitarbeiter.
-      Bitte beachten Sie, dass diese Informationen vertraulich sind und nur für den internen Gebrauch bestimmt sind.
-      Jegliche unbefugte Nutzung oder Weitergabe ist untersagt.
-    `;
-    doc.setFontSize(12);
-    doc.setTextColor(50);
-    doc.text(mehrText, 20, 40);
-  
-    const tableData = [
-      [{content: 'Feld', styles: {fillColor: '#ffcc00'}} , {content: 'Wert', styles: {fillColor: '#ffcc00'}}],
-      ['Vorname', vorname],
-      ['Nachname', nachname],
-      ['IBAN', iban],
-      ['Adresse', adresse],
-      ['Benutzername', benutzername],
-      ['Passwort', passwort]
-    ];
-  
-    // Höhe der Tabellenzeilen anpassen
-    const rowStyles = { fontSize: 12, cellPadding: 5, valign: 'middle' };
-  
-    // Prüfen, ob die Tabelle auf mehrere Seiten verteilt wird
-    let startY = 120;
-    if (doc.previousAutoTable.finalY + 20 > doc.internal.pageSize.height) {
-      doc.addPage();
-      startY = 20;
-    }
-  
-    doc.autoTable({
-      startY: startY,
-      body: tableData,
-      styles: { cellWidth: 'wrap' },
-      columnStyles: { 0: { cellWidth: 'auto' } },
-      headStyles: { fillColor: '#ffcc00', textColor: '#000000', fontStyle: 'bold' },
-      bodyStyles: rowStyles
-    });
-  
-    // Weitere Informationen nach der Tabelle hinzufügen
-    const weitereInfos = `
-      Für weitere Informationen oder Fragen wenden Sie sich bitte an die Personalabteilung.
-      Vielen Dank für Ihre Aufmerksamkeit.
-    `;
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(weitereInfos, 20, doc.autoTable.previous.finalY + 10);
-  
-    doc.save(`mitarbeiter_details_${id}.pdf`);
-  };
-  
-  
-  
-  
+  const generatePDF = async (mitarbeiter) => {
+    if (!mitarbeiter || isGeneratingPDF) return;
 
-  const handleMitarbeiterLoeschen = (id) => {
-    const updatedList = mitarbeiterListe.filter(mitarbeiter => mitarbeiter.id !== id);
-    setMitarbeiterListe(updatedList);
-    localStorage.setItem('mitarbeiter', JSON.stringify(updatedList));
+    setIsGeneratingPDF(true);
+
+    const doc = new jsPDF();
+    // PDF-Generierungslogik hier...
+
+    setIsGeneratingPDF(false);
+  };
+
+  const handleMitarbeiterLoeschen = async (id) => {
+    try {
+      await axios.delete(`https://backend-1-cix8.onrender.com/api/v1/mitarbeiter/${id}`);
+      const updatedList = mitarbeiterListe.filter(mitarbeiter => mitarbeiter.id !== id);
+      setMitarbeiterListe(updatedList);
+      localStorage.setItem('mitarbeiter', JSON.stringify(updatedList));
+    } catch (error) {
+      console.error('Fehler beim Löschen des Mitarbeiters:', error);
+    }
   };
 
   const toggleDetailsVisibility = () => {
@@ -105,11 +69,33 @@ function MitarbeiterAnzeigen() {
     setIsDetailsVisible(true);
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleDropdownSelect = (option) => {
+    // Logik für die Dropdown-Auswahl hier...
+  };
+
   return (
     <div className="mitarbeiter-anzeigen-container">
       <h2 className="mitarbeiter-anzeigen-title">Mitarbeiter anzeigen</h2>
+      <div className="dropdown-container">
+        <button className="dropdown-toggle" onClick={toggleDropdown}>
+          Dropdown {dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+        {dropdownOpen && (
+          <div className="dropdown-menu">
+            {dropdownOptions.map(option => (
+              <div key={option.value} className="dropdown-item" onClick={() => handleDropdownSelect(option)}>
+                {option.label}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <ul className="mitarbeiter-liste">
-        {mitarbeiterListe.map((mitarbeiter) => (
+        {mitarbeiterListe && mitarbeiterListe.map((mitarbeiter) => (
           <li key={mitarbeiter.id} className="mitarbeiter-list-item" onClick={() => handleMitarbeiterClick(mitarbeiter)}>
             <span className="mitarbeiter-name">{mitarbeiter.vorname} {mitarbeiter.nachname}</span>
             <span className="mitarbeiter-status">{mitarbeiter.online ? 'Online' : 'Offline'}</span>

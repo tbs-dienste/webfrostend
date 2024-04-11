@@ -9,7 +9,7 @@ const KundenAnzeigen = () => {
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
-  
+
   useEffect(() => {
     async function fetchKunde() {
       try {
@@ -23,7 +23,7 @@ const KundenAnzeigen = () => {
         setLoading(false);
       }
     }
-  
+
     fetchKunde();
   }, [id]);
 
@@ -56,11 +56,18 @@ const KundenAnzeigen = () => {
     }
   };
 
+  const handleZuruck = () => {
+    window.location.href = `/kunden`; // Hier entsprechend die URL anpassen
+  };
+
+
   return (
     <div className="kunden-anzeigen">
       {loading ? (
         <p>Lade Kunden...</p>
       ) : selectedKunde ? (
+      <div>
+        <button onClick={handleZuruck} className="zuruck-button">Zurück</button>
         <div className="info">
   <p><span>Kundennummer:</span> {editMode ? <input type="text" name="kundennummer" value={formData.kundennummer || ""} onChange={handleChange} /> : selectedKunde.kundennummer}</p>
   <p><span>Vorname:</span> {editMode ? <input type="text" name="vorname" value={formData.vorname || ""} onChange={handleChange} /> : selectedKunde.vorname}</p>
@@ -83,6 +90,7 @@ const KundenAnzeigen = () => {
   <button className="edit" onClick={handleEdit}>Bearbeiten</button>
 )}
 
+</div>
 </div>
 
       ) : (

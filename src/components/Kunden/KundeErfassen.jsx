@@ -26,19 +26,27 @@ const KundeErfassen = () => {
       telefon,
       mobil,
       geschlecht,
+      auftragsTyp,
+      auftragsBeschreibung,
     };
   
     axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
       .then(response => {
         console.log('Kontaktdaten erfolgreich gesendet:', response.data);
-        handleKontaktAufnehmen(response.data.data.id); // Datenstruktur anpassen, um die ID zu erhalten
-        window.location.href = '/dankesnachricht'; // Hier wird die Weiterleitung zur Dankesnachricht-Seite durchgeführt
+        // Überprüfen, ob die Antwort eine ID enthält
+        if (response.data.data && response.data.data.id) {
+          window.location.href = '/dankesnachricht'; // Hier wird die Weiterleitung zur Dankesnachricht-Seite durchgeführt
+        } else {
+          console.error('Fehler: Die Antwort enthält keine ID.');
+          alert('Fehler: Die Antwort enthält keine ID. Bitte versuchen Sie es erneut.');
+        }
       })
       .catch(error => {
         console.error('Fehler beim Senden der Kontaktdaten:', error);
         alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
       });
   };
+  
   
 
   

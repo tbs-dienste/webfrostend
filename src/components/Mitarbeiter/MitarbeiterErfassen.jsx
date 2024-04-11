@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import JsBarcode from 'jsbarcode';
+import axios from 'axios'; // Importieren Sie Axios
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
@@ -7,7 +8,7 @@ const MitarbeiterErfassen = () => {
   const [geschlecht, setGeschlecht] = useState('');
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
-  const [adresse, setadresse] = useState('');
+  const [adresse, setAdresse] = useState('');
   const [postleitzahl, setPostleitzahl] = useState('');
   const [ort, setOrt] = useState('');
   const [email, setEmail] = useState('');
@@ -15,8 +16,8 @@ const MitarbeiterErfassen = () => {
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
   const [mitarbeiternummer, setMitarbeiternummer] = useState('');
-  const [land, setLand] = useState('CH'); // Default value for Switzerland
-  const [iban, setIban] = useState('CH'); // Default value for Switzerland
+  const [land, setLand] = useState('CH');
+  const [iban, setIban] = useState('CH');
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
@@ -25,74 +26,22 @@ const MitarbeiterErfassen = () => {
     }
   }, []);
 
-  const handleMitarbeiterHinzufügen = () => {
-    const newMitarbeiternummer = generateRandomMitarbeiternummer();
-
-    const newMitarbeiter = {
-      id: mitarbeiter.length + 1,
-      mitarbeiternummer: newMitarbeiternummer,
-      geschlecht,
-      vorname,
-      nachname,
-      adresse,
-      postleitzahl,
-      ort,
-      email,
-      mobil,
-      benutzername,
-      passwort,
-      iban: land, // Use selected country code as IBAN
-      auftrag: [],
-    };
-
-    setMitarbeiter([...mitarbeiter, newMitarbeiter]);
-    localStorage.setItem('mitarbeiter', JSON.stringify([...mitarbeiter, newMitarbeiter]));
-
-    setGeschlecht('');
-    setVorname('');
-    setNachname('');
-    setadresse('');
-    setPostleitzahl('');
-    setOrt('');
-    setEmail('');
-    setMobil('');
-    setBenutzername('');
-    setPasswort('');
-    setMitarbeiternummer(newMitarbeiternummer);
-
-    window.location.href = '/mitarbeiter';
-  };
-
-  const generateRandomMitarbeiternummer = () => {
-    return Math.floor(Math.random() * 1000000) + 1;
-  };
-
-  useEffect(() => {
-    // Wenn die Kundennummer geändert wird, speichern Sie den Strichcode im Local Storage
-    if (mitarbeiternummer) {
-      const canvas = document.createElement('canvas');
-      JsBarcode(canvas, mitarbeiternummer);
-      const dataURL = canvas.toDataURL('image/png');
-      localStorage.setItem(`mitarbeiter_${mitarbeiternummer}_barcode`, dataURL);
-    }
-  }, [mitarbeiternummer]);
-
   const handleIbanChange = (e) => {
-    let input = e.target.value.toUpperCase(); // Eingabe in Großbuchstaben umwandeln
-    input = input.replace(/\D/g, ''); // Nur Zahlen zulassen
+    let input = e.target.value.toUpperCase(); // Convert input to uppercase
+    input = input.replace(/\D/g, ''); // Allow only digits
 
-    // Formatierung der IBAN entsprechend der Vorgabe "CHXX XXXX XXXX XXXX XXXX X"
+    // Format the IBAN according to the pattern "CHXX XXXX XXXX XXXX XXXX X"
     let formattedIban = land;
     for (let i = 0; i < input.length; i++) {
       if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
-        formattedIban += ' '; // Leerzeichen einfügen nach den ersten beiden und dann nach jedem weiteren Block von vier Zahlen
+        formattedIban += ' '; // Add space after the first two and then after every subsequent block of four digits
       }
       formattedIban += input[i];
     }
 
-    // Prüfen, ob die IBAN-Länge die Bedingungen erfüllt
+    // Check if the IBAN length meets the conditions
     if (formattedIban.length >= 26) {
-      formattedIban = formattedIban.substring(0, 26); // Schneiden Sie die IBAN auf 26 Zeichen, um keine weiteren Eingaben zuzulassen
+      formattedIban = formattedIban.substring(0, 26); // Trim the IBAN to 26 characters to disallow further input
     }
 
     setIban(formattedIban);
@@ -104,6 +53,33 @@ const MitarbeiterErfassen = () => {
     // Update IBAN placeholder based on selected country
     setIban(selectedLand);
   };
+
+
+  const handleMitarbeiterHinzufügen = async () => {
+    const newMitarbeiter = {
+      geschlecht,
+      vorname,
+      nachname,
+      adresse,
+      postleitzahl,
+      ort,
+      email,
+      mobil,
+      benutzername,
+      passwort,
+      iban: land, // oder `iban`, je nachdem, wie Sie Ihre Daten modelliert haben
+    };
+  
+    try {
+      const response = await axios.post('https://backend-1-cix8.onrender.com/api/v1/mitarbeiter', newMitarbeiter);
+      console.log('Response:', response.data);
+      window.location = "/mitarbeiter";
+    } catch (error) {
+      console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
+      // Hier können Sie Fehlerbehandlung hinzufügen, z.B. eine Benachrichtigung für den Benutzer anzeigen
+    }
+  };
+  
 
 
   return (
@@ -149,7 +125,7 @@ const MitarbeiterErfassen = () => {
             type="text"
             id="adresse"
             value={adresse}
-            onChange={(e) => setadresse(e.target.value)}
+            onChange={(e) => setAdresse(e.target.value)}
           />
         </div>
 
