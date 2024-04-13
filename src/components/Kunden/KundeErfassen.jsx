@@ -43,7 +43,7 @@ const KundeErfassen = () => {
         auftragsBeschreibung // Auftragsbeschreibung für Diashow/Webseite oder andere Zwecke
       },
     };
-  
+
     axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
       .then(response => {
         console.log('Kontaktdaten erfolgreich gesendet:', response.data);
@@ -60,7 +60,7 @@ const KundeErfassen = () => {
         alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
       });
   };
-  
+
   return (
     <div className="kunde-erfassen">
       <h2>Kontaktdaten</h2>
@@ -174,11 +174,21 @@ const KundeErfassen = () => {
             <div className="formular-gruppe">
               <label htmlFor="budget">Budget:</label>
               <input
-                type="text"
-                id="budget"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-              />
+  type="number"
+  inputMode="numeric"
+  id="budget"
+  value={budget}
+  onChange={(e) => setBudget(e.target.value)}
+  onKeyPress={(e) => {
+    // Nur Zahlen zulassen
+    const charCode = e.which ? e.which : e.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      e.preventDefault();
+    }
+  }}
+/>
+
+
             </div>
             <div className="formular-gruppe">
               <label htmlFor="zweck">Zweck:</label>
