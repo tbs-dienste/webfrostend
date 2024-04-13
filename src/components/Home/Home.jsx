@@ -3,12 +3,14 @@ import './Home.scss';
 
 import Programmieren from './programmieren.png';
 import DiaShow from './diashow.jpg';
+import GamingPC from './gamingpc.jpeg';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlides] = useState([
     { id: 1, image: Programmieren, title: "Webseite Programmieren", description: "Lassen Sie uns Ihre Webseite programmieren" },
     { id: 2, image: DiaShow, title: "Diashow erstellen", description: "Lassen Sie uns Ihre wertvollen Erinnerungen in einer professionellen Diashow zum Leben erwecken." },
+    { id: 3, image: GamingPC, title: "Gaming PC", description: "Lassen Sie sich beraten für einen Optimalen Passenden Gaming PC der in Ihrem Budget liegt" },
   ]);
 
   useEffect(() => {
