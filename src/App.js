@@ -22,6 +22,7 @@ import KundenScanner from './components/Kunden/KundenScanner';
 import Warenkorb from './components/Warenkorb/Warenkorb';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
 import AlleGutscheine from './components/Gutschein/AlleGutscheine';
+import Flyer from './components/Flyer/Flyer';
 
 
 
@@ -204,6 +205,15 @@ function App() {
               </>
             }
           />
+           <Route path="/flyer"
+            element={
+              <>
+                <Navbar />
+                <Flyer />
+              </>
+            }
+          />
+
 
 
 

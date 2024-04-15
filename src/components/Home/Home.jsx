@@ -30,7 +30,7 @@ const Home = () => {
               <img src={slide.image} alt={slide.title} className="slide-image" />
               <div className="slide-content">
                 <h2>{slide.title}</h2>
-                <p>{slide.description}</p>
+                <p className="slide-description">{slide.description}</p>
               </div>
             </div>
           ))}
@@ -42,7 +42,7 @@ const Home = () => {
         </div>
         <div className='text'>
           <p>
-            Wir bieten eine breite Palette von Dienstleistungen an, die Ihre Bedürfnisse erfüllen. Von der Webseitenprogrammierung bis zur Erstellung professioneller Diashows stehen wir Ihnen zur Verfügung.
+            Wir bieten eine breite Palette von Dienstleistungen an, die Ihre Bedürfnisse erfüllen. Von der Webseitenprogrammierung bis zur Erstellung professioneller Diashows und der Zusammenstellung eines optimal passenden Gaming-PCs stehen wir Ihnen zur Verfügung.
           </p>
           <p>
             Unser erfahrenes Team wird sicherstellen, dass Ihre Anforderungen mit hoher Qualität und Präzision erfüllt werden.

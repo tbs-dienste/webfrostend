@@ -174,21 +174,19 @@ const KundeErfassen = () => {
             <div className="formular-gruppe">
               <label htmlFor="budget">Budget:</label>
               <input
-  type="number"
-  inputMode="numeric"
-  id="budget"
-  value={budget}
-  onChange={(e) => setBudget(e.target.value)}
-  onKeyPress={(e) => {
-    // Nur Zahlen zulassen
-    const charCode = e.which ? e.which : e.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      e.preventDefault();
-    }
-  }}
-/>
-
-
+                type="number"
+                inputMode="numeric"
+                id="budget"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                onKeyPress={(e) => {
+                  // Nur Zahlen zulassen
+                  const charCode = e.which ? e.which : e.keyCode;
+                  if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
             </div>
             <div className="formular-gruppe">
               <label htmlFor="zweck">Zweck:</label>
