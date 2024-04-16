@@ -23,6 +23,7 @@ import Warenkorb from './components/Warenkorb/Warenkorb';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
 import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
+import Team from './components/Team/Team';
 
 
 
@@ -210,6 +211,15 @@ function App() {
               <>
                 <Navbar />
                 <Flyer />
+              </>
+            }
+          />
+
+<Route path="/team"
+            element={
+              <>
+                <Navbar />
+                <Team />
               </>
             }
           />
