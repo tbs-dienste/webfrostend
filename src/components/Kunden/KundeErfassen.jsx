@@ -20,8 +20,11 @@ const KundeErfassen = () => {
   const [kühlung, setKühlung] = useState('');
   const [gehäuse, setGehäuse] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
+  const isFormDisabled = true;
+  const popupVisible = true;
 
   const handleKontaktAufnehmen = () => {
+
     const newKunde = {
       vorname,
       nachname,
@@ -73,6 +76,7 @@ const KundeErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -82,6 +86,7 @@ const KundeErfassen = () => {
             id="nachname"
             value={nachname}
             onChange={(e) => setNachname(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -91,6 +96,7 @@ const KundeErfassen = () => {
             id="strasseHausnummer"
             value={strasseHausnummer}
             onChange={(e) => setStrasseHausnummer(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -100,6 +106,7 @@ const KundeErfassen = () => {
             id="postleitzahl"
             value={postleitzahl}
             onChange={(e) => setPostleitzahl(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -109,6 +116,7 @@ const KundeErfassen = () => {
             id="ort"
             value={ort}
             onChange={(e) => setOrt(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -118,6 +126,7 @@ const KundeErfassen = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -127,6 +136,7 @@ const KundeErfassen = () => {
             id="telefon"
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -136,6 +146,7 @@ const KundeErfassen = () => {
             id="mobil"
             value={mobil}
             onChange={(e) => setMobil(e.target.value)}
+            disabled={isFormDisabled}
           />
         </div>
         <div className="formular-gruppe">
@@ -144,6 +155,7 @@ const KundeErfassen = () => {
             id="geschlecht"
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
+            disabled={isFormDisabled}
           >
             <option value="">Bitte auswählen</option>
             <option value="männlich">Männlich</option>
@@ -161,6 +173,7 @@ const KundeErfassen = () => {
             id="auftragsTyp"
             value={auftragsTyp}
             onChange={(e) => setAuftragsTyp(e.target.value)}
+            disabled={isFormDisabled}
           >
             <option value="">Bitte auswählen</option>
             <option value="Webseite">Webseite</option>
@@ -179,6 +192,7 @@ const KundeErfassen = () => {
                 id="budget"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
+                disabled={isFormDisabled}
                 onKeyPress={(e) => {
                   // Nur Zahlen zulassen
                   const charCode = e.which ? e.which : e.keyCode;
@@ -194,6 +208,7 @@ const KundeErfassen = () => {
                 id="zweck"
                 value={zweck}
                 onChange={(e) => setZweck(e.target.value)}
+                disabled={isFormDisabled}
               >
                 <option value="">Bitte auswählen</option>
                 <option value="Gaming">Gaming</option>
@@ -210,6 +225,7 @@ const KundeErfassen = () => {
                 id="speicherkapazität"
                 value={speicherkapazität}
                 onChange={(e) => setSpeicherkapazität(e.target.value)}
+                disabled={isFormDisabled}
               />
             </div>
             <div className="formular-gruppe">
@@ -219,6 +235,7 @@ const KundeErfassen = () => {
                 id="ram"
                 value={ram}
                 onChange={(e) => setRam(e.target.value)}
+                disabled={isFormDisabled}
               />
             </div>
             <div className="formular-gruppe">
@@ -227,6 +244,7 @@ const KundeErfassen = () => {
                 id="kühlung"
                 value={kühlung}
                 onChange={(e) => setKühlung(e.target.value)}
+                disabled={isFormDisabled}
               >
                 <option value="">Bitte auswählen</option>
                 <option value="Luft">Luft</option>
@@ -239,6 +257,7 @@ const KundeErfassen = () => {
                 id="gehäuse"
                 value={gehäuse}
                 onChange={(e) => setGehäuse(e.target.value)}
+                disabled={isFormDisabled}
               >
                 <option value="">Bitte auswählen</option>
                 <option value="RGB">RGB</option>
@@ -255,12 +274,23 @@ const KundeErfassen = () => {
               id="auftragsBeschreibung"
               value={auftragsBeschreibung}
               onChange={(e) => setAuftragsBeschreibung(e.target.value)}
+              disabled={isFormDisabled}
             ></textarea>
           </div>
         )}
         {/* End Inputfelder für Diashow/Webseite Auftrag */}
       </div>
-      <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
+      <button onClick={handleKontaktAufnehmen} disabled={isFormDisabled}>Kontakt aufnehmen</button>
+      {popupVisible && <div className="popup-overlay"></div>}
+      {popupVisible && (
+        <div className="popup">
+          <div className="popup-content">
+          <span className="popup-icon">⚠️</span>
+            <h3>Entschuldigung!</h3>
+            <p>Der Service ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
