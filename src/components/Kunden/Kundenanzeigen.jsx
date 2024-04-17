@@ -61,37 +61,68 @@ const KundenAnzeigen = () => {
   };
 
 
+  const handleRechnungStellen = async () => {
+    try {
+      const updatedKunde = { ...selectedKunde, rechnungGestellt: !selectedKunde.rechnungGestellt };
+      await axios.put(`https://backend-1-cix8.onrender.com/api/v1/kunden/${id}`, updatedKunde);
+      setSelectedKunde(updatedKunde);
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Rechnungsstatus:', error);
+    }
+  };
+
+  const handleRechnungBezahlen = async () => {
+    try {
+      const updatedKunde = { ...selectedKunde, rechnungBezahlt: !selectedKunde.rechnungBezahlt };
+      await axios.put(`https://backend-1-cix8.onrender.com/api/v1/kunden/${id}`, updatedKunde);
+      setSelectedKunde(updatedKunde);
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Rechnungsstatus:', error);
+    }
+  };
+
   return (
     <div className="kunden-anzeigen">
       {loading ? (
         <p>Lade Kunden...</p>
       ) : selectedKunde ? (
-      <div>
-        <button onClick={handleZuruck} className="zuruck-button">Zurück</button>
-        <div className="info">
-  <p><span>Kundennummer:</span> {editMode ? <input type="text" name="kundennummer" value={formData.kundennummer || ""} onChange={handleChange} /> : selectedKunde.kundennummer}</p>
-  <p><span>Vorname:</span> {editMode ? <input type="text" name="vorname" value={formData.vorname || ""} onChange={handleChange} /> : selectedKunde.vorname}</p>
-  <p><span>Nachname:</span> {editMode ? <input type="text" name="nachname" value={formData.nachname || ""} onChange={handleChange} /> : selectedKunde.nachname}</p>
-  <p><span>Strasse und Hausnummer:</span> {editMode ? <input type="text" name="strasseHausnummer" value={formData.strasseHausnummer || ""} onChange={handleChange} /> : selectedKunde.strasseHausnummer}</p>
-  <p><span>Postleitzahl:</span> {editMode ? <input type="text" name="postleitzahl" value={formData.postleitzahl || ""} onChange={handleChange} /> : selectedKunde.postleitzahl}</p>
-  <p><span>Ort:</span> {editMode ? <input type="text" name="ort" value={formData.ort || ""} onChange={handleChange} /> : selectedKunde.ort}</p>
-  <p><span>Email:</span> {editMode ? <input type="text" name="email" value={formData.email || ""} onChange={handleChange} /> : selectedKunde.email}</p>
-  <p><span>Telefon:</span> {editMode ? <input type="text" name="telefon" value={formData.telefon || ""} onChange={handleChange} /> : selectedKunde.telefon}</p>
-  <p><span>Mobil:</span> {editMode ? <input type="text" name="mobil" value={formData.mobil || ""} onChange={handleChange} /> : selectedKunde.mobil}</p>
-  <p><span>Geschlecht:</span> {editMode ? <input type="text" name="geschlecht" value={formData.geschlecht || ""} onChange={handleChange} /> : selectedKunde.geschlecht}</p>
-  <p><span>Auftragstyp:</span> {editMode ? <input type="text" name="auftragsTyp" value={formData.auftragsTyp || ""} onChange={handleChange} /> : selectedKunde.auftragsTyp}</p>
-  <p><span>Auftragsbeschreibung:</span> {editMode ? <input type="text" name="auftragsBeschreibung" value={formData.auftragsBeschreibung || ""} onChange={handleChange} /> : selectedKunde.auftragsBeschreibung}</p>
-  {editMode ? (
-  <div className="edit-buttons">
-    <button className="save" onClick={handleSubmit}>Speichern</button>
-    <button className="cancel" onClick={handleCancel}>Abbrechen</button>
-  </div>
-) : (
-  <button className="edit" onClick={handleEdit}>Bearbeiten</button>
-)}
+        <div>
+          <button onClick={handleZuruck} className="zuruck-button">Zurück</button>
+          <div className="info">
+            <p><span>Kundennummer:</span> {editMode ? <input type="text" name="kundennummer" value={formData.kundennummer || ""} onChange={handleChange} /> : selectedKunde.kundennummer}</p>
+            <p><span>Vorname:</span> {editMode ? <input type="text" name="vorname" value={formData.vorname || ""} onChange={handleChange} /> : selectedKunde.vorname}</p>
+            <p><span>Nachname:</span> {editMode ? <input type="text" name="nachname" value={formData.nachname || ""} onChange={handleChange} /> : selectedKunde.nachname}</p>
+            <p><span>Strasse und Hausnummer:</span> {editMode ? <input type="text" name="strasseHausnummer" value={formData.strasseHausnummer || ""} onChange={handleChange} /> : selectedKunde.strasseHausnummer}</p>
+            <p><span>Postleitzahl:</span> {editMode ? <input type="text" name="postleitzahl" value={formData.postleitzahl || ""} onChange={handleChange} /> : selectedKunde.postleitzahl}</p>
+            <p><span>Ort:</span> {editMode ? <input type="text" name="ort" value={formData.ort || ""} onChange={handleChange} /> : selectedKunde.ort}</p>
+            <p><span>Email:</span> {editMode ? <input type="text" name="email" value={formData.email || ""} onChange={handleChange} /> : selectedKunde.email}</p>
+            <p><span>Telefon:</span> {editMode ? <input type="text" name="telefon" value={formData.telefon || ""} onChange={handleChange} /> : selectedKunde.telefon}</p>
+            <p><span>Mobil:</span> {editMode ? <input type="text" name="mobil" value={formData.mobil || ""} onChange={handleChange} /> : selectedKunde.mobil}</p>
+            <p><span>Geschlecht:</span> {editMode ? <input type="text" name="geschlecht" value={formData.geschlecht || ""} onChange={handleChange} /> : selectedKunde.geschlecht}</p>
+            <p><span>Auftragstyp:</span> {editMode ? <input type="text" name="auftragsTyp" value={formData.auftragsTyp || ""} onChange={handleChange} /> : selectedKunde.auftragsTyp}</p>
+            <p><span>Auftragsbeschreibung:</span> {editMode ? <input type="text" name="auftragsBeschreibung" value={formData.auftragsBeschreibung || ""} onChange={handleChange} /> : selectedKunde.auftragsBeschreibung}</p>
+            {editMode ? (
+              <div className="edit-buttons">
+                <button className="save" onClick={handleSubmit}>Speichern</button>
+                <button className="cancel" onClick={handleCancel}>Abbrechen</button>
+              </div>
+            ) : (
+             <div>
+                <button onClick={handleEdit}>Bearbeiten</button>
+                {/* Rechnung stellen Button */}
+                <button onClick={handleRechnungStellen}>
+                  {selectedKunde.rechnungGestellt ? 'Rechnung rückgängig' : 'Rechnung stellen'}
+                </button>
+                {/* Rechnung bezahlen Button */}
+                <button onClick={handleRechnungBezahlen}>
+                  {selectedKunde.rechnungBezahlt ? 'Zahlung rückgängig' : 'Rechnung bezahlen'}
+                </button>
+              </div>
 
-</div>
-</div>
+            )}
+
+          </div>
+        </div>
 
       ) : (
         <div>Kein Kunde gefunden</div>
