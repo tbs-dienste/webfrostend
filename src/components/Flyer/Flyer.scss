@@ -1,0 +1,44 @@
+.flyer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .flyer-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .pdf-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pdf-item {
+    margin: 20px;
+  }
+  
+  .pdf-error {
+    font-size: 16px;
+    color: #ff0000;
+  }
+  
+  .pdf-download {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .pdf-download:hover {
+    background-color: #0056b3;
+  }
+  

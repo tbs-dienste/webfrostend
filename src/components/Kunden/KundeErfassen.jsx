@@ -20,11 +20,9 @@ const KundeErfassen = () => {
   const [kühlung, setKühlung] = useState('');
   const [gehäuse, setGehäuse] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
-  const isFormDisabled = true;
-  const popupVisible = true;
+
 
   const handleKontaktAufnehmen = () => {
-
     const newKunde = {
       vorname,
       nachname,
@@ -45,23 +43,21 @@ const KundeErfassen = () => {
         gehäuse,
         auftragsBeschreibung // Auftragsbeschreibung für Diashow/Webseite oder andere Zwecke
       },
+      rechnungGestellt: false, // Standardmäßig auf false setzen
+      rechnungBezahlt: false
     };
 
+
     axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
-      .then(response => {
-        console.log('Kontaktdaten erfolgreich gesendet:', response.data);
-        // Überprüfen, ob die Antwort eine ID enthält
-        if (response.data.data && response.data.data.id) {
-          window.location.href = '/dankesnachricht'; // Hier wird die Weiterleitung zur Dankesnachricht-Seite durchgeführt
-        } else {
-          console.error('Fehler: Die Antwort enthält keine ID.');
-          alert('Fehler: Die Antwort enthält keine ID. Bitte versuchen Sie es erneut.');
-        }
+      .then(() => {
+        console.log('Kontaktdaten erfolgreich gesendet.');
+        window.location.href = '/dankesnachricht';
       })
       .catch(error => {
         console.error('Fehler beim Senden der Kontaktdaten:', error);
         alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
       });
+
   };
 
   return (
@@ -76,7 +72,7 @@ const KundeErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -86,7 +82,7 @@ const KundeErfassen = () => {
             id="nachname"
             value={nachname}
             onChange={(e) => setNachname(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -96,7 +92,7 @@ const KundeErfassen = () => {
             id="strasseHausnummer"
             value={strasseHausnummer}
             onChange={(e) => setStrasseHausnummer(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -106,7 +102,7 @@ const KundeErfassen = () => {
             id="postleitzahl"
             value={postleitzahl}
             onChange={(e) => setPostleitzahl(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -116,7 +112,7 @@ const KundeErfassen = () => {
             id="ort"
             value={ort}
             onChange={(e) => setOrt(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -126,7 +122,7 @@ const KundeErfassen = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -136,7 +132,7 @@ const KundeErfassen = () => {
             id="telefon"
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -146,7 +142,7 @@ const KundeErfassen = () => {
             id="mobil"
             value={mobil}
             onChange={(e) => setMobil(e.target.value)}
-            disabled={isFormDisabled}
+
           />
         </div>
         <div className="formular-gruppe">
@@ -155,7 +151,7 @@ const KundeErfassen = () => {
             id="geschlecht"
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
-            disabled={isFormDisabled}
+
           >
             <option value="">Bitte auswählen</option>
             <option value="männlich">Männlich</option>
@@ -173,7 +169,7 @@ const KundeErfassen = () => {
             id="auftragsTyp"
             value={auftragsTyp}
             onChange={(e) => setAuftragsTyp(e.target.value)}
-            disabled={isFormDisabled}
+
           >
             <option value="">Bitte auswählen</option>
             <option value="Webseite">Webseite</option>
@@ -192,7 +188,7 @@ const KundeErfassen = () => {
                 id="budget"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                disabled={isFormDisabled}
+
                 onKeyPress={(e) => {
                   // Nur Zahlen zulassen
                   const charCode = e.which ? e.which : e.keyCode;
@@ -208,7 +204,7 @@ const KundeErfassen = () => {
                 id="zweck"
                 value={zweck}
                 onChange={(e) => setZweck(e.target.value)}
-                disabled={isFormDisabled}
+
               >
                 <option value="">Bitte auswählen</option>
                 <option value="Gaming">Gaming</option>
@@ -225,7 +221,7 @@ const KundeErfassen = () => {
                 id="speicherkapazität"
                 value={speicherkapazität}
                 onChange={(e) => setSpeicherkapazität(e.target.value)}
-                disabled={isFormDisabled}
+
               />
             </div>
             <div className="formular-gruppe">
@@ -235,7 +231,7 @@ const KundeErfassen = () => {
                 id="ram"
                 value={ram}
                 onChange={(e) => setRam(e.target.value)}
-                disabled={isFormDisabled}
+
               />
             </div>
             <div className="formular-gruppe">
@@ -244,7 +240,7 @@ const KundeErfassen = () => {
                 id="kühlung"
                 value={kühlung}
                 onChange={(e) => setKühlung(e.target.value)}
-                disabled={isFormDisabled}
+
               >
                 <option value="">Bitte auswählen</option>
                 <option value="Luft">Luft</option>
@@ -257,7 +253,7 @@ const KundeErfassen = () => {
                 id="gehäuse"
                 value={gehäuse}
                 onChange={(e) => setGehäuse(e.target.value)}
-                disabled={isFormDisabled}
+
               >
                 <option value="">Bitte auswählen</option>
                 <option value="RGB">RGB</option>
@@ -274,23 +270,14 @@ const KundeErfassen = () => {
               id="auftragsBeschreibung"
               value={auftragsBeschreibung}
               onChange={(e) => setAuftragsBeschreibung(e.target.value)}
-              disabled={isFormDisabled}
+
             ></textarea>
           </div>
         )}
         {/* End Inputfelder für Diashow/Webseite Auftrag */}
       </div>
-      <button onClick={handleKontaktAufnehmen} disabled={isFormDisabled}>Kontakt aufnehmen</button>
-      {popupVisible && <div className="popup-overlay"></div>}
-      {popupVisible && (
-        <div className="popup">
-          <div className="popup-content">
-          <span className="popup-icon">⚠️</span>
-            <h3>Entschuldigung!</h3>
-            <p>Der Service ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.</p>
-          </div>
-        </div>
-      )}
+      <button onClick={handleKontaktAufnehmen} >Kontakt aufnehmen</button>
+
     </div>
   );
 };
