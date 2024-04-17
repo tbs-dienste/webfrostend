@@ -22,6 +22,8 @@
     }
   }
 
+ 
+
   .kunden-liste {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -51,6 +53,8 @@
         display: flex;
         flex-wrap: wrap;
 
+        
+
         .kunden-button {
           padding: 8px 16px;
           margin-right: 10px;
@@ -66,6 +70,7 @@
           &:hover {
             background-color: #08664e;
           }
+          
         }
       }
     }

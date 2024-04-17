@@ -1,3 +1,4 @@
+// Kunden.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -92,6 +93,14 @@ const Kunden = () => {
                     <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
                       Kunde löschen
                     </button>
+                    {/* Anzeige des Rechnungsstatus */}
+                    <div className={`rechnungs-status ${kunde.rechnungGestellt ? 'rechnung-gestellt' : ''}`}>
+                      {kunde.rechnungGestellt ? (
+                        kunde.rechnungBezahlt ? 'Bezahlt' : 'Offen'
+                      ) : (
+                        'Entwurf'
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
