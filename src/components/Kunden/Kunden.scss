@@ -53,7 +53,31 @@
         display: flex;
         flex-wrap: wrap;
 
-        
+        .rechnungs-status {
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 10px;
+        width: fit-content;
+
+        // Standardstil für den Status "Entwurf"
+        &.entwurf {
+          background-color: #95af2c!important;
+          color: #fff; // Weißer Text für grauen Hintergrund
+        }
+
+        // Stil für den Status "Offen"
+        &.offen {
+          background-color: #ffc107; // Gelb für offene Rechnungen
+          color: #000; // Schwarzer Text für gelben Hintergrund
+        }
+
+        // Stil für den Status "Bezahlt"
+        &.bezahlt {
+          background-color: #28a745; // Grün für bezahlte Rechnungen
+          color: #fff; // Weißer Text für grünen Hintergrund
+        }
+      }
 
         .kunden-button {
           padding: 8px 16px;

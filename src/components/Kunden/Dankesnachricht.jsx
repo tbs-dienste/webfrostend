@@ -12,7 +12,7 @@ const Dankesnachricht = () => {
         Ein Mitarbeiter wird sich innerhalb der nächsten 48 Stunden mit Ihnen in Verbindung setzen, um Ihre Anfrage zu besprechen und Ihnen bei allem, was Sie benötigen, behilflich zu sein.
       </p>
       <p>
-        In der Zwischenzeit stehen wir Ihnen gerne zur Verfügung, wenn Sie weitere Fragen haben. Sie können uns per E-Mail unter kontakt@unternehmen.com oder telefonisch unter +49 123 456789 erreichen.
+        In der Zwischenzeit stehen wir Ihnen gerne zur Verfügung, wenn Sie weitere Fragen haben. Sie können uns per E-Mail unter kontakt@tbsolutions.com kontaktieren.
       </p>
       <p>
         Nochmals vielen Dank für Ihr Interesse an unserem Unternehmen. Wir freuen uns darauf, von Ihnen zu hören!
