@@ -50,7 +50,7 @@ function Navbar() {
             }
             
             <NavItem to="/flyer" text="Flyer" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/team" text="Team" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+           {/* <NavItem to="/team" text="Team" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             {/* Hier wird das Warenkorb-Icon nur beim Warenkorb-Element angezeigt */}
             <NavItem to="/warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
 
