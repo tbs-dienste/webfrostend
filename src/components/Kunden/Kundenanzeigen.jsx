@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './KundenAnzeigen.scss';
+import jsPDF from 'jspdf';
+import logo from '../../logo.png';
 
 const KundenAnzeigen = () => {
   const { id } = useParams();
@@ -59,6 +61,76 @@ const KundenAnzeigen = () => {
   const handleZuruck = () => {
     window.location.href = `/kunden`; // Hier entsprechend die URL anpassen
   };
+
+  const generateConfirmationPDF = () => {
+    if (selectedKunde) {
+      const pdf = new jsPDF();
+  
+      // Logo hinzufügen
+      const logoImg = new Image();
+      logoImg.src = logo; // Pfade zum Logo anpassen
+      logoImg.onload = function() {
+        pdf.addImage(logoImg, 'PNG', 10, 10, 50, 20); // Position und Größe des Logos anpassen
+  
+        // Willkommenstext
+        const welcomeText = `
+          Herzlich Willkommen, ${selectedKunde.vorname} ${selectedKunde.nachname}!
+        `;
+        pdf.setFontSize(14);
+        pdf.text(welcomeText, 20, 40);
+  
+        // Dankes-Text
+        const thanksText = `
+          Vielen Dank, dass Sie unsere Dienste in Anspruch genommen haben. 
+          Wir schätzen Ihr Vertrauen und freuen uns darauf, Ihnen auch in Zukunft zur Verfügung zu stehen.
+        `;
+        pdf.setFontSize(12);
+        pdf.text(thanksText, 20, 60);
+  
+        // Titel
+        const title = `Kundenbestätigung`;
+        pdf.setFontSize(18);
+        pdf.text(title, 105, 90, null, null, 'center');
+  
+        // Kundeninformationen
+        const customerInfo = `
+          Kundennummer: ${selectedKunde.kundennummer}
+          Vorname: ${selectedKunde.vorname}
+          Nachname: ${selectedKunde.nachname}
+          Strasse und Hausnummer: ${selectedKunde.strasseHausnummer}
+          Postleitzahl: ${selectedKunde.postleitzahl}
+          Ort: ${selectedKunde.ort}
+          Email: ${selectedKunde.email}
+          Telefon: ${selectedKunde.telefon}
+          Mobil: ${selectedKunde.mobil}
+          Geschlecht: ${selectedKunde.geschlecht}
+          Auftragstyp: ${selectedKunde.auftragsTyp}
+          Auftragsbeschreibung: ${selectedKunde.auftragsBeschreibung}
+        `;
+        pdf.setFontSize(12);
+        pdf.text(customerInfo, 20, 110);
+  
+        // Datum
+        const date = new Date().toLocaleDateString();
+        pdf.text(`Datum: ${date}`, 20, pdf.internal.pageSize.height - 20);
+  
+        // Speichern des PDFs
+        pdf.save(`Kundenbestätigung_${selectedKunde.vorname}_${selectedKunde.nachname}.pdf`);
+      };
+  
+      // Fehlerbehandlung
+      logoImg.onerror = function() {
+        console.error('Fehler beim Laden des Logo-Bildes.');
+      };
+  
+      pdf.onerror = function(error) {
+        console.error('Fehler beim Generieren des PDFs:', error);
+      };
+    }
+  };
+  
+  
+  
 
 
   const handleRechnungStellen = async () => {
@@ -122,6 +194,7 @@ const KundenAnzeigen = () => {
             )}
 
           </div>
+          <button onClick={generateConfirmationPDF}>Kundenbestätigung generieren</button>
         </div>
 
       ) : (

@@ -2,13 +2,18 @@ import React, { useState } from 'react';
 import './Team.scss'; // Import des SCSS-Stylesheets
 import musterbild from './musterbild.jpg'; // Import des Musterfotos
 import timo from './timo.jpg';
+import Sven from './sven.jpeg';
+import klaus from './klaus.jpg';
+import laura from './laura.jpeg';
+import michael from './michael.jpeg';
 
 function Team() {
     const [searchTerm, setSearchTerm] = useState('');
     const teamMembers = [
-        { id: 1, firstName: 'Klaus', lastName: 'Steiner', email: 'klaus.steiner@tbsolutions.com', role: 'Inhaber' },
-        { id: 2, firstName: 'Laura', lastName: 'Binder', email: 'laura.binder@tbsolutions.com', role: 'Co-Inhaberin' },
-        { id: 3, firstName: 'Michael', lastName: 'Schmidt', email: 'michael.schmidt@tbsolutions.com', role: 'Projektmanager' },
+        { id: 1, firstName: 'Klaus', lastName: 'Steiner', email: 'klaus.steiner@tbsolutions.com', image: klaus, role: 'Inhaber' },
+        { id: 1, firstName: 'Sven', lastName: 'Jensen', email: 'sven.jensen@tbsolutions.com', image: Sven, role: 'Inhaber' },
+        { id: 2, firstName: 'Laura', lastName: 'Binder', email: 'laura.binder@tbsolutions.com',image: laura, role: 'Co-Inhaberin' },
+        { id: 3, firstName: 'Michael', lastName: 'Schmidt', email: 'michael.schmidt@tbsolutions.com',image: michael, role: 'Projektmanager' },
         { id: 4, firstName: 'Timo', lastName: 'Buchmeier', email: 'timo.buchmeier@tbsolutions.com', image: timo, role: 'Entwickler' },
         { id: 5, firstName: 'Sarah', lastName: 'Müller', email: 'sarah.mueller@tbsolutions.com', role: 'Designer' },
         { id: 6, firstName: 'Max', lastName: 'Schulz', email: 'max.schulz@tbsolutions.com', role: 'Marketingexperte' },
