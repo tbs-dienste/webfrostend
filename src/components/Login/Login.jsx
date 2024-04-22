@@ -13,16 +13,16 @@ const Login = ({ onLogin }) => {
     const salt = await genSalt(10); // Die Zahl 10 gibt die Anzahl der Runden für das Salting an
 
     // Hash das eingegebene Passwort mit dem generierten Salz
-    const hashedPassword = await hash('LöwenRadierenBunt1!', salt);
+    const hashedPassword = await hash(password, salt);
 
     // Hier sollten die gehashten Passwörter mit den gespeicherten gehashten Passwörtern verglichen werden
     // Statt direkten Vergleich verwenden wir hier zur Demonstration eine feste Zuordnung von Benutzerdaten und Passwort-Hashes
     const users = {
       'Gast': '$2a$10$LpVTwdp/.WyDoZR8RqIhwORV05y4AMGph9g0qrLZ0wr4cPByVZ8LO', // Beispielhaft gehashtes Passwort für 'Gast'
-      'admin': hashedPassword // Das Passwort "LöwenRadierenBunt1!" gehasht und gesalzen
+      'admin': '$2a$10$kzo8d3zFjKD1m5HcsPBVzOCGImHqRcF6eUbvfgYkgnWs11qHvJyri' // Beispielhaft gehashtes Passwort für 'admin'
     };
 
-    if (users[username] && await compare('LöwenRadierenBunt1!', users[username])) { // Vergleiche die Passwörter
+    if (users[username] && await compare(password, users[username])) { // Vergleiche die Passwörter
       if (username === 'admin') {
         localStorage.setItem('isAdmin', true);
         window.location.href = '/anmeldungen';
@@ -32,6 +32,9 @@ const Login = ({ onLogin }) => {
     } else {
       alert('Falscher Benutzername oder Passwort.');
     }
+
+    // Setze das Passwort-Feld zurück
+    setPassword('');
   };
 
   return (
