@@ -1,10 +1,7 @@
-// App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
-
 import Home from './components/Home/Home';
-
 import Login from './components/Login/Login';
 import Dienstleistungen from './components/Dienstleistung/Dienstleistungen';
 import ServiceDetail from './components/ServiceDetail/ServiceDetail';
@@ -25,230 +22,41 @@ import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
 
-
-
-
 const isAdmin = localStorage.getItem('isAdmin');
 
 function App() {
-
   const kunden = JSON.parse(localStorage.getItem('kunden')) || [];
+
   return (
     <div className="App">
       <Router>
+        <Navbar />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Navbar />
-                <Home />
-              </>
-            }
-          />
-          <Route
-            path="/kunden/:id"
-            element={
-              <>
-                <Navbar />
-                <KundenAnzeigen kunden={kunden} />
-              </>
-            }
-          />
-
-          <Route
-            path="/dankesnachricht"
-            element={
-              <>
-                <Navbar />
-                <Dankesnachricht />
-              </>
-            }
-          />
-
-
-
-          <Route
-            path="/kurse"
-            element={
-              <>
-                <Navbar />
-                <KursListe />
-              </>
-            }
-          />
-
-          <Route
-            path="/dienstleistungen"
-            element={
-              <>
-                <Navbar />
-                <Dienstleistungen />
-              </>
-            }
-          />
-          <Route
-            path="/zeiterfassung/:id"
-            element={
-              <>
-                <Navbar />
-                <TimeTracker />
-
-              </>
-            }
-          />
-
-          <Route
-            path="/rechnung/:id"
-            element={
-              <>
-                <Navbar />
-                <Rechnung />
-
-              </>
-            }
-          />
-
-
-
-
-          <Route
-            path="/kunden"
-            element={
-              <>
-                <Navbar />
-                <Kunden />
-              </>
-            }
-          />
-
-          <Route
-            path="/kundeerfassen"
-            element={
-              <>
-                <Navbar />
-                <KundeErfassen />
-              </>
-            }
-          />
-
-          <Route
-            path="/mitarbeitererfassen"
-            element={
-              <>
-                <Navbar />
-                <MitarbeiterErfassen />
-              </>
-            }
-          />
-
-          <Route
-            path="/mitarbeiter"
-            element={
-              <>
-                <Navbar />
-                <MitarbeiterAnzeigen />
-              </>
-            }
-          />
-
-          <Route
-            path="/werbung"
-            element={
-              <>
-                <Navbar />
-                <WarumWerbungMachen />
-              </>
-            }
-          />
-
-
-
-          <Route path="/service/:id"
-            element={
-              <>
-                <Navbar />
-                <ServiceDetail />
-              </>
-            }
-          />
-
-          <Route path="/kundenscanner"
-            element={
-              <>
-                <Navbar />
-                <KundenScanner />
-              </>
-            }
-          />
-          <Route path="/warenkorb"
-            element={
-              <>
-                <Navbar />
-                <Warenkorb />
-              </>
-            }
-          />
-
-<Route path="/gutscheine-liste"
-            element={
-              <>
-                <Navbar />
-                <AlleGutscheine />
-              </>
-            }
-          />
-          <Route path="/gutschein"
-            element={
-              <>
-                <Navbar />
-                <GutscheinBestellung />
-              </>
-            }
-          />
-           <Route path="/flyer"
-            element={
-              <>
-                <Navbar />
-                <Flyer />
-              </>
-            }
-          />
-
-<Route path="/team"
-            element={
-              <>
-                <Navbar />
-                <Team />
-              </>
-            }
-          />
-
-
-
-
+          <Route path="/" element={<Home />} />
+          <Route path="/kunden/:id" element={<KundenAnzeigen kunden={kunden} />} />
+          <Route path="/dankesnachricht" element={<Dankesnachricht />} />
+          <Route path="/kurse" element={<KursListe />} />
+          <Route path="/dienstleistungen" element={<Dienstleistungen />} />
+          <Route path="/werbung" element={<WarumWerbungMachen />} />
+          <Route path="/service/:id" element={<ServiceDetail />} />
+          <Route path="/kundenscanner" element={<KundenScanner />} />
+          <Route path="/warenkorb" element={<Warenkorb />} />
+          <Route path="/gutscheine-liste" element={<AlleGutscheine />} />
+          <Route path="/gutschein" element={<GutscheinBestellung />} />
+          <Route path="/flyer" element={<Flyer />} />
+          <Route path="/team" element={<Team />} />
           {isAdmin ? (
-            <Route
-              path="/anmeldungen"
-              element={
-                <>
-                  <Navbar />
-
-                </>
-              }
-            />
+            <>
+              <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
+              <Route path="/rechnung/:id" element={<Rechnung />} />
+              <Route path="/kunden" element={<Kunden />} />
+              <Route path="/kundeerfassen" element={<KundeErfassen />} />
+              <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
+              <Route path="/mitarbeiter" element={<MitarbeiterAnzeigen />} />
+            </>
           ) : (
-            <Route
-              path="/login"
-              element={
-                <>
-                  <Navbar />
-                  <Login />
-                </>
-              }
-            />
+            <Route path="/login" element={<Login />} />
           )}
-
         </Routes>
       </Router>
     </div>
