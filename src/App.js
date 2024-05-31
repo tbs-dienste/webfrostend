@@ -22,6 +22,7 @@ import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
 
+
 const isAdmin = localStorage.getItem('isAdmin');
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/gutschein" element={<GutscheinBestellung />} />
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/team" element={<Team />} />
+         
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />

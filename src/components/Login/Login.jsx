@@ -1,41 +1,27 @@
 import React, { useState } from 'react';
 import './Login.scss';
-import { hash, genSalt, compare } from 'bcryptjs'; // Importiere die bcryptjs-Bibliothek für das Hashing
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-
-    // Generiere ein zufälliges Salz
-    const salt = await genSalt(10); // Die Zahl 10 gibt die Anzahl der Runden für das Salting an
-
-    // Hash das eingegebene Passwort mit dem generierten Salz
-    const hashedPassword = await hash(password, salt);
-
-    // Hier sollten die gehashten Passwörter mit den gespeicherten gehashten Passwörtern verglichen werden
-    // Statt direkten Vergleich verwenden wir hier zur Demonstration eine feste Zuordnung von Benutzerdaten und Passwort-Hashes
-    const users = {
-      'Gast': '$2a$10$LpVTwdp/.WyDoZR8RqIhwORV05y4AMGph9g0qrLZ0wr4cPByVZ8LO', // Beispielhaft gehashtes Passwort für 'Gast'
-      'admin': '$2a$10$kzo8d3zFjKD1m5HcsPBVzOCGImHqRcF6eUbvfgYkgnWs11qHvJyri' // Beispielhaft gehashtes Passwort für 'admin'
-    };
-
-    if (users[username] && await compare(password, users[username])) { // Vergleiche die Passwörter
-      if (username === 'admin') {
-        localStorage.setItem('isAdmin', true);
-        window.location.href = '/anmeldungen';
-      } else {
-        window.location.href = '/anmeldung';
-      }
+  
+    // Fest codierte Benutzerdaten für den Administratorzugriff
+    const adminUsername = 'admin';
+    const adminPassword = '123';
+  
+    // Überprüfen, ob Benutzername und Passwort übereinstimmen
+    if (username === adminUsername && password === adminPassword) {
+      // Wenn übereinstimmen, rufen Sie die Funktion onLogin mit isAdmin=true auf
+      onLogin(username, true);
     } else {
+      // Andernfalls geben Sie eine Fehlermeldung aus
       alert('Falscher Benutzername oder Passwort.');
     }
-
-    // Setze das Passwort-Feld zurück
-    setPassword('');
   };
+  
 
   return (
     <div className="login-container">

@@ -4,6 +4,7 @@ import './ServiceDetail.scss';
 import webseite from './webseite.jpeg'; // Pfad zum Bild anpassen
 import pc from './pc.jpeg'; // Pfad zum Bild anpassen
 import diashow from './diashow.jpeg'; // Pfad zum Bild anpassen
+import musik from './musik.jpeg';
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -24,6 +25,11 @@ const ServiceDetail = () => {
     3: { 
       img: pc,
       title: "Gaming PC zusammenbauen", 
+      description: "Details zur Gaming PC Zusammenstellung: Teilen Sie uns einfach Ihr Budget mit, und wir stellen Ihnen einen passenden Gaming PC im gewünschten Budgetbereich zusammen. Bereit für grenzenloses Gaming-Vergnügen, abgestimmt auf Ihre Vorlieben und finanziellen Möglichkeiten." 
+    },
+    4: { 
+      img: musik,
+      title: "Musik", 
       description: "Details zur Gaming PC Zusammenstellung: Teilen Sie uns einfach Ihr Budget mit, und wir stellen Ihnen einen passenden Gaming PC im gewünschten Budgetbereich zusammen. Bereit für grenzenloses Gaming-Vergnügen, abgestimmt auf Ihre Vorlieben und finanziellen Möglichkeiten." 
     }
   };
