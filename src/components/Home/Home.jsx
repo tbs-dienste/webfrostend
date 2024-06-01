@@ -8,8 +8,8 @@ import Musik from './musik.jpeg';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slides, setSlides] = useState([
-    { id: 1, image: Programmieren, title: "Webseite Programmieren", description: "Lassen Sie uns Ihre Webseite programmieren" },
+  const [slides] = useState([
+    { id: 1, image: Programmieren, title: "Website Programmieren", description: "Lassen Sie uns Ihre Website programmieren" },
     { id: 2, image: DiaShow, title: "Diashow erstellen", description: "Lassen Sie uns Ihre wertvollen Erinnerungen in einer professionellen Diashow zum Leben erwecken." },
     { id: 3, image: GamingPC, title: "Gaming PC", description: "Lassen Sie sich beraten für einen Optimalen Passenden Gaming PC der in Ihrem Budget liegt" },
     { id: 4, image: Musik, title: "Musik und Sounddesign", description: "Erhalten Sie eine persöhnliche Musik und Soundeffekte passen zu Ihrem Projekt." },
@@ -23,11 +23,23 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  const prevSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? slides.length - 1 : prevSlide - 1));
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+  };
+
+  const setSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
   return (
-    <div className="container">
+    <div className="home-container">
       <div className="slide-container">
         <div className="slides" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-          {slides.map((slide, index) => (
+          {slides.map((slide) => (
             <div key={slide.id} className="slide">
               <img src={slide.image} alt={slide.title} className="slide-image" />
               <div className="slide-content">
@@ -37,6 +49,17 @@ const Home = () => {
             </div>
           ))}
         </div>
+        <button className="prev" onClick={prevSlide}>&#10094;</button>
+        <button className="next" onClick={nextSlide}>&#10095;</button>
+      </div>
+      <div className="dots">
+        {slides.map((_, index) => (
+          <span
+            key={index}
+            className={`dot ${currentSlide === index ? 'active' : ''}`}
+            onClick={() => setSlide(index)}
+          ></span>
+        ))}
       </div>
       <div className='text-container'>
         <div className='titel'>
@@ -52,6 +75,9 @@ const Home = () => {
           <p>
             Kontaktieren Sie uns noch heute, um mehr über unsere Dienstleistungen zu erfahren und wie wir Ihnen helfen können.
           </p>
+        </div>
+        <div className="button-container">
+          <button className="button">Mehr Erfahren</button>
         </div>
       </div>
     </div>
