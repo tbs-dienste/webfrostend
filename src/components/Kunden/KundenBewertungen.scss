@@ -1,0 +1,69 @@
+.bewertung-app {
+    text-align: center;
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+
+    .bewertungen-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        .bewertung-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+
+            &:hover {
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            p {
+                margin: 10px 0;
+                font-size: 1.2em;
+            }
+        }
+    }
+
+    .bewertung-detail {
+        margin-top: 30px;
+        text-align: left;
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+
+            strong {
+                font-weight: bold;
+            }
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+}

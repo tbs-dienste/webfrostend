@@ -21,7 +21,8 @@ import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
 import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
-
+import KundenBewertungen from './components/Kunden/KundenBewertungen';
+import BewertungDetail from './components/Kunden/BewertungDetail'; // Neue Zeile für BewertungDetail
 
 const isAdmin = localStorage.getItem('isAdmin');
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="/kunden/:id" element={<KundenAnzeigen kunden={kunden} />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
+          <Route path="/kundeerfassen" element={<KundeErfassen />} />
           <Route path="/dienstleistungen" element={<Dienstleistungen />} />
           <Route path="/werbung" element={<WarumWerbungMachen />} />
           <Route path="/service/:id" element={<ServiceDetail />} />
@@ -46,6 +48,8 @@ function App() {
           <Route path="/gutschein" element={<GutscheinBestellung />} />
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
+          <Route path="/bewertung/:id" element={<BewertungDetail />} /> // Neue Zeile für BewertungDetail
          
           {isAdmin ? (
             <>

@@ -42,6 +42,7 @@ function Navbar() {
             <NavItem to="/kundeerfassen" text="Kunde Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             
             <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kundenbewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             { /* 
             <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/gutschein" text="Gutscheine" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
