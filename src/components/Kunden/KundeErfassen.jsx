@@ -48,7 +48,7 @@ const KundeErfassen = () => {
     };
 
 
-    axios.post('https://backend-1-cix8.onrender.com/api/v1/kunden', newKunde)
+    axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde)
       .then(() => {
         console.log('Kontaktdaten erfolgreich gesendet.');
         window.location.href = '/dankesnachricht';

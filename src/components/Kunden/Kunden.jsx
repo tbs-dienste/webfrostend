@@ -14,7 +14,7 @@ const Kunden = () => {
   useEffect(() => {
     async function fetchKunden() {
       try {
-        const response = await axios.get('https://backend-1-cix8.onrender.com/api/v1/kunden');
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden');
         console.log('API-Daten:', response.data.data);
         setKunden(response.data.data);
       } catch (error) {

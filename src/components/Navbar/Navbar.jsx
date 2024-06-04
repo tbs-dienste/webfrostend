@@ -3,28 +3,18 @@ import { Link } from 'react-router-dom';
 import './Navbar.scss';
 import { FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
 
-function Navbar() {
+function Navbar({ isAdmin, onLogout }) {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [warenkorbCount, setWarenkorbCount] = useState(0); // State für die Anzahl der Artikel im Warenkorb
+  const [warenkorbCount, setWarenkorbCount] = useState(0);
 
   useEffect(() => {
-    const adminStatus = localStorage.getItem('isAdmin');
-    setIsAdmin(adminStatus === 'true');
-
-    // Lade die Anzahl der Artikel im Warenkorb aus dem localStorage
     const savedWarenkorb = JSON.parse(localStorage.getItem('warenkorb')) || [];
     setWarenkorbCount(savedWarenkorb.length);
   }, []);
 
   const toggleBurgerMenu = () => {
     setBurgerMenuActive(!burgerMenuActive);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('isAdmin');
-    window.location.href = '/';
   };
 
   return (
@@ -40,20 +30,8 @@ function Navbar() {
             <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kundeerfassen" text="Kunde Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            
             <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kundenbewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            { /* 
-            <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/gutschein" text="Gutscheine" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            */
-
-            }
-            
-            {/*<NavItem to="/flyer" text="Flyer" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />*/}
-           {/* <NavItem to="/team" text="Team" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            {/* Hier wird das Warenkorb-Icon nur beim Warenkorb-Element angezeigt */}
-            {/*<NavItem to="/warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />*/}
 
             {isAdmin ? (
               <>
@@ -63,7 +41,7 @@ function Navbar() {
                 <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <p className='admin'>Admin</p>
-                <button className="logout-button" onClick={handleLogout}>
+                <button className="logout-button" onClick={onLogout}>
                   <FaSignOutAlt />
                 </button>
               </>
@@ -77,7 +55,6 @@ function Navbar() {
   );
 }
 
-// Hier wird die Komponente so angepasst, dass sie entweder Text oder ein Icon rendern kann
 function NavItem({ to, text, icon, count, currentPath, onClick }) {
   return (
     <li>
@@ -85,7 +62,7 @@ function NavItem({ to, text, icon, count, currentPath, onClick }) {
         {to === "/warenkorb" ? (
           <span>
             {icon}
-            {count > 0 && <span className="warenkorb-count">{count}</span>} {/* Anzeigen der Anzahl im Warenkorb */}
+            {count > 0 && <span className="warenkorb-count">{count}</span>}
           </span>
         ) : (
           text

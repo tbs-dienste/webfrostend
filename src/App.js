@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
@@ -22,20 +22,31 @@ import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
 import KundenBewertungen from './components/Kunden/KundenBewertungen';
-import BewertungDetail from './components/Kunden/BewertungDetail'; // Neue Zeile für BewertungDetail
+import BewertungDetail from './components/Kunden/BewertungDetail';
 
-const isAdmin = localStorage.getItem('isAdmin');
+const App = () => {
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
 
-function App() {
+  const onLogin = (isAdmin) => {
+    localStorage.setItem('isAdmin', isAdmin);
+    setIsAdmin(isAdmin);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
+    setIsAdmin(false);
+  };
+
   const kunden = JSON.parse(localStorage.getItem('kunden')) || [];
 
   return (
     <div className="App">
       <Router>
-        <Navbar />
+        <Navbar isAdmin={isAdmin} onLogout={handleLogout} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen kunden={kunden} />} />
+          <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
           <Route path="/kundeerfassen" element={<KundeErfassen />} />
@@ -49,24 +60,23 @@ function App() {
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/team" element={<Team />} />
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
-          <Route path="/bewertung/:id" element={<BewertungDetail />} /> // Neue Zeile für BewertungDetail
-         
+          <Route path="/bewertung/:id" element={<BewertungDetail />} />
+
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
-              <Route path="/kunden" element={<Kunden />} />
-              <Route path="/kundeerfassen" element={<KundeErfassen />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<MitarbeiterAnzeigen />} />
+              
             </>
           ) : (
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login onLogin={onLogin} />} />
           )}
         </Routes>
       </Router>
     </div>
   );
-}
+};
 
 export default App;

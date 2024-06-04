@@ -7,21 +7,17 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-  
-    // Fest codierte Benutzerdaten für den Administratorzugriff
+
     const adminUsername = 'admin';
     const adminPassword = '123';
-  
-    // Überprüfen, ob Benutzername und Passwort übereinstimmen
+
     if (username === adminUsername && password === adminPassword) {
-      // Wenn übereinstimmen, rufen Sie die Funktion onLogin mit isAdmin=true auf
-      onLogin(username, true);
+      onLogin(true);
+      window.location.href = "/kunden"
     } else {
-      // Andernfalls geben Sie eine Fehlermeldung aus
       alert('Falscher Benutzername oder Passwort.');
     }
   };
-  
 
   return (
     <div className="login-container">
