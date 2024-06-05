@@ -1,0 +1,64 @@
+.bewertung-formular {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .formular-gruppe {
+        margin-bottom: 20px;
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .react-stars {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+        }
+    }
+
+    button[type="submit"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}

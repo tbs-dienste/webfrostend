@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactStars from 'react-stars';
-
+import { Link } from 'react-router-dom'; // Import des Link-Elements für die Navigation
 import './KundenBewertungen.scss';
 
 const KundenBewertungen = () => {
@@ -29,10 +29,6 @@ const KundenBewertungen = () => {
         return (total / bewertungen.length).toFixed(2);
     };
 
-    const handleBewertungClick = (id) => {
-        window.location.href = `/bewertung/${id}`;
-    };
-
     return (
         <div className="bewertung-app">
             <h1>Durchschnittliche Bewertung:</h1>
@@ -48,7 +44,7 @@ const KundenBewertungen = () => {
             </div>
             <div className="bewertungen-container">
                 {bewertungen.map(bewertung => (
-                    <div key={bewertung.id} className="bewertung-box" onClick={() => handleBewertungClick(bewertung.id)}>
+                    <Link to={`/bewertung/${bewertung.id}`} key={bewertung.id} className="bewertung-box">
                         <p>{bewertung.gesamt}</p>
                         <ReactStars
                             count={5}
@@ -57,7 +53,7 @@ const KundenBewertungen = () => {
                             color2={'#ffd700'}
                             edit={false}
                         />
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>

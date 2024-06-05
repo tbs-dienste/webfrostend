@@ -23,6 +23,7 @@ import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
 import KundenBewertungen from './components/Kunden/KundenBewertungen';
 import BewertungDetail from './components/Kunden/BewertungDetail';
+import KundeBewertungformular from './components/Kunden/KundeBewertungformular';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -61,6 +62,7 @@ const App = () => {
           <Route path="/team" element={<Team />} />
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
+          <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
 
           {isAdmin ? (
             <>
