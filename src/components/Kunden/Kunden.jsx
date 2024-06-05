@@ -34,7 +34,7 @@ const Kunden = () => {
 
   const handleDeleteConfirmation = async () => {
     try {
-      await axios.delete(`https://backend-1-cix8.onrender.com/api/v1/kunden/${customerIdToDelete}`);
+      await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerIdToDelete}`);
       const updatedKunden = kunden.filter(kunde => kunde.id !== customerIdToDelete);
       setKunden(updatedKunden);
       setShowConfirmationModal(false);
