@@ -1,13 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
 .navbar {
-  height: 100px;
-  background-color: #0a8e77;
+  z-index: 1000;
+  height: 80px;
+  background-color: #3498db; // Helle Hintergrundfarbe
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Schatten für Tiefe
   position: relative;
   display: flex;
   align-items: center;
-  font-family: 'Montserrat', sans-serif;
-  overflow-x: auto; // Horizontales Scrollen ermöglichen
+  font-family: 'Roboto', sans-serif; // Moderne Schriftart
+
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .menu-icon {
     display: none;
@@ -15,7 +21,7 @@
     div {
       width: 30px;
       height: 3px;
-      background-color: #fbdf84;
+      background-color: #ffffff; // Weiße Burger-Icon-Farbe
       margin: 6px 0;
       transition: 0.4s;
     }
@@ -44,24 +50,27 @@
       list-style-type: none;
 
       li:not(:last-child) {
-        margin-right: 60px;
+        margin-right: 40px; // Abstand zwischen den Links
       }
 
       a {
-        height: 100px;
+        height: 80px;
         display: flex;
         align-items: center;
         padding: 0 20px;
-        font-size: 23px;
-        font-weight: 400;
-        color: #fbdf84;
+        font-size: 16px; // Schriftgröße der Links
+        font-weight: 600; // Fettschrift für bessere Lesbarkeit
+        color: #ffffff; // Weiße Schriftfarbe für Links
         text-decoration: none;
         position: relative;
+        transition: color 0.3s ease;
 
         &.active {
-          color: #0a8e77;
-          background-color: #fbdf84;
-          font-weight: 500;
+          color: #f39c12; // Akzentfarbe für aktive Links
+        }
+
+        &:hover {
+          color: #f39c12; // Farbwechsel beim Hovern über Links
         }
       }
     }
@@ -76,12 +85,13 @@
     .nav-elements {
       position: absolute;
       right: 0;
-      top: 100px;
-      background-color: #0a8e77;
+      top: 80px;
+      background-color: #3498db;
       width: 0;
-      height: calc(100vh - 100px);
+      height: calc(100vh - 80px);
       transition: all 0.3s ease-in;
-      overflow-y: auto; // Vertikales Scrollen ermöglichen
+      overflow: hidden;
+      overflow-y: auto;
 
       &.active {
         width: 100%;
@@ -91,7 +101,7 @@
 
           li {
             margin-right: unset;
-            margin-top: 22px;
+            margin-top: 20px;
           }
         }
       }
