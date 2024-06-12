@@ -1,50 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
 import { useParams } from 'react-router-dom';
-import './TimeTracker.scss'; // Importiere das SCSS-Styling
+import axios from 'axios';
+import './TimeTracker.scss';
 
 const TimeTracker = () => {
   const { id } = useParams(); // Lese die ID aus der URL
 
-  // Nutze die ID des Kunden, um die Arbeitszeiten für jeden Kunden separat zu speichern
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [isTracking, setIsTracking] = useState(false);
   const [workSessions, setWorkSessions] = useState([]);
   const [hourlyRate, setHourlyRate] = useState(20);
   const [isEditing, setIsEditing] = useState(false);
-  const [showInputFields, setShowInputFields] = useState(false);
-  const [currentSession, setCurrentSession] = useState(null); // Hinzugefügt, um die aktuelle Sitzung zu verfolgen
+  const [editingSession, setEditingSession] = useState(null);
 
   useEffect(() => {
-    const storedSessions = localStorage.getItem(`workSessions_${id}`); // Verwende die ID des Kunden im localStorage-Key
-    const storedHourlyRate = localStorage.getItem(`hourlyRate_${id}`);
-    if (storedSessions) {
-      setWorkSessions(JSON.parse(storedSessions));
-    }
-    if (storedHourlyRate) {
-      setHourlyRate(parseFloat(storedHourlyRate));
-    }
-  }, [id]); // Füge die ID als Abhängigkeit hinzu
+    fetchWorkSessions();
+  }, [id]);
 
-  useEffect(() => {
-    if (isTracking) {
-      const interval = setInterval(() => {
-        // Aktualisiere die laufende Arbeitszeit alle 1 Minute
-        setCurrentSession(getCurrentSession());
-      }, 60000); // 60000 Millisekunden = 1 Minute
-      return () => clearInterval(interval);
+  const fetchWorkSessions = async () => {
+    try {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/work_sessions/${id}`);
+      setWorkSessions(response.data.data);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Arbeitszeitsitzungen:', error);
     }
-  }, [isTracking]);
+  };
 
   const getCurrentSession = () => {
     if (startTime) {
       const currentDuration = (new Date() - startTime) / (1000 * 60 * 60);
       const sessionPrice = roundTo5Cents(currentDuration * hourlyRate);
       return {
-        id: Date.now(),
-        start: startTime.toLocaleString(),
-        end: new Date().toLocaleString(),
+        customerId: id,
+        startTime: startTime.toISOString(),
+        endTime: new Date().toISOString(),
         duration: currentDuration.toFixed(2),
         price: sessionPrice.toFixed(2)
       };
@@ -57,131 +48,178 @@ const TimeTracker = () => {
     setIsTracking(true);
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     setIsTracking(false);
     setEndTime(new Date());
     if (startTime) {
       const currentSession = getCurrentSession();
-      setCurrentSession(null); // Setze die aktuelle Sitzung zurück
       if (currentSession) {
-        const newWorkSessions = [...workSessions, currentSession].sort((a, b) => new Date(a.start) - new Date(b.start));
-        localStorage.setItem(`workSessions_${id}`, JSON.stringify(newWorkSessions));
-        setWorkSessions(newWorkSessions);
+        try {
+          await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/work_sessions', currentSession);
+          fetchWorkSessions();
+        } catch (error) {
+          console.error('Fehler beim Speichern der Arbeitszeitsitzung:', error);
+        }
       }
     }
   };
 
-  const handleSaveSession = () => {
-    if (startTime && endTime) {
-      const duration = (endTime - startTime) / (1000 * 60 * 60); // Dauer in Stunden
-      const sessionPrice = roundTo5Cents(duration * hourlyRate);
-      const newSession = { id: Date.now(), start: startTime.toLocaleString(), end: endTime.toLocaleString(), duration: duration.toFixed(2), price: sessionPrice.toFixed(2) };
-      const newWorkSessions = [...workSessions, newSession].sort((a, b) => new Date(a.start) - new Date(b.start));
-      localStorage.setItem(`workSessions_${id}`, JSON.stringify(newWorkSessions));
-      setWorkSessions(newWorkSessions);
-      setStartTime(null);
-      setEndTime(null);
-      setShowInputFields(false);
+  const handleEdit = session => {
+    setEditingSession(session);
+    setIsEditing(true);
+  };
+
+  const handleDelete = async sessionId => {
+    try {
+      await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/work_sessions/${sessionId}`);
+      fetchWorkSessions();
+    } catch (error) {
+      console.error('Fehler beim Löschen der Arbeitszeitsitzung:', error);
     }
   };
 
-  const handleDeleteSession = (id) => {
-    const updatedSessions = workSessions.filter(session => session.id !== id);
-    localStorage.setItem(`workSessions_${id}`, JSON.stringify(updatedSessions));
-    setWorkSessions(updatedSessions);
+  const handleSaveSession = async () => {
+    if (editingSession) {
+      try {
+        await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/work_sessions/${editingSession.id}`, editingSession);
+        setIsEditing(false);
+        setEditingSession(null);
+        fetchWorkSessions();
+      } catch (error) {
+        console.error('Fehler beim Aktualisieren der Arbeitszeitsitzung:', error);
+      }
+    }
   };
 
   const handleSaveHourlyRate = () => {
-    localStorage.setItem(`hourlyRate_${id}`, hourlyRate.toString());
     setIsEditing(false); // Beenden des Bearbeitungsmodus nach dem Speichern
-  };
-
-  const handleAddWorkTime = () => {
-    setShowInputFields(true);
   };
 
   const totalAmount = roundTo5Cents(workSessions.reduce((total, session) => total + parseFloat(session.price), 0));
   const totalDuration = workSessions.reduce((total, session) => total + parseFloat(session.duration), 0);
 
   // PDF-Generierungsfunktion
-  const generatePDF = () => {
-    return (
-      <Document>
-        <Page>
-          <View>
-            {workSessions.map((session, index) => (
-              <Text key={index}>{session.start} - {session.end} - {session.duration} Stunden - {session.price} €</Text>
-            ))}
-            {currentSession && (
-              <Text>{currentSession.start} - {currentSession.end} - {currentSession.duration} Stunden - {currentSession.price} €</Text>
-            )}
-            <Text>Gesamt: {totalAmount.toFixed(2)} €</Text>
+  const generatePDF = () => (
+    <Document>
+      <Page style={styles.body}>
+        <Text style={styles.header}>Arbeitszeit-Report</Text>
+        {workSessions.map((session, index) => (
+          <View key={index} style={styles.section}>
+            <Text>Start: {new Date(session.startTime).toLocaleString()}</Text>
+            <Text>Ende: {new Date(session.endTime).toLocaleString()}</Text>
+            <Text>Dauer: {session.duration} Stunden</Text>
+            <Text>Preis: {session.price} €</Text>
           </View>
-        </Page>
-      </Document>
-    );
-  };
+        ))}
+        <View style={styles.section}>
+          <Text>Gesamtdauer: {totalDuration.toFixed(2)} Stunden</Text>
+          <Text>Gesamtpreis: {totalAmount.toFixed(2)} €</Text>
+        </View>
+      </Page>
+    </Document>
+  );
 
   return (
-    <div className="time-tracker-container">
-      <h1>Time Tracker</h1>
-      <div className="buttons-container">
-        {!showInputFields && !isTracking ? (
-          <>
-            <button onClick={handleStart}>Start</button>
-            <button onClick={handleAddWorkTime}>Arbeitszeit nachtragen</button>
-          </>
-        ) : (
-          <>
-            {showInputFields && (
-              <>
-                <input type="datetime-local" value={startTime ? startTime.toISOString().slice(0, -8) : ''} onChange={(e) => setStartTime(new Date(e.target.value))} />
-                <input type="datetime-local" value={endTime ? endTime.toISOString().slice(0, -8) : ''} onChange={(e) => setEndTime(new Date(e.target.value))} />
-                <button onClick={handleSaveSession}>Speichern</button>
-              </>
-            )}
-            {!showInputFields && isTracking ? (
-              <button onClick={handleStop}>Stop</button>
-            ) : null}
-          </>
-        )}
-        <button onClick={() => setIsEditing(true)}>Stundensatz bearbeiten</button>
-        {isEditing && (
-          <div className="edit-rate-container">
-            <input type="number" value={hourlyRate} onChange={(e) => setHourlyRate(parseFloat(e.target.value))} />
-            <button onClick={handleSaveHourlyRate}>Speichern</button>
-          </div>
-        )}
+    <div className="time-tracker">
+      <h1>Arbeitszeiterfassung</h1>
+      <div>
+        <button onClick={isTracking ? handleStop : handleStart}>
+          {isTracking ? 'Stop' : 'Start'}
+        </button>
       </div>
-      <PDFDownloadLink document={generatePDF()} fileName="work_sessions.pdf" className="pdf-download-link">
-        {({ blob, url, loading, error }) =>
-          loading ? 'PDF wird generiert...' : 'PDF herunterladen'
-        }
-      </PDFDownloadLink>
-      <div className="work-sessions-container">
-        <h2>Arbeitssitzungen</h2>
+      {isTracking && (
+        <div>
+          <h2>Laufende Sitzung</h2>
+          <p>Start: {new Date(startTime).toLocaleString()}</p>
+          <p>Aktuelle Dauer: {((new Date() - startTime) / (1000 * 60 * 60)).toFixed(2)} Stunden</p>
+          <p>Aktueller Preis: {roundTo5Cents(((new Date() - startTime) / (1000 * 60 * 60)) * hourlyRate).toFixed(2)} €</p>
+        </div>
+      )}
+      <div>
+        <h2>Arbeitszeitsitzungen</h2>
         <ul>
           {workSessions.map(session => (
             <li key={session.id}>
-              {session.start} - {session.end} - {session.duration} Stunden - {session.price} € 
-              <button onClick={() => handleDeleteSession(session.id)}>Löschen</button>
+              <p>Start: {new Date(session.startTime).toLocaleString()}</p>
+              <p>Ende: {new Date(session.endTime).toLocaleString()}</p>
+              <p>Dauer: {session.duration} Stunden</p>
+              <p>Preis: {session.price} €</p>
+              <button onClick={() => handleEdit(session)}>Bearbeiten</button>
+              <button onClick={() => handleDelete(session.id)}>Löschen</button>
             </li>
           ))}
-          {currentSession && (
-            <li>
-              {currentSession.start} - {currentSession.end} - {currentSession.duration} Stunden - {currentSession.price} € 
-            </li>
-          )}
         </ul>
-        <p><strong>Gesamtarbeitszeit:</strong> {totalDuration.toFixed(2)} Stunden</p>
-        <p><strong>Gesamtpreis:</strong> {totalAmount.toFixed(2)} €</p>
       </div>
+      {isEditing && editingSession && (
+        <div>
+          <h2>Arbeitszeitsitzung bearbeiten</h2>
+          <label>Startzeit:</label>
+          <input
+            type="datetime-local"
+            value={new Date(editingSession.startTime).toISOString().slice(0, -1)}
+            onChange={e => setEditingSession({ ...editingSession, startTime: new Date(e.target.value).toISOString() })}
+          />
+          <label>Endzeit:</label>
+          <input
+            type="datetime-local"
+            value={new Date(editingSession.endTime).toISOString().slice(0, -1)}
+            onChange={e => setEditingSession({ ...editingSession, endTime: new Date(e.target.value).toISOString() })}
+          />
+          <label>Dauer:</label>
+          <input
+            type="number"
+            value={editingSession.duration}
+            onChange={e => setEditingSession({ ...editingSession, duration: parseFloat(e.target.value) })}
+          />
+          <label>Preis:</label>
+          <input
+            type="number"
+            value={editingSession.price}
+            onChange={e => setEditingSession({ ...editingSession, price: parseFloat(e.target.value) })}
+          />
+          <button onClick={handleSaveSession}>Speichern</button>
+        </div>
+      )}
+      <div>
+        <h2>Stundensatz</h2>
+        {isEditing ? (
+          <div>
+            <input
+              type="number"
+              value={hourlyRate}
+              onChange={e => setHourlyRate(parseFloat(e.target.value))}
+            />
+            <button onClick={handleSaveHourlyRate}>Speichern</button>
+          </div>
+        ) : (
+          <div>
+            <p>Stundensatz: {hourlyRate} €</p>
+            <button onClick={() => setIsEditing(true)}>Bearbeiten</button>
+          </div>
+        )}
+      </div>
+      <PDFDownloadLink document={generatePDF()} fileName="arbeitszeit-report.pdf">
+        {({ loading }) => (loading ? 'PDF wird erstellt...' : 'PDF herunterladen')}
+      </PDFDownloadLink>
     </div>
   );
 };
 
-const roundTo5Cents = (amount) => {
-  return Math.round(amount * 20) / 20;
+const styles = StyleSheet.create({
+  body: {
+    padding: 10
+  },
+  header: {
+    fontSize: 18,
+    marginBottom: 10
+  },
+  section: {
+    marginBottom: 10
+  }
+});
+
+const roundTo5Cents = num => {
+  return Math.round(num * 20) / 20;
 };
 
 export default TimeTracker;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactStars from 'react-stars';
-import { Link } from 'react-router-dom'; // Import des Link-Elements für die Navigation
+import { Link } from 'react-router-dom';
 import './KundenBewertungen.scss';
 
 const KundenBewertungen = () => {
@@ -33,14 +33,16 @@ const KundenBewertungen = () => {
         <div className="bewertung-app">
             <h1>Durchschnittliche Bewertung:</h1>
             <div className="durchschnitt-rating">
-                <ReactStars
-                    count={5}
-                    value={parseFloat(durchschnitt)}
-                    size={50}
-                    color2={'#ffd700'}
-                    edit={false}
-                />
-                <span>{durchschnitt}</span>
+                <span>
+                    <ReactStars
+                        count={5}
+                        value={parseFloat(durchschnitt)}
+                        size={50}
+                        color2={'#ffd700'}
+                        edit={false}
+                    />
+                    {durchschnitt}
+                </span>
             </div>
             <div className="bewertungen-container">
                 {bewertungen.map(bewertung => (

@@ -1,9 +1,29 @@
 .bewertung-app {
     text-align: center;
+    font-family: Arial, sans-serif;
+    color: #333;
 
     h1 {
         font-size: 2.5em;
         margin-bottom: 20px;
+        color: #007BFF;
+    }
+
+    .durchschnitt-rating {
+        margin-bottom: 20px;
+
+        span {
+            font-size: 1.5em;
+            margin-left: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .react-stars {
+                margin: 0;
+            }
+        }
     }
 
     .bewertungen-container {
@@ -13,12 +33,14 @@
 
         .bewertung-box {
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 20px;
             margin: 10px;
             width: 200px;
             cursor: pointer;
             transition: box-shadow 0.3s;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
             &:hover {
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -38,6 +60,7 @@
         h2 {
             font-size: 2em;
             margin-bottom: 20px;
+            color: #007BFF;
         }
 
         p {
