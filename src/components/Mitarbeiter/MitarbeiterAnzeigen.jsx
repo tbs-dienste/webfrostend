@@ -111,6 +111,9 @@ const MitarbeiterAnzeigen = () => {
                             <strong>Benutzername:</strong> {mitarbeiter.benutzername}
                         </div>
                         <div className="detail">
+                            <strong>Passwort:</strong> {mitarbeiter.passwort}
+                        </div>
+                        <div className="detail">
                             <strong>IBAN:</strong> {mitarbeiter.iban}
                         </div>
                         <div className="detail">
