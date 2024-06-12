@@ -4,6 +4,7 @@ import './MitarbeiterAnzeigen.scss'; // Stil für diese Komponente
 import { useParams } from 'react-router-dom'; // Importiere useParams
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import logo from '../../logo.png';
 
 const MitarbeiterAnzeigen = () => {
     const [mitarbeiter, setMitarbeiter] = useState(null);
@@ -34,46 +35,48 @@ const MitarbeiterAnzeigen = () => {
         if (mitarbeiter) {
             const doc = new jsPDF();
 
-            // Format the letter
-            doc.setFontSize(12);
+            // Add logo image
+            const img = new Image();
+            img.src = logo;
+            doc.addImage(img, 'PNG', 10, 10, 50, 20);
 
-            // Add address
-            doc.text(`Firma XYZ`, 20, 20);
-            doc.text(`Breitenrainstrasse 63`, 20, 26);
-            doc.text(`3013 Bern`, 20, 32);
-            doc.text(`Schweiz`, 20, 38);
+            // Add company address
+            doc.setFontSize(12);
+            doc.text(`TBs Solutions`, 170, 20, { align: 'right' });
+            doc.text(`3013 Bern`, 170, 26, { align: 'right' });
+            doc.text(`Schweiz`, 170, 32, { align: 'right' });
 
             // Add date
             const today = new Date();
             const dateStr = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`;
-            doc.text(dateStr, 160, 20);
+            doc.text(dateStr, 150, 50, { align: 'right' });
 
             // Add recipient address
-            doc.text(`${mitarbeiter.vorname} ${mitarbeiter.nachname}`, 20, 60);
-            doc.text(`${mitarbeiter.adresse}`, 20, 66);
-            doc.text(`${mitarbeiter.postleitzahl} ${mitarbeiter.ort}`, 20, 72);
+            doc.text(`${mitarbeiter.vorname} ${mitarbeiter.nachname}`, 20, 70);
+            doc.text(`${mitarbeiter.adresse}`, 20, 76);
+            doc.text(`${mitarbeiter.postleitzahl} ${mitarbeiter.ort}`, 20, 82);
+
+            // Add subject
+            doc.setFontSize(14);
+            doc.text(`Betreff: Ihre Anstellung bei TBs Solutions`, 20, 100);
 
             // Add greeting
-            doc.text(`Sehr geehrte/r Frau/Herr ${mitarbeiter.nachname},`, 20, 100);
+            doc.setFontSize(12);
+            doc.text(`Sehr geehrte/r Frau/Herr ${mitarbeiter.nachname},`, 20, 120);
 
             // Add body
-            doc.text(`Wir freuen uns, Ihnen mitteilen zu können, dass Sie als neuer Mitarbeiter bei uns anfangen werden.`, 20, 110);
-            doc.text(`Hier sind Ihre Zugangsdaten für das interne System:`, 20, 116);
-            doc.text(`Benutzername: ${mitarbeiter.benutzername}`, 20, 122);
-            doc.text(`Passwort: ${mitarbeiter.passwort}`, 20, 128);
-
-            // Add further text
-            doc.text(`Bitte bewahren Sie diese Informationen sicher auf.`, 20, 138);
-            doc.text(`Bei Fragen stehen wir Ihnen jederzeit zur Verfügung.`, 20, 144);
-            doc.text(`Wir freuen uns auf eine erfolgreiche Zusammenarbeit.`, 20, 150);
+            const textBody = `Wir freuen uns, Ihnen mitteilen zu können, dass Sie als neuer Mitarbeiter bei uns anfangen werden. Hier sind Ihre Zugangsdaten für das interne System:\n\nBenutzername: ${mitarbeiter.benutzername}\nPasswort: ${mitarbeiter.passwort}\n\nBitte bewahren Sie diese Informationen sicher auf. Bei Fragen stehen wir Ihnen jederzeit zur Verfügung. Wir freuen uns auf eine erfolgreiche Zusammenarbeit.`;
+            doc.text(textBody, 20, 130, { maxWidth: 170 });
 
             // Add closing
-            doc.text(`Mit freundlichen Grüßen,`, 20, 170);
-            doc.text(`Firma XYZ`, 20, 176);
+            doc.text(`Mit freundlichen Grüßen,`, 20, 190);
+            doc.text(`Timo Blumer`, 20, 212);
+            doc.text(`TBs Solutions`, 20, 218);
 
             doc.save(`Mitarbeiter_Brief_${mitarbeiter.id}.pdf`);
         }
     };
+
 
     return (
         <div className="mitarbeiter-details">
