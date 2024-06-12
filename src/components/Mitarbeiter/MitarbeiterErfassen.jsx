@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import JsBarcode from 'jsbarcode';
-import axios from 'axios'; // Importieren Sie Axios
+import axios from 'axios';
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
@@ -18,6 +17,16 @@ const MitarbeiterErfassen = () => {
   const [mitarbeiternummer, setMitarbeiternummer] = useState('');
   const [land, setLand] = useState('CH');
   const [iban, setIban] = useState('CH');
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'tur', name: 'Türkei', flag: '🇹🇷'}
+  ];
 
   useEffect(() => {
     const storedMitarbeiter = localStorage.getItem('mitarbeiter');
@@ -27,21 +36,19 @@ const MitarbeiterErfassen = () => {
   }, []);
 
   const handleIbanChange = (e) => {
-    let input = e.target.value.toUpperCase(); // Convert input to uppercase
-    input = input.replace(/\D/g, ''); // Allow only digits
+    let input = e.target.value.toUpperCase();
+    input = input.replace(/\D/g, '');
 
-    // Format the IBAN according to the pattern "CHXX XXXX XXXX XXXX XXXX X"
     let formattedIban = land;
     for (let i = 0; i < input.length; i++) {
       if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
-        formattedIban += ' '; // Add space after the first two and then after every subsequent block of four digits
+        formattedIban += ' ';
       }
       formattedIban += input[i];
     }
 
-    // Check if the IBAN length meets the conditions
     if (formattedIban.length >= 26) {
-      formattedIban = formattedIban.substring(0, 26); // Trim the IBAN to 26 characters to disallow further input
+      formattedIban = formattedIban.substring(0, 26);
     }
 
     setIban(formattedIban);
@@ -50,10 +57,22 @@ const MitarbeiterErfassen = () => {
   const handleLandChange = (e) => {
     const selectedLand = e.target.value;
     setLand(selectedLand);
-    // Update IBAN placeholder based on selected country
     setIban(selectedLand);
   };
 
+  const handleLanguageChange = (code) => {
+    setSelectedLanguages((prevSelectedLanguages) => {
+      if (prevSelectedLanguages.includes(code)) {
+        return prevSelectedLanguages.filter((lang) => lang !== code);
+      } else {
+        if (prevSelectedLanguages.length < 4) {
+          return [...prevSelectedLanguages, code];
+        } else {
+          return prevSelectedLanguages;
+        }
+      }
+    });
+  };
 
   const handleMitarbeiterHinzufügen = async () => {
     const newMitarbeiter = {
@@ -67,20 +86,18 @@ const MitarbeiterErfassen = () => {
       mobil,
       benutzername,
       passwort,
-      iban: land, // oder `iban`, je nachdem, wie Sie Ihre Daten modelliert haben
+      iban: land,
+      sprachen: selectedLanguages,
     };
-  
+
     try {
-      const response = await axios.post('https://backend-1-cix8.onrender.com/api/v1/mitarbeiter', newMitarbeiter);
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter', newMitarbeiter);
       console.log('Response:', response.data);
       window.location = "/mitarbeiter";
     } catch (error) {
       console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
-      // Hier können Sie Fehlerbehandlung hinzufügen, z.B. eine Benachrichtigung für den Benutzer anzeigen
     }
   };
-  
-
 
   return (
     <div className="kunde-erfassen">
@@ -176,48 +193,67 @@ const MitarbeiterErfassen = () => {
             id="benutzername"
             value={benutzername}
             onChange={(e) => setBenutzername(e.target.value)}
-          />
+            />
+          </div>
+  
+          <div className="formular-gruppe">
+            <label htmlFor="passwort">Passwort:</label>
+            <input
+              type="password"
+              id="passwort"
+              value={passwort}
+              onChange={(e) => setPasswort(e.target.value)}
+            />
+          </div>
+  
+          <div className="formular-gruppe">
+            <label htmlFor="land">Land:</label>
+            <select
+              id="land"
+              value={land}
+              onChange={handleLandChange}
+            >
+              <option value="CH">Schweiz</option>
+              <option value="DE">Deutschland</option>
+              <option value="AT">Österreich</option>
+              <option value="UK">England</option>
+            </select>
+          </div>
+  
+          <div className="formular-gruppe">
+            <label htmlFor="iban">Iban:</label>
+            <input
+              type="text"
+              id="iban"
+              value={iban}
+              onChange={handleIbanChange}
+            />
+          </div>
+  
+          <div className="formular-gruppe">
+            <label>Sprachen:</label>
+            <div className="languages">
+              {languages.map((language) => (
+                <div key={language.code} className="language-checkbox">
+                  <input
+                    type="checkbox"
+                    id={`language-${language.code}`}
+                    checked={selectedLanguages.includes(language.code)}
+                    onChange={() => handleLanguageChange(language.code)}
+                  />
+                  <label htmlFor={`language-${language.code}`}>
+                    <span className="flag">{language.flag}</span> {language.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
+  
+          <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
         </div>
-
-        <div className="formular-gruppe">
-          <label htmlFor="passwort">Passwort:</label>
-          <input
-            type="password"
-            id="passwort"
-            value={passwort}
-            onChange={(e) => setPasswort(e.target.value)}
-          />
-        </div>
-
-        <div className="formular-gruppe">
-          <label htmlFor="land">Land:</label>
-          <select
-            id="land"
-            value={land}
-            onChange={handleLandChange}
-          >
-            <option value="CH">Schweiz</option>
-            <option value="DE">Deutschland</option>
-            <option value="AT">Österreich</option>
-            <option value="UK">England</option>
-          </select>
-        </div>
-
-        <div className="formular-gruppe">
-          <label htmlFor="iban">Iban:</label>
-          <input
-            type="text"
-            id="iban"
-            value={iban}
-            onChange={handleIbanChange}
-          />
-        </div>
-
-
-        <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
       </div>
-    </div>
-  );
-};
-
-export default MitarbeiterErfassen;
+    );
+  };
+  
+  export default MitarbeiterErfassen;
+  

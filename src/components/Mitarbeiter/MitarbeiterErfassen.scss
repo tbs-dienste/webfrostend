@@ -1,55 +1,94 @@
+$primary-color: #004080;
+$secondary-color: #ffffff;
+$accent-color: #ffcc00;
+$background-color: #f0f4f8;
+$text-color: #333333;
+$border-color: #cccccc;
+$input-focus-color: #66afe9;
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+}
+
 .kunde-erfassen {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: $secondary-color;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
   h2 {
     text-align: center;
-    margin-bottom: 20px;
+    color: $primary-color;
+    margin-bottom: 1.5rem;
   }
 
   .formular {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
 
     .formular-gruppe {
-      margin-bottom: 15px;
       display: flex;
       flex-direction: column;
+      gap: 0.5rem;
 
       label {
         font-weight: bold;
-        margin-bottom: 5px;
+        color: $primary-color;
       }
 
       input,
       select {
-        padding: 8px;
-        border: 1px solid #ccc;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid $border-color;
         border-radius: 5px;
-        font-size: 16px;
+        transition: border-color 0.3s;
+
+        &:focus {
+          border-color: $input-focus-color;
+          outline: none;
+        }
       }
 
-      select {
-        cursor: pointer;
+      .languages {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .language-checkbox {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          input {
+            margin: 0;
+          }
+
+          .flag {
+            font-size: 1.5rem;
+          }
+        }
       }
     }
 
     button {
-      padding: 10px 20px;
+      padding: 0.75rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: $secondary-color;
+      background-color: $primary-color;
       border: none;
       border-radius: 5px;
-      background-color: #007bff;
-      color: #fff;
-      font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
 
       &:hover {
-        background-color: #0056b3;
+        background-color: darken($primary-color, 10%);
       }
     }
   }

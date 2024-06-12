@@ -24,6 +24,7 @@ import Team from './components/Team/Team';
 import KundenBewertungen from './components/Kunden/KundenBewertungen';
 import BewertungDetail from './components/Kunden/BewertungDetail';
 import KundeBewertungformular from './components/Kunden/KundeBewertungformular';
+import Mitarbeiter from './components/Mitarbeiter/Mitarbeiter';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -69,7 +70,8 @@ const App = () => {
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
-              <Route path="/mitarbeiter" element={<MitarbeiterAnzeigen />} />
+              <Route path="/mitarbeiter" element={<Mitarbeiter />} />
+              <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
               
             </>
           ) : (
