@@ -17,7 +17,7 @@ import KundenAnzeigen from './components/Kunden/Kundenanzeigen';
 import KursListe from './components/Kurse/KursListe';
 import KundenScanner from './components/Kunden/KundenScanner';
 import Warenkorb from './components/Warenkorb/Warenkorb';
-import GutscheinBestellung from './components/Gutschein/GutscheinBestellen';
+import GutscheinErstellung from './components/Gutschein/GutscheinErstellung';
 import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
@@ -58,7 +58,7 @@ const App = () => {
           <Route path="/kundenscanner" element={<KundenScanner />} />
           <Route path="/warenkorb" element={<Warenkorb />} />
           <Route path="/gutscheine-liste" element={<AlleGutscheine />} />
-          <Route path="/gutschein" element={<GutscheinBestellung />} />
+          <Route path="/gutschein" element={<GutscheinErstellung />} />
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/team" element={<Team />} />
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />

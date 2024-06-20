@@ -1,0 +1,71 @@
+.alle-gutscheine {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #343a40;
+    }
+  
+    ul {
+      list-style-type: none;
+      padding: 0;
+  
+      li {
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+  
+        span {
+          font-size: 18px;
+          color: #495057;
+          flex: 1;
+  
+          &:first-child {
+            font-weight: bold;
+          }
+  
+          &.gutschein-aktiviert {
+            font-weight: bold;
+  
+            &.aktiviert {
+              color: #28a745; // Grün für "aktiviert"
+            }
+  
+            &.nicht-aktiviert {
+              color: #dc3545; // Rot für "nicht aktiviert"
+            }
+          }
+        }
+  
+        button {
+          padding: 8px 15px;
+          font-size: 14px;
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+  
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+      }
+    }
+  }
+  

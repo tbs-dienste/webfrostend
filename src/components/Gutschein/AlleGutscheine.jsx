@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './AlleGutscheine.scss'; // Stelle sicher, dass der Pfad zur SCSS-Datei korrekt ist
 
 const AlleGutscheine = () => {
   const [gutscheine, setGutscheine] = useState([]);
@@ -19,6 +20,26 @@ const AlleGutscheine = () => {
     fetchGutscheine();
   }, []);
 
+  const handleAktivieren = async (id) => {
+    try {
+      const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}`, {
+        gutscheinaktiviert: true
+      });
+      // Gutschein aktualisieren und lokal den Aktivierungsstatus setzen
+      const updatedGutscheine = gutscheine.map(gutschein => {
+        if (gutschein.id === id) {
+          return { ...gutschein, gutscheinaktiviert: true };
+        }
+        return gutschein;
+      });
+      setGutscheine(updatedGutscheine);
+      alert('Gutschein erfolgreich aktiviert.');
+    } catch (error) {
+      console.error(error);
+      alert('Es gab ein Problem beim Aktivieren des Gutscheins. Bitte versuchen Sie es später erneut.');
+    }
+  };
+
   return (
     <div className="alle-gutscheine">
       <h2>Alle verfügbaren Gutscheincodes:</h2>
@@ -26,7 +47,13 @@ const AlleGutscheine = () => {
         {gutscheine.map(gutschein => (
           <li key={gutschein.id}>
             <span>Gutscheincode: {gutschein.gutscheincode}</span>
-            <span>Betrag: {gutschein.betrag} CHF</span>
+            <span>Betrag: {gutschein.guthaben} CHF</span>
+            <span className={`gutschein-aktiviert ${gutschein.gutscheinaktiviert ? 'aktiviert' : 'nicht-aktiviert'}`}>
+              {gutschein.gutscheinaktiviert ? 'Aktiviert' : 'Nicht aktiviert'}
+            </span>
+            {!gutschein.gutscheinaktiviert && (
+              <button onClick={() => handleAktivieren(gutschein.id)}>Aktivieren</button>
+            )}
           </li>
         ))}
       </ul>

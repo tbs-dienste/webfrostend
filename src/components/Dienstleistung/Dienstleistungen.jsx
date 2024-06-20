@@ -9,7 +9,7 @@ const Dienstleistungen = () => {
     { id: 3, title: "Gaming PC zusammenbauen", description: "Bereit für das ultimative Gaming-Erlebnis? Lassen Sie sich von uns beraten, um Ihren eigenen Gaming PC zu bauen. Maßgeschneidert nach Ihren Wünschen für maximale Leistung und unvergleichliche Gaming-Sessions. " },
     { id: 4, title: "Musik", description: "Bereit für das ultimative Gaming-Erlebnis? Lassen Sie sich von uns beraten, um Ihren eigenen Gaming PC zu bauen. Maßgeschneidert nach Ihren Wünschen für maximale Leistung und unvergleichliche Gaming-Sessions. " }
   ];
-
+  
   return (
     <div className="services-container">
       <h1>Unsere Dienstleistungen</h1>

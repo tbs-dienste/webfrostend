@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Home.scss';
+import SimpleChatbot from '../Chatbot/SimpleChatbot';
 
 import Programmieren from './programmieren.png';
 import DiaShow from './diashow.jpg';
@@ -11,8 +12,8 @@ const Home = () => {
   const [slides] = useState([
     { id: 1, image: Programmieren, title: "Website Programmieren", description: "Lassen Sie uns Ihre Website programmieren" },
     { id: 2, image: DiaShow, title: "Diashow erstellen", description: "Lassen Sie uns Ihre wertvollen Erinnerungen in einer professionellen Diashow zum Leben erwecken." },
-    { id: 3, image: GamingPC, title: "Gaming PC", description: "Lassen Sie sich beraten für einen Optimalen Passenden Gaming PC der in Ihrem Budget liegt" },
-    { id: 4, image: Musik, title: "Musik und Sounddesign", description: "Erhalten Sie eine persöhnliche Musik und Soundeffekte passen zu Ihrem Projekt." },
+    { id: 3, image: GamingPC, title: "Gaming PC", description: "Lassen Sie sich beraten für einen optimal passenden Gaming PC, der in Ihrem Budget liegt." },
+    { id: 4, image: Musik, title: "Musik und Sounddesign", description: "Erhalten Sie persönliche Musik und Soundeffekte, die zu Ihrem Projekt passen." },
   ]);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ const Home = () => {
           <button className="button">Mehr Erfahren</button>
         </div>
       </div>
+      <SimpleChatbot />
     </div>
   );
 };

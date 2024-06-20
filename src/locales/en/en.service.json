@@ -1,0 +1,32 @@
+{
+    "Services": {
+      "title": "Our Services",
+      "services": [
+        {
+          "id": 1,
+          "title": "Website Development",
+          "description": "Let us develop your website.",
+          "linkText": "Learn more"
+        },
+        {
+          "id": 2,
+          "title": "Create Slideshow",
+          "description": "Let us bring your precious memories to life in a professional slideshow.",
+          "linkText": "Learn more"
+        },
+        {
+          "id": 3,
+          "title": "Build Gaming PC",
+          "description": "Ready for the ultimate gaming experience? Let us help you build your own gaming PC. Custom tailored for maximum performance and unparalleled gaming sessions.",
+          "linkText": "Learn more"
+        },
+        {
+          "id": 4,
+          "title": "Music",
+          "description": "Ready for the ultimate gaming experience? Let us help you build your own gaming PC. Custom tailored for maximum performance and unparalleled gaming sessions.",
+          "linkText": "Learn more"
+        }
+      ]
+    }
+  }
+  
