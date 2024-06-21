@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './AlleGutscheine.scss'; // Stelle sicher, dass der Pfad zur CSS-Datei korrekt ist
+import './AlleGutscheine.scss';
 
 const AlleGutscheine = () => {
     const [gutscheine, setGutscheine] = useState([]);
 
     useEffect(() => {
-        // Funktion zum Abrufen der Gutscheine von der API
         const fetchGutscheine = async () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine');
@@ -20,7 +19,6 @@ const AlleGutscheine = () => {
         fetchGutscheine();
     }, []);
 
-    // Funktion zum Aktivieren eines Gutscheins
     const handleAktivieren = async (id) => {
         try {
             await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}/activate`, { gutscheinaktiviert: true });
@@ -38,6 +36,18 @@ const AlleGutscheine = () => {
         }
     };
 
+    const handleLoeschen = async (id) => {
+        try {
+            await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}`);
+            const filteredGutscheine = gutscheine.filter(gutschein => gutschein.id !== id);
+            setGutscheine(filteredGutscheine);
+            alert('Gutschein erfolgreich gelöscht.');
+        } catch (error) {
+            console.error(error);
+            alert('Es gab ein Problem beim Löschen des Gutscheins. Bitte versuchen Sie es später erneut.');
+        }
+    };
+
     return (
         <div className="alle-gutscheine">
             <h2>Alle verfügbaren Gutscheincodes:</h2>
@@ -50,7 +60,10 @@ const AlleGutscheine = () => {
                             {gutschein.gutscheinaktiviert ? 'Aktiviert' : 'Nicht aktiviert'}
                         </span>
                         {!gutschein.gutscheinaktiviert && (
-                            <button onClick={() => handleAktivieren(gutschein.id)}>Aktivieren</button>
+                            <>
+                                <button onClick={() => handleAktivieren(gutschein.id)}>Aktivieren</button>
+                                <button onClick={() => handleLoeschen(gutschein.id)}>Löschen</button>
+                            </>
                         )}
                     </li>
                 ))}
