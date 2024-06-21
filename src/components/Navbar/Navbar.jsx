@@ -40,6 +40,7 @@ function Navbar({ isAdmin, onLogout }) {
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <NavItem to="/gutscheinscanner" text="Gutscheinscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <p className='admin'>Admin</p>
                 <button className="logout-button" onClick={onLogout}>
                   <FaSignOutAlt />

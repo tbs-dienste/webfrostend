@@ -9,7 +9,7 @@ const AlleGutscheine = () => {
         // Funktion zum Abrufen der Gutscheine von der API
         const fetchGutscheine = async () => {
             try {
-                const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine'); // Anpassen der URL entsprechend deines Backends
+                const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine');
                 setGutscheine(response.data.data);
             } catch (error) {
                 console.error(error);
@@ -23,10 +23,10 @@ const AlleGutscheine = () => {
     // Funktion zum Aktivieren eines Gutscheins
     const handleAktivieren = async (id) => {
         try {
-            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}`, { gutscheinaktiviert: true }); // Anpassen der URL entsprechend deines Backends
+            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}/activate`, { gutscheinaktiviert: true });
             const updatedGutscheine = gutscheine.map(gutschein => {
                 if (gutschein.id === id) {
-                    return { ...gutschein, gutscheinaktiviert: 1 };
+                    return { ...gutschein, gutscheinaktiviert: true };
                 }
                 return gutschein;
             });

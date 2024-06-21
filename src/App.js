@@ -25,6 +25,7 @@ import KundenBewertungen from './components/Kunden/KundenBewertungen';
 import BewertungDetail from './components/Kunden/BewertungDetail';
 import KundeBewertungformular from './components/Kunden/KundeBewertungformular';
 import Mitarbeiter from './components/Mitarbeiter/Mitarbeiter';
+import GutscheinScanner from './components/Gutschein/GutscheinScanner';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="/werbung" element={<WarumWerbungMachen />} />
           <Route path="/service/:id" element={<ServiceDetail />} />
           <Route path="/kundenscanner" element={<KundenScanner />} />
+          <Route path="/gutscheinscanner" element={<GutscheinScanner />} />
           <Route path="/warenkorb" element={<Warenkorb />} />
           <Route path="/gutscheine-liste" element={<AlleGutscheine />} />
           <Route path="/gutschein" element={<GutscheinErstellung />} />
