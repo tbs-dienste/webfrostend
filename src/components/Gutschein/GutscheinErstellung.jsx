@@ -3,18 +3,19 @@ import axios from 'axios';
 import './GutscheinErstellung.scss';
 
 const GutscheinErstellung = () => {
-  const [guthaben, setGuthaben] = useState('');
+  const [guthaben, setGuthaben] = useState(0); // Standardwert auf 0 setzen
   const [gueltigBis, setGueltigBis] = useState('');
-  const [gutscheinrabatt, setGutscheinrabatt] = useState(0);
+  const [gutscheinrabatt, setGutscheinrabatt] = useState('');
   const [gutscheinaktiviert, setGutscheinaktiviert] = useState(false);
   const [message, setMessage] = useState('');
 
   const handleCreateGutschein = async () => {
     try {
+      const rabattInDezimal = gutscheinrabatt ? parseFloat(gutscheinrabatt) / 100 : 0; // Umwandlung von 20 in 0.2
       const gutschein = {
         guthaben,
         gueltigBis,
-        gutscheinrabatt,
+        gutscheinrabatt: rabattInDezimal,
         gutscheinaktiviert
       };
 
@@ -24,6 +25,14 @@ const GutscheinErstellung = () => {
     } catch (error) {
       console.error('Fehler beim Erstellen des Gutscheins:', error);
       setMessage('Es gab ein Problem beim Erstellen des Gutscheins. Bitte versuchen Sie es später erneut.');
+    }
+  };
+
+  const handleGutscheinrabattChange = (e) => {
+    const value = e.target.value;
+    setGutscheinrabatt(value);
+    if (value) {
+      setGuthaben(0); // Setzt guthaben auf 0, wenn gutscheinrabatt gesetzt ist
     }
   };
 
@@ -38,6 +47,7 @@ const GutscheinErstellung = () => {
             id="guthaben"
             value={guthaben}
             onChange={(e) => setGuthaben(e.target.value)}
+            disabled={!!gutscheinrabatt} // Deaktiviert das Feld, wenn gutscheinrabatt gesetzt ist
           />
         </div>
         <div className="form-group">
@@ -50,12 +60,12 @@ const GutscheinErstellung = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="gutscheinrabatt">Gutscheinrabatt:</label>
+          <label htmlFor="gutscheinrabatt">Gutscheinrabatt (%):</label>
           <input
             type="number"
             id="gutscheinrabatt"
             value={gutscheinrabatt}
-            onChange={(e) => setGutscheinrabatt(parseFloat(e.target.value))}
+            onChange={handleGutscheinrabattChange}
           />
         </div>
         <div className="form-group">

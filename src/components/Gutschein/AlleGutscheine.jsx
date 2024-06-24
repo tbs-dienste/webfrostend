@@ -48,7 +48,7 @@ const AlleGutscheine = () => {
             setGutscheine(updatedGutscheine);
         } catch (error) {
             console.error(error);
-            alert('Es gab ein Problem beim Aktivieren des Gutscheins. Bitte versuchen Sie es später erneut.');
+            alert('Es gab ein Problem beim Deaktivieren des Gutscheins. Bitte versuchen Sie es später erneut.');
         }
     };
 
@@ -79,7 +79,11 @@ const AlleGutscheine = () => {
                     <li key={gutschein.id} className="gutschein-item">
                         <div className="gutschein-details">
                             <span>Gutscheincode: <strong>{gutschein.gutscheincode}</strong></span>
-                            <span>Betrag: <strong>{gutschein.guthaben} CHF</strong></span>
+                            {gutschein.gutscheinrabatt > 0 ? (
+                                <span>Rabatt: <strong>{gutschein.gutscheinrabatt * 100} %</strong></span> // Umrechnung in Prozent
+                            ) : (
+                                <span>Betrag: <strong>{gutschein.guthaben} CHF</strong></span>
+                            )}
                         </div>
                         <div className="switch-container">
                             <span className={`gutschein-aktiviert ${gutschein.gutscheinaktiviert ? 'aktiviert' : 'nicht-aktiviert'}`}>
