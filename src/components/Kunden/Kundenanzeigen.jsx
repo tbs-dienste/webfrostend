@@ -56,40 +56,45 @@ const KundenAnzeigen = () => {
     <div className="kunde-anzeigen-container">
       <div className="kunde-anzeigen">
         <h2>Kundendetails</h2>
-        {editMode ? (
-          // Eingabefelder im Bearbeitungsmodus anzeigen
-          <>
-            <input type="text" name="vorname" value={editedData.vorname} onChange={handleInputChange} />
-            <input type="text" name="nachname" value={editedData.nachname} onChange={handleInputChange} />
-            <input type="text" name="strasseHausnummer" value={editedData.strasseHausnummer} onChange={handleInputChange} />
-            <input type="text" name="postleitzahl" value={editedData.postleitzahl} onChange={handleInputChange} />
-            <input type="text" name="ort" value={editedData.ort} onChange={handleInputChange} />
-            <input type="text" name="email" value={editedData.email} onChange={handleInputChange} />
-            <input type="text" name="telefon" value={editedData.telefon} onChange={handleInputChange} />
-            <input type="text" name="mobil" value={editedData.mobil} onChange={handleInputChange} />
-            <input type="text" name="geschlecht" value={editedData.geschlecht} onChange={handleInputChange} />
-            <input type="text" name="auftragsTyp" value={editedData.auftragsTyp} onChange={handleInputChange} />
-            <input type="text" name="auftragsBeschreibung" value={editedData.auftragsBeschreibung} onChange={handleInputChange} />
-            <input type="text" name="preis" value={editedData.preis} onChange={handleInputChange} />
-            <input type="text" name="ip_adresse" value={editedData.ip_adresse} onChange={handleInputChange} />
-          </>
+        {selectedKunde ? (
+          // Prüfe, ob selectedKunde nicht null ist, bevor du seine Eigenschaften anzeigst
+          editMode ? (
+            // Eingabefelder im Bearbeitungsmodus anzeigen
+            <>
+              <input type="text" name="vorname" value={editedData.vorname} onChange={handleInputChange} />
+              <input type="text" name="nachname" value={editedData.nachname} onChange={handleInputChange} />
+              <input type="text" name="strasseHausnummer" value={editedData.strasseHausnummer} onChange={handleInputChange} />
+              <input type="text" name="postleitzahl" value={editedData.postleitzahl} onChange={handleInputChange} />
+              <input type="text" name="ort" value={editedData.ort} onChange={handleInputChange} />
+              <input type="text" name="email" value={editedData.email} onChange={handleInputChange} />
+              <input type="text" name="telefon" value={editedData.telefon} onChange={handleInputChange} />
+              <input type="text" name="mobil" value={editedData.mobil} onChange={handleInputChange} />
+              <input type="text" name="geschlecht" value={editedData.geschlecht} onChange={handleInputChange} />
+              <input type="text" name="auftragsTyp" value={editedData.auftragsTyp} onChange={handleInputChange} />
+              <input type="text" name="auftragsBeschreibung" value={editedData.auftragsBeschreibung} onChange={handleInputChange} />
+              <input type="text" name="preis" value={editedData.preis} onChange={handleInputChange} />
+              <input type="text" name="ip_adresse" value={editedData.ip_adresse} onChange={handleInputChange} />
+            </>
+          ) : (
+            // Anzeigen im Anzeigemodus anzeigen
+            <>
+              <p><strong>Vorname:</strong> {selectedKunde.vorname}</p>
+              <p><strong>Nachname:</strong> {selectedKunde.nachname}</p>
+              <p><strong>Strasse und Hausnummer:</strong> {selectedKunde.strasseHausnummer}</p>
+              <p><strong>Postleitzahl:</strong> {selectedKunde.postleitzahl}</p>
+              <p><strong>Ort:</strong> {selectedKunde.ort}</p>
+              <p><strong>Email:</strong> {selectedKunde.email}</p>
+              <p><strong>Telefon:</strong> {selectedKunde.telefon}</p>
+              <p><strong>Mobil:</strong> {selectedKunde.mobil}</p>
+              <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
+              <p><strong>Auftragstyp:</strong> {selectedKunde.auftragsTyp}</p>
+              <p><strong>Auftragsbeschreibung:</strong> {selectedKunde.auftragsBeschreibung}</p>
+              <p><strong>Preis:</strong> {selectedKunde.preis}</p>
+              <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
+            </>
+          )
         ) : (
-          // Anzeigen im Anzeigemodus anzeigen
-          <>
-            <p><strong>Vorname:</strong> {selectedKunde.vorname}</p>
-            <p><strong>Nachname:</strong> {selectedKunde.nachname}</p>
-            <p><strong>Strasse und Hausnummer:</strong> {selectedKunde.strasseHausnummer}</p>
-            <p><strong>Postleitzahl:</strong> {selectedKunde.postleitzahl}</p>
-            <p><strong>Ort:</strong> {selectedKunde.ort}</p>
-            <p><strong>Email:</strong> {selectedKunde.email}</p>
-            <p><strong>Telefon:</strong> {selectedKunde.telefon}</p>
-            <p><strong>Mobil:</strong> {selectedKunde.mobil}</p>
-            <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
-            <p><strong>Auftragstyp:</strong> {selectedKunde.auftragsTyp}</p>
-            <p><strong>Auftragsbeschreibung:</strong> {selectedKunde.auftragsBeschreibung}</p>
-            <p><strong>Preis:</strong> {selectedKunde.preis}</p>
-            <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
-          </>
+          <div>Keine Daten gefunden</div>
         )}
         {editMode ? (
           // Anzeigen der Speichern-Schaltfläche im Bearbeitungsmodus

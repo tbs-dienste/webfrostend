@@ -7,35 +7,53 @@ import logo from '../../logo.png';
 import './Rechnung.scss';
 
 const Rechnung = () => {
-  const [selectedKunde, setSelectedKunde] = useState(null);
-  const [bearbeitenderMitarbeiter, setBearbeitenderMitarbeiter] = useState('');
   const { id } = useParams();
+  const [selectedKunde, setSelectedKunde] = useState(null);
+  const [arbeitszeiten, setArbeitszeiten] = useState([]);
+  const [bearbeitenderMitarbeiter, setBearbeitenderMitarbeiter] = useState('');
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
-    async function fetchKundenData() {
+    async function fetchData() {
       try {
-        const response = await axios.get(`https://backend-1-cix8.onrender.com/api/v1/kunden/${id}`);
-        setSelectedKunde(response.data.data);
+        const kundenResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`);
+        setSelectedKunde(kundenResponse.data.data);
+
+        const arbeitszeitenResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/arbeitszeiten`);
+        setArbeitszeiten(arbeitszeitenResponse.data.data);
+
+        setIsFetching(false);
       } catch (error) {
-        console.error('Error fetching kunden data:', error);
+        console.error('Error fetching data:', error);
+        setIsFetching(false);
       }
     }
 
-    fetchKundenData();
+    fetchData();
   }, [id]);
-
-  useEffect(() => {
-    if (selectedKunde) {
-      generateBarcode(selectedKunde.kundennummer.toString());
-    }
-  }, [selectedKunde]);
 
   const generateBarcode = (kundennummer) => {
     const canvas = document.createElement('canvas');
-    JsBarcode(canvas, kundennummer, { format: 'CODE128' });
+    JsBarcode(canvas, kundennummer.toString(), { format: 'CODE128' });
     const barcodeElement = document.getElementById('barcode');
     barcodeElement.innerHTML = '';
     barcodeElement.appendChild(canvas);
+  };
+
+  const calculateTotalCosts = () => {
+    if (!selectedKunde || arbeitszeiten.length === 0) return 0;
+
+    let totalHours = 0;
+    arbeitszeiten.forEach(zeit => {
+      totalHours += parseFloat(zeit.arbeitsstunden);
+    });
+
+    if (selectedKunde && selectedKunde.stundensatz) {
+      const totalCosts = totalHours * parseFloat(selectedKunde.stundensatz);
+      return totalCosts.toFixed(2);
+    }
+
+    return 0;
   };
 
   const generatePDF = () => {
@@ -45,7 +63,8 @@ const Rechnung = () => {
 
     doc.addImage(logo, 'PNG', 15, 15, 50, 20);
 
-    const barcodeDataURL = document.getElementById('barcode').getElementsByTagName('canvas')[0].toDataURL();
+    const barcodeCanvas = document.getElementById('barcode').getElementsByTagName('canvas')[0];
+    const barcodeDataURL = barcodeCanvas.toDataURL();
     const barcodeWidth = 50;
     const barcodeHeight = 20;
     const pdfWidth = doc.internal.pageSize.getWidth();
@@ -86,7 +105,9 @@ const Rechnung = () => {
     doc.setFontSize(10);
     doc.text(description, descriptionX, descriptionY);
 
-    // Weitere PDF-Inhalte hinzufügen
+    const totalCosts = calculateTotalCosts();
+
+    doc.text(`Gesamtkosten: ${totalCosts} CHF`, descriptionX, descriptionY + 40);
 
     doc.save('rechnung.pdf');
   };
@@ -94,6 +115,10 @@ const Rechnung = () => {
   const handleBearbeitenderMitarbeiterChange = (e) => {
     setBearbeitenderMitarbeiter(e.target.value);
   };
+
+  if (isFetching) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="rechnung-container">
@@ -122,7 +147,28 @@ const Rechnung = () => {
           <button onClick={generatePDF}>Rechnung als PDF herunterladen</button>
         </div>
         <div className="arbeitszeiten">
-          {/* Tabelle für die Arbeitszeiten hier rendern */}
+          <h3>Positionen</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Beschreibung</th>
+                <th>Arbeitsstunden</th>
+                <th>Preis pro Stunde (CHF)</th>
+                <th>Gesamtpreis (CHF)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {arbeitszeiten.map((zeit, index) => (
+                <tr key={index}>
+                  <td>{`Position ${index + 1}`}</td>
+                  <td>{zeit.arbeitsstunden}</td>
+                  <td>{selectedKunde.stundensatz}</td>
+                  <td>{(parseFloat(zeit.arbeitsstunden) * parseFloat(selectedKunde.stundensatz)).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p>Total: {calculateTotalCosts()} CHF</p>
         </div>
       </div>
     </div>

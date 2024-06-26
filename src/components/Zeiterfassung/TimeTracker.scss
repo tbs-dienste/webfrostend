@@ -1,103 +1,67 @@
-$time-tracker-primary-color: #0a8e77;
-$time-tracker-secondary-color: #fbdf84;
-$time-tracker-text-color: #333;
+// time-tracker.scss
 
-.time-tracker-container {
-  font-family: 'Montserrat', sans-serif;
-  color: $time-tracker-text-color;
+.time-tracker {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
-  h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+  h2 {
+      text-align: center;
+      margin-bottom: 20px;
   }
 
-  .buttons-container {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+  .buttons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
 
-    button {
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: $time-tracker-primary-color;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
+      button {
+          padding: 10px 20px;
+          font-size: 16px;
+          margin: 0 10px;
+          cursor: pointer;
+          border: none;
+          border-radius: 4px;
+          background-color: #007bff;
+          color: white;
+          transition: background-color 0.3s ease;
 
-      &:hover {
-        background-color: darken($time-tracker-primary-color, 10%);
+          &:hover {
+              background-color: #0056b3;
+          }
       }
-    }
-
-    input {
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
   }
 
-  .pdf-download-link {
-    display: inline-block;
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: $time-tracker-primary-color;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
+  .time-display {
+      text-align: center;
+      margin-bottom: 20px;
 
-    &:hover {
-      color: darken($time-tracker-primary-color, 10%);
-    }
-  }
-
-  .work-sessions-container {
-    ul {
-      list-style: none;
-      padding: 0;
-
-      li {
-        margin-bottom: 10px;
+      label {
+          font-size: 18px;
       }
-    }
-
-    p {
-      margin-top: 20px;
-      font-size: 16px;
-    }
   }
 
-  .edit-rate-container {
-    margin-top: 20px;
+  .message {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #dc3545;
+  }
 
-    input {
-      margin-right: 10px;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+  .work-time {
+      text-align: center;
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: $time-tracker-primary-color;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: darken($time-tracker-primary-color, 10%);
+      h3 {
+          margin-bottom: 10px;
       }
-    }
+
+      p {
+          font-size: 24px;
+          font-weight: bold;
+      }
   }
 }
