@@ -1,13 +1,11 @@
 import React from 'react';
 import './NotFound.scss';
+import notFoundGif from './404.gif'; // Stelle sicher, dass die Dateipfade korrekt sind
 
 const NotFound = () => {
   return (
     <div className="not-found-container">
-      <div className="not-found-content">
-        <h1 className="not-found-title">404</h1>
-        <p className="not-found-text">Oops! Die Seite wurde nicht gefunden.</p>
-      </div>
+      <img src={notFoundGif} alt="404 Not Found" className="not-found-gif" />
     </div>
   );
 };
