@@ -7,11 +7,14 @@ import './Rechnung.scss'; // Importieren Sie das SCSS-Stylesheet
 
 const Rechnung = () => {
     const { id } = useParams();
-    const [arbeitszeit, setArbeitszeit] = useState(0); // Initialisierung von 'arbeitszeit'
-    const [message, setMessage] = useState(''); // Initialisierung von 'message'
-    const [beschreibung, setBeschreibung] = useState(''); // Initialisierung von 'beschreibung'
-    const [preis, setPreis] = useState(0); // Initialisierung von 'preis'
-    const [kunde, setKunde] = useState({}); // Initialisierung von 'kunde'
+    const [arbeitszeit, setArbeitszeit] = useState(0);
+    const [message, setMessage] = useState('');
+    const [beschreibung, setBeschreibung] = useState('');
+    const [preis, setPreis] = useState(0);
+    const [kunde, setKunde] = useState({});
+    const [rabattCode, setRabattCode] = useState('');
+    const [rabatt, setRabatt] = useState(0);
+    const [rabattBetrag, setRabattBetrag] = useState(0);
 
     const optionen = [
         "Website Erstellen",
@@ -45,8 +48,44 @@ const Rechnung = () => {
         setPreis(event.target.value);
     };
 
+    const handleRabattCodeChange = (event) => {
+        setRabattCode(event.target.value);
+    };
+
+    const applyDiscount = async () => {
+        try {
+            const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine');
+            const gutscheine = response.data.data;
+            const gutscheincodeObj = gutscheine.find(gutschein => gutschein.gutscheincode === rabattCode && gutschein.gutscheinaktiviert);
+
+            if (gutscheincodeObj) {
+                const gueltigBis = new Date(gutscheincodeObj.gueltigBis);
+                if (gueltigBis > new Date()) {
+                    setRabatt(parseFloat(gutscheincodeObj.gutscheinrabatt));
+                    setMessage(`Rabatt von ${parseFloat(gutscheincodeObj.gutscheinrabatt) * 100}% angewendet.`);
+                } else {
+                    setRabatt(0);
+                    setMessage('Rabattcode ist abgelaufen.');
+                }
+            } else {
+                setRabatt(0);
+                setMessage('Ungültiger Rabattcode.');
+            }
+        } catch (error) {
+            console.error("Fehler beim Überprüfen des Rabattcodes:", error);
+            setMessage('Fehler beim Überprüfen des Rabattcodes.');
+        }
+    };
+
     const calculateTotal = () => {
         return arbeitszeit * preis;
+    };
+
+    const calculateDiscountedTotal = () => {
+        const total = calculateTotal();
+        const discountAmount = total * rabatt;
+        setRabattBetrag(discountAmount);
+        return total - discountAmount;
     };
 
     const calculateMwSt = (total) => {
@@ -57,11 +96,14 @@ const Rechnung = () => {
     const generatePDF = () => {
         const doc = new jsPDF();
         const total = calculateTotal();
-        const mwst = calculateMwSt(total);
-        const totalWithMwSt = total + mwst;
+        const discountedTotal = calculateDiscountedTotal();
+        const mwst = calculateMwSt(discountedTotal);
+        const totalWithMwSt = discountedTotal + mwst;
 
-        // Header information
+        const textColor = 0; // Schwarz
+
         doc.setFontSize(12);
+        doc.setTextColor(textColor); // Setzt die Textfarbe auf Schwarz
         doc.text('TBs Solutions', 20, 20);
         doc.text('Kontakt: tbs-digital-solutions@gmail.com', 20, 30);
 
@@ -73,39 +115,40 @@ const Rechnung = () => {
         doc.text(`${kunde.strasseHausnummer}`, 20, 65);
         doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 70);
 
-        // Table with all details
         doc.autoTable({
             startY: 90,
             head: [['Position', 'Beschreibung', 'Arbeitszeit', 'Preis']],
             body: [
-                ['1', beschreibung, `${arbeitszeit} Stunden`, `${preis} CHF`],
+                ['1', beschreibung, `${arbeitszeit} Stunden`, `${preis} €`],
             ],
             foot: [
-                ['', '', 'Zwischensumme', `${total.toFixed(2)} CHF`],
-                ['', '', 'MwSt (19%)', `${mwst.toFixed(2)} CHF`],
-                ['', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} CHF`],
+                ['', '', 'Zwischensumme', `${total.toFixed(2)} €`],
+                ['', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
+                ['', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
+                ['', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
+                ['', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
             ],
             styles: {
                 fontSize: 10,
-                cellPadding: 5,
+                cellPadding: 2, // Verringern Sie den Innenabstand
                 overflow: 'linebreak',
                 halign: 'center',
-                valign: 'middle'
+                valign: 'middle',
+                textColor: textColor // Setzt die Textfarbe in den Zellen auf Schwarz
             },
             headStyles: {
                 fillColor: [41, 128, 185],
-                textColor: [255, 255, 255],
+                textColor: [255, 255, 255], // Weißer Text im Header
                 fontSize: 11,
             },
             footStyles: {
                 fillColor: [245, 245, 245],
-                textColor: [0, 0, 0],
+                textColor: textColor,
                 fontSize: 11,
                 fontStyle: ''
             }
         });
 
-        // Additional text below the table
         const finalY = doc.lastAutoTable.finalY;
 
         doc.text('Bankverbindung:', 20, finalY + 20);
@@ -140,6 +183,14 @@ const Rechnung = () => {
                     onChange={handlePreisChange}
                     min="0"
                 />
+                <label htmlFor="rabatt-input">Rabattcode:</label>
+                <input
+                    type="text"
+                    id="rabatt-input"
+                    value={rabattCode}
+                    onChange={handleRabattCodeChange}
+                />
+                <button onClick={applyDiscount}>Rabatt anwenden</button>
                 <table className="styled-table">
                     <thead>
                         <tr>
@@ -154,7 +205,7 @@ const Rechnung = () => {
                             <td>1</td>
                             <td>{beschreibung}</td>
                             <td>{arbeitszeit} Stunden</td>
-                            <td>{preis} CHF</td>
+                            <td>{preis} €</td>
                         </tr>
                     </tbody>
                 </table>

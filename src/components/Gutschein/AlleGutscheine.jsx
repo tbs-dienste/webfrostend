@@ -82,7 +82,7 @@ const AlleGutscheine = () => {
                             {gutschein.gutscheinrabatt > 0 ? (
                                 <span>Rabatt: <strong>{gutschein.gutscheinrabatt * 100} %</strong></span> // Umrechnung in Prozent
                             ) : (
-                                <span>Betrag: <strong>{gutschein.guthaben} CHF</strong></span>
+                                <span>Betrag: <strong>{gutschein.guthaben} €</strong></span>
                             )}
                         </div>
                         <div className="switch-container">
