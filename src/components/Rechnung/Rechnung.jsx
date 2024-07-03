@@ -21,7 +21,9 @@ const Rechnung = () => {
         "Website Erstellen",
         "Diashow Erstellen",
         "Gaming PC Zusammenstellung",
-        "Musik und Sounddesign"
+        "Musik und Sounddesign",
+        "Backend Speicher",
+        "Datenbank Hosting"
     ];
 
     useEffect(() => {

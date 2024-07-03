@@ -36,7 +36,6 @@ const KundeErfassen = () => {
         auftragsBeschreibung,
         rechnungGestellt: false,
         rechnungBezahlt: false,
-        preis,
         arbeitszeit: 0,
         ip_adresse
       };
@@ -152,7 +151,8 @@ const KundeErfassen = () => {
             <option value="">Bitte auswählen</option>
             <option value="Webseite">Webseite</option>
             <option value="Diashow">Diashow</option>
-        
+            <option value="Gaming PC">Gaming PC</option>
+            <option value="Musik und Sounddesign">Musik und Sounddesign</option>
           </select>
         </div>
         <div className="formular-gruppe">
@@ -163,16 +163,7 @@ const KundeErfassen = () => {
             onChange={(e) => setAuftragsBeschreibung(e.target.value)}
           ></textarea>
         </div>
-        <div className="formular-gruppe">
-          <label htmlFor="preis">Preis:</label>
-          <input
-            type="number"
-            inputMode="numeric"
-            id="preis"
-            value={preis}
-            onChange={(e) => setPreis(e.target.value)}
-          />
-        </div>
+        
       </div>
       <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
     </div>
