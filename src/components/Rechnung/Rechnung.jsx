@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import './Rechnung.scss'; // Importieren Sie das SCSS-Stylesheet
+import './Rechnung.scss';
 
 const Rechnung = () => {
     const { id } = useParams();
@@ -46,7 +46,7 @@ const Rechnung = () => {
     };
 
     const handlePreisChange = (event) => {
-        setPreis(event.target.value);
+        setPreis(parseFloat(event.target.value));
     };
 
     const handleRabattCodeChange = (event) => {
@@ -113,10 +113,10 @@ const Rechnung = () => {
         const mwst = calculateMwSt(discountedTotal);
         const totalWithMwSt = discountedTotal + mwst;
 
-        const textColor = 0; // Schwarz
+        const textColor = 0; // Black
 
         doc.setFontSize(12);
-        doc.setTextColor(textColor); // Setzt die Textfarbe auf Schwarz
+        doc.setTextColor(textColor); // Set text color to black
         doc.text('TBs Solutions', 20, 20);
         doc.text('Kontakt: tbs-digital-solutions@gmail.com', 20, 30);
 
@@ -130,38 +130,35 @@ const Rechnung = () => {
 
         let startY = 90;
 
-        // Positionen in PDF-Tabelle anzeigen
         const tableData = positionen.map((pos, index) => [
-            index + 1, pos.beschreibung, `${pos.arbeitszeit} Stunden`, `${pos.preis} €`
+            index + 1, pos.beschreibung, `${pos.arbeitszeit} Stunden`, `${pos.preis.toFixed(2)} €`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} €`
         ]);
 
-        // Gesamtsummen in PDF-Tabelle anzeigen
         const totalsData = [
-            ['', '', 'Zwischensumme', `${total.toFixed(2)} €`],
-            ['', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
-            ['', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
-            ['', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
-            ['', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
+            ['', '', '', 'Zwischensumme', `${total.toFixed(2)} €`],
+            ['', '', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
+            ['', '', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
+            ['', '', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
+            ['', '', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
         ];
 
-        // Verbinden von Positionen- und Gesamtsummen-Daten
         const allData = [...tableData, ...totalsData];
 
         doc.autoTable({
             startY,
-            head: [['Position', 'Beschreibung', 'Arbeitszeit', 'Preis']],
+            head: [['Position', 'Beschreibung', 'Anzahl', 'Preis', 'Total']],
             body: allData,
             styles: {
                 fontSize: 10,
-                cellPadding: 2, // Verringern Sie den Innenabstand
+                cellPadding: 2, // Decrease padding
                 overflow: 'linebreak',
                 halign: 'center',
                 valign: 'middle',
-                textColor: textColor // Setzt die Textfarbe in den Zellen auf Schwarz
+                textColor: textColor // Set cell text color to black
             },
             headStyles: {
                 fillColor: [41, 128, 185],
-                textColor: [255, 255, 255], // Weißer Text im Header
+                textColor: [255, 255, 255], // White text in header
                 fontSize: 11,
             },
             footStyles: {
@@ -215,8 +212,9 @@ const Rechnung = () => {
                         <tr>
                             <th>Position</th>
                             <th>Beschreibung</th>
-                            <th>Arbeitszeit</th>
+                            <th>Anzahl</th>
                             <th>Preis</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -224,8 +222,9 @@ const Rechnung = () => {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{pos.beschreibung}</td>
-                                <td>{pos.arbeitszeit} Stunden</td>
-                                <td>{pos.preis} €</td>
+                                <td>{pos.arbeitszeit}</td>
+                                <td>{pos.preis.toFixed(2)} €</td>
+                                <td>{(pos.arbeitszeit * pos.preis).toFixed(2)} €</td>
                             </tr>
                         ))}
                     </tbody>
