@@ -16,6 +16,7 @@ const Rechnung = () => {
     const [rabatt, setRabatt] = useState(0);
     const [rabattBetrag, setRabattBetrag] = useState(0);
     const [positionen, setPositionen] = useState([]);
+    const [editIndex, setEditIndex] = useState(null);
 
     const optionen = [
         "Website Erstellen",
@@ -99,13 +100,32 @@ const Rechnung = () => {
     const addPosition = () => {
         const newPosition = {
             beschreibung,
-            arbeitszeit,
+            arbeitszeit: Math.round(arbeitszeit), // Rundet die Arbeitszeit auf die nächste ganze Zahl
             preis
         };
-        setPositionen([...positionen, newPosition]);
+        if (editIndex !== null) {
+            const updatedPositionen = [...positionen];
+            updatedPositionen[editIndex] = newPosition;
+            setPositionen(updatedPositionen);
+            setEditIndex(null);
+        } else {
+            setPositionen([...positionen, newPosition]);
+        }
         setBeschreibung('');
         setArbeitszeit(0);
         setPreis(0);
+    };
+
+    const editPosition = (index) => {
+        const position = positionen[index];
+        setBeschreibung(position.beschreibung);
+        setArbeitszeit(position.arbeitszeit);
+        setPreis(position.preis);
+        setEditIndex(index);
+    };
+
+    const deletePosition = (index) => {
+        setPositionen(positionen.filter((_, i) => i !== index));
     };
 
     const generatePDF = () => {
@@ -133,7 +153,7 @@ const Rechnung = () => {
         let startY = 90;
 
         const tableData = positionen.map((pos, index) => [
-            index + 1, pos.beschreibung, `${pos.arbeitszeit} Stunden`, `${pos.preis.toFixed(2)} €`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} €`
+            index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} €`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} €`
         ]);
 
         const totalsData = [
@@ -197,10 +217,10 @@ const Rechnung = () => {
                     ))}
                 </select>
                 <label htmlFor="arbeitszeit-input">Arbeitszeit (Stunden):</label>
-                <input id="arbeitszeit-input" type="number" value={arbeitszeit} onChange={(e) => setArbeitszeit(parseFloat(e.target.value))} />
+                <input id="arbeitszeit-input" type="number" value={arbeitszeit} onChange={(e) => setArbeitszeit(Math.round(parseFloat(e.target.value)))} />
                 <label htmlFor="preis-input">Preis pro Stunde (€):</label>
                 <input id="preis-input" type="number" step="0.01" value={preis} onChange={handlePreisChange} />
-                <button onClick={addPosition}>Position hinzufügen</button>
+                <button onClick={addPosition}>{editIndex !== null ? 'Position aktualisieren' : 'Position hinzufügen'}</button>
                 <label htmlFor="rabatt-input">Rabattcode:</label>
                 <input
                     type="text"
@@ -217,6 +237,7 @@ const Rechnung = () => {
                             <th>Anzahl</th>
                             <th>Preis</th>
                             <th>Total</th>
+                            <th>Aktionen</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -224,9 +245,13 @@ const Rechnung = () => {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{pos.beschreibung}</td>
-                                <td>{pos.arbeitszeit}</td>
+                                <td>{Math.round(pos.arbeitszeit)}</td>
                                 <td>{pos.preis.toFixed(2)} €</td>
                                 <td>{(pos.arbeitszeit * pos.preis).toFixed(2)} €</td>
+                                <td>
+                                    <button onClick={() => editPosition(index)}>Bearbeiten</button>
+                                    <button onClick={() => deletePosition(index)}>Löschen</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
