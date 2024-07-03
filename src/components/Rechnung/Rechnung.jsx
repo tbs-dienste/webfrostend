@@ -15,6 +15,7 @@ const Rechnung = () => {
     const [rabattCode, setRabattCode] = useState('');
     const [rabatt, setRabatt] = useState(0);
     const [rabattBetrag, setRabattBetrag] = useState(0);
+    const [positionen, setPositionen] = useState([]);
 
     const optionen = [
         "Website Erstellen",
@@ -78,7 +79,7 @@ const Rechnung = () => {
     };
 
     const calculateTotal = () => {
-        return arbeitszeit * preis;
+        return positionen.reduce((acc, pos) => acc + pos.arbeitszeit * pos.preis, 0);
     };
 
     const calculateDiscountedTotal = () => {
@@ -91,6 +92,18 @@ const Rechnung = () => {
     const calculateMwSt = (total) => {
         const mwstRate = 0.19; // 19% MwSt
         return total * mwstRate;
+    };
+
+    const addPosition = () => {
+        const newPosition = {
+            beschreibung,
+            arbeitszeit,
+            preis
+        };
+        setPositionen([...positionen, newPosition]);
+        setBeschreibung('');
+        setArbeitszeit(0);
+        setPreis(0);
     };
 
     const generatePDF = () => {
@@ -115,19 +128,29 @@ const Rechnung = () => {
         doc.text(`${kunde.strasseHausnummer}`, 20, 65);
         doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 70);
 
+        let startY = 90;
+
+        // Positionen in PDF-Tabelle anzeigen
+        const tableData = positionen.map((pos, index) => [
+            index + 1, pos.beschreibung, `${pos.arbeitszeit} Stunden`, `${pos.preis} €`
+        ]);
+
+        // Gesamtsummen in PDF-Tabelle anzeigen
+        const totalsData = [
+            ['', '', 'Zwischensumme', `${total.toFixed(2)} €`],
+            ['', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
+            ['', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
+            ['', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
+            ['', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
+        ];
+
+        // Verbinden von Positionen- und Gesamtsummen-Daten
+        const allData = [...tableData, ...totalsData];
+
         doc.autoTable({
-            startY: 90,
+            startY,
             head: [['Position', 'Beschreibung', 'Arbeitszeit', 'Preis']],
-            body: [
-                ['1', beschreibung, `${arbeitszeit} Stunden`, `${preis} €`],
-            ],
-            foot: [
-                ['', '', 'Zwischensumme', `${total.toFixed(2)} €`],
-                ['', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
-                ['', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
-                ['', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
-                ['', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
-            ],
+            body: allData,
             styles: {
                 fontSize: 10,
                 cellPadding: 2, // Verringern Sie den Innenabstand
@@ -149,16 +172,15 @@ const Rechnung = () => {
             }
         });
 
-        const finalY = doc.lastAutoTable.finalY;
+        const paymentInfoY = doc.lastAutoTable.finalY + 10;
+        doc.text('Bankverbindung:', 20, paymentInfoY + 20);
+        doc.text('IBAN: DE12345678901234567890', 20, paymentInfoY + 30);
+        doc.text('BIC: ABCDEF1X2Y3', 20, paymentInfoY + 40);
 
-        doc.text('Bankverbindung:', 20, finalY + 20);
-        doc.text('IBAN: DE12345678901234567890', 20, finalY + 30);
-        doc.text('BIC: ABCDEF1X2Y3', 20, finalY + 40);
+        doc.text('Zahlungsbedingungen:', 20, paymentInfoY + 60);
+        doc.text('Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 70);
 
-        doc.text('Zahlungsbedingungen:', 20, finalY + 60);
-        doc.text('Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, finalY + 70);
-
-        doc.text('Vielen Dank für Ihren Auftrag!', 20, finalY + 90);
+        doc.text('Vielen Dank für Ihren Auftrag!', 20, paymentInfoY + 90);
 
         doc.save('Rechnung.pdf');
     };
@@ -175,14 +197,11 @@ const Rechnung = () => {
                         <option key={index} value={option}>{option}</option>
                     ))}
                 </select>
-                <label htmlFor="preis-input">Preis pro Stunde:</label>
-                <input
-                    type="number"
-                    id="preis-input"
-                    value={preis}
-                    onChange={handlePreisChange}
-                    min="0"
-                />
+                <label htmlFor="arbeitszeit-input">Arbeitszeit (Stunden):</label>
+                <input id="arbeitszeit-input" type="number" value={arbeitszeit} onChange={(e) => setArbeitszeit(parseFloat(e.target.value))} />
+                <label htmlFor="preis-input">Preis pro Stunde (€):</label>
+                <input id="preis-input" type="number" step="0.01" value={preis} onChange={handlePreisChange} />
+                <button onClick={addPosition}>Position hinzufügen</button>
                 <label htmlFor="rabatt-input">Rabattcode:</label>
                 <input
                     type="text"
@@ -201,12 +220,14 @@ const Rechnung = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>{beschreibung}</td>
-                            <td>{arbeitszeit} Stunden</td>
-                            <td>{preis} €</td>
-                        </tr>
+                        {positionen.map((pos, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{pos.beschreibung}</td>
+                                <td>{pos.arbeitszeit} Stunden</td>
+                                <td>{pos.preis} €</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <button onClick={generatePDF}>PDF generieren</button>
