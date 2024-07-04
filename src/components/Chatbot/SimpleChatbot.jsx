@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComments, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './SimpleChatbot.scss'; // Stil für die Chatbot-Komponente
 
 const SimpleChatbot = () => {
@@ -42,7 +44,7 @@ const SimpleChatbot = () => {
   return (
     <div className="chatbot-container">
       <div className={`chatbot-button ${isOpen ? 'open' : ''}`} onClick={toggleChatbot}>
-        {!isOpen ? <span>Chatbot</span> : <span>×</span>}
+        {!isOpen ? <FontAwesomeIcon icon={faComments} /> : <FontAwesomeIcon icon={faTimes} />}
       </div>
       {isOpen && (
         <div className="chatbot-content">
