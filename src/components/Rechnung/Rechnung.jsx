@@ -150,7 +150,14 @@ const Rechnung = () => {
         doc.text(`${kunde.strasseHausnummer}`, 20, 65);
         doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 70);
 
-        let startY = 90;
+        const anrede = kunde.geschlecht === 'männlich' ? 'Herr' : 'Frau';
+        const begruessung = kunde.geschlecht === 'männlich' ? 'geehrter' : 'geehrte';
+
+        doc.text(`Sehr ${begruessung} ${anrede} ${kunde.nachname},`, 20, 85);
+        doc.text('anbei erhalten Sie unsere Rechnung für die erbrachten Leistungen.', 20, 95);
+        doc.text('Wir bitten um Überprüfung und fristgerechte Zahlung.', 20, 105);
+
+        let startY = 120;
 
         const tableData = positionen.map((pos, index) => [
             index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} €`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} €`
@@ -191,15 +198,16 @@ const Rechnung = () => {
             }
         });
 
-        const paymentInfoY = doc.lastAutoTable.finalY + 10;
-        doc.text('Bankverbindung:', 20, paymentInfoY + 20);
-        doc.text('IBAN: DE12345678901234567890', 20, paymentInfoY + 30);
-        doc.text('BIC: ABCDEF1X2Y3', 20, paymentInfoY + 40);
+        const paymentInfoY = doc.lastAutoTable.finalY || startY;
 
-        doc.text('Zahlungsbedingungen:', 20, paymentInfoY + 60);
-        doc.text('Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 70);
+        doc.text('Zahlungsbedingungen:', 20, paymentInfoY + 20);
+        doc.text('Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 30);
 
-        doc.text('Vielen Dank für Ihren Auftrag!', 20, paymentInfoY + 90);
+        doc.text('Vielen Dank für Ihren Auftrag!', 20, paymentInfoY + 50);
+
+        doc.text('Mit freundlichen Grüßen,', 20, paymentInfoY + 80);
+        doc.text('TBs Solutions', 20, paymentInfoY + 90);
+        doc.text('Mitarbeiter: [Name des Mitarbeiters]', 20, paymentInfoY + 100);
 
         doc.save('Rechnung.pdf');
     };
