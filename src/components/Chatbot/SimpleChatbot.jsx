@@ -9,6 +9,29 @@ const SimpleChatbot = () => {
   const [typing, setTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const faqs = [
+    { question: 'hallo', reply: 'Hallo! Wie kann ich Ihnen helfen?' },
+    { question: 'wie viel kostet', reply: 'Die Preise variieren. Möchten Sie eine spezifische Information? <br/><a href="https://tbs-solutions.vercel.app/preise" class="chatbot-link" target="_blank">Preisinformationen</a>' },
+    { question: 'ich brauche hilfe', reply: 'Ich bin hier, um Ihnen zu helfen. Was brauchen Sie? <br/><a href="https://tbs-solutions.vercel.app/kundeerfassen" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>' },
+    { question: 'was sind die öffnungszeiten', reply: 'Unsere Öffnungszeiten sind Montag bis Freitag von 9 bis 17 Uhr. <br/><a href="https://tbs-solutions.vercel.app" class="chatbot-link" target="_blank">Website besuchen</a>' }
+  ];
+
+  const getBotReply = (text) => {
+    for (let faq of faqs) {
+      if (text.toLowerCase().includes(faq.question.toLowerCase())) {
+        return faq.reply;
+      }
+    }
+    return `
+      Entschuldigung, ich verstehe Ihre Frage nicht.
+      <br/><a href="https://www.example.com/kontakt" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>
+      <br/><div class="button-container">
+        <button className="chatbot-button" onClick={handleChatWithAgent}>Chat</button>
+        <button className="chatbot-button" onClick={handleVideoConsultation}>Videoberatung</button>
+      </div>
+    `;
+  };
+
   const handleUserMessage = (text) => {
     if (!text.trim()) return;
 
@@ -17,15 +40,7 @@ const SimpleChatbot = () => {
 
     setTyping(true);
     setTimeout(() => {
-      let reply;
-      if (text.toLowerCase().includes('hallo')) {
-        reply = "Hallo! Wie kann ich Ihnen helfen?";
-      } else if (text.toLowerCase().includes('preis')) {
-        reply = "Die Preise variieren. Möchten Sie eine spezifische Information?";
-      } else {
-        reply = "Entschuldigung, ich verstehe Ihre Frage nicht. Klicken Sie hier für eine Videoberatung.";
-      }
-
+      const reply = getBotReply(text);
       setMessages([...newMessages, { text: reply, sender: 'bot' }]);
       setTyping(false);
     }, 1500);
@@ -35,9 +50,17 @@ const SimpleChatbot = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleChatWithAgent = () => {
+    window.open("https://www.example.com/chat", "_blank");
+  };
+
+  const handleVideoConsultation = () => {
+    window.open("https://www.example.com/videoberatung", "_blank");
+  };
+
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isOpen]);
 
@@ -50,8 +73,7 @@ const SimpleChatbot = () => {
         <div className="chatbot-content">
           <div className="messages-container">
             {messages.map((message, index) => (
-              <div key={index} className={`message ${message.sender}`}>
-                {message.text}
+              <div key={index} className={`message ${message.sender}`} dangerouslySetInnerHTML={{ __html: message.text }}>
               </div>
             ))}
             {typing && (

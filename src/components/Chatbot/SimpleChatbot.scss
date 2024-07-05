@@ -145,3 +145,35 @@
     opacity: 1;
   }
 }
+
+.chatbot-link {
+  color: #007bff;
+  text-decoration: none;
+  border-bottom: 1px solid #007bff;
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
+
+  &:hover {
+    color: #0056b3;
+    border-bottom-color: #0056b3;
+  }
+}
+
+.button-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.button-container .chatbot-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
