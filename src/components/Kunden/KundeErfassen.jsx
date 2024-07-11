@@ -14,7 +14,7 @@ const KundeErfassen = () => {
   const [geschlecht, setGeschlecht] = useState('');
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
-  const [preis, setPreis] = useState('');
+  const [firma, setFirma] = useState('');
 
   const handleKontaktAufnehmen = async () => {
     try {
@@ -23,6 +23,7 @@ const KundeErfassen = () => {
       const ip_adresse = ipResponse.data.ip;
 
       const newKunde = {
+        firma,
         vorname,
         nachname,
         strasseHausnummer,
@@ -53,6 +54,15 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kontaktdaten</h2>
       <div className="formular">
+      <div className="formular-gruppe">
+          <label htmlFor="vorname">Firma:</label>
+          <input
+            type="text"
+            id="firma"
+            value={firma}
+            onChange={(e) => setFirma(e.target.value)}
+          />
+        </div>
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname:</label>
           <input

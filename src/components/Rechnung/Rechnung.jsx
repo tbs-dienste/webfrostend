@@ -160,15 +160,15 @@ const Rechnung = () => {
         let startY = 120;
 
         const tableData = positionen.map((pos, index) => [
-            index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} €`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} €`
+            index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} CHF`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} CHF`
         ]);
 
         const totalsData = [
-            ['', '', '', 'Zwischensumme', `${total.toFixed(2)} €`],
-            ['', '', '', 'Rabatt', `${rabattBetrag.toFixed(2)} €`],
-            ['', '', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} €`],
-            ['', '', '', 'MwSt (19%)', `${mwst.toFixed(2)} €`],
-            ['', '', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} €`],
+            ['', '', '', 'Zwischensumme', `${total.toFixed(2)} CHF`],
+            ['', '', '', 'Rabatt', `${rabattBetrag.toFixed(2)} CHF`],
+            ['', '', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} CHF`],
+            ['', '', '', 'MwSt (19%)', `${mwst.toFixed(2)} CHF`],
+            ['', '', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} CHF`],
         ];
 
         const allData = [...tableData, ...totalsData];
@@ -226,7 +226,7 @@ const Rechnung = () => {
                 </select>
                 <label htmlFor="arbeitszeit-input">Arbeitszeit (Stunden):</label>
                 <input id="arbeitszeit-input" type="number" value={arbeitszeit} onChange={(e) => setArbeitszeit(Math.round(parseFloat(e.target.value)))} />
-                <label htmlFor="preis-input">Preis pro Stunde (€):</label>
+                <label htmlFor="preis-input">Preis pro Stunde (CHF):</label>
                 <input id="preis-input" type="number" step="0.01" value={preis} onChange={handlePreisChange} />
                 <button onClick={addPosition}>{editIndex !== null ? 'Position aktualisieren' : 'Position hinzufügen'}</button>
                 <label htmlFor="rabatt-input">Rabattcode:</label>
@@ -254,8 +254,8 @@ const Rechnung = () => {
                                 <td>{index + 1}</td>
                                 <td>{pos.beschreibung}</td>
                                 <td>{Math.round(pos.arbeitszeit)}</td>
-                                <td>{pos.preis.toFixed(2)} €</td>
-                                <td>{(pos.arbeitszeit * pos.preis).toFixed(2)} €</td>
+                                <td>{pos.preis.toFixed(2)} CHF</td>
+                                <td>{(pos.arbeitszeit * pos.preis).toFixed(2)} CHF</td>
                                 <td>
                                     <button onClick={() => editPosition(index)}>Bearbeiten</button>
                                     <button onClick={() => deletePosition(index)}>Löschen</button>

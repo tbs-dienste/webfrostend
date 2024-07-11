@@ -30,9 +30,10 @@ function Navbar({ isAdmin, onLogout }) {
             <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kundeerfassen" text="Kontakt" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/werbung" text="Werbung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kundenbewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/faq" text="FAQ" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/warenkorb" text="Warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             {isAdmin ? (
               <>
                 <NavItem to="/gutscheine-liste" text="Gutscheinliste" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
