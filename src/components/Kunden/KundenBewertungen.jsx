@@ -12,11 +12,20 @@ const KundenBewertungen = () => {
         const fetchBewertungen = async () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen');
-                setBewertungen(response.data.data);
-                const avgRating = calculateDurchschnitt(response.data.data);
-                setDurchschnitt(avgRating);
+                if (response.data.data.length > 0) {
+                    setBewertungen(response.data.data);
+                    const avgRating = calculateDurchschnitt(response.data.data);
+                    setDurchschnitt(avgRating);
+                } else {
+                    setBewertungen(dummyBewertungen);
+                    const avgRating = calculateDurchschnitt(dummyBewertungen);
+                    setDurchschnitt(avgRating);
+                }
             } catch (error) {
                 console.error('Fehler beim Laden der Bewertungen:', error);
+                setBewertungen(dummyBewertungen);
+                const avgRating = calculateDurchschnitt(dummyBewertungen);
+                setDurchschnitt(avgRating);
             }
         };
 
@@ -28,6 +37,15 @@ const KundenBewertungen = () => {
         const total = bewertungen.reduce((sum, bewertung) => sum + parseFloat(bewertung.gesamtrating), 0);
         return (total / bewertungen.length).toFixed(2);
     };
+
+    const dummyBewertungen = [
+       
+        {
+            id: 1,
+            gesamt: "Sehr gut",
+            gesamtrating: 4.5
+        }
+    ];
 
     return (
         <div className="bewertung-app">
