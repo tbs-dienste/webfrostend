@@ -78,7 +78,7 @@ const Home = () => {
           </p>
         </div>
         <div className="button-container">
-          <button className="button">Mehr Erfahren</button>
+        <Link to="/dienstleistungen" className="button">Mehr Erfahren</Link>
         </div>
       </div>
       <SimpleChatbot />
