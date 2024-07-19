@@ -1,20 +1,22 @@
-body.popup-open {
-  overflow: hidden; /* Verhindert das Scrollen der Seite */
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica, Arial, sans-serif;
+
 }
+
 
 
 .kunde-erfassen {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 20px;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 
   h2 {
     font-size: 24px;
     margin-bottom: 20px;
+    color: #333333;
   }
 
   .formular {
@@ -25,14 +27,16 @@ body.popup-open {
         display: block;
         font-weight: bold;
         margin-bottom: 5px;
+        color: #555555;
       }
 
-      input {
+      input, select, textarea {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        border: 1px solid #cccccc;
+        border-radius: 5px;
         font-size: 16px;
+        transition: border-color 0.3s, box-shadow 0.3s;
 
         &:focus {
           outline: none;
@@ -40,16 +44,31 @@ body.popup-open {
           box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
       }
+
+      textarea {
+        resize: vertical;
+        height: 100px;
+      }
+    }
+
+    .dropdown {
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23787878" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 10px;
+      padding-right: 30px;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 20px;
       background-color: #007bff;
-      color: #fff;
+      color: #ffffff;
       border: none;
-      border-radius: 3px;
+      border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.3s;
 
       &:hover {
         background-color: #0056b3;
@@ -57,21 +76,6 @@ body.popup-open {
     }
   }
 
-  h3 {
-    font-size: 20px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-
-    li {
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-  }
   .popup-overlay {
     position: fixed;
     top: 100px; 
@@ -115,5 +119,20 @@ body.popup-open {
       margin-bottom: 20px;
     }
   }
+
+  .aufnehmen {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50px;
+    width: 620px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
   
+  .aufnehmen:hover {
+    background-color: #0056b3;
+  }
 }

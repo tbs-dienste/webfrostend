@@ -18,7 +18,6 @@ const KundeErfassen = () => {
 
   const handleKontaktAufnehmen = async () => {
     try {
-      // Erfassung der IP-Adresse des Clients
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
 
@@ -54,8 +53,8 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kontaktdaten</h2>
       <div className="formular">
-      <div className="formular-gruppe">
-          <label htmlFor="vorname">Firma:</label>
+        <div className="formular-gruppe">
+          <label htmlFor="firma">Firma:</label>
           <input
             type="text"
             id="firma"
@@ -141,6 +140,7 @@ const KundeErfassen = () => {
             id="geschlecht"
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
+            className="dropdown"
           >
             <option value="">Bitte auswählen</option>
             <option value="männlich">Männlich</option>
@@ -157,6 +157,7 @@ const KundeErfassen = () => {
             id="auftragsTyp"
             value={auftragsTyp}
             onChange={(e) => setAuftragsTyp(e.target.value)}
+            className="dropdown"
           >
             <option value="">Bitte auswählen</option>
             <option value="Webseite">Webseite</option>
@@ -173,9 +174,8 @@ const KundeErfassen = () => {
             onChange={(e) => setAuftragsBeschreibung(e.target.value)}
           ></textarea>
         </div>
-        
       </div>
-      <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
+      <button onClick={handleKontaktAufnehmen} className='aufnehmen'>Kontakt aufnehmen</button>
     </div>
   );
 };
