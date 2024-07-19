@@ -9,9 +9,9 @@ function Navbar({ isAdmin, onLogout }) {
   const [warenkorbCount, setWarenkorbCount] = useState(0);
 
   useEffect(() => {
-    const savedWarenkorb = JSON.parse(localStorage.getItem('warenkorb')) || [];
-    setWarenkorbCount(savedWarenkorb.length);
-  }, []);
+    // Kein Initialisierungscode im useEffect
+    // wenn du nicht möchtest, dass der Warenkorbzähler bei jedem Laden der Komponente wiederhergestellt wird
+  }, []); // Leer lassen, damit dieser Effekt nur einmalig ausgeführt wird
 
   const toggleBurgerMenu = () => {
     setBurgerMenuActive(!burgerMenuActive);
@@ -77,3 +77,4 @@ function NavItem({ to, text, icon, count, currentPath, onClick }) {
 }
 
 export default Navbar;
+
