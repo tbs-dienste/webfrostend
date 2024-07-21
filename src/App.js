@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
@@ -55,7 +55,7 @@ const App = () => {
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
-          <Route path="/preisinformationen" element={<Preisinformationen />
+          <Route path="/preisinformationen" element={<Preisinformationen />} />
           <Route path="/kundeerfassen" element={<KundeErfassen />} />
           <Route path="/dienstleistungen" element={<Dienstleistungen />} />
           <Route path="/werbung" element={<WarumWerbungMachen />} />
@@ -71,7 +71,7 @@ const App = () => {
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="*" element={<NotFound />} /> 
+          <Route path="*" element={<NotFound />} />
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
@@ -79,7 +79,6 @@ const App = () => {
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
-              
             </>
           ) : (
             <Route path="/login" element={<Login onLogin={onLogin} />} />
