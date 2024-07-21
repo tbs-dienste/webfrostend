@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Home.scss';
 import SimpleChatbot from '../Chatbot/SimpleChatbot';
+import { Link } from 'react-router-dom';
 
 import Programmieren from './programmieren.png';
 import DiaShow from './diashow.jpg';
