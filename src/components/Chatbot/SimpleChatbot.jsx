@@ -7,6 +7,7 @@ const SimpleChatbot = () => {
   const [messages, setMessages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [typing, setTyping] = useState(false);
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef(null);
 
   const faqs = [
@@ -41,8 +42,8 @@ const SimpleChatbot = () => {
       Entschuldigung, ich verstehe Ihre Frage nicht.
       <br/><a href="https://www.example.com/kontakt" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>
       <br/><div class="button-container">
-        <button className="chatbot-button" onClick={handleChatWithAgent}>Chat</button>
-        <button className="chatbot-button" onClick={handleVideoConsultation}>Videoberatung</button>
+        <button class="chatbot-button" onClick={handleChatWithAgent}>Chat</button>
+        <button class="chatbot-button" onClick={handleVideoConsultation}>Videoberatung</button>
       </div>
     `;
   };
@@ -52,17 +53,20 @@ const SimpleChatbot = () => {
 
     const newMessages = [...messages, { text, sender: 'user' }];
     setMessages(newMessages);
+    setHasUnreadMessages(!isOpen); // Setzt die Benachrichtigung, wenn der Chat geschlossen ist
 
     setTyping(true);
     setTimeout(() => {
       const reply = getBotReply(text);
       setMessages([...newMessages, { text: reply, sender: 'bot' }]);
       setTyping(false);
+      setHasUnreadMessages(true); // Nachricht als ungelesen markieren
     }, 1500);
   };
 
   const toggleChatbot = () => {
     setIsOpen(!isOpen);
+    setHasUnreadMessages(false); // Benachrichtigung zurücksetzen, wenn geöffnet
   };
 
   const handleChatWithAgent = () => {
@@ -75,21 +79,32 @@ const SimpleChatbot = () => {
 
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
 
   return (
-    <div className="chatbot-container">
-      <div className={`chatbot-button ${isOpen ? 'open' : ''}`} onClick={toggleChatbot}>
-        {!isOpen ? <FontAwesomeIcon icon={faComments} /> : <FontAwesomeIcon icon={faTimes} />}
+    <div className={`chatbot-container ${isOpen ? 'open' : ''}`}>
+      <div className="chatbot-button" onClick={toggleChatbot}>
+        {isOpen ? (
+          <FontAwesomeIcon icon={faTimes} />
+        ) : (
+          <>
+            <FontAwesomeIcon icon={faComments} />
+            {hasUnreadMessages && <div className="unread-badge">!</div>}
+          </>
+        )}
       </div>
+
       {isOpen && (
         <div className="chatbot-content">
           <div className="messages-container">
             {messages.map((message, index) => (
-              <div key={index} className={`message ${message.sender}`} dangerouslySetInnerHTML={{ __html: message.text }}>
-              </div>
+              <div
+                key={index}
+                className={`message ${message.sender}`}
+                dangerouslySetInnerHTML={{ __html: message.text }}
+              />
             ))}
             {typing && (
               <div className="message bot typing">
@@ -101,9 +116,9 @@ const SimpleChatbot = () => {
           <div className="user-input">
             <input
               type="text"
-              placeholder="Nachricht eingeben..."
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && e.target.value.trim()) {
+              placeholder="Ihre Nachricht..."
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
                   handleUserMessage(e.target.value);
                   e.target.value = '';
                 }
