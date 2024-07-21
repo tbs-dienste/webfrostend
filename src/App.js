@@ -28,6 +28,7 @@ import Mitarbeiter from './components/Mitarbeiter/Mitarbeiter';
 import GutscheinScanner from './components/Gutschein/GutscheinScanner';
 import FAQ from './components/FAQ/FaqComponent';
 import NotFound from './components/Error/NotFound';
+import Preisinformationen from './components/Preise/Preisinformationen';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
+          <Route path="/preisinformationen" element={<Preisinformationen />
           <Route path="/kundeerfassen" element={<KundeErfassen />} />
           <Route path="/dienstleistungen" element={<Dienstleistungen />} />
           <Route path="/werbung" element={<WarumWerbungMachen />} />
