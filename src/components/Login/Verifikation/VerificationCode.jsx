@@ -5,7 +5,7 @@ const VerificationCode = () => {
   const inputs = useRef([]);
   const [error, setError] = useState('');
 
-  const codeToVerify = '123456'; // Der richtige Verifizierungscode
+  const codeToVerify = '731894'; // Der richtige Verifizierungscode
 
   const handleChange = (e, index) => {
     const { value } = e.target;
