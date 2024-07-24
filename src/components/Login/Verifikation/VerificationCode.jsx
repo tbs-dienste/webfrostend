@@ -7,7 +7,7 @@ const VerificationCode = () => {
   const [timeLeft, setTimeLeft] = useState(60); // Timer initialisieren
   const [timerExpired, setTimerExpired] = useState(false); // Flag für den Timer
 
-  const codeToVerify = '731894'; // Der richtige Verifizierungscode
+  const codeToVerify = '111111'; // Der richtige Verifizierungscode
 
   useEffect(() => {
     if (timeLeft === 0) {
