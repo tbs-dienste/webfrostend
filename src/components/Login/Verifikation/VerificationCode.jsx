@@ -1,11 +1,27 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './VerificationCode.scss';
 
 const VerificationCode = () => {
   const inputs = useRef([]);
   const [error, setError] = useState('');
+  const [timeLeft, setTimeLeft] = useState(60); // Timer initialisieren
+  const [timerExpired, setTimerExpired] = useState(false); // Flag für den Timer
 
   const codeToVerify = '731894'; // Der richtige Verifizierungscode
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setTimerExpired(true);
+      window.location.href = '/login'; // Weiterleitung zur Login-Seite
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   const handleChange = (e, index) => {
     const { value } = e.target;
@@ -54,6 +70,9 @@ const VerificationCode = () => {
               onKeyDown={(e) => handleKeyDown(e, index)}
             />
           ))}
+        </div>
+        <div className="countdown-timer">
+          {timerExpired ? 'Die Zeit ist abgelaufen.' : `Verbleibende Zeit: ${timeLeft} Sekunden`}
         </div>
         {error && <div className="error-message">{error}</div>}
         <button className="verify-button" onClick={verifyCode}>
