@@ -122,9 +122,6 @@ const Kunden = () => {
                   <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
                     Rechnung erstellen
                   </Link>
-                  <Link to={`/auftrag/${kunde.id}`} className="kunden-button">
-                    Auftrag
-                  </Link>
                   <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                     Kunden anzeigen
                   </Link>
