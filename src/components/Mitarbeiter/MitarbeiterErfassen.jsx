@@ -112,7 +112,6 @@ const MitarbeiterErfassen = () => {
           >
             <option value="männlich">Männlich</option>
             <option value="weiblich">Weiblich</option>
-            <option value="divers">Divers</option>
           </select>
         </div>
 

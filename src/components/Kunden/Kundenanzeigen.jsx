@@ -66,6 +66,7 @@ const KundenAnzeigen = () => {
               <input type="text" name="strasseHausnummer" value={editedData.strasseHausnummer} onChange={handleInputChange} />
               <input type="text" name="postleitzahl" value={editedData.postleitzahl} onChange={handleInputChange} />
               <input type="text" name="ort" value={editedData.ort} onChange={handleInputChange} />
+              <input type="text" name="land" value={editedData.land} onChange={handleInputChange} />
               <input type="text" name="email" value={editedData.email} onChange={handleInputChange} />
               <input type="text" name="telefon" value={editedData.telefon} onChange={handleInputChange} />
               <input type="text" name="mobil" value={editedData.mobil} onChange={handleInputChange} />
@@ -83,13 +84,13 @@ const KundenAnzeigen = () => {
               <p><strong>Strasse und Hausnummer:</strong> {selectedKunde.strasseHausnummer}</p>
               <p><strong>Postleitzahl:</strong> {selectedKunde.postleitzahl}</p>
               <p><strong>Ort:</strong> {selectedKunde.ort}</p>
+              <p><strong>Ort:</strong> {selectedKunde.land}</p>
               <p><strong>Email:</strong> {selectedKunde.email}</p>
               <p><strong>Telefon:</strong> {selectedKunde.telefon}</p>
               <p><strong>Mobil:</strong> {selectedKunde.mobil}</p>
               <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
               <p><strong>Auftragstyp:</strong> {selectedKunde.auftragsTyp}</p>
               <p><strong>Auftragsbeschreibung:</strong> {selectedKunde.auftragsBeschreibung}</p>
-              <p><strong>Preis:</strong> {selectedKunde.preis}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
             </>
           )

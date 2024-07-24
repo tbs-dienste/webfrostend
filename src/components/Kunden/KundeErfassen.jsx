@@ -15,6 +15,7 @@ const KundeErfassen = () => {
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
   const [firma, setFirma] = useState('');
+  const [land, setLand] = useState('');
 
   const handleKontaktAufnehmen = async () => {
     try {
@@ -22,6 +23,7 @@ const KundeErfassen = () => {
       const ip_adresse = ipResponse.data.ip;
 
       const newKunde = {
+        land,
         firma,
         vorname,
         nachname,
@@ -53,6 +55,19 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kontaktdaten</h2>
       <div className="formular">
+      <div className="formular-gruppe">
+          <label htmlFor="geschlecht">Geschlecht:</label>
+          <select
+            id="geschlecht"
+            value={geschlecht}
+            onChange={(e) => setGeschlecht(e.target.value)}
+            className="dropdown"
+          >
+            <option value="">Bitte auswählen</option>
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+          </select>
+        </div>
         <div className="formular-gruppe">
           <label htmlFor="firma">Firma:</label>
           <input
@@ -108,6 +123,23 @@ const KundeErfassen = () => {
           />
         </div>
         <div className="formular-gruppe">
+          <label htmlFor="land">Land:</label>
+          <select
+            id="land"
+            value={land}
+            onChange={(e) => setGeschlecht(e.target.value)}
+            className="dropdown"
+          >
+            <option value="">Bitte auswählen</option>
+            <option value="Deutschland">Deutschland</option>
+            <option value="Schweiz">Schweiz</option>
+            <option value="Österreich">Österreich</option>
+            <option value="Frankreich">Frankreich</option>
+            <option value="Italien">Italien</option>
+            <option value="England">England</option>
+          </select>
+        </div>
+        <div className="formular-gruppe">
           <label htmlFor="email">Email-Adresse:</label>
           <input
             type="email"
@@ -134,20 +166,7 @@ const KundeErfassen = () => {
             onChange={(e) => setMobil(e.target.value)}
           />
         </div>
-        <div className="formular-gruppe">
-          <label htmlFor="geschlecht">Geschlecht:</label>
-          <select
-            id="geschlecht"
-            value={geschlecht}
-            onChange={(e) => setGeschlecht(e.target.value)}
-            className="dropdown"
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="männlich">Männlich</option>
-            <option value="weiblich">Weiblich</option>
-            <option value="divers">Divers</option>
-          </select>
-        </div>
+      
       </div>
       <h2>Auftrag</h2>
       <div className="formular">

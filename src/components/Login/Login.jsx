@@ -13,7 +13,7 @@ const Login = ({ onLogin }) => {
 
     if (username === adminUsername && password === adminPassword) {
       onLogin(true);
-      window.location.href = "/kunden"
+      window.location.href = "/verification"
     } else {
       alert('Falscher Benutzername oder Passwort.');
     }
@@ -22,25 +22,26 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       <form onSubmit={handleLogin} className="login-form">
+      <h1 className='titel'>Login</h1>
         <label>
-          Benutzername:
           <input
             type="text"
+            placeholder='Benutzername'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </label>
         <br />
         <label>
-          Passwort:
           <input
             type="password"
             value={password}
+            placeholder='Passwort'
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
         <br />
-        <button type="submit">Einloggen</button>
+        <button onClick={handleLogin} className='einloggen'>Kontakt aufnehmen</button>
       </form>
     </div>
   );

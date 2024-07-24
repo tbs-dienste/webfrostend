@@ -29,6 +29,7 @@ import GutscheinScanner from './components/Gutschein/GutscheinScanner';
 import FAQ from './components/FAQ/FaqComponent';
 import NotFound from './components/Error/NotFound';
 import Preisinformationen from './components/Preise/Preisinformationen';
+import VerificationCode from './components/Login/Verifikation/VerificationCode';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -71,6 +72,7 @@ const App = () => {
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
           {isAdmin ? (
             <>

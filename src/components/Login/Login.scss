@@ -21,36 +21,44 @@ $button-border-radius: 4px;
   align-items: center;
 
   .login-form {
-    background-color: $background-color;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   backdrop-filter: blur(30px);
+   box-shadow: 0px 0px 30px rgba(227, 228, 237, 0.37);
+   border: 2px solid rgba(255, 255, 255, 0.18);
+   height: 300px;
+   width: 500px;
+   border-radius: 10%;
+
+   .titel {
+    padding-top: 40px;
+    padding-left: 40px;
+    font-weight: 2px;
+   }
 
     label {
       display: block;
       margin-bottom: 10px;
+      padding-left: 40px;
 
       input {
-        width: 100%;
+        width: 350px;
         padding: 8px;
         border-radius: $input-border-radius;
         border: 1px solid $input-border-color;
       }
     }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: $primary-color;
-      color: #ffffff;
+    .einloggen {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      background-color: #007bff;
       border: none;
-      border-radius: $button-border-radius;
+      border-radius: 50px;
+      width: 350px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: $secondary-color;
-      }
+      transition: background-color 0.3s;
     }
   }
 }

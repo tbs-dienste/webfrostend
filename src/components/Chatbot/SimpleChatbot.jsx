@@ -12,7 +12,7 @@ const SimpleChatbot = () => {
 
   const faqs = [
     { question: 'hallo', reply: 'Hallo! Wie kann ich Ihnen helfen?' },
-    { question: 'wie viel kostet', reply: 'Die Preise variieren. Möchten Sie eine spezifische Information? <br/><a href="https://tbs-solutions.vercel.app/preise" class="chatbot-link" target="_blank">Preisinformationen</a>' },
+    { question: 'wie viel kostet', reply: 'Die Preise variieren. Möchten Sie eine spezifische Information? <br/><a href="https://tbs-solutions.vercel.app/preisinformationen" class="chatbot-link" target="_blank">Preisinformationen</a>' },
     { question: 'ich brauche hilfe', reply: 'Ich bin hier, um Ihnen zu helfen. Was brauchen Sie? <br/><a href="https://tbs-solutions.vercel.app/kundeerfassen" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>' },
     { question: 'was sind die öffnungszeiten', reply: 'Unsere Öffnungszeiten sind Montag bis Freitag von 9 bis 17 Uhr. <br/><a href="https://tbs-solutions.vercel.app" class="chatbot-link" target="_blank">Website besuchen</a>' },
     { question: 'was ist deine funktion', reply: 'Ich bin ein virtueller Assistent, um Ihre Fragen zu beantworten und Ihnen Informationen zu geben.' },
