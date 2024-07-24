@@ -46,7 +46,7 @@ const VerificationCode = () => {
           {Array.from({ length: 6 }, (_, index) => (
             <input
               key={index}
-              type="text"
+              type="number"
               maxLength="1"
               className="verification-code-input"
               ref={(el) => (inputs.current[index] = el)}
