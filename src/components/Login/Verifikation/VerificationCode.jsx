@@ -6,6 +6,7 @@ const VerificationCode = () => {
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(60); // Timer initialisieren
   const [timerExpired, setTimerExpired] = useState(false); // Flag für den Timer
+  const [attempts, setAttempts] = useState(0); // Versuche initialisieren
 
   const codeToVerify = '111111'; // Der richtige Verifizierungscode
 
@@ -47,7 +48,16 @@ const VerificationCode = () => {
       window.location.href = '/kunden';
       setError('');
     } else {
-      setError('Der eingegebene Code ist falsch. Bitte versuche es erneut.');
+      setAttempts(prevAttempts => {
+        const newAttempts = prevAttempts + 1;
+        if (newAttempts >= 3) {
+          // Nach 3 Fehlversuchen weiterleiten
+          window.location.href = '/login';
+        } else {
+          setError(`Der eingegebene Code ist falsch. Du hast noch ${3 - newAttempts} ${newAttempts === 2 ? 'Versuch' : 'Versuche'} übrig.`);
+        }
+        return newAttempts;
+      });
       inputs.current.forEach(input => (input.value = ''));
       inputs.current[0].focus();
     }
@@ -73,6 +83,9 @@ const VerificationCode = () => {
         </div>
         <div className="countdown-timer">
           {timerExpired ? 'Die Zeit ist abgelaufen.' : `Verbleibende Zeit: ${timeLeft} Sekunden`}
+        </div>
+        <div className="attempts-info">
+          {attempts < 3 ? `Verbleibende Versuche: ${3 - attempts}` : 'Keine Versuche mehr übrig.'}
         </div>
         {error && <div className="error-message">{error}</div>}
         <button className="verify-button" onClick={verifyCode}>

@@ -73,8 +73,8 @@ const Preisinformationen = () => {
                 <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
                   <td>{paket.leistung}</td>
                   <td>{paket.ram}</td>
-                  <td>{paket.preis.toFixed(2)}€</td>
-                  <td>{(paket.preis * 12).toFixed(2)}€</td>
+                  <td>{paket.preis.toFixed(2)}CHF</td>
+                  <td>{(paket.preis * 12).toFixed(2)}CHF</td>
                 </tr>
               ))}
             </tbody>
@@ -97,8 +97,8 @@ const Preisinformationen = () => {
                 <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
                   <td>{paket.leistung}</td>
                   <td>{paket.speicher}</td>
-                  <td>{paket.preis.toFixed(2)}€</td>
-                  <td>{(paket.preis * 12).toFixed(2)}€</td>
+                  <td>{paket.preis.toFixed(2)}CHF</td>
+                  <td>{(paket.preis * 12).toFixed(2)}CHF</td>
                 </tr>
               ))}
             </tbody>
