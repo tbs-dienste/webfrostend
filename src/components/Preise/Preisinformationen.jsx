@@ -2,21 +2,21 @@ import React from 'react';
 import './Preisinformationen.scss';
 
 const datenbankPakete = [
-  { leistung: 'XS Medium Space', speicher: '10 GiB', preis: 26.00, empfohlen: true },
-  { leistung: 'S Small Space', speicher: '10 GiB', preis: 50.00, empfohlen: true },
-  { leistung: 'M Medium Space', speicher: '40 GiB', preis: 116.00, empfohlen: true },
-  { leistung: 'L Medium Space', speicher: '80 GiB', preis: 240.00, empfohlen: false },
-  { leistung: 'XL Medium Space', speicher: '160 GiB', preis: 512.00, empfohlen: false },
-  { leistung: 'XXL Medium Space', speicher: '320 GiB', preis: 1088.00, empfohlen: false },
+  { leistung: 'XS Medium Space', speicher: '10 GiB', preis: 35.00, empfohlen: true },
+  { leistung: 'S Small Space', speicher: '10 GiB', preis: 70.00, empfohlen: true },
+  { leistung: 'M Medium Space', speicher: '40 GiB', preis: 150.00, empfohlen: true },
+  { leistung: 'L Medium Space', speicher: '80 GiB', preis: 300.00, empfohlen: false },
+  { leistung: 'XL Medium Space', speicher: '160 GiB', preis: 650.00, empfohlen: false },
+  { leistung: 'XXL Medium Space', speicher: '320 GiB', preis: 1400.00, empfohlen: false },
 ];
 
 const backendPakete = [
-  { leistung: 'Starter', ram: '512 MB', preis: 7, empfohlen: true },
-  { leistung: 'Standard', ram: '2 GB', preis: 25, empfohlen: true },
-  { leistung: 'Pro', ram: '4 GB', preis: 85, empfohlen: false },
-  { leistung: 'Pro Plus', ram: '8 GB', preis: 175, empfohlen: false },
-  { leistung: 'Pro Max', ram: '16 GB', preis: 225, empfohlen: false },
-  { leistung: 'Pro Ultra', ram: '32 GB', preis: 450, empfohlen: false },
+  { leistung: 'Starter', ram: '512 MB', preis: 10, empfohlen: true },
+  { leistung: 'Standard', ram: '2 GB', preis: 35, empfohlen: true },
+  { leistung: 'Pro', ram: '4 GB', preis: 120, empfohlen: false },
+  { leistung: 'Pro Plus', ram: '8 GB', preis: 250, empfohlen: false },
+  { leistung: 'Pro Max', ram: '16 GB', preis: 300, empfohlen: false },
+  { leistung: 'Pro Ultra', ram: '32 GB', preis: 600, empfohlen: false },
 ];
 
 const Preisinformationen = () => {
