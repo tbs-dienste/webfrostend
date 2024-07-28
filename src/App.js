@@ -30,6 +30,7 @@ import FAQ from './components/FAQ/FaqComponent';
 import NotFound from './components/Error/NotFound';
 import Preisinformationen from './components/Preise/Preisinformationen';
 import VerificationCode from './components/Login/Verifikation/VerificationCode';
+import Vertrag from './components/Vertrag/Vertrag';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -78,6 +79,7 @@ const App = () => {
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
+              <Route path="/vertrag" element={<Vertrag />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />

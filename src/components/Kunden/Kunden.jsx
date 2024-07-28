@@ -19,11 +19,11 @@ const Kunden = () => {
       geschlecht: 'männlich',
       auftragsTyp: 'Webseite',
       auftragsBeschreibung: 'Beispielbeschreibung',
-      rechnungGestellt: false,
-      rechnungBezahlt: false,
+      rechnungGestellt: true,
+      rechnungBezahlt: true,
       arbeitszeit: 0,
       ip_adresse: '0.0.0.0',
-      archiviert: false, // Neues Feld für den Archivstatus
+      archiviert: true, // Neues Feld für den Archivstatus
     }
   ]);
   const [searchTerm, setSearchTerm] = useState('');

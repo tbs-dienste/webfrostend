@@ -40,6 +40,7 @@ function Navbar({ isAdmin, onLogout }) {
                 <NavItem to="/gutscheine-liste" text="Gutscheinliste" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/gutschein" text="Gutschein Erstellen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                <NavItem to="/vertrag" text="Vertrag" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/mitarbeitererfassen" text="Mitarbeiter Erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                 <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
