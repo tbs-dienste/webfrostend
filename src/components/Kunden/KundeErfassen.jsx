@@ -39,7 +39,8 @@ const KundeErfassen = () => {
         rechnungGestellt: false,
         rechnungBezahlt: false,
         arbeitszeit: 0,
-        ip_adresse
+        ip_adresse,
+        archiviert: false // Hier hinzufügen
       };
 
       await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
@@ -55,7 +56,7 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kontaktdaten</h2>
       <div className="formular">
-      <div className="formular-gruppe">
+        <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
           <select
             id="geschlecht"
@@ -127,7 +128,7 @@ const KundeErfassen = () => {
           <select
             id="land"
             value={land}
-            onChange={(e) => setGeschlecht(e.target.value)}
+            onChange={(e) => setLand(e.target.value)}
             className="dropdown"
           >
             <option value="">Bitte auswählen</option>
@@ -166,7 +167,6 @@ const KundeErfassen = () => {
             onChange={(e) => setMobil(e.target.value)}
           />
         </div>
-      
       </div>
       <h2>Auftrag</h2>
       <div className="formular">

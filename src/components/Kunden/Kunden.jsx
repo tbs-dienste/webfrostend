@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Stelle sicher, dass axios importiert ist
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Kunden.scss';
 
@@ -16,9 +16,19 @@ const Kunden = () => {
     const fetchKunden = async () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden');
-        setKunden(response.data);
+        const data = response.data.data;
+
+        if (Array.isArray(data)) {
+          setKunden(data);
+        } else {
+          console.error('Erwartet ein Array, aber erhalten:', data);
+          setKunden([]);
+        }
       } catch (error) {
-        console.error('Error fetching kunden:', error);
+        console.error('Fehler beim Abrufen der Kunden:', error);
+        // Zeige eine benutzerfreundliche Fehlermeldung
+        alert('Fehler beim Abrufen der Kunden. Bitte versuche es später noch einmal.');
+        setKunden([]);
       } finally {
         setLoading(false);
       }
@@ -39,7 +49,8 @@ const Kunden = () => {
       setKunden(updatedKunden);
       setShowConfirmationModal(false);
     } catch (error) {
-      console.error('Error deleting kunde:', error);
+      console.error('Fehler beim Löschen des Kunden:', error);
+      alert('Fehler beim Löschen des Kunden. Bitte versuche es später noch einmal.');
     }
   };
 
@@ -59,7 +70,6 @@ const Kunden = () => {
       (showArchived ? kunde.archiviert : !kunde.archiviert)
     );
   });
-
 
   return (
     <div className="kunden-container">
@@ -119,7 +129,6 @@ const Kunden = () => {
                   <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
                     Kunde löschen
                   </button>
-                  {/* Anzeige des Rechnungsstatus */}
                   <div className={`rechnungs-status ${kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf'}`}>
                     {kunde.rechnungGestellt ? (
                       kunde.rechnungBezahlt ? 'Bezahlt' : 'Offen'
@@ -131,30 +140,12 @@ const Kunden = () => {
                 </div>
               </div>
             ))
-          ) : showMusterKunde ? (
-            <div className="muster-kunde">
-              <p>Keine Kunden vorhanden. Hier ist ein Muster-Kunde:</p>
-              <div className="kunden-box">
-                <p className="kunden-nummer">Kundennummer: 0000</p>
-                <p className="kunden-name">Max Mustermann</p>
-                <div className="kunden-buttons">
-                  <Link to={`/zeiterfassung/0`} className="kunden-button">
-                    Arbeitszeit
-                  </Link>
-                  <Link to={`/rechnung/0`} className="kunden-button">
-                    Rechnung erstellen
-                  </Link>
-                  <Link to={`/kunden/0`} className="kunden-button">
-                    Kunden anzeigen
-                  </Link>
-                </div>
-              </div>
-            </div>
           ) : (
             <p className="no-results">Keine Ergebnisse gefunden.</p>
           )}
         </div>
       )}
+
       {showConfirmationModal && (
         <div className="confirmation-modal">
           <div className="modal-content">
