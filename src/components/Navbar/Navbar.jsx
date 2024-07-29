@@ -10,9 +10,8 @@ function Navbar({ isAdmin, onLogout }) {
   const [adminMenuActive, setAdminMenuActive] = useState(false);
 
   useEffect(() => {
-    // Kein Initialisierungscode im useEffect
-    // wenn du nicht möchtest, dass der Warenkorbzähler bei jedem Laden der Komponente wiederhergestellt wird
-  }, []); // Leer lassen, damit dieser Effekt nur einmalig ausgeführt wird
+    // Hier kannst du Warenkorb-Count initialisieren, falls nötig
+  }, []);
 
   const toggleBurgerMenu = () => {
     setBurgerMenuActive(!burgerMenuActive);
@@ -25,18 +24,21 @@ function Navbar({ isAdmin, onLogout }) {
   return (
     <div className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
       <div className='container'>
+        <div className='logo'>
+          <Link to="/">TBs Solutions</Link>
+        </div>
         <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
-          <div></div>
-          <div></div>
-          <div></div>
+          <div className="bar"></div>
+          <div className="bar"></div>
+          <div className="bar"></div>
         </div>
         <div className={`nav-elements ${burgerMenuActive ? 'active' : ''}`}>
           <ul>
             <NavItem to="/" text="Home" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kundeerfassen" text="Kontakt" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kontakt" text="Kontakt" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kundenbewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/bewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/preisinformationen" text="Preisinformationen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/faq" text="FAQ" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/warenkorb" text="Warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
@@ -75,14 +77,9 @@ function NavItem({ to, text, icon, count, currentPath, onClick }) {
   return (
     <li>
       <Link to={to} className={currentPath === to ? 'active' : ''} onClick={onClick}>
-        {to === "/warenkorb" ? (
-          <span>
-            {icon}
-            {count > 0 && <span className="warenkorb-count">{count}</span>}
-          </span>
-        ) : (
-          text
-        )}
+        {icon && <span className="icon">{icon}</span>}
+        {text}
+        {count > 0 && to === "/warenkorb" && <span className="warenkorb-count">{count}</span>}
         {currentPath === to && <span className="active-indicator"></span>}
       </Link>
     </li>
