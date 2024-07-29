@@ -1,37 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Stelle sicher, dass axios importiert ist
 import { Link } from 'react-router-dom';
 import './Kunden.scss';
 
 const Kunden = () => {
-  const [kunden, setKunden] = useState([
-    {
-      id: 1,
-      land: 'Deutschland',
-      firma: 'Musterfirma',
-      vorname: 'Max',
-      nachname: 'Mustermann',
-      strasseHausnummer: 'Musterstraße 1',
-      postleitzahl: '12345',
-      ort: 'Musterstadt',
-      email: 'max.mustermann@example.com',
-      telefon: '0123456789',
-      mobil: '0987654321',
-      geschlecht: 'männlich',
-      auftragsTyp: 'Webseite',
-      auftragsBeschreibung: 'Beispielbeschreibung',
-      rechnungGestellt: true,
-      rechnungBezahlt: true,
-      arbeitszeit: 0,
-      ip_adresse: '0.0.0.0',
-      archiviert: true, // Neues Feld für den Archivstatus
-    }
-  ]);
+  const [kunden, setKunden] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('alle');
-  const [showArchived, setShowArchived] = useState(false); // Für den Archivfilter
-  const [loading, setLoading] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [customerIdToDelete, setCustomerIdToDelete] = useState(null);
+
+  useEffect(() => {
+    const fetchKunden = async () => {
+      try {
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden');
+        setKunden(response.data);
+      } catch (error) {
+        console.error('Error fetching kunden:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchKunden();
+  }, []);
 
   const handleShowConfirmationModal = (id) => {
     setShowConfirmationModal(true);
@@ -40,8 +34,7 @@ const Kunden = () => {
 
   const handleDeleteConfirmation = async () => {
     try {
-      // Kommentiere diesen Abschnitt aus, wenn du keine Löschoperation möchtest
-      // await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerIdToDelete}`);
+      await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerIdToDelete}`);
       const updatedKunden = kunden.filter(kunde => kunde.id !== customerIdToDelete);
       setKunden(updatedKunden);
       setShowConfirmationModal(false);
@@ -67,8 +60,6 @@ const Kunden = () => {
     );
   });
 
-  // Musterkunde nur anzeigen, wenn keine tatsächlichen Kunden vorhanden sind
-  const showMusterKunde = kunden.length === 0;
 
   return (
     <div className="kunden-container">
