@@ -9,7 +9,6 @@ const KundenAnzeigen = () => {
   const [originalData, setOriginalData] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState({});
-  const [previousState, setPreviousState] = useState({});
   const [loading, setLoading] = useState(true); // Definiere den Loading-Zustand
 
   useEffect(() => {
@@ -21,7 +20,6 @@ const KundenAnzeigen = () => {
           setSelectedKunde(kunde);
           setOriginalData(kunde);
           setEditedData(kunde);
-          setPreviousState(kunde); // Speichern des ursprünglichen Zustands
         } else {
           console.error('Kunde nicht gefunden');
         }
@@ -60,20 +58,34 @@ const KundenAnzeigen = () => {
 
   const handleArchivieren = async () => {
     try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { ...editedData, archiviert: true });
-      alert('Kunde erfolgreich archiviert');
-      setEditedData(prevData => ({ ...prevData, archiviert: true }));
+        const url = editedData.archiviert
+            ? `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/unarchive`
+            : `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/archive`;
+        
+        const response = await axios.post(url);
+
+        if (response.data.status === 'success') {
+            const updatedData = { ...editedData, archiviert: !editedData.archiviert };
+            setEditedData(updatedData);
+            alert(updatedData.archiviert ? 'Kunde erfolgreich archiviert' : 'Kunde erfolgreich reaktiviert');
+        } else {
+            alert('Fehler beim Archivieren des Kunden');
+        }
     } catch (error) {
-      console.error('Fehler beim Archivieren des Kunden:', error);
-      alert('Fehler beim Archivieren des Kunden. Bitte versuche es später noch einmal.');
+        console.error('Fehler beim Archivieren des Kunden:', error);
+        alert('Fehler beim Archivieren des Kunden. Bitte versuche es später noch einmal.');
     }
-  };
+};
+
+
+  
 
   const handleRechnungGestellt = async () => {
     try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { ...editedData, rechnungGestellt: true });
-      alert('Rechnung erfolgreich erstellt');
-      setEditedData(prevData => ({ ...prevData, rechnungGestellt: true }));
+      const updatedData = { ...editedData, rechnungGestellt: !editedData.rechnungGestellt };
+      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, updatedData);
+      alert(updatedData.rechnungGestellt ? 'Rechnung erfolgreich erstellt' : 'Rechnungserstellung rückgängig gemacht');
+      setEditedData(updatedData);
     } catch (error) {
       console.error('Fehler beim Erstellen der Rechnung:', error);
       alert('Fehler beim Erstellen der Rechnung. Bitte versuche es später noch einmal.');
@@ -82,47 +94,37 @@ const KundenAnzeigen = () => {
 
   const handleRechnungBezahlt = async () => {
     try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { ...editedData, rechnungBezahlt: true });
-      alert('Rechnung als bezahlt markiert');
-      setEditedData(prevData => ({ ...prevData, rechnungBezahlt: true }));
+      const updatedData = { ...editedData, rechnungBezahlt: !editedData.rechnungBezahlt };
+      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, updatedData);
+      alert(updatedData.rechnungBezahlt ? 'Rechnung als bezahlt markiert' : 'Rechnung als bezahlt rückgängig gemacht');
+      setEditedData(updatedData);
     } catch (error) {
       console.error('Fehler beim Markieren der Rechnung als bezahlt:', error);
       alert('Fehler beim Markieren der Rechnung als bezahlt. Bitte versuche es später noch einmal.');
     }
   };
 
-  const handleUndoRechnungGestellt = async () => {
-    try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { ...editedData, rechnungGestellt: false });
-      alert('Rechnungserstellung rückgängig gemacht');
-      setEditedData(prevData => ({ ...prevData, rechnungGestellt: false }));
-    } catch (error) {
-      console.error('Fehler beim Rückgängig-Machen der Rechnungserstellung:', error);
-      alert('Fehler beim Rückgängig-Machen der Rechnungserstellung. Bitte versuche es später noch einmal.');
-    }
-  };
-
-  const handleUndoRechnungBezahlt = async () => {
-    try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { ...editedData, rechnungBezahlt: false });
-      alert('Rechnung als bezahlt rückgängig gemacht');
-      setEditedData(prevData => ({ ...prevData, rechnungBezahlt: false }));
-    } catch (error) {
-      console.error('Fehler beim Rückgängig-Machen der Rechnung als bezahlt:', error);
-      alert('Fehler beim Rückgängig-Machen der Rechnung als bezahlt. Bitte versuche es später noch einmal.');
-    }
-  };
-
   const handleUndo = () => {
     if (originalData) {
       setEditedData(originalData);
-      setPreviousState(originalData); // Zurücksetzen auf den ursprünglichen Zustand
     }
   };
 
   if (loading) {
     return <div>Lade Kunde...</div>;
   }
+
+  const getArchivierenButtonText = () => {
+    return editedData.archiviert ? 'Reaktivieren' : 'Archivieren';
+  };
+
+  const getRechnungGestelltButtonText = () => {
+    return editedData.rechnungGestellt ? 'Rückgängig Rechnung erstellen' : 'Rechnung erstellen';
+  };
+
+  const getRechnungBezahltButtonText = () => {
+    return editedData.rechnungBezahlt ? 'Rückgängig Rechnung bezahlt' : 'Rechnung bezahlt';
+  };
 
   return (
     <div className="kunde-anzeigen-container">
@@ -207,16 +209,10 @@ const KundenAnzeigen = () => {
               <p><strong>Preis:</strong> {selectedKunde.preis}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
               <button onClick={handleEdit}>Bearbeiten</button>
-              <button onClick={handleArchivieren}>Archivieren</button>
-              <button onClick={handleRechnungGestellt}>Rechnung erstellen</button>
-              {selectedKunde.rechnungGestellt && !selectedKunde.rechnungBezahlt && (
-                <button onClick={handleRechnungBezahlt}>Rechnung bezahlt</button>
-              )}
-              {selectedKunde.rechnungGestellt && (
-                <button onClick={handleUndoRechnungGestellt}>Rückgängig Rechnung erstellen</button>
-              )}
-              {selectedKunde.rechnungBezahlt && (
-                <button onClick={handleUndoRechnungBezahlt}>Rückgängig Rechnung bezahlt</button>
+              <button onClick={handleArchivieren}>{getArchivierenButtonText()}</button>
+              <button onClick={handleRechnungGestellt}>{getRechnungGestelltButtonText()}</button>
+              {editedData.rechnungGestellt && !editedData.rechnungBezahlt && (
+                <button onClick={handleRechnungBezahlt}>{getRechnungBezahltButtonText()}</button>
               )}
             </>
           )
