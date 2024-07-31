@@ -1,15 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Dienstleistungen.scss';
 
 const Dienstleistungen = () => {
-  const services = [
-    { id: 1, title: "Webseite Programmieren", description: "Lassen Sie uns Ihre Webseite programmieren." },
-    { id: 2, title: "Diashow erstellen", description: "Lassen Sie uns Ihre wertvollen Erinnerungen in einer professionellen Diashow zum Leben erwecken." },
-    { id: 3, title: "Gaming PC zusammenbauen", description: "Bereit für das ultimative Gaming-Erlebnis? Lassen Sie sich von uns beraten, um Ihren eigenen Gaming PC zu bauen. Maßgeschneidert nach Ihren Wünschen für maximale Leistung und unvergleichliche Gaming-Sessions. " },
-    { id: 4, title: "Musik", description: "Bereit für das ultimative Gaming-Erlebnis? Lassen Sie sich von uns beraten, um Ihren eigenen Gaming PC zu bauen. Maßgeschneidert nach Ihren Wünschen für maximale Leistung und unvergleichliche Gaming-Sessions. " }
-  ];
-  
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
+        setServices(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Fehler beim Laden der Dienstleistungen:", error);
+        setError("Fehler beim Laden der Dienstleistungen.");
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className="services-container">
       <h1>Unsere Dienstleistungen</h1>
@@ -17,7 +34,7 @@ const Dienstleistungen = () => {
         {services.map(service => (
           <div className="service" key={service.id}>
             <h2>{service.title}</h2>
-            <p>{service.description}</p>
+            <p>{service.description.length > 100 ? `${service.description.substring(0, 100)}...` : service.description}</p>
             <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
           </div>
         ))}

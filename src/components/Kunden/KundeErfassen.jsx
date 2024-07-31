@@ -19,9 +19,11 @@ const KundeErfassen = () => {
 
   const handleKontaktAufnehmen = async () => {
     try {
+      // Hole die IP-Adresse des Benutzers
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
 
+      // Erstelle das neue Kundenobjekt
       const newKunde = {
         land,
         firma,
@@ -36,16 +38,14 @@ const KundeErfassen = () => {
         geschlecht,
         auftragsTyp,
         auftragsBeschreibung,
-        rechnungGestellt: false,
-        rechnungBezahlt: false,
-        arbeitszeit: 0,
-        ip_adresse,
-        archiviert: false // Hier hinzufügen
+        ip_adresse
       };
 
-      await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
-      console.log('Kontaktdaten erfolgreich gesendet.');
-      window.location.href = '/dankesnachricht';
+      // Sende die Daten an das Backend
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
+      
+      console.log('Kontaktdaten erfolgreich gesendet:', response.data);
+      window.location.href = '/dankesnachricht'; // Weiterleitung nach erfolgreicher Verarbeitung
     } catch (error) {
       console.error('Fehler beim Senden der Kontaktdaten:', error);
       alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
