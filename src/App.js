@@ -31,6 +31,7 @@ import NotFound from './components/Error/NotFound';
 import Preisinformationen from './components/Preise/Preisinformationen';
 import VerificationCode from './components/Login/Verifikation/VerificationCode';
 import Vertrag from './components/Vertrag/Vertrag';
+import SignComponent from './components/Vertrag/SignComponent';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -68,6 +69,7 @@ const App = () => {
           <Route path="/gutscheine-liste" element={<AlleGutscheine />} />
           <Route path="/gutschein" element={<GutscheinErstellung />} />
           <Route path="/flyer" element={<Flyer />} />
+          <Route path="/sign" element={<SignComponent />} />
           <Route path="/team" element={<Team />} />
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />

@@ -3,7 +3,6 @@ import axios from 'axios';
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
-  const [mitarbeiter, setMitarbeiter] = useState([]);
   const [geschlecht, setGeschlecht] = useState('');
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
@@ -14,26 +13,8 @@ const MitarbeiterErfassen = () => {
   const [mobil, setMobil] = useState('');
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
-  const [mitarbeiternummer, setMitarbeiternummer] = useState('');
   const [land, setLand] = useState('CH');
   const [iban, setIban] = useState('CH');
-  const [selectedLanguages, setSelectedLanguages] = useState([]);
-
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'tur', name: 'Türkei', flag: '🇹🇷'}
-  ];
-
-  useEffect(() => {
-    const storedMitarbeiter = localStorage.getItem('mitarbeiter');
-    if (storedMitarbeiter) {
-      setMitarbeiter(JSON.parse(storedMitarbeiter));
-    }
-  }, []);
 
   const handleIbanChange = (e) => {
     let input = e.target.value.toUpperCase();
@@ -60,20 +41,6 @@ const MitarbeiterErfassen = () => {
     setIban(selectedLand);
   };
 
-  const handleLanguageChange = (code) => {
-    setSelectedLanguages((prevSelectedLanguages) => {
-      if (prevSelectedLanguages.includes(code)) {
-        return prevSelectedLanguages.filter((lang) => lang !== code);
-      } else {
-        if (prevSelectedLanguages.length < 4) {
-          return [...prevSelectedLanguages, code];
-        } else {
-          return prevSelectedLanguages;
-        }
-      }
-    });
-  };
-
   const handleMitarbeiterHinzufügen = async () => {
     const newMitarbeiter = {
       geschlecht,
@@ -86,8 +53,7 @@ const MitarbeiterErfassen = () => {
       mobil,
       benutzername,
       passwort,
-      iban: land,
-      sprachen: selectedLanguages,
+      iban: land
     };
 
     try {
@@ -229,25 +195,6 @@ const MitarbeiterErfassen = () => {
             />
           </div>
   
-          <div className="formular-gruppe">
-            <label>Sprachen:</label>
-            <div className="languages">
-              {languages.map((language) => (
-                <div key={language.code} className="language-checkbox">
-                  <input
-                    type="checkbox"
-                    id={`language-${language.code}`}
-                    checked={selectedLanguages.includes(language.code)}
-                    onChange={() => handleLanguageChange(language.code)}
-                  />
-                  <label htmlFor={`language-${language.code}`}>
-                    <span className="flag">{language.flag}</span> {language.name}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-  
           <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
         </div>
       </div>
@@ -255,4 +202,5 @@ const MitarbeiterErfassen = () => {
   };
   
   export default MitarbeiterErfassen;
+
   

@@ -27,6 +27,7 @@
     "react-pdf": "^7.7.1",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
+    "react-signature-canvas": "^1.0.6",
     "react-simple-chatbot": "^0.6.1",
     "react-stars": "^2.2.5",
     "sass": "^1.72.0",
