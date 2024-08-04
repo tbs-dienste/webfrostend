@@ -8,6 +8,7 @@ const SignComponent = () => {
   const [code, setCode] = useState('');
   const [status, setStatus] = useState('');
   const [showSignatureField, setShowSignatureField] = useState(false);
+  const [signatureDataUrl, setSignatureDataUrl] = useState(''); // State für die Unterschrift
   const signatureRef = useRef(null);
 
   const handleCodeChange = (e) => {
@@ -35,8 +36,9 @@ const SignComponent = () => {
   const handleSignatureSubmit = () => {
     if (signatureRef.current) {
       const dataUrl = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
-      alert('Unterschrift gesendet!');
-      console.log('Unterschrift:', dataUrl); // Hier kannst du den Code hinzufügen, um die Unterschrift zu speichern oder zu senden
+      setSignatureDataUrl(dataUrl); // Unterschrift speichern
+      alert('Unterschrift gespeichert!');
+      console.log('Unterschrift:', dataUrl); // Hier kannst du den Code hinzufügen, um die Unterschrift lokal weiterzuverwenden
     }
   };
 
@@ -62,7 +64,13 @@ const SignComponent = () => {
             canvasProps={{ width: 600, height: 200, className: 'signature-canvas' }}
           />
           <button onClick={handleClearSignature}>Löschen</button>
-          <button onClick={handleSignatureSubmit}>Senden</button>
+          <button onClick={handleSignatureSubmit}>Speichern</button>
+        </div>
+      )}
+      {signatureDataUrl && (
+        <div className="signature-preview">
+          <h3>Unterschrift Vorschau:</h3>
+          <img src={signatureDataUrl} alt="Unterschrift Vorschau" />
         </div>
       )}
     </div>

@@ -84,12 +84,14 @@
     flex-direction: column;
     gap: 15px;
     width: 100%;
-    max-width: 500px;
+    max-width: 600px; // Maximalbreite anpassen, um das Layout zu kontrollieren
     text-align: center;
   
     .signature-canvas {
       border: 1px solid #d1d1d1;
       border-radius: 8px;
+      width: 100%; // Canvas passt sich der Breite des Containers an
+      height: auto; // Höhe wird automatisch angepasst
     }
   
     button {
@@ -109,6 +111,19 @@
       &:active {
         transform: scale(0.98);
       }
+    }
+  }
+  
+  // Vorschau der Unterschrift
+  .signature-preview {
+    margin-top: 20px;
+    text-align: center;
+  
+    img {
+      max-width: 100%;
+      height: auto; // Höhe automatisch anpassen
+      border: 1px solid #d1d1d1;
+      border-radius: 8px;
     }
   }
   
