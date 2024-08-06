@@ -1,0 +1,28 @@
+// src/components/DownloadButton.scss
+.download-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; // Füllt die gesamte Viewport-Höhe aus
+    background-color: #f4f4f4; // Heller Hintergrund
+  }
+  
+  .download-button {
+    background-color: #007bff; // Blauer Hintergrund
+    color: #ffffff; // Weißer Text
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #0056b3; // Dunkleres Blau bei Hover
+    }
+  
+    &:focus {
+      outline: none; // Kein Rahmen bei Fokus
+    }
+  }
+  

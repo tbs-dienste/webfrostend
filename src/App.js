@@ -32,6 +32,7 @@ import Preisinformationen from './components/Preise/Preisinformationen';
 import VerificationCode from './components/Login/Verifikation/VerificationCode';
 import Vertrag from './components/Vertrag/Vertrag';
 import SignComponent from './components/Vertrag/SignComponent';
+import Infos from './components/Administrativ/Infos';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -80,8 +81,10 @@ const App = () => {
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
+              <Route path="/infos" element={<Infos />} />
+
               <Route path="/rechnung/:id" element={<Rechnung />} />
-              <Route path="/vertrag" element={<Vertrag />} />
+              <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />

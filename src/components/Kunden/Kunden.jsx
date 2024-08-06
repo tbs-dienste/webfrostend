@@ -26,7 +26,6 @@ const Kunden = () => {
         }
       } catch (error) {
         console.error('Fehler beim Abrufen der Kunden:', error);
-        // Zeige eine benutzerfreundliche Fehlermeldung
         alert('Fehler beim Abrufen der Kunden. Bitte versuche es später noch einmal.');
         setKunden([]);
       } finally {
@@ -59,7 +58,6 @@ const Kunden = () => {
     setCustomerIdToDelete(null);
   };
 
-  // Filter- und Sortierlogik
   const filteredKunden = kunden.filter((kunde) => {
     const fullName = `${kunde.vorname} ${kunde.nachname}`;
     const status = kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf';
@@ -125,6 +123,9 @@ const Kunden = () => {
                   </Link>
                   <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                     Kunden anzeigen
+                  </Link>
+                  <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode}`} className="kunden-button">
+                    Vertrag
                   </Link>
                   <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
                     Kunde löschen

@@ -52,6 +52,8 @@ function Navbar({ isAdmin, onLogout }) {
                   <div className={`dropdown-menu ${adminMenuActive ? 'show' : ''}`}>
                     <NavItem to="/gutscheine-liste" text="Gutscheinliste" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/gutschein" text="Gutschein Erstellen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                    <NavItem to="/infos" text="Betriebsordnung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+
                     <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/vertrag" text="Vertrag" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
