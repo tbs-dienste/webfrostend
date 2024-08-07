@@ -33,6 +33,7 @@ import VerificationCode from './components/Login/Verifikation/VerificationCode';
 import Vertrag from './components/Vertrag/Vertrag';
 import SignComponent from './components/Vertrag/SignComponent';
 import Infos from './components/Administrativ/Infos';
+import VideoCall from './components/VideoChat/VideoCall';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -74,6 +75,8 @@ const App = () => {
           <Route path="/team" element={<Team />} />
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
+          <Route path="/videocall" element={<VideoCall />} />
+
           <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />

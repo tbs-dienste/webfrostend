@@ -85,6 +85,7 @@ const Home = () => {
           <Link to="/dienstleistungen" className="button">Jetzt entdecken</Link>
         </div>
       </div>
+  
     </div>
   );
 };
