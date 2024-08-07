@@ -5,8 +5,12 @@ const VideoCall = () => {
     const [stream, setStream] = useState(null);
     const [peerConnection, setPeerConnection] = useState(null);
     const [socket, setSocket] = useState(null);
+    const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+    const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
+    const screenStreamRef = useRef(null);
     const [isCallActive, setIsCallActive] = useState(false);
 
     useEffect(() => {
@@ -36,11 +40,9 @@ const VideoCall = () => {
     }, []);
 
     const handleOffer = async (offer, from) => {
-        // Create and set up a new RTCPeerConnection
         const pc = new RTCPeerConnection();
         setPeerConnection(pc);
 
-        // Add ICE candidate handlers
         pc.onicecandidate = (event) => {
             if (event.candidate) {
                 socket.send(JSON.stringify({
@@ -51,15 +53,12 @@ const VideoCall = () => {
             }
         };
 
-        // Add track handlers
         pc.ontrack = (event) => {
             remoteVideoRef.current.srcObject = event.streams[0];
         };
 
-        // Set remote description
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
 
-        // Create and send an answer
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
 
@@ -88,7 +87,6 @@ const VideoCall = () => {
         if (!peerConnection) {
             const pc = new RTCPeerConnection();
 
-            // Add ICE candidate handlers
             pc.onicecandidate = (event) => {
                 if (event.candidate) {
                     socket.send(JSON.stringify({
@@ -99,21 +97,18 @@ const VideoCall = () => {
                 }
             };
 
-            // Add track handlers
             pc.ontrack = (event) => {
                 remoteVideoRef.current.srcObject = event.streams[0];
             };
 
             setPeerConnection(pc);
 
-            // Get local media stream
             const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             localVideoRef.current.srcObject = localStream;
             setStream(localStream);
 
             localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-            // Create an offer
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
 
@@ -138,7 +133,39 @@ const VideoCall = () => {
             setStream(null);
         }
 
+        if (screenStreamRef.current) {
+            screenStreamRef.current.getTracks().forEach(track => track.stop());
+            setIsScreenSharing(false);
+        }
+
         setIsCallActive(false);
+    };
+
+    const toggleVideo = () => {
+        const videoTrack = stream.getVideoTracks()[0];
+        videoTrack.enabled = !videoTrack.enabled;
+        setIsVideoEnabled(videoTrack.enabled);
+    };
+
+    const toggleAudio = () => {
+        const audioTrack = stream.getAudioTracks()[0];
+        audioTrack.enabled = !audioTrack.enabled;
+        setIsAudioEnabled(audioTrack.enabled);
+    };
+
+    const startScreenShare = async () => {
+        try {
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            screenStreamRef.current = screenStream;
+
+            screenStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, screenStream);
+            });
+
+            setIsScreenSharing(true);
+        } catch (error) {
+            console.error('Error sharing screen:', error);
+        }
     };
 
     return (
@@ -150,6 +177,15 @@ const VideoCall = () => {
             <div className={styles.buttonContainer}>
                 <button onClick={() => startCall('recipient-id')} className={styles.button}>Start Call</button>
                 <button onClick={endCall} disabled={!isCallActive} className={styles.button}>End Call</button>
+                <button onClick={toggleVideo} className={styles.button}>
+                    {isVideoEnabled ? 'Turn Off Video' : 'Turn On Video'}
+                </button>
+                <button onClick={toggleAudio} className={styles.button}>
+                    {isAudioEnabled ? 'Mute Audio' : 'Unmute Audio'}
+                </button>
+                <button onClick={startScreenShare} disabled={isScreenSharing} className={styles.button}>
+                    {isScreenSharing ? 'Stop Sharing Screen' : 'Share Screen'}
+                </button>
             </div>
         </div>
     );
