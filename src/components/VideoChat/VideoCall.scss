@@ -1,53 +1,64 @@
-// VideoCall.module.scss
-
 .videoCallContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    width: 100vw;
     background-color: #f0f0f0;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .videoContainer {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+    height: 60%;
     gap: 10px;
     margin-bottom: 20px;
 }
 
 .videoElement {
-    width: 300px;
-    height: 225px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #000;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
     object-fit: cover;
+    background-color: #000;
 }
 
 .buttonContainer {
     display: flex;
-    gap: 20px;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-button {
+.button {
     background-color: #007bff;
-    color: #fff;
     border: none;
+    color: white;
     padding: 10px 20px;
-    font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
 
-    &:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
-    }
+.button:hover {
+    background-color: #0056b3;
+}
 
-    &:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
-    }
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }

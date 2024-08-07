@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './VideoCall.scss';
+import './VideoCall.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone, faPhoneSlash, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash, faShareSquare, faStopCircle } from '@fortawesome/free-solid-svg-icons';
 
 const VideoCall = () => {
     const [stream, setStream] = useState(null);
@@ -12,10 +14,10 @@ const VideoCall = () => {
     const remoteVideoRef = useRef(null);
     const screenStreamRef = useRef(null);
     const [isCallActive, setIsCallActive] = useState(false);
+    const [remoteStreamVisible, setRemoteStreamVisible] = useState(true);
 
     useEffect(() => {
-        // Initialize WebSocket connection
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket('ws://https://tbsdigitalsolutionsbackend.onrender.com');
         setSocket(ws);
 
         ws.onopen = () => {
@@ -135,22 +137,28 @@ const VideoCall = () => {
 
         if (screenStreamRef.current) {
             screenStreamRef.current.getTracks().forEach(track => track.stop());
+            screenStreamRef.current = null;
             setIsScreenSharing(false);
         }
 
         setIsCallActive(false);
+        setRemoteStreamVisible(true);
     };
 
     const toggleVideo = () => {
-        const videoTrack = stream.getVideoTracks()[0];
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsVideoEnabled(videoTrack.enabled);
+        if (stream) {
+            const videoTrack = stream.getVideoTracks()[0];
+            videoTrack.enabled = !videoTrack.enabled;
+            setIsVideoEnabled(videoTrack.enabled);
+        }
     };
 
     const toggleAudio = () => {
-        const audioTrack = stream.getAudioTracks()[0];
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsAudioEnabled(audioTrack.enabled);
+        if (stream) {
+            const audioTrack = stream.getAudioTracks()[0];
+            audioTrack.enabled = !audioTrack.enabled;
+            setIsAudioEnabled(audioTrack.enabled);
+        }
     };
 
     const startScreenShare = async () => {
@@ -158,34 +166,60 @@ const VideoCall = () => {
             const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
             screenStreamRef.current = screenStream;
 
-            screenStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, screenStream);
-            });
+            if (peerConnection) {
+                screenStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, screenStream);
+                });
+            }
 
             setIsScreenSharing(true);
+            setRemoteStreamVisible(false);
         } catch (error) {
             console.error('Error sharing screen:', error);
+            // Display an error message to the user
+            alert('Unable to share screen. Please check your permissions and try again.');
+        }
+    };
+
+    const stopScreenShare = () => {
+        if (screenStreamRef.current) {
+            screenStreamRef.current.getTracks().forEach(track => track.stop());
+            screenStreamRef.current = null;
+            setIsScreenSharing(false);
+            setRemoteStreamVisible(true);
         }
     };
 
     return (
-        <div className={styles.videoCallContainer}>
-            <div className={styles.videoContainer}>
-                <video ref={localVideoRef} autoPlay muted className={styles.videoElement} />
-                <video ref={remoteVideoRef} autoPlay className={styles.videoElement} />
+        <div className="videoCallContainer">
+            <div className="videoContainer">
+                <video ref={localVideoRef} autoPlay muted className="videoElement" />
+                {remoteStreamVisible && <video ref={remoteVideoRef} autoPlay className="videoElement" />}
             </div>
-            <div className={styles.buttonContainer}>
-                <button onClick={() => startCall('recipient-id')} className={styles.button}>Start Call</button>
-                <button onClick={endCall} disabled={!isCallActive} className={styles.button}>End Call</button>
-                <button onClick={toggleVideo} className={styles.button}>
-                    {isVideoEnabled ? 'Turn Off Video' : 'Turn On Video'}
+            <div className="buttonContainer">
+                <button onClick={() => startCall('recipient-id')} className="button">
+                    <FontAwesomeIcon icon={faPhone} /> Start Call
                 </button>
-                <button onClick={toggleAudio} className={styles.button}>
-                    {isAudioEnabled ? 'Mute Audio' : 'Unmute Audio'}
+                <button onClick={endCall} disabled={!isCallActive} className="button">
+                    <FontAwesomeIcon icon={faPhoneSlash} /> End Call
                 </button>
-                <button onClick={startScreenShare} disabled={isScreenSharing} className={styles.button}>
-                    {isScreenSharing ? 'Stop Sharing Screen' : 'Share Screen'}
+                <button onClick={toggleVideo} className="button">
+                    <FontAwesomeIcon icon={isVideoEnabled ? faVideo : faVideoSlash} />
+                    {isVideoEnabled ? ' Turn Off Video' : ' Turn On Video'}
                 </button>
+                <button onClick={toggleAudio} className="button">
+                    <FontAwesomeIcon icon={isAudioEnabled ? faMicrophone : faMicrophoneSlash} />
+                    {isAudioEnabled ? ' Mute Audio' : ' Unmute Audio'}
+                </button>
+                {isScreenSharing ? (
+                    <button onClick={stopScreenShare} className="button">
+                        <FontAwesomeIcon icon={faStopCircle} /> Stop Sharing Screen
+                    </button>
+                ) : (
+                    <button onClick={startScreenShare} disabled={!isCallActive} className="button">
+                        <FontAwesomeIcon icon={faShareSquare} /> Share Screen
+                    </button>
+                )}
             </div>
         </div>
     );
