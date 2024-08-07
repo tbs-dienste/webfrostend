@@ -1,6 +1,5 @@
 // VideoCall.module.scss
 
-// Grundlegendes Layout für das Container-Element
 .videoCallContainer {
     display: flex;
     flex-direction: column;
@@ -9,32 +8,29 @@
     height: 100vh;
     background-color: #f0f0f0;
     padding: 20px;
-  }
-  
-  // Styling für das Container-Element der Videos
-  .videoContainer {
+}
+
+.videoContainer {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-  }
-  
-  // Styling für das Videoelement
-  video {
+}
+
+.videoElement {
     width: 300px;
     height: 225px;
     border: 2px solid #ccc;
     border-radius: 10px;
     background-color: #000;
     object-fit: cover;
-  }
-  
-  // Styling für die Buttons
-  .buttonContainer {
+}
+
+.buttonContainer {
     display: flex;
     gap: 20px;
-  }
-  
-  button {
+}
+
+button {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -44,15 +40,14 @@
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  
+
     &:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
+        background-color: #0056b3;
+        transform: scale(1.05);
     }
-  
+
     &:disabled {
-      background-color: #6c757d;
-      cursor: not-allowed;
+        background-color: #6c757d;
+        cursor: not-allowed;
     }
-  }
-  
+}
