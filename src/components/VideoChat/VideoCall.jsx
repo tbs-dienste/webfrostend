@@ -15,6 +15,7 @@ const VideoCall = () => {
     const screenStreamRef = useRef(null);
     const [isCallActive, setIsCallActive] = useState(false);
     const [remoteStreamVisible, setRemoteStreamVisible] = useState(true);
+    const [screenSharingInitiatedBy, setScreenSharingInitiatedBy] = useState(null); // Track who started screen sharing
 
     useEffect(() => {
         const ws = new WebSocket('ws://https://tbsdigitalsolutionsbackend.onrender.com');
@@ -33,6 +34,10 @@ const VideoCall = () => {
                 await handleAnswer(data.answer);
             } else if (data.type === 'ice-candidate') {
                 await handleICECandidate(data.candidate);
+            } else if (data.type === 'screen-share-start') {
+                handleScreenShareStart(data.from);
+            } else if (data.type === 'screen-share-stop') {
+                handleScreenShareStop(data.from);
             }
         };
 
@@ -143,6 +148,7 @@ const VideoCall = () => {
 
         setIsCallActive(false);
         setRemoteStreamVisible(true);
+        setScreenSharingInitiatedBy(null);
     };
 
     const toggleVideo = () => {
@@ -162,6 +168,11 @@ const VideoCall = () => {
     };
 
     const startScreenShare = async () => {
+        if (isScreenSharing) {
+            alert('Screen sharing is already active.');
+            return;
+        }
+
         try {
             const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
             screenStreamRef.current = screenStream;
@@ -174,18 +185,55 @@ const VideoCall = () => {
 
             setIsScreenSharing(true);
             setRemoteStreamVisible(false);
+
+            // Notify other users that screen sharing has started
+            socket.send(JSON.stringify({
+                type: 'screen-share-start',
+                from: 'your-user-id' // Replace with actual user ID or identifier
+            }));
+            setScreenSharingInitiatedBy('your-user-id'); // Track who initiated screen sharing
+
         } catch (error) {
             console.error('Error sharing screen:', error);
-            // Display an error message to the user
             alert('Unable to share screen. Please check your permissions and try again.');
         }
     };
 
     const stopScreenShare = () => {
+        if (!isScreenSharing) {
+            alert('Screen sharing is not active.');
+            return;
+        }
+
         if (screenStreamRef.current) {
             screenStreamRef.current.getTracks().forEach(track => track.stop());
             screenStreamRef.current = null;
             setIsScreenSharing(false);
+            setRemoteStreamVisible(true);
+
+            // Notify other users that screen sharing has stopped
+            socket.send(JSON.stringify({
+                type: 'screen-share-stop',
+                from: 'your-user-id' // Replace with actual user ID or identifier
+            }));
+            setScreenSharingInitiatedBy(null);
+        }
+    };
+
+    const handleScreenShareStart = (from) => {
+        // Handle incoming screen share start message
+        if (screenSharingInitiatedBy === null) {
+            // If no one is currently sharing the screen
+            setScreenSharingInitiatedBy(from);
+            setRemoteStreamVisible(false);
+        }
+    };
+
+    const handleScreenShareStop = (from) => {
+        // Handle incoming screen share stop message
+        if (screenSharingInitiatedBy === from) {
+            // If the screen share was initiated by this user
+            setScreenSharingInitiatedBy(null);
             setRemoteStreamVisible(true);
         }
     };
@@ -194,7 +242,13 @@ const VideoCall = () => {
         <div className="videoCallContainer">
             <div className="videoContainer">
                 <video ref={localVideoRef} autoPlay muted className="videoElement" />
-                {remoteStreamVisible && <video ref={remoteVideoRef} autoPlay className="videoElement" />}
+                {remoteStreamVisible && (
+                    <video
+                        ref={remoteVideoRef}
+                        autoPlay
+                        className={`videoElement ${isScreenSharing ? 'remoteVideoMinimized' : ''}`}
+                    />
+                )}
             </div>
             <div className="buttonContainer">
                 <button onClick={() => startCall('recipient-id')} className="button">

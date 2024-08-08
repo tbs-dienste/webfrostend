@@ -209,6 +209,7 @@ const KundenAnzeigen = () => {
               <p><strong>Auftragsbeschreibung:</strong> {selectedKunde.auftragsBeschreibung}</p>
               <p><strong>Preis:</strong> {selectedKunde.preis}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
+              <p><strong>Code:</strong> {selectedKunde.code}</p>
               <button onClick={handleEdit}>Bearbeiten</button>
               <button onClick={handleArchivieren}>{getArchivierenButtonText()}</button>
               <button onClick={handleRechnungGestellt}>{getRechnungGestelltButtonText()}</button>

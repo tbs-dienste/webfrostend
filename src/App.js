@@ -61,7 +61,7 @@ const App = () => {
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
           <Route path="/preisinformationen" element={<Preisinformationen />} />
-          <Route path="/kundeerfassen" element={<KundeErfassen />} />
+          <Route path="/kontakt" element={<KundeErfassen />} />
           <Route path="/dienstleistungen" element={<Dienstleistungen />} />
           <Route path="/werbung" element={<WarumWerbungMachen />} />
           <Route path="/service/:id" element={<ServiceDetail />} />

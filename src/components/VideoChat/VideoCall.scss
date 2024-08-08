@@ -62,3 +62,12 @@
     background-color: #cccccc;
     cursor: not-allowed;
 }
+.remoteVideoHidden {
+    display: none; /* Hides the remote video */
+}
+
+.remoteVideoMinimized {
+    width: 200px; /* Adjust as needed */
+    height: 150px; /* Adjust as needed */
+    opacity: 0.5; /* Make it semi-transparent */
+}
