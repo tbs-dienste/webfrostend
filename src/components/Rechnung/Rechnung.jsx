@@ -17,18 +17,11 @@ const Rechnung = () => {
     const [rabattBetrag, setRabattBetrag] = useState(0);
     const [positionen, setPositionen] = useState([]);
     const [editIndex, setEditIndex] = useState(null);
-
-    const optionen = [
-        "Website Erstellen",
-        "Diashow Erstellen",
-        "Gaming PC Zusammenstellung",
-        "Musik und Sounddesign",
-        "Backend Speicher",
-        "Datenbank Hosting"
-    ];
+    const [optionen, setOptionen] = useState([]); // Zustand für die Optionen
 
     useEffect(() => {
         fetchKundenDaten();
+        fetchDienstleistungen();
     }, [id]);
 
     const fetchKundenDaten = async () => {
@@ -41,6 +34,17 @@ const Rechnung = () => {
         } catch (error) {
             console.error("Fehler beim Abrufen der Daten:", error);
             setMessage('Fehler beim Abrufen der Daten.');
+        }
+    };
+
+    const fetchDienstleistungen = async () => {
+        try {
+            const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
+            const dienstleistungen = response.data.data;
+            setOptionen(dienstleistungen.map(dienstleistung => dienstleistung.title));
+        } catch (error) {
+            console.error("Fehler beim Abrufen der Dienstleistungen:", error);
+            setMessage('Fehler beim Abrufen der Dienstleistungen.');
         }
     };
 
