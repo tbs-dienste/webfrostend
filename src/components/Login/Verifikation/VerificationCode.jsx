@@ -1,19 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
+import axios from 'axios';
 import './VerificationCode.scss';
 
 const VerificationCode = () => {
   const inputs = useRef([]);
   const [error, setError] = useState('');
-  const [timeLeft, setTimeLeft] = useState(60); // Timer initialisieren
-  const [timerExpired, setTimerExpired] = useState(false); // Flag für den Timer
-  const [attempts, setAttempts] = useState(0); // Versuche initialisieren
-
-  const codeToVerify = '111111'; // Der richtige Verifizierungscode
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [timerExpired, setTimerExpired] = useState(false);
+  const [attempts, setAttempts] = useState(0);
 
   useEffect(() => {
     if (timeLeft === 0) {
       setTimerExpired(true);
-      window.location.href = '/login'; // Weiterleitung zur Login-Seite
+      window.location.href = '/login';
       return;
     }
 
@@ -26,13 +25,12 @@ const VerificationCode = () => {
 
   const handleChange = (e, index) => {
     const { value } = e.target;
-    if (/[^0-9]/.test(value)) return; // Nur Zahlen erlauben
+    if (/[^0-9]/.test(value)) return;
 
     if (value && index < inputs.current.length - 1) {
       inputs.current[index + 1].focus();
     }
 
-    // Setze den Wert im aktuellen Input
     inputs.current[index].value = value;
   };
 
@@ -42,24 +40,33 @@ const VerificationCode = () => {
     }
   };
 
-  const verifyCode = () => {
+  const verifyCode = async () => {
     const enteredCode = inputs.current.map(input => input.value).join('');
-    if (enteredCode === codeToVerify) {
-      window.location.href = '/kunden';
-      setError('');
-    } else {
-      setAttempts(prevAttempts => {
-        const newAttempts = prevAttempts + 1;
-        if (newAttempts >= 3) {
-          // Nach 3 Fehlversuchen weiterleiten
-          window.location.href = '/login';
-        } else {
-          setError(`Der eingegebene Code ist falsch. Du hast noch ${3 - newAttempts} ${newAttempts === 2 ? 'Versuch' : 'Versuche'} übrig.`);
-        }
-        return newAttempts;
-      });
-      inputs.current.forEach(input => (input.value = ''));
-      inputs.current[0].focus();
+    const userId = localStorage.getItem('userId');
+
+    try {
+      const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter');
+      const data = response.data.data;
+      const user = data.find(user => user.id === parseInt(userId));
+
+      if (user && enteredCode === user.verificationcode) {
+        window.location.href = '/kunden';
+        setError('');
+      } else {
+        setAttempts(prevAttempts => {
+          const newAttempts = prevAttempts + 1;
+          if (newAttempts >= 3) {
+            window.location.href = '/login';
+          } else {
+            setError(`Der eingegebene Code ist falsch. Du hast noch ${3 - newAttempts} ${newAttempts === 2 ? 'Versuch' : 'Versuche'} übrig.`);
+          }
+          return newAttempts;
+        });
+        inputs.current.forEach(input => (input.value = ''));
+        inputs.current[0].focus();
+      }
+    } catch (error) {
+      setError('Ein Fehler ist aufgetreten. Bitte versuche es später erneut.');
     }
   };
 

@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Login.scss';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const adminUsername = 'admin';
-    const adminPassword = '123';
+    try {
+      const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter');
+      const data = response.data.data;
 
-    if (username === adminUsername && password === adminPassword) {
-      onLogin(true);
-      window.location.href = "/verification";
-    } else {
-      alert('Falscher Benutzername oder Passwort.');
+      const user = data.find(user => user.benutzername === username && user.passwort === password);
+
+      if (user) {
+        // Speichern der User ID im lokalen Speicher
+        localStorage.setItem('userId', user.id);
+        onLogin(true);
+        window.location.href = "/verification";
+      } else {
+        setError('Falscher Benutzername oder Passwort.');
+      }
+    } catch (error) {
+      setError('Ein Fehler ist aufgetreten. Bitte versuche es später erneut.');
     }
   };
 
@@ -39,6 +49,7 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
+        {error && <div className="error-message">{error}</div>}
         <button type="submit" className="login-button">Einloggen</button>
       </form>
     </div>
