@@ -35,6 +35,7 @@ import SignComponent from './components/Vertrag/SignComponent';
 import Infos from './components/Administrativ/Infos';
 import VideoCall from './components/VideoChat/VideoCall';
 import CookieConsent from './components/Cookies/CookieConsent';
+import CreateService from './components/Dienstleistung/CreateService';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -64,7 +65,7 @@ const App = () => {
           <Route path="/kurse" element={<KursListe />} />
           <Route path="/preisinformationen" element={<Preisinformationen />} />
           <Route path="/kontakt" element={<KundeErfassen />} />
-          <Route path="/dienstleistungen" element={<Dienstleistungen />} />
+          <Route path="/dienstleistungen" element={<Dienstleistungen isAdmin={isAdmin} />} />
           <Route path="/werbung" element={<WarumWerbungMachen />} />
           <Route path="/service/:id" element={<ServiceDetail />} />
           <Route path="/kundenscanner" element={<KundenScanner />} />
@@ -78,7 +79,6 @@ const App = () => {
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/videocall" element={<VideoCall />} />
-
           <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />
@@ -87,7 +87,7 @@ const App = () => {
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/infos" element={<Infos />} />
-
+              <Route path="/service-create" element={<CreateService />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />

@@ -1,0 +1,72 @@
+.create-service-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+  
+    .create-service-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+  
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+  
+        span {
+          font-size: 16px;
+          color: #555;
+        }
+  
+        input, textarea {
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+        }
+  
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+      }
+  
+      .submit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #0056b3;
+        }
+  
+        &:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+        }
+      }
+  
+      .error-message {
+        color: #d9534f;
+        font-size: 14px;
+        text-align: center;
+      }
+    }
+  }
+  

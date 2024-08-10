@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Dienstleistungen.scss';
 
-const Dienstleistungen = () => {
+const Dienstleistungen = ({ isAdmin }) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +30,9 @@ const Dienstleistungen = () => {
   return (
     <div className="services-container">
       <h1>Unsere Dienstleistungen</h1>
+      {isAdmin && (
+        <Link to="/service-create" className="add-button">+</Link>
+      )}
       <div className="services-list">
         {services.map(service => (
           <div className="service" key={service.id}>
