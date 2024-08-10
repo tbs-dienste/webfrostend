@@ -13,10 +13,10 @@ const Dienstleistungen = () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
         setServices(response.data.data);
-        setLoading(false);
       } catch (error) {
         console.error("Fehler beim Laden der Dienstleistungen:", error);
         setError("Fehler beim Laden der Dienstleistungen.");
+      } finally {
         setLoading(false);
       }
     };
@@ -24,8 +24,8 @@ const Dienstleistungen = () => {
     fetchServices();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="loading">Lädt...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="services-container">
@@ -33,9 +33,12 @@ const Dienstleistungen = () => {
       <div className="services-list">
         {services.map(service => (
           <div className="service" key={service.id}>
-            <h2>{service.title}</h2>
-            <p>{service.description.length > 100 ? `${service.description.substring(0, 100)}...` : service.description}</p>
-            <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
+            {service.img && <img src={service.img} alt={service.title} className="service-image" />}
+            <div className="service-content">
+              <h2>{service.title}</h2>
+              <p>{service.description.length > 150 ? `${service.description.substring(0, 150)}...` : service.description}</p>
+              <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
+            </div>
           </div>
         ))}
       </div>

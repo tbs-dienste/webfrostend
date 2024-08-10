@@ -34,6 +34,7 @@ import Vertrag from './components/Vertrag/Vertrag';
 import SignComponent from './components/Vertrag/SignComponent';
 import Infos from './components/Administrativ/Infos';
 import VideoCall from './components/VideoChat/VideoCall';
+import CookieConsent from './components/Cookies/CookieConsent';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -54,6 +55,7 @@ const App = () => {
     <div className="App">
       <Router>
         <Navbar isAdmin={isAdmin} onLogout={handleLogout} />
+        <CookieConsent />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen kunden={kunden} />} />
