@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Home.scss';
+import Loading from '../Loading/Loading';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -25,7 +26,7 @@ const Home = () => {
     fetchServices();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>{error}</div>;
 
   const prevSlide = () => {

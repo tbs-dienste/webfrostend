@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Dienstleistungen.scss';
+import Loading from '../Loading/Loading';
 
 const Dienstleistungen = ({ isAdmin }) => {
   const [services, setServices] = useState([]);
@@ -24,7 +25,7 @@ const Dienstleistungen = ({ isAdmin }) => {
     fetchServices();
   }, []);
 
-  if (loading) return <div className="loading">Lädt...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="error">{error}</div>;
 
   return (

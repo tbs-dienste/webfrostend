@@ -1,0 +1,14 @@
+// Loading.scss
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; // Vollbildhöhe
+  
+    img {
+      width: 300px; // Breite des GIFs anpassen
+      height: auto; // Höhe automatisch anpassen
+    }
+  }
+  

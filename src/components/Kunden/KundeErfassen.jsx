@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './KundeErfassen.scss';
 
@@ -16,6 +16,28 @@ const KundeErfassen = () => {
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
   const [firma, setFirma] = useState('');
   const [land, setLand] = useState('');
+
+  // State für die AuftragsTyp-Optionen
+  const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
+
+  useEffect(() => {
+    // Funktion zum Abrufen der AuftragsTyp-Optionen
+    const fetchAuftragsTypOptions = async () => {
+      try {
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
+        // Überprüfe, ob die Datenstruktur wie erwartet ist
+        if (Array.isArray(response.data.data)) {
+          setAuftragsTypOptions(response.data.data);
+        } else {
+          console.error('Fehlerhafte Datenstruktur:', response.data);
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der AuftragsTyp-Optionen:', error);
+      }
+    };
+
+    fetchAuftragsTypOptions();
+  }, []);
 
   const handleKontaktAufnehmen = async () => {
     try {
@@ -179,10 +201,15 @@ const KundeErfassen = () => {
             className="dropdown"
           >
             <option value="">Bitte auswählen</option>
-            <option value="Webseite">Webseite</option>
-            <option value="Diashow">Diashow</option>
-            <option value="Gaming PC">Gaming PC</option>
-            <option value="Musik und Sounddesign">Musik und Sounddesign</option>
+            {auftragsTypOptions.length > 0 ? (
+              auftragsTypOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.title}
+                </option>
+              ))
+            ) : (
+              <option value="">Keine Optionen verfügbar</option>
+            )}
           </select>
         </div>
         <div className="formular-gruppe">
