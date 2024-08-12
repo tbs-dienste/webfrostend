@@ -8,13 +8,8 @@ function Navbar({ isAdmin, onLogout }) {
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [adminMenuActive, setAdminMenuActive] = useState(false);
 
-  const toggleBurgerMenu = () => {
-    setBurgerMenuActive(prev => !prev);
-  };
-
-  const toggleAdminMenu = () => {
-    setAdminMenuActive(prev => !prev);
-  };
+  const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
+  const toggleAdminMenu = () => setAdminMenuActive(prev => !prev);
 
   return (
     <nav className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
