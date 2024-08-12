@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AlleGutscheine.scss';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaTrashAlt, FaPlus } from 'react-icons/fa';
 
 const AlleGutscheine = () => {
     const [gutscheine, setGutscheine] = useState([]);
@@ -74,13 +74,16 @@ const AlleGutscheine = () => {
     return (
         <div className="alle-gutscheine">
             <h2>Alle verfügbaren Gutscheincodes</h2>
+            <button className="add-btn" onClick={() => window.location.href = '/gutschein'}>
+                <FaPlus /> Neuer Gutschein
+            </button>
             <ul>
                 {gutscheine.map(gutschein => (
                     <li key={gutschein.id} className="gutschein-item">
                         <div className="gutschein-details">
                             <span>Gutscheincode: <strong>{gutschein.gutscheincode}</strong></span>
                             {gutschein.gutscheinrabatt > 0 ? (
-                                <span>Rabatt: <strong>{gutschein.gutscheinrabatt * 100} %</strong></span> // Umrechnung in Prozent
+                                <span>Rabatt: <strong>{gutschein.gutscheinrabatt * 100} %</strong></span>
                             ) : (
                                 <span>Betrag: <strong>{gutschein.guthaben} CHF</strong></span>
                             )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
 import { FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
@@ -6,12 +6,7 @@ import { FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
 function Navbar({ isAdmin, onLogout }) {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [warenkorbCount, setWarenkorbCount] = useState(0);
   const [adminMenuActive, setAdminMenuActive] = useState(false);
-
-  useEffect(() => {
-    // Hier kannst du Warenkorb-Count initialisieren, falls nötig
-  }, []);
 
   const toggleBurgerMenu = () => {
     setBurgerMenuActive(prev => !prev);
@@ -38,12 +33,11 @@ function Navbar({ isAdmin, onLogout }) {
             <NavItem to="/dienstleistungen" text="Dienstleistungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kontakt" text="Kontakt" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/sign" text="Vertrag unterschreiben" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kurse" text="Kurse" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/kundenbewertungen" text="Bewertungen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/preisinformationen" text="Preisinformationen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/faq" text="FAQ" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/warenkorb" text="Warenkorb" icon={<FaShoppingCart />} count={warenkorbCount} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            {isAdmin ? (
+
+            {isAdmin && (
               <>
                 <li className="dropdown">
                   <button className={`dropdown-toggle ${adminMenuActive ? 'active' : ''}`} onClick={toggleAdminMenu}>
@@ -51,12 +45,8 @@ function Navbar({ isAdmin, onLogout }) {
                   </button>
                   <div className={`dropdown-menu ${adminMenuActive ? 'show' : ''}`}>
                     <NavItem to="/gutscheine-liste" text="Gutscheinliste" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/gutschein" text="Gutschein erstellen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/infos" text="Betriebsordnung" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/vertrag/:id" text="Vertrag" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/mitarbeitererfassen" text="Mitarbeiter erfassen" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/gutscheinscanner" text="Gutscheinscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                   </div>
@@ -65,9 +55,12 @@ function Navbar({ isAdmin, onLogout }) {
                   <FaSignOutAlt />
                 </button>
               </>
-            ) : (
+            )}
+            
+            {!isAdmin && (
               <NavItem to="/login" text="Login" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             )}
+            
           </ul>
         </div>
       </div>

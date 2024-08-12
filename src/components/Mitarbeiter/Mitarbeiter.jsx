@@ -32,7 +32,12 @@ function Mitarbeiter() {
 
   return (
     <div className="mitarbeiter-anzeigen-container">
-      <h2 className="mitarbeiter-anzeigen-title">Mitarbeiter anzeigen</h2>
+      <div className="header-container">
+        <h2 className="mitarbeiter-anzeigen-title">Mitarbeiter anzeigen</h2>
+        <Link to="/mitarbeitererfassen" className="add-btn">
+          <span>+</span> Neuer Mitarbeiter
+        </Link>
+      </div>
       <ul className="mitarbeiter-liste">
         {mitarbeiterListe.map((mitarbeiter) => (
           <li key={mitarbeiter.id} className="mitarbeiter-list-item">
