@@ -36,6 +36,7 @@ import Infos from './components/Administrativ/Infos';
 import VideoCall from './components/VideoChat/VideoCall';
 import CookieConsent from './components/Cookies/CookieConsent';
 import CreateService from './components/Dienstleistung/CreateService';
+import Auftragsbestaetigung from './components/Auftragsbestaetigung/Auftragsbestaetigung';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -90,6 +91,8 @@ const App = () => {
               <Route path="/service-create" element={<CreateService />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
+              <Route path="/auftragsbestaetigung/:id" element={<Auftragsbestaetigung />} />
+
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />

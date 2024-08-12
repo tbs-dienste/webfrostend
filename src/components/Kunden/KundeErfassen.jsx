@@ -17,15 +17,12 @@ const KundeErfassen = () => {
   const [firma, setFirma] = useState('');
   const [land, setLand] = useState('');
 
-  // State für die AuftragsTyp-Optionen
   const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
 
   useEffect(() => {
-    // Funktion zum Abrufen der AuftragsTyp-Optionen
     const fetchAuftragsTypOptions = async () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
-        // Überprüfe, ob die Datenstruktur wie erwartet ist
         if (Array.isArray(response.data.data)) {
           setAuftragsTypOptions(response.data.data);
         } else {
@@ -41,11 +38,9 @@ const KundeErfassen = () => {
 
   const handleKontaktAufnehmen = async () => {
     try {
-      // Hole die IP-Adresse des Benutzers
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
 
-      // Erstelle das neue Kundenobjekt
       const newKunde = {
         land,
         firma,
@@ -63,11 +58,10 @@ const KundeErfassen = () => {
         ip_adresse
       };
 
-      // Sende die Daten an das Backend
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
-      
+
       console.log('Kontaktdaten erfolgreich gesendet:', response.data);
-      window.location.href = '/dankesnachricht'; // Weiterleitung nach erfolgreicher Verarbeitung
+      window.location.href = '/dankesnachricht';
     } catch (error) {
       console.error('Fehler beim Senden der Kontaktdaten:', error);
       alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
@@ -189,11 +183,8 @@ const KundeErfassen = () => {
             onChange={(e) => setMobil(e.target.value)}
           />
         </div>
-      </div>
-      <h2>Auftrag</h2>
-      <div className="formular">
         <div className="formular-gruppe">
-          <label htmlFor="auftragsTyp">Auftragstyp:</label>
+          <label htmlFor="auftragsTyp">Auftragsart:</label>
           <select
             id="auftragsTyp"
             value={auftragsTyp}
@@ -201,15 +192,11 @@ const KundeErfassen = () => {
             className="dropdown"
           >
             <option value="">Bitte auswählen</option>
-            {auftragsTypOptions.length > 0 ? (
-              auftragsTypOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.title}
-                </option>
-              ))
-            ) : (
-              <option value="">Keine Optionen verfügbar</option>
-            )}
+            {auftragsTypOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.title}
+              </option>
+            ))}
           </select>
         </div>
         <div className="formular-gruppe">
@@ -218,10 +205,10 @@ const KundeErfassen = () => {
             id="auftragsBeschreibung"
             value={auftragsBeschreibung}
             onChange={(e) => setAuftragsBeschreibung(e.target.value)}
-          ></textarea>
+          />
         </div>
+        <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
       </div>
-      <button onClick={handleKontaktAufnehmen} className='aufnehmen'>Kontakt aufnehmen</button>
     </div>
   );
 };

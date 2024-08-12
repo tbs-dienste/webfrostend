@@ -124,6 +124,9 @@ const Kunden = () => {
                   <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                     Kunden anzeigen
                   </Link>
+                  <Link to={`/auftragsbestaetigung/${kunde.id}`} className="kunden-button">
+                    Auftragsbestätigung
+                  </Link>
                   <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode}`} className="kunden-button">
                     Vertrag
                   </Link>
