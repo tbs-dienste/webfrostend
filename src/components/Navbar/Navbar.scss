@@ -7,6 +7,7 @@
   align-items: center;
   font-family: 'Roboto', sans-serif;
   color: #ffffff;
+  position: relative;
 
   .container {
     width: 100%;
@@ -14,6 +15,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   .logo {
@@ -67,6 +70,7 @@
       list-style: none;
       padding: 0;
       margin: 0;
+      flex-wrap: wrap;
 
       li {
         margin-right: 20px;
