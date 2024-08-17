@@ -37,6 +37,8 @@ import VideoCall from './components/VideoChat/VideoCall';
 import CookieConsent from './components/Cookies/CookieConsent';
 import CreateService from './components/Dienstleistung/CreateService';
 import Auftragsbestaetigung from './components/Auftragsbestaetigung/Auftragsbestaetigung';
+import Kontoangaben from './components/Rechnung/Kontoangaben';
+import PdfMerger from './components/Rechnung/PdfMerger';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -87,7 +89,10 @@ const App = () => {
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
+              <Route path="/pdfmerger" element={<PdfMerger />} />
+
               <Route path="/infos" element={<Infos />} />
+              <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />

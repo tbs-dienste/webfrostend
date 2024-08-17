@@ -17,3 +17,16 @@ Teilen Sie uns einfach Ihr Budget mit, und wir stellen Ihnen einen passenden Gam
 ### Musik
 
 Unsere Musikdienstleistungen umfassen alles von der Erstellung von benutzerdefinierten Soundtracks bis hin zur Bearbeitung von Musikstücken für besondere Anlässe. Egal ob Sie Musik für Videos, Präsentationen oder andere Projekte benötigen – wir bieten maßgeschneiderte Lösungen, die Ihre Anforderungen erfüllen.
+
+
+
+
+ideen:
+
+Mitarbeiter bekommen automatisch jeden monat in ihrer eigenen seite alle lohnabrechnungen zu sehne online und können diese downloaden
+
+Ich sehe im Kunden alle arbeitszeiten der mitarbeiter!
+
+und im mitarbeiter werden jeden monat automatisch dann eine lohnabrechnung generiert also anhand der stunden ujnd des stundenlohns wird alles schön individuell generiert!
+
+

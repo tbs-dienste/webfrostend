@@ -42,6 +42,7 @@ function Navbar({ isAdmin, onLogout }) {
                     <NavItem to="/gutscheine-liste" text="Gutscheinliste" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kunden" text="Kunden" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/mitarbeiter" text="Mitarbeiter" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                    <NavItem to="/kontoangaben" text="Kontoangaben" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kundenscanner" text="Kundenscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/gutscheinscanner" text="Gutscheinscanner" currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                   </div>

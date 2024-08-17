@@ -136,50 +136,52 @@ const Rechnung = () => {
         const doc = new jsPDF();
         const total = calculateTotal();
         const discountedTotal = calculateDiscountedTotal();
-        const mwst = calculateMwSt(discountedTotal);
-        const totalWithMwSt = discountedTotal + mwst;
-
+    
         const textColor = 0; // Black
-
+    
         doc.setFontSize(12);
         doc.setTextColor(textColor); // Set text color to black
+    
+        // Firmenkopf
         doc.text('TBs Solutions', 20, 20);
-        doc.text('Kontakt: tbs-digital-solutions@gmail.com', 20, 30);
-
-        doc.text(`Rechnungsnummer: ${id}`, 140, 20);
-        doc.text(`Datum: ${new Date().toLocaleDateString()}`, 140, 30);
-
-        doc.text('Rechnung an:', 20, 50);
-        doc.text(`${kunde.vorname} ${kunde.nachname}`, 20, 60);
-        doc.text(`${kunde.strasseHausnummer}`, 20, 65);
-        doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 70);
-
+        doc.text('Adresse: Musterstraße 1, 12345 Musterstadt', 20, 30);
+        doc.text('Telefon: 01234 567890', 20, 40);
+        doc.text('E-Mail: tbs-digital-solutions@gmail.com', 20, 50);
+        
+        // Rechnungsinformationen
+        doc.text(`Rechnungsnummer: ${id}`, 150, 20);
+        doc.text(`Datum: ${new Date().toLocaleDateString()}`, 150, 30);
+    
+        // Kundenadresse
+        doc.text('Rechnung an:', 20, 70);
+        doc.text(`${kunde.vorname} ${kunde.nachname}`, 20, 80);
+        doc.text(`${kunde.strasseHausnummer}`, 20, 90);
+        doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 100);
+    
         const anrede = kunde.geschlecht === 'männlich' ? 'Herr' : 'Frau';
         const begruessung = kunde.geschlecht === 'männlich' ? 'geehrter' : 'geehrte';
-
-        doc.text(`Sehr ${begruessung} ${anrede} ${kunde.nachname},`, 20, 85);
-        doc.text('anbei erhalten Sie unsere Rechnung für die erbrachten Leistungen.', 20, 95);
-        doc.text('Wir bitten um Überprüfung und fristgerechte Zahlung.', 20, 105);
-
-        let startY = 120;
-
+    
+        doc.text(`Sehr ${begruessung} ${anrede} ${kunde.nachname},`, 20, 120);
+        doc.text('anbei erhalten Sie unsere Rechnung für die erbrachten Leistungen.', 20, 130);
+        doc.text('Wir bitten um Überprüfung und fristgerechte Zahlung.', 20, 140);
+    
+        // Tabelle der Positionen
+        let startY = 160;
+    
         const tableData = positionen.map((pos, index) => [
             index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} CHF`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} CHF`
         ]);
-
+    
         const totalsData = [
-            ['', '', '', 'Zwischensumme', `${total.toFixed(2)} CHF`],
             ['', '', '', 'Rabatt', `${rabattBetrag.toFixed(2)} CHF`],
-            ['', '', '', 'Zwischensumme nach Rabatt', `${discountedTotal.toFixed(2)} CHF`],
-            ['', '', '', 'MwSt (19%)', `${mwst.toFixed(2)} CHF`],
-            ['', '', '', 'Gesamt inkl. MwSt', `${totalWithMwSt.toFixed(2)} CHF`],
+            ['', '', '', 'Gesamtbetrag nach Rabatt', `${discountedTotal.toFixed(2)} CHF`],
         ];
-
+    
         const allData = [...tableData, ...totalsData];
-
+    
         doc.autoTable({
             startY,
-            head: [['Position', 'Beschreibung', 'Anzahl', 'Preis', 'Total']],
+            head: [['Nr.', 'Beschreibung', 'Anzahl', 'Preis', 'Total']],
             body: allData,
             styles: {
                 fontSize: 10,
@@ -201,20 +203,21 @@ const Rechnung = () => {
                 fontStyle: ''
             }
         });
-
+    
         const paymentInfoY = doc.lastAutoTable.finalY || startY;
-
+    
         doc.text('Zahlungsbedingungen:', 20, paymentInfoY + 20);
-        doc.text('Bitte überweisen Sie den Betrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 30);
-
+        doc.text('Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 30);
+    
         doc.text('Vielen Dank für Ihren Auftrag!', 20, paymentInfoY + 50);
-
+    
         doc.text('Mit freundlichen Grüßen,', 20, paymentInfoY + 80);
         doc.text('TBs Solutions', 20, paymentInfoY + 90);
         doc.text('Mitarbeiter: [Name des Mitarbeiters]', 20, paymentInfoY + 100);
-
+    
         doc.save('Rechnung.pdf');
     };
+    
 
     return (
         <div className="time-tracker">

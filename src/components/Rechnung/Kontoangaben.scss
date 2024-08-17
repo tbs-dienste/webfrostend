@@ -1,0 +1,89 @@
+// Kontoangaben.scss
+
+.kontoangaben-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      text-align: center;
+      color: #333;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+  
+    .kontoangaben-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2em;
+      color: #555;
+      margin: 10px 0;
+      padding: 8px 12px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+      .label {
+        flex-basis: 35%;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+  
+      span {
+        flex-grow: 1;
+        margin-right: 10px;
+      }
+  
+      .copy-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 1.2em;
+  
+        &:hover {
+          background-color: #0056b3;
+        }
+  
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+      }
+    }
+  
+    .qr-button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      color: #fff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 20px 0 0;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #218838;
+      }
+  
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+      }
+    }
+  }
+  
