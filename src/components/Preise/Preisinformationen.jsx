@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './Preisinformationen.scss';
-import axios from 'axios'; // Stelle sicher, dass axios installiert ist (npm install axios)
+import { FaPlus } from 'react-icons/fa';
+import axios from 'axios';
+import { Link } from 'react-router-dom'; // Importiere Link von react-router-dom
 
-const Preisinformationen = () => {
+const Preisinformationen = ({ isAdmin }) => {
   const [backendPakete, setBackendPakete] = useState([]);
   const [datenbankPakete, setDatenbankPakete] = useState([]);
 
   useEffect(() => {
-    // Funktion zum Abrufen der Backend-Pakete
     const fetchBackendPakete = async () => {
       try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete'); // Ersetze dies durch den tatsächlichen Endpunkt
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete');
         if (response.data && response.data.data) {
-          setBackendPakete(response.data.data); // Passen Sie dies je nach Antwortstruktur an
+          setBackendPakete(response.data.data);
         } else {
           console.error('Unerwartetes Antwortformat für Backend-Pakete:', response.data);
         }
@@ -21,12 +22,11 @@ const Preisinformationen = () => {
       }
     };
 
-    // Funktion zum Abrufen der Datenbank-Pakete (falls aus einer anderen API)
     const fetchDatenbankPakete = async () => {
       try {
-        const response = await axios.get('/api/datenbank-pakete'); // Ersetze dies durch den tatsächlichen Endpunkt
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/datenbankpakete');
         if (response.data && response.data.data) {
-          setDatenbankPakete(response.data.data); // Passen Sie dies je nach Antwortstruktur an
+          setDatenbankPakete(response.data.data);
         } else {
           console.error('Unerwartetes Antwortformat für Datenbank-Pakete:', response.data);
         }
@@ -39,7 +39,6 @@ const Preisinformationen = () => {
     fetchDatenbankPakete();
   }, []);
 
-  // Hilfsfunktion zum sicheren Umwandeln von Preis in eine Zahl
   const formatPreis = (preis) => {
     const numPreis = parseFloat(preis);
     return isNaN(numPreis) ? '0.00' : numPreis.toFixed(2);
@@ -54,7 +53,17 @@ const Preisinformationen = () => {
         <h2>Legende</h2>
         <p><strong>Empfohlen:</strong> Diese Pakete sind für die meisten Kunden die beste Wahl basierend auf Preis-Leistungs-Verhältnis.</p>
       </div>
-      
+      {isAdmin && (
+        <div className="action-buttons">
+          <Link to="/datenbankpaketerstellen" className="add-btn">
+            <FaPlus /> Neuer Datenbankeintrag
+          </Link>
+          <Link to="/backendpaketerstellen" className="add-btn">
+            <FaPlus /> Neuer Backendeintrag
+          </Link>
+        </div>
+      )}
+
       <div className="tables">
         <div className="table-container">
           <h2>Stundensatz</h2>
@@ -87,19 +96,19 @@ const Preisinformationen = () => {
           <table>
             <thead>
               <tr>
-                <th>Leistung</th>
+                <th>Paket</th>
                 <th>RAM</th>
-                <th>CPU</th> {/* Hier wird die neue Spalte hinzugefügt */}
+                <th>CPU</th>
                 <th>Preis pro Monat</th>
                 <th>Preis pro Jahr</th>
               </tr>
             </thead>
             <tbody>
-              {backendPakete.map((paket, index) => (
-                <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
+              {backendPakete.map((paket) => (
+                <tr key={paket.id} className={paket.empfohlen ? 'empfohlen' : ''}>
                   <td>{paket.name}</td>
                   <td>{paket.ram}</td>
-                  <td>{paket.cpu}</td> {/* Hier wird die CPU-Information hinzugefügt */}
+                  <td>{paket.cpu}</td>
                   <td>{formatPreis(paket.preis)} CHF</td>
                   <td>{formatPreis(paket.preis * 12)} CHF</td>
                 </tr>
@@ -115,15 +124,17 @@ const Preisinformationen = () => {
               <tr>
                 <th>Leistung</th>
                 <th>Speicher</th>
+                <th>Memory</th>
                 <th>Preis pro Monat</th>
                 <th>Preis pro Jahr</th>
               </tr>
             </thead>
             <tbody>
-              {datenbankPakete.map((paket, index) => (
-                <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
+              {datenbankPakete.map((paket) => (
+                <tr key={paket.id} className={paket.empfohlen ? 'empfohlen' : ''}>
                   <td>{paket.name}</td>
-                  <td>{paket.speicher}</td>
+                  <td>{paket.maxDBSize} GB</td>
+                  <td>{paket.memory} GB</td>
                   <td>{formatPreis(paket.preis)} CHF</td>
                   <td>{formatPreis(paket.preis * 12)} CHF</td>
                 </tr>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
-import './PdfMerger.scss';
+import './Pdfgenerator.scss';
 
 function PdfMerger() {
   const [files, setFiles] = useState([null, null]);
@@ -40,23 +40,26 @@ function PdfMerger() {
 
   return (
     <div className="pdf-merger-container">
-      <h2>PDFs zusammenführen</h2>
+      <h2>PDFs Zusammenführen</h2>
+      <p>Wählen Sie zwei PDF-Dateien aus, die zusammengeführt werden sollen.</p>
       
       <div className="upload-section">
         <input
           type="file"
           accept=".pdf"
           onChange={(e) => handleFileChange(e, 0)}
+          className="file-input"
         />
         <input
           type="file"
           accept=".pdf"
           onChange={(e) => handleFileChange(e, 1)}
+          className="file-input"
         />
       </div>
       
       <button onClick={mergePdfs} className="merge-button">
-        PDFs zusammenführen
+        PDFs Zusammenführen
       </button>
     </div>
   );
