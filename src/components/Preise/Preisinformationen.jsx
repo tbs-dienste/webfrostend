@@ -1,25 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Preisinformationen.scss';
-
-const datenbankPakete = [
-  { leistung: 'XS Medium Space', speicher: '10 GiB', preis: 35.00, empfohlen: true },
-  { leistung: 'S Small Space', speicher: '10 GiB', preis: 70.00, empfohlen: true },
-  { leistung: 'M Medium Space', speicher: '40 GiB', preis: 150.00, empfohlen: true },
-  { leistung: 'L Medium Space', speicher: '80 GiB', preis: 300.00, empfohlen: false },
-  { leistung: 'XL Medium Space', speicher: '160 GiB', preis: 650.00, empfohlen: false },
-  { leistung: 'XXL Medium Space', speicher: '320 GiB', preis: 1400.00, empfohlen: false },
-];
-
-const backendPakete = [
-  { leistung: 'Starter', ram: '512 MB', preis: 10, empfohlen: true },
-  { leistung: 'Standard', ram: '2 GB', preis: 35, empfohlen: true },
-  { leistung: 'Pro', ram: '4 GB', preis: 120, empfohlen: false },
-  { leistung: 'Pro Plus', ram: '8 GB', preis: 250, empfohlen: false },
-  { leistung: 'Pro Max', ram: '16 GB', preis: 300, empfohlen: false },
-  { leistung: 'Pro Ultra', ram: '32 GB', preis: 600, empfohlen: false },
-];
+import axios from 'axios'; // Stelle sicher, dass axios installiert ist (npm install axios)
 
 const Preisinformationen = () => {
+  const [backendPakete, setBackendPakete] = useState([]);
+  const [datenbankPakete, setDatenbankPakete] = useState([]);
+
+  useEffect(() => {
+    // Funktion zum Abrufen der Backend-Pakete
+    const fetchBackendPakete = async () => {
+      try {
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete'); // Ersetze dies durch den tatsächlichen Endpunkt
+        if (response.data && response.data.data) {
+          setBackendPakete(response.data.data); // Passen Sie dies je nach Antwortstruktur an
+        } else {
+          console.error('Unerwartetes Antwortformat für Backend-Pakete:', response.data);
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Backend-Pakete:', error);
+      }
+    };
+
+    // Funktion zum Abrufen der Datenbank-Pakete (falls aus einer anderen API)
+    const fetchDatenbankPakete = async () => {
+      try {
+        const response = await axios.get('/api/datenbank-pakete'); // Ersetze dies durch den tatsächlichen Endpunkt
+        if (response.data && response.data.data) {
+          setDatenbankPakete(response.data.data); // Passen Sie dies je nach Antwortstruktur an
+        } else {
+          console.error('Unerwartetes Antwortformat für Datenbank-Pakete:', response.data);
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Datenbank-Pakete:', error);
+      }
+    };
+
+    fetchBackendPakete();
+    fetchDatenbankPakete();
+  }, []);
+
+  // Hilfsfunktion zum sicheren Umwandeln von Preis in eine Zahl
+  const formatPreis = (preis) => {
+    const numPreis = parseFloat(preis);
+    return isNaN(numPreis) ? '0.00' : numPreis.toFixed(2);
+  };
+
   return (
     <div className="preisinformationen">
       <h1>Preisinformationen</h1>
@@ -64,6 +89,7 @@ const Preisinformationen = () => {
               <tr>
                 <th>Leistung</th>
                 <th>RAM</th>
+                <th>CPU</th> {/* Hier wird die neue Spalte hinzugefügt */}
                 <th>Preis pro Monat</th>
                 <th>Preis pro Jahr</th>
               </tr>
@@ -71,10 +97,11 @@ const Preisinformationen = () => {
             <tbody>
               {backendPakete.map((paket, index) => (
                 <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
-                  <td>{paket.leistung}</td>
+                  <td>{paket.name}</td>
                   <td>{paket.ram}</td>
-                  <td>{paket.preis.toFixed(2)}CHF</td>
-                  <td>{(paket.preis * 12).toFixed(2)}CHF</td>
+                  <td>{paket.cpu}</td> {/* Hier wird die CPU-Information hinzugefügt */}
+                  <td>{formatPreis(paket.preis)} CHF</td>
+                  <td>{formatPreis(paket.preis * 12)} CHF</td>
                 </tr>
               ))}
             </tbody>
@@ -95,10 +122,10 @@ const Preisinformationen = () => {
             <tbody>
               {datenbankPakete.map((paket, index) => (
                 <tr key={index} className={paket.empfohlen ? 'empfohlen' : ''}>
-                  <td>{paket.leistung}</td>
+                  <td>{paket.name}</td>
                   <td>{paket.speicher}</td>
-                  <td>{paket.preis.toFixed(2)}CHF</td>
-                  <td>{(paket.preis * 12).toFixed(2)}CHF</td>
+                  <td>{formatPreis(paket.preis)} CHF</td>
+                  <td>{formatPreis(paket.preis * 12)} CHF</td>
                 </tr>
               ))}
             </tbody>
