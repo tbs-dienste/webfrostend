@@ -41,6 +41,7 @@ import Kontoangaben from './components/Rechnung/Kontoangaben';
 import PdfMerger from './components/Rechnung/Pdfgenerator';
 import CreateDatenbankPaket from './components/Preise/CreateDatenbankPaket';
 import CreateBackendPaket from './components/Preise/CreateBackendPaket';
+import CreateFaq from './components/FAQ/CreateFaq';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -94,6 +95,7 @@ const App = () => {
               <Route path="/pdfmerger" element={<PdfMerger />} />
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
+              <Route path="/createfaq" element={<CreateFaq />} />
 
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />

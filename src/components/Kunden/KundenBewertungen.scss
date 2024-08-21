@@ -1,28 +1,24 @@
 .bewertung-app {
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     color: #333;
+    padding: 20px;
+    background-color: #f4f4f4;
 
     h1 {
         font-size: 2.5em;
         margin-bottom: 20px;
         color: #007BFF;
+        font-weight: 700;
     }
 
     .durchschnitt-rating {
         margin-bottom: 20px;
 
-        span {
+        .rating-value {
             font-size: 1.5em;
+            font-weight: 500;
             margin-left: 10px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            .react-stars {
-                margin: 0;
-            }
         }
     }
 
@@ -33,59 +29,25 @@
 
         .bewertung-box {
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 20px;
             margin: 10px;
-            width: 200px;
+            width: 250px;
             cursor: pointer;
-            transition: box-shadow 0.3s;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s, transform 0.2s;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
             &:hover {
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                transform: translateY(-5px);
             }
 
-            p {
-                margin: 10px 0;
+            .bewertung-text {
+                margin-bottom: 10px;
                 font-size: 1.2em;
-            }
-        }
-    }
-
-    .bewertung-detail {
-        margin-top: 30px;
-        text-align: left;
-
-        h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #007BFF;
-        }
-
-        p {
-            font-size: 1.2em;
-            margin: 10px 0;
-
-            strong {
-                font-weight: bold;
-            }
-        }
-
-        .back-button {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-
-            &:hover {
-                background-color: #0056b3;
+                font-weight: 600;
+                color: #555;
             }
         }
     }

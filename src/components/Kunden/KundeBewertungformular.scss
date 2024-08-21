@@ -1,13 +1,18 @@
 .bewertung-formular {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
 
     h2 {
         text-align: center;
         margin-bottom: 20px;
+        font-size: 2em;
+        color: #007bff;
     }
 
     .formular-gruppe {
@@ -15,50 +20,63 @@
 
         label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            color: #555;
         }
 
         input[type="text"],
         textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             transition: border-color 0.3s ease;
 
             &:focus {
                 border-color: #007bff;
                 outline: none;
             }
+
+            &::placeholder {
+                color: #aaa;
+                font-style: italic;
+            }
         }
 
         textarea {
-            height: 100px;
+            height: 120px;
+            resize: vertical;
         }
 
         .react-stars {
-            display: block;
+            display: flex;
+            justify-content: center;
             margin-top: 10px;
-            text-align: center;
         }
     }
 
     button[type="submit"] {
         display: block;
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         font-size: 16px;
         background-color: #007bff;
         color: #fff;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.2s ease;
 
         &:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        &:focus {
+            outline: none;
         }
     }
 }
