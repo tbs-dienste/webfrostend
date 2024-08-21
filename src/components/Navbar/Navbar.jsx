@@ -70,7 +70,6 @@ function NavItem({ to, text, icon, currentPath, onClick }) {
       <Link to={to} className={`nav-link ${currentPath === to ? 'active' : ''}`} onClick={onClick}>
         {icon && <span className="icon">{icon}</span>}
         {text}
-        {to === "/warenkorb" && <span className="warenkorb-count">3</span>} {/* Example count */}
       </Link>
     </li>
   );
