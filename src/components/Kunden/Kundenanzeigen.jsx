@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FaSave, FaUndo, FaArchive, FaFileInvoice, FaCheck, FaTimes } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
 
 const KundenAnzeigen = () => {
@@ -9,7 +10,7 @@ const KundenAnzeigen = () => {
   const [originalData, setOriginalData] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState({});
-  const [loading, setLoading] = useState(true); // Definiere den Loading-Zustand
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchKunde() {
@@ -27,16 +28,14 @@ const KundenAnzeigen = () => {
         console.error('Fehler beim Abrufen des Kunden:', error);
         alert('Fehler beim Abrufen der Kundendaten. Bitte versuche es später noch einmal.');
       } finally {
-        setLoading(false); // Setze den Loading-Zustand auf false, wenn die Daten geladen sind
+        setLoading(false);
       }
     }
 
     fetchKunde();
   }, [id]);
 
-  const handleEdit = () => {
-    setEditMode(true);
-  };
+  const handleEdit = () => setEditMode(true);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -58,28 +57,24 @@ const KundenAnzeigen = () => {
 
   const handleArchivieren = async () => {
     try {
-        const url = editedData.archiviert
-            ? `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/unarchive`
-            : `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/archive`;
-        
-        const response = await axios.post(url);
+      const url = editedData.archiviert
+        ? `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/unarchive`
+        : `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/archive`;
+      
+      const response = await axios.post(url);
 
-        if (response.data.status === 'success') {
-            const updatedData = { ...editedData, archiviert: !editedData.archiviert };
-            setEditedData(updatedData);
-            alert(updatedData.archiviert ? 'Kunde erfolgreich archiviert' : 'Kunde erfolgreich reaktiviert');
-        } else {
-            alert('Fehler beim Archivieren des Kunden');
-        }
+      if (response.data.status === 'success') {
+        const updatedData = { ...editedData, archiviert: !editedData.archiviert };
+        setEditedData(updatedData);
+        alert(updatedData.archiviert ? 'Kunde erfolgreich archiviert' : 'Kunde erfolgreich reaktiviert');
+      } else {
+        alert('Fehler beim Archivieren des Kunden');
+      }
     } catch (error) {
-        console.error('Fehler beim Archivieren des Kunden:', error);
-        alert('Fehler beim Archivieren des Kunden. Bitte versuche es später noch einmal.');
+      console.error('Fehler beim Archivieren des Kunden:', error);
+      alert('Fehler beim Archivieren des Kunden. Bitte versuche es später noch einmal.');
     }
-};
-
-
-
-  
+  };
 
   const handleRechnungGestellt = async () => {
     try {
@@ -112,20 +107,12 @@ const KundenAnzeigen = () => {
   };
 
   if (loading) {
-    return <div>Lade Kunde...</div>;
+    return <div className="loading">Lade Kunde...</div>;
   }
 
-  const getArchivierenButtonText = () => {
-    return editedData.archiviert ? 'Reaktivieren' : 'Archivieren';
-  };
-
-  const getRechnungGestelltButtonText = () => {
-    return editedData.rechnungGestellt ? 'Rückgängig Rechnung erstellen' : 'Rechnung erstellen';
-  };
-
-  const getRechnungBezahltButtonText = () => {
-    return editedData.rechnungBezahlt ? 'Rückgängig Rechnung bezahlt' : 'Rechnung bezahlt';
-  };
+  const getArchivierenButtonText = () => editedData.archiviert ? 'Reaktivieren' : 'Archivieren';
+  const getRechnungGestelltButtonText = () => editedData.rechnungGestellt ? 'Rückgängig Rechnung erstellen' : 'Rechnung erstellen';
+  const getRechnungBezahltButtonText = () => editedData.rechnungBezahlt ? 'Rückgängig Rechnung bezahlt' : 'Rechnung bezahlt';
 
   return (
     <div className="kunde-anzeigen-container">
@@ -190,8 +177,8 @@ const KundenAnzeigen = () => {
                 IP-Adresse:
                 <input type="text" name="ip_adresse" value={editedData.ip_adresse} onChange={handleInputChange} />
               </label>
-              <button onClick={handleSave}>Speichern</button>
-              <button onClick={handleUndo}>Rückgängig</button>
+              <button onClick={handleSave} className="save-button"><FaSave /> Speichern</button>
+              <button onClick={handleUndo} className="undo-button"><FaUndo /> Rückgängig</button>
             </>
           ) : (
             <>
@@ -210,11 +197,12 @@ const KundenAnzeigen = () => {
               <p><strong>Preis:</strong> {selectedKunde.preis}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
               <p><strong>Code:</strong> {selectedKunde.code}</p>
-              <button onClick={handleEdit}>Bearbeiten</button>
-              <button onClick={handleArchivieren}>{getArchivierenButtonText()}</button>
-              <button onClick={handleRechnungGestellt}>{getRechnungGestelltButtonText()}</button>
+              <button onClick={handleEdit} className="edit-button">Bearbeiten</button>
+              <button onClick={handleArchivieren} className="archive-button"><FaArchive /> {getArchivierenButtonText()}</button>
+              <button onClick={handleRechnungGestellt} className="invoice-button"><FaFileInvoice /> {getRechnungGestelltButtonText()}</button>
+              
               {editedData.rechnungGestellt && !editedData.rechnungBezahlt && (
-                <button onClick={handleRechnungBezahlt}>{getRechnungBezahltButtonText()}</button>
+                <button onClick={handleRechnungBezahlt} className="paid-button"><FaCheck /> {getRechnungBezahltButtonText()}</button>
               )}
             </>
           )

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { FaClock, FaFileInvoice, FaUser, FaFileAlt, FaFileSignature, FaTrash } from 'react-icons/fa';
 import './Kunden.scss';
 
 const Kunden = () => {
@@ -63,7 +64,7 @@ const Kunden = () => {
     const status = kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf';
     return (
       (kunde.id.toString().includes(searchTerm) ||
-      fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (statusFilter === 'alle' || status === statusFilter) &&
       (showArchived ? kunde.archiviert : !kunde.archiviert)
     );
@@ -72,7 +73,7 @@ const Kunden = () => {
   return (
     <div className="kunden-container">
       <h2 className="kunden-title">Kunden</h2>
-      
+
       <div className="filter-bar">
         <input
           type="text"
@@ -112,26 +113,26 @@ const Kunden = () => {
           {filteredKunden.length > 0 ? (
             filteredKunden.map((kunde) => (
               <div key={kunde.id} className="kunden-box">
-                <p className="kunden-nummer">Kundennummer: {kunde.id}</p>
+                <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
                 <p className="kunden-name">{kunde.vorname} {kunde.nachname}</p>
                 <div className="kunden-buttons">
                   <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
-                    Arbeitszeit
+                    <FaClock /> Arbeitszeit
                   </Link>
                   <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
-                    Rechnung erstellen
+                    <FaFileInvoice /> Rechnung erstellen
                   </Link>
                   <Link to={`/kunden/${kunde.id}`} className="kunden-button">
-                    Kunden anzeigen
+                    <FaUser /> Kunden anzeigen
                   </Link>
                   <Link to={`/auftragsbestaetigung/${kunde.id}`} className="kunden-button">
-                    Auftragsbestätigung
+                    <FaFileAlt /> Auftragsbestätigung
                   </Link>
-                  <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode}`} className="kunden-button">
-                    Vertrag
+                  <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode || ''}`} className="kunden-button">
+                    <FaFileSignature /> Vertrag
                   </Link>
                   <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
-                    Kunde löschen
+                    <FaTrash /> Kunde löschen
                   </button>
                   <div className={`rechnungs-status ${kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf'}`}>
                     {kunde.rechnungGestellt ? (
@@ -140,7 +141,8 @@ const Kunden = () => {
                       'Entwurf'
                     )}
                   </div>
-                  {kunde.archiviert && <span className="archiviert-label">Archiviert</span>}
+                  {/* Nur anzeigen, wenn `kunde.archiviert` wahr ist */}
+                  {kunde.archiviert ? <span className="archiviert-label">Archiviert</span> : null}
                 </div>
               </div>
             ))

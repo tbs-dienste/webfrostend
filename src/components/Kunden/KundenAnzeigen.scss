@@ -1,52 +1,109 @@
 .kunde-anzeigen-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .kunde-anzeigen {
-  background-color: #ffffff;
-  border-radius: 8px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .kunde-anzeigen h2 {
-  font-size: 24px;
+  font-size: 26px;
   margin-bottom: 20px;
-  color: #333333;
+  color: #333;
 }
 
 .kunde-anzeigen p {
-  margin-bottom: 10px;
-  color: #666666;
+  margin-bottom: 12px;
+  color: #555;
 }
 
 .kunde-anzeigen p strong {
   font-weight: bold;
 }
 
-.kunde-anzeigen input[type="text"] {
+.kunde-anzeigen label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.kunde-anzeigen input[type="text"],
+.kunde-anzeigen input[type="email"],
+.kunde-anzeigen input[type="tel"] {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
 }
 
 .kunde-anzeigen button {
+  display: inline-flex;
+  align-items: center;
   background-color: #007bff;
-  color: #ffffff;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s, color 0.3s;
+  margin-right: 10px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .kunde-anzeigen button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.kunde-anzeigen .save-button {
+  background-color: #28a745;
+}
+
+.kunde-anzeigen .save-button:hover {
+  background-color: #218838;
+}
+
+.kunde-anzeigen .undo-button {
+  background-color: #ffc107;
+}
+
+.kunde-anzeigen .undo-button:hover {
+  background-color: #e0a800;
+}
+
+.kunde-anzeigen .archive-button {
+  background-color: #dc3545;
+}
+
+.kunde-anzeigen .archive-button:hover {
+  background-color: #c82333;
+}
+
+.kunde-anzeigen .invoice-button {
+  background-color: #17a2b8;
+}
+
+.kunde-anzeigen .invoice-button:hover {
+  background-color: #138496;
+}
+
+.kunde-anzeigen .paid-button {
+  background-color: #28a745;
+}
+
+.kunde-anzeigen .paid-button:hover {
+  background-color: #218838;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
 }
