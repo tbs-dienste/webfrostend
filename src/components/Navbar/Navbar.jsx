@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
-import { FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
+import { FaSignOutAlt } from 'react-icons/fa';
 
 function Navbar({ isAdmin, onLogout }) {
   const currentPath = window.location.pathname;
@@ -64,13 +64,13 @@ function Navbar({ isAdmin, onLogout }) {
   );
 }
 
-function NavItem({ to, text, icon, count, currentPath, onClick }) {
+function NavItem({ to, text, icon, currentPath, onClick }) {
   return (
     <li>
       <Link to={to} className={`nav-link ${currentPath === to ? 'active' : ''}`} onClick={onClick}>
         {icon && <span className="icon">{icon}</span>}
         {text}
-        {count > 0 && to === "/warenkorb" && <span className="warenkorb-count">{count}</span>}
+        {to === "/warenkorb" && <span className="warenkorb-count">3</span>} {/* Example count */}
       </Link>
     </li>
   );

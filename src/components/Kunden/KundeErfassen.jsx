@@ -3,6 +3,7 @@ import axios from 'axios';
 import './KundeErfassen.scss';
 
 const KundeErfassen = () => {
+  // State-Variablen für das Formular
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
   const [strasseHausnummer, setStrasseHausnummer] = useState('');
@@ -17,8 +18,10 @@ const KundeErfassen = () => {
   const [firma, setFirma] = useState('');
   const [land, setLand] = useState('');
 
+  // State-Variable für die Auftragsarten-Optionen
   const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
 
+  // Hole die Auftragsarten-Optionen beim ersten Rendern
   useEffect(() => {
     const fetchAuftragsTypOptions = async () => {
       try {
@@ -36,7 +39,16 @@ const KundeErfassen = () => {
     fetchAuftragsTypOptions();
   }, []);
 
+  // Formular senden
   const handleKontaktAufnehmen = async () => {
+    if (!vorname || !nachname || !email || !telefon || !mobil || !auftragsTyp) {
+      alert('Bitte füllen Sie alle erforderlichen Felder aus.');
+      return;
+    }
+
+    // Geschlecht in die entsprechenden Werte umwandeln
+    const geschlechtWert = geschlecht === 'männlich' ? 'm' : geschlecht === 'weiblich' ? 'w' : '';
+
     try {
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
@@ -52,12 +64,13 @@ const KundeErfassen = () => {
         email,
         telefon,
         mobil,
-        geschlecht,
+        geschlecht: geschlechtWert,
         auftragsTyp,
         auftragsBeschreibung,
         ip_adresse
       };
 
+      // Sende die Daten an die API
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
 
       console.log('Kontaktdaten erfolgreich gesendet:', response.data);
@@ -207,7 +220,7 @@ const KundeErfassen = () => {
             onChange={(e) => setAuftragsBeschreibung(e.target.value)}
           />
         </div>
-        <button onClick={handleKontaktAufnehmen}>Kontakt aufnehmen</button>
+        <button onClick={handleKontaktAufnehmen} className="submit-button">Kontakt aufnehmen</button>
       </div>
     </div>
   );

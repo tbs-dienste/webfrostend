@@ -1,26 +1,27 @@
 .navbar {
   z-index: 1000;
-  height: 70px;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  height: 80px;
+  background: #003366; // Dark blue background
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #ffffff;
   position: relative;
+  transition: background 0.3s ease;
 
   .container {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 30px;
     max-width: 1200px;
     margin: 0 auto;
   }
 
   .logo {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
     color: #ffffff;
     a {
@@ -29,7 +30,7 @@
       transition: color 0.3s ease;
       
       &:hover {
-        color: #f1c40f;
+        color: #ffcc00; // Gold color on hover
       }
     }
   }
@@ -39,17 +40,17 @@
     cursor: pointer;
 
     .bar {
-      width: 30px;
-      height: 3px;
+      width: 35px;
+      height: 4px;
       background-color: #ffffff;
-      margin: 5px 0;
+      margin: 6px 0;
       transition: 0.4s;
     }
 
     &.active {
       .bar:nth-child(1) {
         transform: rotate(-45deg) translate(-5px, 6px);
-        width: 35px;
+        width: 40px;
       }
 
       .bar:nth-child(2) {
@@ -58,8 +59,8 @@
 
       .bar:nth-child(3) {
         transform: rotate(45deg) translate(-5px, -6px);
-        width: 35px;
-        margin-top: -8px;
+        width: 40px;
+        margin-top: -10px;
       }
     }
   }
@@ -73,7 +74,7 @@
       flex-wrap: wrap;
 
       li {
-        margin-right: 20px;
+        margin-right: 25px;
         position: relative;
 
         &:last-child {
@@ -84,38 +85,38 @@
       .nav-link {
         display: flex;
         align-items: center;
-        padding: 10px 15px;
-        font-size: 16px;
+        padding: 12px 20px;
+        font-size: 18px;
         font-weight: 500;
         color: #ffffff;
         text-decoration: none;
         position: relative;
-        border-radius: 5px;
+        border-radius: 8px;
         transition: background-color 0.3s ease, color 0.3s ease;
 
         &.active {
-          background-color: #f39c12;
-          color: #ffffff;
+          background-color: #ffcc00; // Gold color for active link
+          color: #003366;
         }
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.2);
-          color: #f39c12;
+          color: #ffcc00;
         }
 
         .icon {
-          margin-right: 10px;
+          margin-right: 12px;
         }
 
         .warenkorb-count {
-          background-color: #e74c3c;
+          background-color: #ff6666;
           border-radius: 12px;
           color: #ffffff;
-          font-size: 12px;
-          padding: 2px 8px;
+          font-size: 14px;
+          padding: 4px 10px;
           position: absolute;
-          top: -5px;
-          right: -10px;
+          top: -8px;
+          right: -12px;
           font-weight: 600;
         }
       }
@@ -127,21 +128,21 @@
       .dropdown-toggle {
         background: none;
         border: none;
-        font-size: 16px;
+        font-size: 18px;
         color: #ffffff;
         cursor: pointer;
-        padding: 10px 15px;
-        border-radius: 5px;
+        padding: 12px 20px;
+        border-radius: 8px;
         transition: background-color 0.3s ease, color 0.3s ease;
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.2);
-          color: #f39c12;
+          color: #ffcc00;
         }
 
         &.active {
-          background-color: #f39c12;
-          color: #ffffff;
+          background-color: #ffcc00;
+          color: #003366;
         }
       }
 
@@ -150,10 +151,10 @@
         position: absolute;
         top: 100%;
         left: 0;
-        background-color: #2a5298;
-        width: 220px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-        border-radius: 5px;
+        background-color: #003366;
+        width: 240px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
         z-index: 1000;
         opacity: 0;
         visibility: hidden;
@@ -167,11 +168,11 @@
 
         a {
           display: block;
-          padding: 10px;
+          padding: 12px;
           color: #ffffff;
           text-decoration: none;
           font-weight: 400;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.3);
           transition: background-color 0.3s ease;
 
           &:last-child {
@@ -179,7 +180,7 @@
           }
 
           &:hover {
-            background-color: #1e3c72;
+            background-color: #002244;
           }
         }
       }
@@ -190,12 +191,12 @@
     background: none;
     border: none;
     color: #ffffff;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     transition: color 0.3s ease;
 
     &:hover {
-      color: #e74c3c;
+      color: #ff6666;
     }
   }
 
@@ -206,9 +207,9 @@
 
     .nav-elements {
       position: fixed;
-      top: 70px;
+      top: 80px;
       right: 0;
-      background-color: #2a5298;
+      background-color: #003366;
       width: 0;
       height: 100vh;
       overflow-y: auto;

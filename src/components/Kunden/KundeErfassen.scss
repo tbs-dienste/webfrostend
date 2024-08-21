@@ -1,139 +1,101 @@
 * {
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica, Arial, sans-serif;
-
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
 }
 
-
-
 .kunde-erfassen {
-  max-width: 600px;
-  margin: 20px;
-  padding: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 40px;
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  color: #333;
 
   h2 {
-    font-size: 24px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
     margin-bottom: 20px;
-    color: #333333;
+    text-align: center;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
   }
 
   .formular {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
     .formular-gruppe {
-      margin-bottom: 15px;
+      flex: 1 1 calc(50% - 20px);
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
 
       label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #555555;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #7f8c8d;
+        font-size: 14px;
       }
 
       input, select, textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #cccccc;
-        border-radius: 5px;
+        padding: 12px 15px;
+        border: 1px solid #bdc3c7;
+        border-radius: 8px;
         font-size: 16px;
         transition: border-color 0.3s, box-shadow 0.3s;
+        outline: none;
 
         &:focus {
-          outline: none;
-          border-color: #007bff;
-          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+          border-color: #3498db;
+          box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
         }
       }
 
       textarea {
         resize: vertical;
-        height: 100px;
+        height: 150px;
+      }
+
+      .dropdown {
+        appearance: none;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"%3E%3Cpath fill="%23bdc3c7" d="M0 3.5l5 5 5-5H0z"/%3E%3C/svg%3E');
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px;
+        padding-right: 45px;
       }
     }
 
-    .dropdown {
-      appearance: none;
-      background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23787878" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 10px;
-      font-family: 'Arial', sans-serif;
-      padding-right: 30px;
-    }
-
-    button {
-      padding: 12px 20px;
-      background-color: #007bff;
+    .submit-button {
+      flex: 1 1 100%;
+      padding: 15px;
+      background-color: #3498db;
       color: #ffffff;
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s, transform 0.2s;
+      margin-top: 20px;
+      display: block;
+      text-align: center;
 
       &:hover {
-        background-color: #0056b3;
+        background-color: #2980b9;
+        transform: translateY(-2px);
       }
-    }
-  }
 
-  .popup-overlay {
-    position: fixed;
-    top: 100px; 
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparentes Overlay */
-    z-index: 9998; /* Unterhalb des Pop-ups */
-  }
-  
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    z-index: 9999;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    animation: fadeIn 0.3s ease forwards;
-  
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-      }
-      100% {
-        opacity: 1;
+      &:active {
+        background-color: #1f65a6;
+        transform: translateY(1px);
       }
     }
-  
-    h3 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-  
-    p {
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
-  }
-
-  .aufnehmen {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 50px;
-    width: 620px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .aufnehmen:hover {
-    background-color: #0056b3;
   }
 }
