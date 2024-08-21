@@ -1,3 +1,8 @@
+/* Add this to your global styles or in a suitable location */
+.no-scroll {
+  overflow: hidden;
+}
+
 .navbar {
   z-index: 1000;
   height: 80px;
@@ -28,7 +33,7 @@
       text-decoration: none;
       color: inherit;
       transition: color 0.3s ease;
-      
+
       &:hover {
         color: #ffb74d; // Light orange color on hover
       }
@@ -38,6 +43,8 @@
   .menu-icon {
     display: none;
     cursor: pointer;
+    font-size: 24px; // Adjust size if needed
+    color: #ffffff; // Ensure color matches your theme
 
     .bar {
       width: 35px;
@@ -106,6 +113,7 @@
 
         .icon {
           margin-right: 12px;
+          font-size: 20px; // Slightly larger icons
         }
       }
     }
@@ -140,7 +148,7 @@
         top: 100%;
         left: 0;
         background-color: #004d40;
-        width: 240px;
+        width: 250px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         border-radius: 8px;
         z-index: 1000;
@@ -155,8 +163,9 @@
         }
 
         a {
-          display: block;
-          padding: 12px;
+          display: flex;
+          align-items: center;
+          padding: 12px 20px;
           color: #ffffff;
           text-decoration: none;
           font-weight: 400;
@@ -169,6 +178,11 @@
 
           &:hover {
             background-color: #003d34; // Darker teal on hover
+          }
+
+          .icon {
+            margin-right: 12px;
+            font-size: 18px; // Adjust icon size if needed
           }
         }
       }
@@ -203,6 +217,7 @@
       overflow-y: auto;
       transition: width 0.3s ease-in;
       z-index: 1000;
+      overflow: auto; // Ensure that the menu itself can scroll
 
       &.active {
         width: 100%;

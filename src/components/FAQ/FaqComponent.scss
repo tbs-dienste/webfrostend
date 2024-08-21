@@ -1,50 +1,73 @@
-.faq-list {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.faq-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff; /* Weißer Hintergrund für ein sauberes Aussehen */
+  border-radius: 12px; /* Abgerundete Ecken für ein modernes Gefühl */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sanfter Schatten für mehr Tiefe */
 
   h1 {
     text-align: center;
-    margin-bottom: 20px;
-    font-size: 2em;
-    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em; /* Größere Schriftgröße für den Titel */
+    color: #333; /* Dunkelgraue Farbe für besseren Kontrast */
+    font-weight: 700; /* Fett für bessere Lesbarkeit */
   }
 }
 
-.faq-item {
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: hidden;
+.faq-list {
+  .faq-item {
+    margin-bottom: 15px;
+    border-radius: 8px; /* Abgerundete Ecken für die FAQ-Elemente */
+    overflow: hidden;
+    border: 1px solid #e0e0e0; /* Helle Randfarbe für einen sanften Look */
 
-  .faq-question {
-    background-color: #f5f5f5;
-    padding: 15px 20px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.1em;
-    color: #444;
+    .faq-question {
+      background-color: #f7f7f7; /* Heller Hintergrund für Fragen */
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2em; /* Etwas größere Schriftgröße für Fragen */
+      color: #444; /* Sanfte, aber gut sichtbare Textfarbe */
+      font-weight: 600; /* Fett für besseren Kontrast */
+      transition: background-color 0.3s, color 0.3s; /* Sanfte Übergänge für Hover-Effekte */
 
-    &:hover {
-      background-color: #e5e5e5;
+      &:hover {
+        background-color: #e0e0e0; /* Dunklerer Hintergrund beim Hover */
+        color: #007bff; /* Wechsel der Textfarbe beim Hover */
+      }
+
+      .faq-toggle {
+        font-size: 1.3em; /* Größere Icons für bessere Sichtbarkeit */
+        color: #007bff; /* Farbe für das Toggle-Icon */
+        transition: transform 0.3s; /* Sanfter Übergang für das Icon */
+      }
     }
 
-    .faq-toggle {
-      font-size: 1.2em;
-      transition: transform 0.3s;
+    .faq-answer {
+      padding: 20px;
+      background-color: #ffffff; /* Weißer Hintergrund für Antworten */
+      border-top: 1px solid #e0e0e0; /* Trennlinie zwischen Frage und Antwort */
+      font-size: 1em;
+      color: #666; /* Sanfte Farbe für die Antwort */
     }
   }
+}
 
-  .faq-answer {
-    padding: 15px 20px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    font-size: 1em;
-    color: #666;
+@media (max-width: 768px) {
+  .faq-container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2em; /* Kleinere Schriftgröße für den Titel auf mobilen Geräten */
+  }
+
+  .faq-item {
+    .faq-question {
+      font-size: 1.1em; /* Kleinere Schriftgröße für Fragen auf mobilen Geräten */
+    }
   }
 }

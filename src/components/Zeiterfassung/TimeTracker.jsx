@@ -53,9 +53,9 @@ const TimeTracker = () => {
             <h2>Arbeitszeitstempelung</h2>
             <div className="buttons">
                 {!isRunning ? (
-                    <button onClick={handleStart}>Start</button>
+                    <button className="start-button" onClick={handleStart}>Start</button>
                 ) : (
-                    <button onClick={handleStop}>Stop</button>
+                    <button className="stop-button" onClick={handleStop}>Stop</button>
                 )}
             </div>
             {isRunning && (
@@ -75,7 +75,7 @@ const TimeTracker = () => {
                         Endzeit: {new Date(endTime).toLocaleString()}
                     </label>
                     <br />
-                    <button onClick={handleStop}>Arbeitszeit erfassen</button>
+                    <button className="record-button" onClick={handleStop}>Arbeitszeit erfassen</button>
                 </div>
             )}
             {message && <div className="message">{message}</div>}
