@@ -42,6 +42,11 @@ const Dienstleistungen = ({ isAdmin }) => {
               <h2>{service.title}</h2>
               <p>{service.description.length > 150 ? `${service.description.substring(0, 150)}...` : service.description}</p>
               <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
+              {isAdmin && (
+                <Link to={`/service-edit/${service.id}`} className="edit-button">
+                  Bearbeiten
+                </Link>
+              )}
             </div>
           </div>
         ))}

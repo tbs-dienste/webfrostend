@@ -5,6 +5,7 @@ import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Dienstleistungen from './components/Dienstleistung/Dienstleistungen';
 import ServiceDetail from './components/ServiceDetail/ServiceDetail';
+import ServiceEdit from './components/Dienstleistung/ServiceEdit'; // Importiere die ServiceEdit-Komponente
 import TimeTracker from './components/Zeiterfassung/TimeTracker';
 import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
@@ -42,6 +43,7 @@ import PdfMerger from './components/Rechnung/Pdfgenerator';
 import CreateDatenbankPaket from './components/Preise/CreateDatenbankPaket';
 import CreateBackendPaket from './components/Preise/CreateBackendPaket';
 import CreateFaq from './components/FAQ/CreateFaq';
+import AudioSettings from './components/VideoChat/AudioSettings';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -89,6 +91,8 @@ const App = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/audiosettings" element={<AudioSettings />} />
+
           {isAdmin ? (
             <>
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
@@ -100,6 +104,7 @@ const App = () => {
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
+              <Route path="/service-edit/:id" element={<ServiceEdit />} /> {/* Route für die Bearbeitung */}
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/auftragsbestaetigung/:id" element={<Auftragsbestaetigung />} />

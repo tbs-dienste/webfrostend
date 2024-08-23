@@ -30,3 +30,5 @@ Ich sehe im Kunden alle arbeitszeiten der mitarbeiter!
 und im mitarbeiter werden jeden monat automatisch dann eine lohnabrechnung generiert also anhand der stunden ujnd des stundenlohns wird alles schön individuell generiert!
 
 
+
+Passwort GMX: Startup2024_

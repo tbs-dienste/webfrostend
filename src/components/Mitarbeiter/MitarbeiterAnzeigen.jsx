@@ -15,7 +15,7 @@ const MitarbeiterAnzeigen = () => {
         const fetchMitarbeiter = async () => {
             try {
                 const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`);
-                const data = response.data?.data; // Verwende optionalen Chaining für sicheren Zugriff
+                const data = response.data.data; // Verwende optionalen Chaining für sicheren Zugriff
                 if (data && data.length > 0) {
                     setMitarbeiter(data[0]); // Die Daten befinden sich im ersten Element des Arrays
                     setLoading(false); // Setze den Ladezustand auf false, wenn die Daten geladen sind

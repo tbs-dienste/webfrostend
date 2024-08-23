@@ -1,4 +1,4 @@
-/* Dienstleistungen.scss */
+// Dienstleistungen.scss
 
 .services-container {
   max-width: 1200px;
@@ -69,11 +69,33 @@
         background-color: #007bff;
         color: #fff;
         text-decoration: none;
-        border-radius: 5px;
+        border-radius: 6px;
         transition: background-color 0.3s ease;
 
         &:hover {
           background-color: #0056b3;
+        }
+      }
+
+      .edit-button {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #ffc107; /* Gelb für den Bearbeitungsbutton */
+        color: #333;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: #e0a800;
+          transform: scale(1.05);
+        }
+
+        &:active {
+          background-color: #d39e00;
+          transform: scale(1);
         }
       }
     }
