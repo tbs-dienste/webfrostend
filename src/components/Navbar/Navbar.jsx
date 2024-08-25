@@ -64,9 +64,7 @@ function Navbar({ isAdmin, onLogout }) {
                   <div className={`dropdown-menu ${adminMenuActive ? 'show' : ''}`}>
                     <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/kontoangaben" text="Kontoangaben" icon={faIdCard} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />                    <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                   </div>
                 </li>
                 <button className="logout-button" onClick={onLogout}>
