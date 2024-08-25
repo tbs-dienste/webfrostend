@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -7,6 +7,7 @@ import './Rechnung.scss';
 
 const Rechnung = () => {
     const { id } = useParams();
+    const navigate = useNavigate(); // Verwende useNavigate Hook
     const [arbeitszeit, setArbeitszeit] = useState(0);
     const [message, setMessage] = useState('');
     const [beschreibung, setBeschreibung] = useState('');
@@ -193,31 +194,29 @@ const Rechnung = () => {
             },
             headStyles: {
                 fillColor: [41, 128, 185],
-                textColor: [255, 255, 255], // White text in header
-                fontSize: 11,
+                textColor: [255, 255, 255]
             },
-            footStyles: {
-                fillColor: [245, 245, 245],
-                textColor: textColor,
-                fontSize: 11,
-                fontStyle: ''
-            }
+            margin: { horizontal: 10 },
         });
     
-        const paymentInfoY = doc.lastAutoTable.finalY || startY;
+        // Zahlungsinformationen
+        const paymentInfoY = doc.lastAutoTable.finalY + 10;
+        doc.text('Zahlungsinformationen:', 20, paymentInfoY);
+        doc.text('Bankverbindung: Musterbank', 20, paymentInfoY + 10);
+        doc.text('IBAN: DE12345678901234567890', 20, paymentInfoY + 20);
+        doc.text('BIC: BANKDEFFXXX', 20, paymentInfoY + 30);
+        doc.text('Verwendungszweck: Rechnungsnummer ' + id, 20, paymentInfoY + 40);
     
-        doc.text('Zahlungsbedingungen:', 20, paymentInfoY + 20);
-        doc.text('Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen auf das oben genannte Konto.', 20, paymentInfoY + 30);
-    
-        doc.text('Vielen Dank für Ihren Auftrag!', 20, paymentInfoY + 50);
+        doc.text('Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen.', 20, paymentInfoY + 50);
     
         doc.text('Mit freundlichen Grüßen,', 20, paymentInfoY + 80);
         doc.text('TBs Solutions', 20, paymentInfoY + 90);
         doc.text('Mitarbeiter: [Name des Mitarbeiters]', 20, paymentInfoY + 100);
     
         doc.save('Rechnung.pdf');
-    };
     
+        navigate('/kontoangaben', { state: { auftragsnummer: id, kunde: kunde } });
+    };
 
     return (
         <div className="time-tracker">

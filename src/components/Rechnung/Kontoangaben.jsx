@@ -1,85 +1,85 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { FaRegCopy } from 'react-icons/fa';
 import './Kontoangaben.scss';
 
-function Kontoangaben() {
-  const kontoDaten = {
-    iban: 'CH52 0844 0256 5100 2200 2',
-    nameOrFirma: 'TBs Solutions, Timo Blumer',
-    land: 'Schweiz',
-    plz: '4052',
-    ort: 'Basel',
-    strasse: 'Aeschenplatz',
-    nummer: '3',
-    kundennummer: '987654321', // Kundennummer/Auftragsnummer
-  };
+const Kontoangaben = () => {
+    const location = useLocation();
+    const { auftragsnummer, kunde } = location.state || {};
 
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    alert(`"${text}" wurde kopiert!`);
-  };
+    const handleCopy = (text) => {
+        navigator.clipboard.writeText(text);
+        alert(`"${text}" wurde kopiert!`);
+    };
 
-  const openPostFinanceQR = () => {
-    window.open('https://www.postfinance.ch/de/support/services/tools-rechner/qr-generator.html#/', '_blank');
-  };
+    const openPostFinanceQR = () => {
+        window.open('https://www.postfinance.ch/de/support/services/tools-rechner/qr-generator.html#/', '_blank');
+    };
 
-  return (
-    <div className="kontoangaben-container">
-      <h2>Kontoangaben</h2>
+    if (!auftragsnummer || !kunde) {
+        return <p>Keine Auftragsdaten verfügbar.</p>;
+    }
 
-      <div className="kontoangaben-row">
-        <span className="label">IBAN:</span>
-        <span>{kontoDaten.iban}</span>
-        <button onClick={() => handleCopy(kontoDaten.iban)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+    return (
+        <div className="kontoangaben-container">
+            <h2>Kontoangaben</h2>
 
-      <div className="kontoangaben-row">
-        <span className="label">Name oder Firma:</span>
-        <span>{kontoDaten.nameOrFirma}</span>
-        <button onClick={() => handleCopy(kontoDaten.nameOrFirma)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+            <div className="kontoangaben-row">
+                <span className="label">Auftragsnummer:</span>
+                <span>{auftragsnummer}</span>
+            </div>
 
-      <div className="kontoangaben-row">
-        <span className="label">Land:</span>
-        <span>{kontoDaten.land}</span>
-        <button onClick={() => handleCopy(kontoDaten.land)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+            <div className="kontoangaben-row">
+                <span className="label">IBAN:</span>
+                <span>CH52 0844 0256 5100 2200 2</span>
+                <button onClick={() => handleCopy('CH52 0844 0256 5100 2200 2')} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
 
-      <div className="kontoangaben-row">
-        <span className="label">PLZ / Ort:</span>
-        <span>{kontoDaten.plz} {kontoDaten.ort}</span>
-        <button onClick={() => handleCopy(`${kontoDaten.plz} ${kontoDaten.ort}`)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+            <div className="kontoangaben-row">
+                <span className="label">Name oder Firma:</span>
+                <span>TBs Solutions, Timo Blumer</span>
+                <button onClick={() => handleCopy('TBs Solutions, Timo Blumer')} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
 
-    
+            <div className="kontoangaben-row">
+                <span className="label">Land:</span>
+                <span>Schweiz</span>
+                <button onClick={() => handleCopy('Schweiz')} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
 
-      <div className="kontoangaben-row">
-        <span className="label">Strasse / Nummer:</span>
-        <span>{kontoDaten.strasse} {kontoDaten.nummer}</span>
-        <button onClick={() => handleCopy(`${kontoDaten.strasse} ${kontoDaten.nummer}`)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+            <div className="kontoangaben-row">
+                <span className="label">PLZ / Ort:</span>
+                <span>4052 Basel</span>
+                <button onClick={() => handleCopy('4052 Basel')} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
 
-      <div className="kontoangaben-row">
-        <span className="label">Mitteilung:</span>
-        <span>Rechnung {kontoDaten.kundennummer}</span>
-        <button onClick={() => handleCopy(`Rechnung ${kontoDaten.kundennummer}`)} className="copy-button">
-          <FaRegCopy />
-        </button>
-      </div>
+            <div className="kontoangaben-row">
+                <span className="label">Strasse / Nummer:</span>
+                <span>Aeschenplatz 3</span>
+                <button onClick={() => handleCopy('Aeschenplatz 3')} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
 
-      <button onClick={openPostFinanceQR} className="qr-button">PostFinance QR Code Generator</button>
-    </div>
-  );
-}
+            <div className="kontoangaben-row">
+                <span className="label">Mitteilung:</span>
+                <span>Rechnung {auftragsnummer}</span>
+                <button onClick={() => handleCopy(`Rechnung ${auftragsnummer}`)} className="copy-button">
+                    <FaRegCopy />
+                </button>
+            </div>
+
+            <button onClick={openPostFinanceQR} className="qr-button">PostFinance QR Code Generator</button>
+        </div>
+    );
+};
 
 export default Kontoangaben;

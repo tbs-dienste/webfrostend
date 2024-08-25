@@ -1,102 +1,83 @@
 .mitarbeiter-anzeigen-container {
-  padding: 20px;
-  background-color: #f4f4f9;
+  padding: 2rem;
+  background-color: #f8f9fa;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 0 auto;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-  .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
 
-  .mitarbeiter-anzeigen-title {
-    margin: 0;
-    font-size: 1.8rem;
-    color: #333;
-  }
+.mitarbeiter-anzeigen-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+}
 
-  .add-btn {
-    display: inline-flex;
-    align-items: center;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    text-decoration: none;
+.add-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
 
-    span {
-      font-size: 1.5rem;
-      margin-right: 8px;
-    }
+.add-btn span {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
 
-    &:hover {
-      background-color: #0056b3;
-    }
-  }
+.mitarbeiter-liste {
+  list-style: none;
+  padding: 0;
+}
 
-  .mitarbeiter-liste {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+.mitarbeiter-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: white;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-  .mitarbeiter-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+.mitarbeiter-name {
+  font-weight: 500;
+  color: #333;
+}
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+.mitarbeiter-status {
+  font-weight: 400;
+  color: #666;
+}
 
-    .mitarbeiter-name {
-      font-size: 1rem;
-      color: #555;
-    }
+.details-link, .delete-button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
 
-    .mitarbeiter-status {
-      font-size: 0.9rem;
-      color: #888;
-    }
+.delete-button {
+  background-color: #dc3545;
+}
 
-    button {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s;
+.details-link:hover, .delete-button:hover {
+  background-color: #0056b3;
+}
 
-      &:hover {
-        background-color: #c82333;
-      }
-    }
-
-    .details-link {
-      color: #007bff;
-      text-decoration: none;
-      font-size: 0.9rem;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
+.delete-button:hover {
+  background-color: #c82333;
 }

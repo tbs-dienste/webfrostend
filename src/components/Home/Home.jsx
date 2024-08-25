@@ -27,7 +27,7 @@ const Home = () => {
   }, []);
 
   if (loading) return <Loading />;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   const prevSlide = () => {
     setCurrentSlide((prevSlide) => (prevSlide === 0 ? slides.length - 1 : prevSlide - 1));
@@ -71,7 +71,7 @@ const Home = () => {
         ))}
       </div>
       <div className="text-container">
-        <div className="titel">
+        <div className="title">
           <h1>Erleben Sie unsere exklusiven Dienstleistungen</h1>
         </div>
         <div className="text">
@@ -86,7 +86,6 @@ const Home = () => {
           <Link to="/dienstleistungen" className="button">Jetzt entdecken</Link>
         </div>
       </div>
-  
     </div>
   );
 };

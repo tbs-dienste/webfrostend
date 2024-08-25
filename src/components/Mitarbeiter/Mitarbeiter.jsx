@@ -18,7 +18,7 @@ function Mitarbeiter() {
     };
 
     fetchMitarbeiter();
-  }, []); // Keine Abhängigkeit, da wir die Mitarbeiterliste nur einmal laden möchten
+  }, []);
 
   const handleMitarbeiterLoeschen = async (id) => {
     try {
@@ -43,7 +43,7 @@ function Mitarbeiter() {
           <li key={mitarbeiter.id} className="mitarbeiter-list-item">
             <span className="mitarbeiter-name">{mitarbeiter.vorname} {mitarbeiter.nachname}</span>
             <span className="mitarbeiter-status">{mitarbeiter.online ? 'Online' : 'Offline'}</span>
-            <button onClick={() => handleMitarbeiterLoeschen(mitarbeiter.id)}>Löschen</button>
+            <button className="delete-button" onClick={() => handleMitarbeiterLoeschen(mitarbeiter.id)}>Löschen</button>
             <Link to={`/mitarbeiteranzeigen/${mitarbeiter.id}`} className="details-link">Mehr</Link>
           </li>
         ))}
