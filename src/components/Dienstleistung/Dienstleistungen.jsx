@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Icons importieren
 import './Dienstleistungen.scss';
 import Loading from '../Loading/Loading';
 
@@ -25,6 +26,17 @@ const Dienstleistungen = ({ isAdmin }) => {
     fetchServices();
   }, []);
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Bist du sicher, dass du diesen Service löschen möchtest?")) {
+      try {
+        await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`);
+        setServices(services.filter(service => service.id !== id));
+      } catch (error) {
+        console.error("Fehler beim Löschen des Service:", error);
+      }
+    }
+  };
+
   if (loading) return <Loading />;
   if (error) return <div className="error">{error}</div>;
 
@@ -43,9 +55,14 @@ const Dienstleistungen = ({ isAdmin }) => {
               <p>{service.description.length > 150 ? `${service.description.substring(0, 150)}...` : service.description}</p>
               <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
               {isAdmin && (
-                <Link to={`/service-edit/${service.id}`} className="edit-button">
-                  Bearbeiten
-                </Link>
+                <div className="admin-buttons">
+                  <Link to={`/service-edit/${service.id}`} className="edit-button">
+                    <FaEdit /> 
+                  </Link>
+                  <button className="delete-button" onClick={() => handleDelete(service.id)}>
+                    <FaTrash /> 
+                  </button>
+                </div>
               )}
             </div>
           </div>
