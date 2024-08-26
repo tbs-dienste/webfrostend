@@ -4,6 +4,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import './Rechnung.scss';
+import logoFoto from '../../logo.png';
 
 const Rechnung = () => {
     const { id } = useParams();
@@ -27,16 +28,17 @@ const Rechnung = () => {
 
     const fetchKundenDaten = async () => {
         try {
-            const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`);
-            const kundenDaten = response.data.data[0];
-            setArbeitszeit(kundenDaten.arbeitszeit);
-            setPreis(kundenDaten.stundensatzvorschlag || 0);
-            setKunde(kundenDaten);
+          const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`);
+          const kundenDaten = response.data.data;
+          console.log(kundenDaten); // Füge dies hinzu, um die Daten in der Konsole zu überprüfen
+          setArbeitszeit(kundenDaten.arbeitszeit);
+          setKunde(kundenDaten);
         } catch (error) {
-            console.error("Fehler beim Abrufen der Daten:", error);
-            setMessage('Fehler beim Abrufen der Daten.');
+          console.error("Fehler beim Abrufen der Daten:", error);
+          setMessage('Fehler beim Abrufen der Daten.');
         }
-    };
+      };
+      
 
     const fetchDienstleistungen = async () => {
         try {
@@ -143,31 +145,35 @@ const Rechnung = () => {
         doc.setFontSize(12);
         doc.setTextColor(textColor); // Set text color to black
     
-        // Firmenkopf
-        doc.text('TBs Solutions', 20, 20);
-        doc.text('Adresse: Musterstraße 1, 12345 Musterstadt', 20, 30);
-        doc.text('Telefon: 01234 567890', 20, 40);
-        doc.text('E-Mail: tbs-digital-solutions@gmail.com', 20, 50);
-        
-        // Rechnungsinformationen
-        doc.text(`Rechnungsnummer: ${id}`, 150, 20);
-        doc.text(`Datum: ${new Date().toLocaleDateString()}`, 150, 30);
+        // Firmenlogo und Kopf
+        doc.addImage(logoFoto, 'PNG', 20, 10, 50, 15); // Firmenlogo hinzufügen
+        doc.setFontSize(10);
+        doc.text('Adresse: Musterstraße 1, 12345 Musterstadt', 140, 15);
+        doc.text('Telefon: 01234 567890', 140, 20);
+        doc.text('E-Mail: tbs-digital-solutions@gmail.com', 140, 25);
+    
+        // Linien und Layout für den Kopfbereich
+        doc.line(20, 35, 190, 35); // Horizontale Linie
+        doc.setFontSize(12);
+        doc.text(`Rechnungsnummer: ${id}`, 20, 45);
+        doc.text(`Datum: ${new Date().toLocaleDateString()}`, 150, 45);
     
         // Kundenadresse
-        doc.text('Rechnung an:', 20, 70);
-        doc.text(`${kunde.vorname} ${kunde.nachname}`, 20, 80);
-        doc.text(`${kunde.strasseHausnummer}`, 20, 90);
-        doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 100);
+        doc.setFontSize(10);
+        doc.text(`${kunde.vorname} ${kunde.nachname}`, 20, 65);
+        doc.text(`${kunde.strasseHausnummer}`, 20, 70);
+        doc.text(`${kunde.postleitzahl} ${kunde.ort}`, 20, 75);
     
         const anrede = kunde.geschlecht === 'männlich' ? 'Herr' : 'Frau';
         const begruessung = kunde.geschlecht === 'männlich' ? 'geehrter' : 'geehrte';
     
-        doc.text(`Sehr ${begruessung} ${anrede} ${kunde.nachname},`, 20, 120);
-        doc.text('anbei erhalten Sie unsere Rechnung für die erbrachten Leistungen.', 20, 130);
-        doc.text('Wir bitten um Überprüfung und fristgerechte Zahlung.', 20, 140);
+        doc.setFontSize(12);
+        doc.text(`Sehr ${begruessung} ${anrede} ${kunde.nachname},`, 20, 90);
+        doc.text('anbei erhalten Sie unsere Rechnung für die erbrachten Leistungen.', 20, 100);
+        doc.text('Wir bitten um Überprüfung und fristgerechte Zahlung.', 20, 110);
     
         // Tabelle der Positionen
-        let startY = 160;
+        let startY = 120;
     
         const tableData = positionen.map((pos, index) => [
             index + 1, pos.beschreibung, `${Math.round(pos.arbeitszeit)}`, `${pos.preis.toFixed(2)} CHF`, `${(pos.arbeitszeit * pos.preis).toFixed(2)} CHF`
@@ -186,37 +192,41 @@ const Rechnung = () => {
             body: allData,
             styles: {
                 fontSize: 10,
-                cellPadding: 2, // Decrease padding
+                cellPadding: 3, // Slightly increase padding for better readability
                 overflow: 'linebreak',
                 halign: 'center',
                 valign: 'middle',
                 textColor: textColor // Set cell text color to black
             },
             headStyles: {
-                fillColor: [41, 128, 185],
+                fillColor: [41, 128, 185], // Unternehmensfarbe für die Kopfzeile
                 textColor: [255, 255, 255]
             },
             margin: { horizontal: 10 },
+            tableLineColor: [0, 0, 0],
+            tableLineWidth: 0.1,
+            columnStyles: {
+                0: { cellWidth: 10 }, // Nummernspalte schmaler machen
+                2: { cellWidth: 15 }, // Anzahl schmaler machen
+                3: { cellWidth: 25 }, // Preisspalte breiter machen
+                4: { cellWidth: 25 }, // Total-Spalte breiter machen
+            },
         });
     
-        // Zahlungsinformationen
+        // Zahlungsinformationen und Footer
         const paymentInfoY = doc.lastAutoTable.finalY + 10;
-        doc.text('Zahlungsinformationen:', 20, paymentInfoY);
-        doc.text('Bankverbindung: Musterbank', 20, paymentInfoY + 10);
-        doc.text('IBAN: DE12345678901234567890', 20, paymentInfoY + 20);
-        doc.text('BIC: BANKDEFFXXX', 20, paymentInfoY + 30);
-        doc.text('Verwendungszweck: Rechnungsnummer ' + id, 20, paymentInfoY + 40);
     
-        doc.text('Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen.', 20, paymentInfoY + 50);
-    
-        doc.text('Mit freundlichen Grüßen,', 20, paymentInfoY + 80);
-        doc.text('TBs Solutions', 20, paymentInfoY + 90);
-        doc.text('Mitarbeiter: [Name des Mitarbeiters]', 20, paymentInfoY + 100);
+        doc.setFontSize(10);
+        doc.text('Bitte überweisen Sie den Gesamtbetrag innerhalb von 14 Tagen.', 20, paymentInfoY + 10);
+        doc.text('Mit freundlichen Grüßen,', 20, paymentInfoY + 30);
+        doc.text('TBs Solutions', 20, paymentInfoY + 40);
+        doc.text('Mitarbeiter: [Name des Mitarbeiters]', 20, paymentInfoY + 50);
     
         doc.save('Rechnung.pdf');
     
         navigate('/kontoangaben', { state: { auftragsnummer: id, kunde: kunde } });
     };
+    
 
     return (
         <div className="time-tracker">
