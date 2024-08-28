@@ -26,6 +26,15 @@ const Home = () => {
     fetchServices();
   }, []);
 
+  // Automatisches Wechseln der Slides alle 15 Sekunden
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+    }, 15000); // 15000 ms = 15 Sekunden
+
+    return () => clearInterval(interval); // Cleanup beim Unmounten
+  }, [slides.length]);
+
   if (loading) return <Loading />;
   if (error) return <div className="error-message">{error}</div>;
 
