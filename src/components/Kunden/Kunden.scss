@@ -66,6 +66,64 @@
       }
     }
   }
+
+  .dropdown-filter {
+    position: relative;
+
+    .dropdown-toggle {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      z-index: 1000;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #f1f1f1;
+        }
+
+        input {
+          margin-right: 8px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }
 
 .kunden-liste {
@@ -101,28 +159,40 @@
     font-weight: 500;
   }
 
-  .rechnungs-status {
+  .status-und-typ {
     position: absolute;
     top: 15px;
     right: 15px;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #fff;
-    text-align: center;
-    background-color: #28a745; // Default color
+    display: flex;
+    align-items: center;
+    gap: 10px; // Abstand zwischen den Elementen
 
-    &.bezahlt {
-      background-color: #28a745;
+    .dienstleistung,
+    .rechnungs-status {
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
     }
 
-    &.offen {
-      background-color: #ffc107;
+    .dienstleistung {
+      background-color: #bdc3c7; // Standardfarbe für unbekannte Typen
     }
 
-    &.entwurf {
-      background-color: #6c757d;
+    .rechnungs-status {
+      &.bezahlt {
+        background-color: #28a745;
+      }
+
+      &.offen {
+        background-color: #ffc107;
+      }
+
+      &.entwurf {
+        background-color: #6c757d;
+      }
     }
   }
 
@@ -145,17 +215,16 @@
       text-decoration: none;
       cursor: pointer;
       transition: background-color 0.3s, box-shadow 0.3s;
-      
+
       &:hover {
         background-color: #0056b3;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
-    
+
       svg {
         font-size: 18px; // Größe der Icons
       }
     }
-    
   }
 
   .archiviert-label {
@@ -168,7 +237,7 @@
     border-radius: 12px;
     font-size: 12px;
     font-weight: 600;
-    z-index: 1; // Ensure the label is above the status
+    z-index: 1; // Sicherstellen, dass das Label über dem Status ist
   }
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaClock, FaFileInvoice, FaUser, FaFileAlt, FaFileSignature, FaTrash } from 'react-icons/fa';
+import { FaClock, FaFileInvoice, FaUser, FaFileAlt, FaFileSignature, FaTrash, FaChevronDown } from 'react-icons/fa';
 import './Kunden.scss';
 
 const Kunden = () => {
@@ -9,9 +9,28 @@ const Kunden = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('alle');
   const [showArchived, setShowArchived] = useState(false);
+  const [selectedDienstleistungen, setSelectedDienstleistungen] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [customerIdToDelete, setCustomerIdToDelete] = useState(null);
+
+  const auftragsTypFarben = {
+    "Webseite Programmieren": "#3498db",
+    "Diashow erstellen": "#2ecc71",
+    "Gaming PC zusammenbauen": "#e74c3c",
+    "Visitenkarten": "#f1c40f",
+    "Flyer erstellen": "#9b59b6",
+    "IT-Support": "#e67e22",
+    "Eventplanung": "#1abc9c",
+    "Mockup Erstellen": "#34495e",
+    "Notentool für Lehrbetriebe und Unternehmen": "#16a085",
+    "Office-Kurse für Schüler": "#27ae60",
+    "Office-Kurse für Unternehmen": "#2980b9",
+    "default": "#bdc3c7"
+  };
+
+  const dienstleistungsTypen = Object.keys(auftragsTypFarben);
 
   useEffect(() => {
     const fetchKunden = async () => {
@@ -59,14 +78,25 @@ const Kunden = () => {
     setCustomerIdToDelete(null);
   };
 
+  const handleDienstleistungsChange = (dienstleistung) => {
+    setSelectedDienstleistungen(prevSelected =>
+      prevSelected.includes(dienstleistung)
+        ? prevSelected.filter(item => item !== dienstleistung)
+        : [...prevSelected, dienstleistung]
+    );
+  };
+
   const filteredKunden = kunden.filter((kunde) => {
     const fullName = `${kunde.vorname} ${kunde.nachname}`;
     const status = kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf';
+    const dienstleistungsFilter = selectedDienstleistungen.length === 0 || selectedDienstleistungen.includes(kunde.auftragsTyp);
+
     return (
       (kunde.id.toString().includes(searchTerm) ||
         fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (statusFilter === 'alle' || status === statusFilter) &&
-      (showArchived ? kunde.archiviert : !kunde.archiviert)
+      (showArchived ? kunde.archiviert : !kunde.archiviert) &&
+      dienstleistungsFilter
     );
   });
 
@@ -104,6 +134,26 @@ const Kunden = () => {
             Archivierte Kunden anzeigen
           </label>
         </div>
+
+        <div className="dropdown-filter">
+          <button className="dropdown-toggle" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            Dienstleistung <FaChevronDown />
+          </button>
+          {dropdownOpen && (
+            <div className="dropdown-menu">
+              {dienstleistungsTypen.map((typ) => (
+                <label key={typ} className="dropdown-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedDienstleistungen.includes(typ)}
+                    onChange={() => handleDienstleistungsChange(typ)}
+                  />
+                  {typ}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -111,41 +161,49 @@ const Kunden = () => {
       ) : (
         <div className="kunden-liste">
           {filteredKunden.length > 0 ? (
-            filteredKunden.map((kunde) => (
-              <div key={kunde.id} className="kunden-box">
-                <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
-                <p className="kunden-name">{kunde.vorname} {kunde.nachname}</p>
-                <div className="kunden-buttons">
-                  <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
-                    <FaClock /> Arbeitszeit
-                  </Link>
-                  <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
-                    <FaFileInvoice /> Rechnung erstellen
-                  </Link>
-                  <Link to={`/kunden/${kunde.id}`} className="kunden-button">
-                    <FaUser /> Kunden anzeigen
-                  </Link>
-                  <Link to={`/auftragsbestaetigung/${kunde.id}`} className="kunden-button">
-                    <FaFileAlt /> Auftragsbestätigung
-                  </Link>
-                  <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode || ''}`} className="kunden-button">
-                    <FaFileSignature /> Vertrag
-                  </Link>
-                  <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
-                    <FaTrash /> Kunde löschen
-                  </button>
-                  <div className={`rechnungs-status ${kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf'}`}>
-                    {kunde.rechnungGestellt ? (
-                      kunde.rechnungBezahlt ? 'Bezahlt' : 'Offen'
-                    ) : (
-                      'Entwurf'
-                    )}
+            filteredKunden.map((kunde) => {
+              const dienstleistungsFarbe = auftragsTypFarben[kunde.auftragsTyp] || auftragsTypFarben["default"];
+              
+              return (
+                <div key={kunde.id} className="kunden-box">
+                  <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
+                  <p className="kunden-name">{kunde.vorname} {kunde.nachname}</p>
+                  <div className="kunden-buttons">
+                    <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
+                      <FaClock /> Arbeitszeit
+                    </Link>
+                    <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
+                      <FaFileInvoice /> Rechnung erstellen
+                    </Link>
+                    <Link to={`/kunden/${kunde.id}`} className="kunden-button">
+                      <FaUser /> Kunden anzeigen
+                    </Link>
+                    <Link to={`/auftragsbestaetigung/${kunde.id}`} className="kunden-button">
+                      <FaFileAlt /> Auftragsbestätigung
+                    </Link>
+                    <Link to={`/vertrag/${kunde.id}?code=${kunde.verificationCode || ''}`} className="kunden-button">
+                      <FaFileSignature /> Vertrag
+                    </Link>
+                    <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
+                      <FaTrash /> Kunde löschen
+                    </button>
                   </div>
-                  {/* Nur anzeigen, wenn `kunde.archiviert` wahr ist */}
+                  <div className="status-und-typ">
+                    <div className="dienstleistung" style={{ backgroundColor: dienstleistungsFarbe }}>
+                      {kunde.auftragsTyp}
+                    </div>
+                    <div className={`rechnungs-status ${kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf'}`}>
+                      {kunde.rechnungGestellt ? (
+                        kunde.rechnungBezahlt ? 'Bezahlt' : 'Offen'
+                      ) : (
+                        'Entwurf'
+                      )}
+                    </div>
+                  </div>
                   {kunde.archiviert ? <span className="archiviert-label">Archiviert</span> : null}
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="no-results">Keine Ergebnisse gefunden.</p>
           )}

@@ -206,7 +206,7 @@ const KundeErfassen = () => {
           >
             <option value="">Bitte auswählen</option>
             {auftragsTypOptions.map((option) => (
-              <option key={option.id} value={option.id}>
+              <option key={option.id} value={option.title}>
                 {option.title}
               </option>
             ))}
