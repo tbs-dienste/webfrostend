@@ -35,14 +35,7 @@ const Footer = () => {
               <FaTiktok />
               <span className="social-text">TikTok</span>
             </a>
-            <a href="https://www.instagram.com/tbssolutions" target="_blank" rel="noopener noreferrer" className="social-icon">
-              <FaInstagram />
-              <span className="social-text">Instagram</span>
-            </a>
-            <a href="https://www.facebook.com/tbssolutions" target="_blank" rel="noopener noreferrer" className="social-icon">
-              <FaFacebookF />
-              <span className="social-text">Facebook</span>
-            </a>
+            
           </div>
         </div>
       </div>
