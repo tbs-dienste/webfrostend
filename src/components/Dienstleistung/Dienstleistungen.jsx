@@ -48,8 +48,10 @@ const Dienstleistungen = ({ isAdmin }) => {
       )}
       <div className="services-list">
         {services.map(service => (
-          <div className="service" key={service.id}>
-            {service.img && <img src={service.img} alt={service.title} className="service-image" />}
+          <div className="service-card" key={service.id}>
+            <div className="service-image-wrapper">
+              {service.img && <img src={service.img} alt={service.title} className="service-image" />}
+            </div>
             <div className="service-content">
               <h2>{service.title}</h2>
               <p>{service.description.length > 150 ? `${service.description.substring(0, 150)}...` : service.description}</p>

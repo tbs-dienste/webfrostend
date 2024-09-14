@@ -1,49 +1,53 @@
 .services-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 40px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px 20px;
+  background-color: #f4f6f8;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  font-family: 'Poppins', sans-serif;
 
   h1 {
-    font-size: 32px;
-    margin-bottom: 30px;
+    font-size: 36px;
+    font-weight: 700;
+    color: #2d2d2d;
     text-align: center;
-    color: #333;
-    font-family: 'Arial', sans-serif;
-  }
-
-  .loading,
-  .error {
-    text-align: center;
-    font-size: 18px;
-    color: #333;
-    margin-top: 20px;
+    margin-bottom: 40px;
   }
 
   .services-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
   }
 
-  .service {
+  .service-card {
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-10px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
     }
 
-    .service-image {
+    .service-image-wrapper {
       width: 100%;
-      height: 200px;
-      object-fit: cover;
+      height: 220px;
+      overflow: hidden;
+
+      .service-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      &:hover .service-image {
+        transform: scale(1.1);
+      }
     }
 
     .service-content {
@@ -51,110 +55,102 @@
 
       h2 {
         font-size: 24px;
-        margin-bottom: 15px;
-        color: #007bff;
+        color: #0077b6;
+        margin-bottom: 10px;
       }
 
       p {
         font-size: 16px;
-        color: #555;
+        color: #666;
         margin-bottom: 20px;
+        line-height: 1.6;
       }
 
       .btn-more {
         display: inline-block;
         padding: 12px 24px;
-        background-color: #007bff;
+        background-color: #0077b6;
         color: #fff;
+        font-weight: 600;
         text-decoration: none;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
+        border-radius: 8px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
 
         &:hover {
-          background-color: #0056b3;
+          background-color: #005f99;
+          transform: translateY(-3px);
         }
       }
 
       .admin-buttons {
         display: flex;
         gap: 10px;
-        margin-top: 15px;
-      }
+        margin-top: 20px;
 
-      .edit-button,
-      .delete-button {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 600;
-        text-align: center;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        .edit-button, .delete-button {
+          display: flex;
+          align-items: center;
+          padding: 10px 14px;
+          font-size: 14px;
+          border-radius: 8px;
+          transition: background-color 0.3s ease, transform 0.2s ease;
 
-        svg {
-          font-size: 1.2rem;
-        }
-      }
-
-      .edit-button {
-        background-color: #ffc107; /* Gelb für den Bearbeitungsbutton */
-        color: #333;
-
-        &:hover {
-          background-color: #e0a800;
-          transform: scale(1.05);
+          svg {
+            margin-right: 8px;
+            font-size: 1.2rem;
+          }
         }
 
-        &:active {
-          background-color: #d39e00;
-          transform: scale(1);
-        }
-      }
+        .edit-button {
+          background-color: #ffc107;
+          color: #fff;
 
-      .delete-button {
-        background-color: #dc3545; /* Rot für den Löschen-Button */
-        color: #fff;
-        border: none;
-        cursor: pointer;
-
-        &:hover {
-          background-color: #c82333;
-          transform: scale(1.05);
+          &:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+          }
         }
 
-        &:active {
-          background-color: #bd2130;
-          transform: scale(1);
+        .delete-button {
+          background-color: #ff4d4d;
+          color: #fff;
+
+          &:hover {
+            background-color: #d43f3f;
+            transform: scale(1.05);
+          }
         }
       }
     }
   }
 
   .add-button {
-    display: inline-block;
-    padding: 10px;
-    background-color: #007bff; /* Primärfarbe */
-    color: #fff;
-    font-size: 2rem; /* Größere Schriftgröße für den "+" */
-    font-weight: bold;
-    text-align: center;
-    border-radius: 50%;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 60px;
     height: 60px;
-    line-height: 60px;
-    text-decoration: none; /* Kein Unterstrich */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 20px;
-    position: absolute;
-    top: 220px;
-    right: 20px;
+    background-color: #0077b6;
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: bold;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 
     &:hover {
-      background-color: #0056b3; /* Dunklere Farbe beim Hover */
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      background-color: #005f99;
+      transform: scale(1.1);
     }
+  }
+
+  .error {
+    color: #ff4d4d;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 20px;
   }
 }

@@ -10,6 +10,7 @@ import TimeTracker from './components/Zeiterfassung/TimeTracker';
 import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
 import Kunden from './components/Kunden/Kunden';
+import WheelOfFortune from './components/WheelEvent/WheelOfFortune';
 import Dankesnachricht from './components/Kunden/Dankesnachricht';
 import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
 import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
@@ -44,6 +45,8 @@ import CreateDatenbankPaket from './components/Preise/CreateDatenbankPaket';
 import CreateBackendPaket from './components/Preise/CreateBackendPaket';
 import CreateFaq from './components/FAQ/CreateFaq';
 import AudioSettings from './components/VideoChat/AudioSettings';
+import Lizenzen from './components/Lizenz/Lizenzen';
+import Footer from './components/Content/Footer';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -92,6 +95,7 @@ const App = () => {
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/audiosettings" element={<AudioSettings />} />
+          <Route path="/lizenzen" element={<Lizenzen />} />
 
           {isAdmin ? (
             <>
@@ -100,7 +104,7 @@ const App = () => {
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
               <Route path="/createfaq" element={<CreateFaq />} />
-
+              <Route path="/wheel" element={<WheelOfFortune />} />
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
@@ -117,6 +121,7 @@ const App = () => {
             <Route path="/login" element={<Login onLogin={onLogin} />} />
           )}
         </Routes>
+        <Footer />
       </Router>
     </div>
   );
