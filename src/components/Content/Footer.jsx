@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 import './Footer.scss';
 
@@ -12,7 +13,7 @@ const Footer = () => {
           <p>
             TBS Solutions <br />
             3001 Bern <br />
-            <a href="/kontakt">Zum Kontaktformular</a>
+            <Link to="/kontakt">Zum Kontaktformular</Link>
           </p>
         </div>
 
@@ -20,7 +21,7 @@ const Footer = () => {
         <div className="footer-section">
           <h2>Rechtliches</h2>
           <ul>
-            <li><a href="/impressum">Impressum</a></li>
+            <li><Link to="/impressum">Impressum</Link></li>
             <li><span className="disabled-link">Datenschutz</span></li>
             <li><span className="disabled-link">AGB</span></li>
           </ul>
@@ -34,7 +35,14 @@ const Footer = () => {
               <FaTiktok />
               <span className="social-text">TikTok</span>
             </a>
-           
+            <a href="https://www.instagram.com/tbssolutions" target="_blank" rel="noopener noreferrer" className="social-icon">
+              <FaInstagram />
+              <span className="social-text">Instagram</span>
+            </a>
+            <a href="https://www.facebook.com/tbssolutions" target="_blank" rel="noopener noreferrer" className="social-icon">
+              <FaFacebookF />
+              <span className="social-text">Facebook</span>
+            </a>
           </div>
         </div>
       </div>

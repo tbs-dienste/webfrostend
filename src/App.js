@@ -46,6 +46,7 @@ import CreateFaq from './components/FAQ/CreateFaq';
 import AudioSettings from './components/VideoChat/AudioSettings';
 import Lizenzen from './components/Lizenz/Lizenzen';
 import Footer from './components/Content/Footer';
+import Impressum from './components/Content/Impressum';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -94,6 +95,7 @@ const App = () => {
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/audiosettings" element={<AudioSettings />} />
+          <Route path="/impressum" element={<Impressum />} />
           <Route path="/lizenzen" element={<Lizenzen />} />
 
           {isAdmin ? (
@@ -110,7 +112,6 @@ const App = () => {
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/auftragsbestaetigung/:id" element={<Auftragsbestaetigung />} />
-
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />

@@ -1,0 +1,45 @@
+.impressum-container {
+    padding: 40px;
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+  
+    .impressum-title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+      border-bottom: 3px solid #0073e6;
+      padding-bottom: 10px;
+    }
+  
+    .impressum-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      
+      .impressum-section {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+        h2 {
+          font-size: 1.8rem;
+          color: #0073e6;
+          margin-bottom: 10px;
+        }
+  
+        p {
+          font-size: 1.1rem;
+          color: #555;
+        }
+  
+        strong {
+          font-weight: bold;
+          color: #0073e6;
+        }
+      }
+    }
+  }
+  
