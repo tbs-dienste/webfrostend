@@ -10,7 +10,6 @@ import TimeTracker from './components/Zeiterfassung/TimeTracker';
 import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
 import Kunden from './components/Kunden/Kunden';
-import WheelOfFortune from './components/WheelEvent/WheelOfFortune';
 import Dankesnachricht from './components/Kunden/Dankesnachricht';
 import MitarbeiterErfassen from './components/Mitarbeiter/MitarbeiterErfassen';
 import MitarbeiterAnzeigen from './components/Mitarbeiter/MitarbeiterAnzeigen';
@@ -104,7 +103,6 @@ const App = () => {
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
               <Route path="/createfaq" element={<CreateFaq />} />
-              <Route path="/wheel" element={<WheelOfFortune />} />
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
