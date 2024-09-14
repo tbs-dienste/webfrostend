@@ -49,9 +49,7 @@ function Navbar({ isAdmin, onLogout }) {
           <ul>
             <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/sign" text="Vertrag unterschreiben" icon={faFileSignature} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kundenbewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />            
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
 
