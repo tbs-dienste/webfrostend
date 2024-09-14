@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.scss';
+import logo from '../../logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faSignOutAlt, 
@@ -14,7 +15,6 @@ import {
   faGift, 
   faUser, 
   faUsers, 
-  faIdCard, 
   faBarcode, 
   faBars as faMenu // Importing the menu icon
 } from '@fortawesome/free-solid-svg-icons';
@@ -39,8 +39,8 @@ function Navbar({ isAdmin, onLogout }) {
   return (
     <nav className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
       <div className='container'>
-        <div className='logo'>
-          <Link to="/">TBs Solutions</Link>
+        <div className='logobox'>
+          <Link to="/"><img src={logo} alt="Logo" className='logo' /></Link>
         </div>
         <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
           <FontAwesomeIcon icon={faMenu} />
@@ -64,7 +64,8 @@ function Navbar({ isAdmin, onLogout }) {
                   <div className={`dropdown-menu ${adminMenuActive ? 'show' : ''}`}>
                     <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                     <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />                    <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+                    <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                   </div>
                 </li>
                 <button className="logout-button" onClick={onLogout}>
