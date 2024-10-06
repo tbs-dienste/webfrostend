@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode'; // Importiere jwt-decode
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Dienstleistungen from './components/Dienstleistung/Dienstleistungen';
-import ServiceDetail from './components/ServiceDetail/ServiceDetail';
-import ServiceEdit from './components/Dienstleistung/ServiceEdit'; // Importiere die ServiceEdit-Komponente
+import ServiceDetail from './components/Dienstleistung/ServiceDetail';
+import ServiceEdit from './components/Dienstleistung/ServiceEdit';
 import TimeTracker from './components/Zeiterfassung/TimeTracker';
 import KundeErfassen from './components/Kunden/KundeErfassen';
 import Rechnung from './components/Rechnung/Rechnung';
@@ -47,30 +48,36 @@ import AudioSettings from './components/VideoChat/AudioSettings';
 import Lizenzen from './components/Lizenz/Lizenzen';
 import Footer from './components/Content/Footer';
 import Impressum from './components/Content/Impressum';
+import BewerbungForm from './components/Mitarbeiter/BewerbungForm';
 
 const App = () => {
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
+  
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const onLogin = (isAdmin) => {
-    localStorage.setItem('isAdmin', isAdmin);
-    setIsAdmin(isAdmin);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Hole den Token aus localStorage
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setIsAdmin(decodedToken.isAdmin); // Überprüfe die Admin-Rolle aus dem Token
+      } catch (error) {
+        console.error('Token konnte nicht dekodiert werden:', error);
+        setIsAdmin(false); // Setze auf false, wenn der Token ungültig ist
+      }
+    }
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAdmin');
-    setIsAdmin(false);
-  };
+  
 
-  const kunden = JSON.parse(localStorage.getItem('kunden')) || [];
 
   return (
     <div className="App">
       <Router>
-        <Navbar isAdmin={isAdmin} onLogout={handleLogout} />
-        <CookieConsent />
+        <Navbar />
+      
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/kunden/:id" element={<KundenAnzeigen kunden={kunden} />} />
+          <Route path="/kunden/:id" element={<KundenAnzeigen />} />
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
@@ -97,9 +104,9 @@ const App = () => {
           <Route path="/audiosettings" element={<AudioSettings />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/lizenzen" element={<Lizenzen />} />
-
-          {isAdmin ? (
-            <>
+          <Route path="/bewerbungformular" element={<BewerbungForm />} />
+        
+            
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/pdfmerger" element={<PdfMerger />} />
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
@@ -108,17 +115,17 @@ const App = () => {
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
-              <Route path="/service-edit/:id" element={<ServiceEdit />} /> {/* Route für die Bearbeitung */}
+              <Route path="/service-edit/:id" element={<ServiceEdit />} />
               <Route path="/rechnung/:id" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/auftragsbestaetigung/:id" element={<Auftragsbestaetigung />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
-            </>
-          ) : (
-            <Route path="/login" element={<Login onLogin={onLogin} />} />
-          )}
+           
+    
+            <Route path="/login" element={<Login />} />
+     
         </Routes>
         <Footer />
       </Router>

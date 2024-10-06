@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.scss';
 import logo from '../../logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,21 +8,30 @@ import {
   faHome, 
   faCogs as faServicestack, 
   faPhoneAlt, 
-  faFileSignature, 
-  faStar, 
   faDollarSign, 
   faQuestionCircle, 
   faGift, 
   faUser, 
   faUsers, 
   faBarcode, 
-  faBars as faMenu // Importing the menu icon
+  faBars as faMenu 
 } from '@fortawesome/free-solid-svg-icons';
 
-function Navbar({ isAdmin, onLogout }) {
+function Navbar() {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [adminMenuActive, setAdminMenuActive] = useState(false);
+  
+  const navigate = useNavigate(); // Hook zum Navigieren
+
+  // Rolle des Benutzers aus localStorage abrufen
+  const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Prüfen, ob der Benutzer Admin ist
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('isAdmin'); // Optional: Entferne den Admin-Status
+    navigate('/login'); // Weiterleitung zur Login-Seite nach dem Logout
+  };
 
   const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
   const toggleAdminMenu = () => setAdminMenuActive(prev => !prev);
@@ -52,7 +61,7 @@ function Navbar({ isAdmin, onLogout }) {
             <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />            
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-
+            
             {isAdmin && (
               <>
                 <li className="dropdown">
@@ -66,7 +75,7 @@ function Navbar({ isAdmin, onLogout }) {
                     <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
                   </div>
                 </li>
-                <button className="logout-button" onClick={onLogout}>
+                <button className="logout-button" onClick={handleLogout}>
                   <FontAwesomeIcon icon={faSignOutAlt} />
                 </button>
               </>

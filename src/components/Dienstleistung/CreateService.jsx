@@ -6,6 +6,7 @@ const CreateService = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [img, setImg] = useState('');
+  const [preis, setPreis] = useState(''); // Neue State für den Preis
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,16 +16,31 @@ const CreateService = () => {
     setError(null);
 
     try {
-      await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung', {
-        title,
-        description,
-        img,
-      });
+      // Token aus localStorage abrufen
+      const token = localStorage.getItem('token');
+
+      // Axios POST-Request mit Token im Header
+      await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung',
+        {
+          title,
+          description,
+          img,
+          preis, // Preis zum POST-Request hinzufügen
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Token im Header setzen
+          },
+        }
+      );
+
       alert('Dienstleistung erfolgreich erstellt!');
       window.location.href = "/dienstleistungen";
       setTitle('');
       setDescription('');
       setImg('');
+      setPreis(''); // Preis zurücksetzen
     } catch (error) {
       console.error("Fehler beim Erstellen der Dienstleistung:", error);
       setError("Fehler beim Erstellen der Dienstleistung.");
@@ -64,6 +80,17 @@ const CreateService = () => {
             onChange={(e) => setImg(e.target.value)}
             placeholder="Geben Sie die URL des Bildes ein"
             required
+          />
+        </label>
+        <label>
+          <span>Preis</span>
+          <input
+            type="number"
+            value={preis}
+            onChange={(e) => setPreis(e.target.value)}
+            placeholder="Geben Sie den Preis der Dienstleistung ein"
+            required
+            min="0" // Preis sollte nicht negativ sein
           />
         </label>
         <button type="submit" className="submit-button" disabled={loading}>

@@ -7,12 +7,15 @@ import warteschleifenmusik from './warteschleife.mp3';
 function AudioSettings() {
   const [micAllowed, setMicAllowed] = useState(false);
   const [microphones, setMicrophones] = useState([]);
+  const [speakers, setSpeakers] = useState([]);
   const [selectedMic, setSelectedMic] = useState('');
+  const [selectedSpeaker, setSelectedSpeaker] = useState('');
   const [volumeLevels, setVolumeLevels] = useState(Array(10).fill(false));
   const [inWaitingRoom, setInWaitingRoom] = useState(false);
   const [currentFact, setCurrentFact] = useState(0);
   const [waitingQueue, setWaitingQueue] = useState([]);
   const audioRef = useRef(null);
+  const mediaStreamRef = useRef(null); // Referenz für den MediaStream
 
   const facts = [
     "Wussten Sie schon, dass Videoanrufe die Kommunikation verbessern können?",
@@ -25,9 +28,14 @@ function AudioSettings() {
     if (micAllowed) {
       navigator.mediaDevices.enumerateDevices().then(devices => {
         const mics = devices.filter(device => device.kind === 'audioinput');
+        const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
         setMicrophones(mics);
+        setSpeakers(audioOutputs);
         if (mics.length === 1) {
           setSelectedMic(mics[0].deviceId);
+        }
+        if (audioOutputs.length === 1) {
+          setSelectedSpeaker(audioOutputs[0].deviceId);
         }
       });
     }
@@ -38,6 +46,7 @@ function AudioSettings() {
       navigator.mediaDevices
         .getUserMedia({ audio: { deviceId: selectedMic } })
         .then(stream => {
+          mediaStreamRef.current = stream; // Speichere den Stream
           const audioContext = new (window.AudioContext || window.webkitAudioContext)();
           const analyser = audioContext.createAnalyser();
           const source = audioContext.createMediaStreamSource(stream);
@@ -91,6 +100,10 @@ function AudioSettings() {
     setSelectedMic(e.target.value);
   };
 
+  const handleSpeakerChange = (e) => {
+    setSelectedSpeaker(e.target.value);
+  };
+
   const handleStartVideo = async () => {
     setInWaitingRoom(true);
     try {
@@ -117,6 +130,17 @@ function AudioSettings() {
       ));
     } catch (error) {
       console.error("Error moving client to consultation:", error);
+    }
+  };
+
+  const handleTestAudio = async () => {
+    if (mediaStreamRef.current) {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaStreamSource(mediaStreamRef.current);
+      source.connect(audioContext.destination); // Verbinde den Audio-Stream mit dem Audio-Ausgabegerät (Lautsprecher)
+      const audioElement = new Audio();
+      audioElement.srcObject = mediaStreamRef.current; // Setze den Audio-Stream als Quelle
+      audioElement.play().catch(error => console.error("Error playing audio: ", error));
     }
   };
 
@@ -151,11 +175,15 @@ function AudioSettings() {
             </div>
             <div className="speaker-settings">
               <label htmlFor="speaker">Lautsprecher:</label>
-              <select id="speaker">
-                {/* Lautsprecher-Auswahl könnte hier ebenfalls eingebaut werden */}
+              <select id="speaker" value={selectedSpeaker} onChange={handleSpeakerChange}>
+                {speakers.map(speaker => (
+                  <option key={speaker.deviceId} value={speaker.deviceId}>
+                    {speaker.label || `Lautsprecher ${speaker.deviceId}`}
+                  </option>
+                ))}
               </select>
             </div>
-            <button className="test-audio">
+            <button className="test-audio" onClick={handleTestAudio}>
               Lautsprecher testen
             </button>
             <button className="start-video" onClick={handleStartVideo}>Video Beratung starten</button>

@@ -62,7 +62,6 @@ const KundeErfassen = () => {
         postleitzahl,
         ort,
         email,
-        telefon,
         mobil,
         geschlecht: geschlechtWert,
         auftragsTyp,
@@ -114,6 +113,7 @@ const KundeErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
+            required
           />
         </div>
         <div className="formular-gruppe">
@@ -123,6 +123,7 @@ const KundeErfassen = () => {
             id="nachname"
             value={nachname}
             onChange={(e) => setNachname(e.target.value)}
+            required
           />
         </div>
         <div className="formular-gruppe">
@@ -176,6 +177,7 @@ const KundeErfassen = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div className="formular-gruppe">
@@ -185,6 +187,7 @@ const KundeErfassen = () => {
             id="telefon"
             value={telefon}
             onChange={(e) => setTelefon(e.target.value)}
+            required
           />
         </div>
         <div className="formular-gruppe">
@@ -194,6 +197,7 @@ const KundeErfassen = () => {
             id="mobil"
             value={mobil}
             onChange={(e) => setMobil(e.target.value)}
+            required
           />
         </div>
         <div className="formular-gruppe">
