@@ -3,55 +3,58 @@ import axios from 'axios';
 import './Login.scss';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/login', {
+                benutzername: username,
+                passwort: password
+            });
+            const { token, userType } = response.data;
+            localStorage.setItem('token', token);
+            // Redirect or handle userType as needed
+            window.location.href = "/dashboard";
+            console.log('Login erfolgreich, User Type:', userType);
+        } catch (error) {
+            setError('Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.');
+        }
+    };
 
-    try {
-      // POST-Anfrage zum Backend senden
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/login', {
-        benutzername: username,
-        passwort: password,
-      });
-
-      // Erfolgreiches Login
-      const { token, isAdmin } = response.data; // Stelle sicher, dass die Antwort diese Struktur hat
-      localStorage.setItem('token', token);
-      localStorage.setItem('isAdmin', isAdmin); // Speichere die Admin-Rolle
-      // Hier kannst du eine Redirect-Logik hinzufügen, z.B. zu einer geschützten Route
-      window.location.href = '/'; // Redirect zur Startseite
-    } catch (err) {
-      console.error('Login-Fehler:', err);
-      setError('Benutzername oder Passwort ist falsch.');
-    }
-  };
-
-  return (
-    <div className="login-container">
-      <form onSubmit={handleLogin}>
-        <h2>Login</h2>
-        {error && <p className="error">{error}</p>}
-        <input
-          type="text"
-          placeholder="Benutzername"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Passwort"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Einloggen</button>
-      </form>
-    </div>
-  );
+    return (
+        <div className="login-container">
+            <h2 className="login-title">Login</h2>
+            <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="username" className="form-label">Benutzername</label>
+                    <input
+                        type="text"
+                        id="username"
+                        className="form-input"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password" className="form-label">Passwort</label>
+                    <input
+                        type="password"
+                        id="password"
+                        className="form-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                {error && <div className="error-message">{error}</div>}
+                <button type="submit" className="submit-button">Login</button>
+            </form>
+        </div>
+    );
 };
 
 export default Login;

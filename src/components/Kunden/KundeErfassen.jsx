@@ -4,19 +4,18 @@ import './KundeErfassen.scss';
 
 const KundeErfassen = () => {
   // State-Variablen für das Formular
+  const [firma, setFirma] = useState('');
   const [vorname, setVorname] = useState('');
   const [nachname, setNachname] = useState('');
   const [strasseHausnummer, setStrasseHausnummer] = useState('');
   const [postleitzahl, setPostleitzahl] = useState('');
   const [ort, setOrt] = useState('');
+  const [land, setLand] = useState('');
   const [email, setEmail] = useState('');
-  const [telefon, setTelefon] = useState('');
   const [mobil, setMobil] = useState('');
   const [geschlecht, setGeschlecht] = useState('');
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
-  const [firma, setFirma] = useState('');
-  const [land, setLand] = useState('');
 
   // State-Variable für die Auftragsarten-Optionen
   const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
@@ -41,29 +40,26 @@ const KundeErfassen = () => {
 
   // Formular senden
   const handleKontaktAufnehmen = async () => {
-    if (!vorname || !nachname || !email || !telefon || !mobil || !auftragsTyp) {
+    if (!vorname || !nachname || !email || !mobil || !auftragsTyp) {
       alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       return;
     }
-
-    // Geschlecht in die entsprechenden Werte umwandeln
-    const geschlechtWert = geschlecht === 'männlich' ? 'm' : geschlecht === 'weiblich' ? 'w' : '';
 
     try {
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
 
       const newKunde = {
-        land,
         firma,
         vorname,
         nachname,
         strasseHausnummer,
         postleitzahl,
         ort,
+        land,
         email,
         mobil,
-        geschlecht: geschlechtWert,
+        geschlecht,
         auftragsTyp,
         auftragsBeschreibung,
         ip_adresse
@@ -85,19 +81,6 @@ const KundeErfassen = () => {
       <h2>Kontaktdaten</h2>
       <div className="formular">
         <div className="formular-gruppe">
-          <label htmlFor="geschlecht">Geschlecht:</label>
-          <select
-            id="geschlecht"
-            value={geschlecht}
-            onChange={(e) => setGeschlecht(e.target.value)}
-            className="dropdown"
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="männlich">Männlich</option>
-            <option value="weiblich">Weiblich</option>
-          </select>
-        </div>
-        <div className="formular-gruppe">
           <label htmlFor="firma">Firma:</label>
           <input
             type="text"
@@ -113,7 +96,6 @@ const KundeErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
-            required
           />
         </div>
         <div className="formular-gruppe">
@@ -123,7 +105,6 @@ const KundeErfassen = () => {
             id="nachname"
             value={nachname}
             onChange={(e) => setNachname(e.target.value)}
-            required
           />
         </div>
         <div className="formular-gruppe">
@@ -177,17 +158,6 @@ const KundeErfassen = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="telefon">Telefon:</label>
-          <input
-            type="tel"
-            id="telefon"
-            value={telefon}
-            onChange={(e) => setTelefon(e.target.value)}
-            required
           />
         </div>
         <div className="formular-gruppe">
@@ -197,8 +167,20 @@ const KundeErfassen = () => {
             id="mobil"
             value={mobil}
             onChange={(e) => setMobil(e.target.value)}
-            required
           />
+        </div>
+        <div className="formular-gruppe">
+          <label htmlFor="geschlecht">Geschlecht:</label>
+          <select
+            id="geschlecht"
+            value={geschlecht}
+            onChange={(e) => setGeschlecht(e.target.value)}
+            className="dropdown"
+          >
+            <option value="">Bitte auswählen</option>
+            <option value="männlich">Männlich</option>
+            <option value="weiblich">Weiblich</option>
+          </select>
         </div>
         <div className="formular-gruppe">
           <label htmlFor="auftragsTyp">Auftragsart:</label>

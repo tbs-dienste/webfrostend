@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // Korrekt importieren: ohne geschweifte Klammern
 import './Navbar.scss';
 import logo from '../../logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,16 +22,35 @@ function Navbar() {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
   const [adminMenuActive, setAdminMenuActive] = useState(false);
-  
+  const [isAdmin, setIsAdmin] = useState(false); // Initialisiere Admin-Status mit false
+  const [benutzername, setBenutzername] = useState('');
+  const [userType, setUserType] = useState('');
+  const [lernenderId, setLernenderId] = useState('');
+
   const navigate = useNavigate(); // Hook zum Navigieren
 
-  // Rolle des Benutzers aus localStorage abrufen
-  const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Prüfen, ob der Benutzer Admin ist
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token); // Korrekt verwendet
+        setBenutzername(decodedToken.benutzername);
+        setUserType(decodedToken.userType);
+        setLernenderId(decodedToken.id);
+
+        // Setze isAdmin auf true, wenn der Benutzer ein Admin ist
+        setIsAdmin(decodedToken.userType === 'admin');
+      } catch (error) {
+        console.error('Fehler beim Decodieren des Tokens:', error);
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('isAdmin'); // Optional: Entferne den Admin-Status
-    navigate('/login'); // Weiterleitung zur Login-Seite nach dem Logout
+    setBenutzername('');
+    setIsAdmin(false); // Admin-Status zurücksetzen
+    navigate('/login');
   };
 
   const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
@@ -77,6 +97,7 @@ function Navbar() {
                 </li>
                 <button className="logout-button" onClick={handleLogout}>
                   <FontAwesomeIcon icon={faSignOutAlt} />
+                  Logout
                 </button>
               </>
             )}
