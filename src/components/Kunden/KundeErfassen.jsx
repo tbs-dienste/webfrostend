@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './KundeErfassen.scss';
+import agb from '../Documents/AGB.pdf';
 
 const KundeErfassen = () => {
   // State-Variablen für das Formular
@@ -16,6 +17,7 @@ const KundeErfassen = () => {
   const [geschlecht, setGeschlecht] = useState('');
   const [auftragsTyp, setAuftragsTyp] = useState('');
   const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
+  const [datenschutzAkzeptiert, setDatenschutzAkzeptiert] = useState(false);
 
   // State-Variable für die Auftragsarten-Optionen
   const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
@@ -62,7 +64,7 @@ const KundeErfassen = () => {
         geschlecht,
         auftragsTyp,
         auftragsBeschreibung,
-        ip_adresse
+        ip_adresse,
       };
 
       // Sende die Daten an die API
@@ -206,6 +208,18 @@ const KundeErfassen = () => {
             onChange={(e) => setAuftragsBeschreibung(e.target.value)}
           />
         </div>
+        <div className="formular-gruppe checkbox-gruppe">
+          <input
+            type="checkbox"
+            id="datenschutz"
+            checked={datenschutzAkzeptiert}
+            onChange={(e) => setDatenschutzAkzeptiert(e.target.checked)}
+          />
+          <label htmlFor="datenschutz">
+            Ich akzeptiere die <a href={agb} target="_blank" rel="noopener noreferrer">AGB</a>
+          </label>
+        </div>
+
         <button onClick={handleKontaktAufnehmen} className="submit-button">Kontakt aufnehmen</button>
       </div>
     </div>

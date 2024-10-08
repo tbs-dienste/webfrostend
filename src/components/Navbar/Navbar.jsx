@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Korrekt importieren: ohne geschweifte Klammern
+import {jwtDecode} from 'jwt-decode'; // Korrekt importieren
 import './Navbar.scss';
 import logo from '../../logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,11 +21,9 @@ import {
 function Navbar() {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [adminMenuActive, setAdminMenuActive] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Initialisiere Admin-Status mit false
   const [benutzername, setBenutzername] = useState('');
   const [userType, setUserType] = useState('');
-  const [lernenderId, setLernenderId] = useState('');
 
   const navigate = useNavigate(); // Hook zum Navigieren
 
@@ -36,7 +34,6 @@ function Navbar() {
         const decodedToken = jwtDecode(token); // Korrekt verwendet
         setBenutzername(decodedToken.benutzername);
         setUserType(decodedToken.userType);
-        setLernenderId(decodedToken.id);
 
         // Setze isAdmin auf true, wenn der Benutzer ein Admin ist
         setIsAdmin(decodedToken.userType === 'admin');
@@ -54,7 +51,6 @@ function Navbar() {
   };
 
   const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
-  const toggleAdminMenu = () => setAdminMenuActive(prev => !prev);
 
   useEffect(() => {
     if (burgerMenuActive) {
@@ -76,34 +72,34 @@ function Navbar() {
         </div>
         <div className={`nav-elements ${burgerMenuActive ? 'active' : ''}`}>
           <ul>
-            <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />            
-            <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-            
-            {isAdmin && (
+            <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />            
+            <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
+            {userType === 'admin' && (
               <>
-                <li className="dropdown">
-                  <button className={`dropdown-toggle ${adminMenuActive ? 'active' : ''}`} onClick={toggleAdminMenu}>
-                    Admin
-                  </button>
-                  <div className={`dropdown-menu ${adminMenuActive ? 'show' : ''}`}>
-                    <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                    <NavItem to="/kundenscanner" text="Kundenscanner" icon={faBarcode} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
-                  </div>
-                </li>
-                <button className="logout-button" onClick={handleLogout}>
-                  <FontAwesomeIcon icon={faSignOutAlt} />
-                  Logout
-                </button>
+                <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
 
+            {userType === 'admin' || userType === 'mitarbeiter' ? (
+              <>
+                <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
+              </>
+            ) : null}
+              
+           
+            
+            <button className="logout-button" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} />
+              Logout
+            </button>
+
             {!isAdmin && (
-              <NavItem to="/login" text="Login" icon={faSignOutAlt} currentPath={currentPath} onClick={() => setBurgerMenuActive(false)} />
+              <NavItem to="/login" text="Login" icon={faSignOutAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
             )}
           </ul>
         </div>

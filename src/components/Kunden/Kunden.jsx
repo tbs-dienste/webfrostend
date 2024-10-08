@@ -35,7 +35,12 @@ const Kunden = () => {
   useEffect(() => {
     const fetchKunden = async () => {
       try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden');
+        const token = localStorage.getItem('token'); // Token aus localStorage holen
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', {
+          headers: {
+            Authorization: `Bearer ${token}` // Token im Header einfügen
+          }
+        });
         const data = response.data.data;
 
         if (Array.isArray(data)) {
@@ -63,7 +68,12 @@ const Kunden = () => {
 
   const handleDeleteConfirmation = async () => {
     try {
-      await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerIdToDelete}`);
+      const token = localStorage.getItem('token'); // Token aus localStorage holen
+      await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerIdToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // Token im Header einfügen
+        }
+      });
       const updatedKunden = kunden.filter(kunde => kunde.id !== customerIdToDelete);
       setKunden(updatedKunden);
       setShowConfirmationModal(false);
@@ -212,13 +222,9 @@ const Kunden = () => {
 
       {showConfirmationModal && (
         <div className="confirmation-modal">
-          <div className="modal-content">
-            <p>Bist du sicher, dass du diesen Kunden löschen möchtest?</p>
-            <div>
-              <button onClick={handleDeleteConfirmation}>Ja</button>
-              <button onClick={handleCancelDelete}>Nein</button>
-            </div>
-          </div>
+          <p>Bist du sicher, dass du diesen Kunden löschen möchtest?</p>
+          <button onClick={handleDeleteConfirmation}>Ja, löschen</button>
+          <button onClick={handleCancelDelete}>Abbrechen</button>
         </div>
       )}
     </div>

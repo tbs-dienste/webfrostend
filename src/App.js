@@ -49,6 +49,8 @@ import Lizenzen from './components/Lizenz/Lizenzen';
 import Footer from './components/Content/Footer';
 import Impressum from './components/Content/Impressum';
 import BewerbungForm from './components/Mitarbeiter/BewerbungForm';
+import Arbeitsvertrag from './components/Mitarbeiter/Arbeitsvertrag';
+import AGB from './components/AGB';
 
 const App = () => {
   
@@ -77,6 +79,8 @@ const App = () => {
       
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/agb" element={<AGB />} />
+          <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />

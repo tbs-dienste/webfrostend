@@ -16,7 +16,12 @@ const ServiceEdit = () => {
   useEffect(() => {
     async function fetchService() {
       try {
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`);
+        const token = localStorage.getItem('token'); // Token aus localStorage abrufen
+        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` // Token im Header hinzufügen
+          }
+        });
         const serviceData = response.data.data[0]; // Zugriff auf das erste Element im Array
         if (serviceData) {
           setService(serviceData);
@@ -43,7 +48,12 @@ const ServiceEdit = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, editedData);
+      const token = localStorage.getItem('token'); // Token aus localStorage abrufen
+      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, editedData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Token im Header hinzufügen
+        }
+      });
       alert('Dienstleistung erfolgreich aktualisiert');
       // Weiterleiten nach erfolgreicher Bearbeitung
       window.location.href = '/dienstleistungen'; // Ersetzen Sie '/' mit der gewünschten URL für die Weiterleitung
@@ -95,6 +105,15 @@ const ServiceEdit = () => {
             type="text"
             name="img"
             value={editedData.img || ''} // Default-Wert hinzugefügt
+            onChange={handleInputChange}
+          />
+        </label>
+        <label>
+          Preis:
+          <input
+            type="number"
+            name="price"
+            value={editedData.price || ''} // Default-Wert hinzugefügt
             onChange={handleInputChange}
           />
         </label>
