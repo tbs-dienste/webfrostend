@@ -23,7 +23,7 @@ const Footer = () => {
           <ul>
             <li><Link to="/impressum">Impressum</Link></li>
             <li><span className="disabled-link">Datenschutz</span></li>
-            <li><span className="disabled-link">AGB</span></li>
+            <li><Link to="/agb">AGB</Link></li>
           </ul>
         </div>
 
