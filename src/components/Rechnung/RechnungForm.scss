@@ -1,0 +1,59 @@
+.rechnung-form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .kunden-list {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 5px;
+            padding: 0;
+            list-style: none;
+
+            li {
+                padding: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #eee;
+                }
+            }
+        }
+    }
+
+    .selected-kunde {
+        margin: 15px 0;
+        font-style: italic;
+    }
+
+    .message {
+        margin-top: 20px;
+        text-align: center;
+        color: #d9534f;
+    }
+}

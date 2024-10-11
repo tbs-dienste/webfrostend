@@ -15,34 +15,39 @@ const KundeErfassen = () => {
   const [email, setEmail] = useState('');
   const [mobil, setMobil] = useState('');
   const [geschlecht, setGeschlecht] = useState('');
-  const [auftragsTyp, setAuftragsTyp] = useState('');
-  const [auftragsBeschreibung, setAuftragsBeschreibung] = useState('');
+  const [dienstleistungen, setDienstleistungen] = useState([]);
+  const [ausgewaehlteDienstleistungen, setAusgewaehlteDienstleistungen] = useState([]);
   const [datenschutzAkzeptiert, setDatenschutzAkzeptiert] = useState(false);
 
-  // State-Variable für die Auftragsarten-Optionen
-  const [auftragsTypOptions, setAuftragsTypOptions] = useState([]);
-
-  // Hole die Auftragsarten-Optionen beim ersten Rendern
   useEffect(() => {
-    const fetchAuftragsTypOptions = async () => {
+    const fetchDienstleistungen = async () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
         if (Array.isArray(response.data.data)) {
-          setAuftragsTypOptions(response.data.data);
+          setDienstleistungen(response.data.data);
         } else {
           console.error('Fehlerhafte Datenstruktur:', response.data);
         }
       } catch (error) {
-        console.error('Fehler beim Abrufen der AuftragsTyp-Optionen:', error);
+        console.error('Fehler beim Abrufen der Dienstleistungen:', error);
       }
     };
 
-    fetchAuftragsTypOptions();
+    fetchDienstleistungen();
   }, []);
 
-  // Formular senden
-  const handleKontaktAufnehmen = async () => {
-    if (!vorname || !nachname || !email || !mobil || !auftragsTyp) {
+  const handleAddDienstleistung = () => {
+    setAusgewaehlteDienstleistungen([...ausgewaehlteDienstleistungen, '']);
+  };
+
+  const handleDienstleistungChange = (index, value) => {
+    const newDienstleistungen = [...ausgewaehlteDienstleistungen];
+    newDienstleistungen[index] = value;
+    setAusgewaehlteDienstleistungen(newDienstleistungen);
+  };
+
+  const handleKundeErfassen = async () => {
+    if (!firma || !vorname || !nachname || !email || !mobil || ausgewaehlteDienstleistungen.length === 0) {
       alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       return;
     }
@@ -62,25 +67,24 @@ const KundeErfassen = () => {
         email,
         mobil,
         geschlecht,
-        auftragsTyp,
-        auftragsBeschreibung,
         ip_adresse,
+        dienstleistungen: ausgewaehlteDienstleistungen.map(dienstleistungsId => ({
+          dienstleistungsId: parseInt(dienstleistungsId),
+        })),
       };
 
-      // Sende die Daten an die API
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
-
-      console.log('Kontaktdaten erfolgreich gesendet:', response.data);
-      window.location.href = '/dankesnachricht';
+      console.log('Kundendaten erfolgreich gesendet:', response.data);
+      alert('Kunde erfolgreich erfasst!');
     } catch (error) {
-      console.error('Fehler beim Senden der Kontaktdaten:', error);
-      alert('Fehler beim Aufnehmen der Kontaktdaten. Bitte versuchen Sie es erneut.');
+      console.error('Fehler beim Senden der Kundendaten:', error);
+      alert('Fehler beim Erfassen der Kundendaten. Bitte versuchen Sie es erneut.');
     }
   };
 
   return (
     <div className="kunde-erfassen">
-      <h2>Kontaktdaten</h2>
+      <h2>Kundendaten erfassen</h2>
       <div className="formular">
         <div className="formular-gruppe">
           <label htmlFor="firma">Firma:</label>
@@ -138,20 +142,12 @@ const KundeErfassen = () => {
         </div>
         <div className="formular-gruppe">
           <label htmlFor="land">Land:</label>
-          <select
+          <input
+            type="text"
             id="land"
             value={land}
             onChange={(e) => setLand(e.target.value)}
-            className="dropdown"
-          >
-            <option value="">Bitte auswählen</option>
-            <option value="Deutschland">Deutschland</option>
-            <option value="Schweiz">Schweiz</option>
-            <option value="Österreich">Österreich</option>
-            <option value="Frankreich">Frankreich</option>
-            <option value="Italien">Italien</option>
-            <option value="England">England</option>
-          </select>
+          />
         </div>
         <div className="formular-gruppe">
           <label htmlFor="email">Email-Adresse:</label>
@@ -177,37 +173,36 @@ const KundeErfassen = () => {
             id="geschlecht"
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
-            className="dropdown"
           >
             <option value="">Bitte auswählen</option>
-            <option value="männlich">Männlich</option>
-            <option value="weiblich">Weiblich</option>
+            <option value="M">Männlich</option>
+            <option value="W">Weiblich</option>
           </select>
         </div>
-        <div className="formular-gruppe">
-          <label htmlFor="auftragsTyp">Auftragsart:</label>
-          <select
-            id="auftragsTyp"
-            value={auftragsTyp}
-            onChange={(e) => setAuftragsTyp(e.target.value)}
-            className="dropdown"
-          >
-            <option value="">Bitte auswählen</option>
-            {auftragsTypOptions.map((option) => (
-              <option key={option.id} value={option.title}>
-                {option.title}
-              </option>
-            ))}
-          </select>
+
+        {/* Bereich für die Auswahl der Dienstleistungen */}
+        <div className="dienstleistungen-bereich">
+          <label>Dienstleistungen:</label>
+          {ausgewaehlteDienstleistungen.map((dienstleistung, index) => (
+            <div key={index} className="dienstleistung-gruppe">
+              <select
+                value={dienstleistung}
+                onChange={(e) => handleDienstleistungChange(index, e.target.value)}
+              >
+                <option value="">Bitte auswählen</option>
+                {dienstleistungen.map((dienst) => (
+                  <option key={dienst.id} value={dienst.id}>
+                    {dienst.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+          <button type="button" onClick={handleAddDienstleistung} className="add-dienstleistung-button">
+            + Weitere Dienstleistung hinzufügen
+          </button>
         </div>
-        <div className="formular-gruppe">
-          <label htmlFor="auftragsBeschreibung">Auftragsbeschreibung:</label>
-          <textarea
-            id="auftragsBeschreibung"
-            value={auftragsBeschreibung}
-            onChange={(e) => setAuftragsBeschreibung(e.target.value)}
-          />
-        </div>
+
         <div className="formular-gruppe checkbox-gruppe">
           <input
             type="checkbox"
@@ -219,8 +214,7 @@ const KundeErfassen = () => {
             Ich akzeptiere die <a href={agb} target="_blank" rel="noopener noreferrer">AGB</a>
           </label>
         </div>
-
-        <button onClick={handleKontaktAufnehmen} className="submit-button">Kontakt aufnehmen</button>
+        <button onClick={handleKundeErfassen} className="submit-button">Kunde erfassen</button>
       </div>
     </div>
   );

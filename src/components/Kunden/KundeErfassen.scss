@@ -12,7 +12,9 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   font-size: 16px;
   color: #333;
-
+  max-height: 80vh; /* Höhe für Scrollen anpassen */
+  overflow-y: auto; /* Scrollen aktivieren */
+  
   h2 {
     font-size: 32px;
     font-weight: 700;
@@ -67,6 +69,32 @@
         background-position: right 12px center;
         background-size: 12px;
         padding-right: 45px;
+      }
+    }
+
+    .dienstleistungen-bereich {
+      flex: 1 1 100%;
+      margin-top: 20px;
+
+      .dienstleistung-gruppe {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+
+      .add-dienstleistung-button {
+        background-color: #3498db;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+
+        &:hover {
+          background-color: #2980b9;
+        }
       }
     }
 

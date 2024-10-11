@@ -51,6 +51,7 @@ import Impressum from './components/Content/Impressum';
 import BewerbungForm from './components/Mitarbeiter/BewerbungForm';
 import Arbeitsvertrag from './components/Mitarbeiter/Arbeitsvertrag';
 import AGB from './components/AGB';
+import RechnungForm from './components/Rechnung/RechnungForm';
 
 const App = () => {
   
@@ -80,6 +81,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/agb" element={<AGB />} />
+          <Route path="/rechnungform" element={<RechnungForm />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
           <Route path="/kunden" element={<Kunden />} />
