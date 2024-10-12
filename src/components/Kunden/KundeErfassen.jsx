@@ -123,7 +123,7 @@ const KundeErfassen = () => {
                 <option value="">Dienstleistung auswählen</option>
                 {dienstleistungen.map((dl) => (
                   <option key={dl.id} value={dl.id}>
-                    {dl.bezeichnung}
+                    {dl.title}
                   </option>
                 ))}
               </select>
