@@ -18,7 +18,7 @@ const KundeErfassen = () => {
   });
 
   const [dienstleistungen, setDienstleistungen] = useState([]);
-  const [ausgewaehlteDienstleistungen, setAusgewaehlteDienstleistungen] = useState([]);
+  const [ausgewaehlteDienstleistungen, setAusgewaehlteDienstleistungen] = useState(['']); // Start with one empty dienstleistung
   const [datenschutzAkzeptiert, setDatenschutzAkzeptiert] = useState(false);
 
   useEffect(() => {
@@ -45,11 +45,11 @@ const KundeErfassen = () => {
   };
 
   const handleAddDienstleistung = () => {
-    setAusgewaehlteDienstleistungen([...ausgewaehlteDienstleistungen, '']);
+    setAusgewaehlteDienstleistungen([...ausgewaehlteDienstleistungen, '']); // Add a new empty dienstleistung
   };
 
   const handleKundeErfassen = async () => {
-    if (!kunde.firma || !kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0) {
+    if (!kunde.firma || !kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0 || !ausgewaehlteDienstleistungen[0]) {
       alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       return;
     }
@@ -61,9 +61,11 @@ const KundeErfassen = () => {
       const newKunde = {
         ...kunde,
         ip_adresse,
-        dienstleistungen: ausgewaehlteDienstleistungen.map(dienstleistungsId => ({
-          dienstleistungsId: parseInt(dienstleistungsId),
-        })),
+        dienstleistungen: ausgewaehlteDienstleistungen
+          .filter(dienstleistungsId => dienstleistungsId) // Ensure no empty values are sent
+          .map(dienstleistungsId => ({
+            dienstleistungsId: parseInt(dienstleistungsId),
+          })),
       };
 
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
@@ -78,6 +80,7 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kundendaten erfassen</h2>
       <div className="formular">
+        {/* Formularfelder für die Kundendaten */}
         <div className="formular-gruppe">
           <label htmlFor="firma">Firma</label>
           <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
@@ -115,6 +118,7 @@ const KundeErfassen = () => {
           <input type="text" id="mobil" name="mobil" value={kunde.mobil} onChange={handleInputChange} />
         </div>
 
+        {/* Dienstleistungen */}
         <div className="dienstleistungen-bereich">
           <label>Dienstleistungen</label>
           {ausgewaehlteDienstleistungen.map((dienstleistung, index) => (
@@ -134,6 +138,7 @@ const KundeErfassen = () => {
           </button>
         </div>
 
+        {/* Checkbox für Datenschutz */}
         <div className="checkbox-gruppe">
           <input
             type="checkbox"
@@ -147,6 +152,7 @@ const KundeErfassen = () => {
           </label>
         </div>
 
+        {/* Submit-Button */}
         <button type="button" className="submit-button" onClick={handleKundeErfassen}>
           Kunde erfassen
         </button>
