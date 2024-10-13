@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './MitarbeiterErfassen.scss';
 
@@ -14,11 +14,11 @@ const MitarbeiterErfassen = () => {
   const [benutzername, setBenutzername] = useState('');
   const [passwort, setPasswort] = useState('');
   const [land, setLand] = useState('CH');
-  const [iban, setIban] = useState('CH');
+  const [iban, setIban] = useState('');
 
   const handleIbanChange = (e) => {
     let input = e.target.value.toUpperCase();
-    input = input.replace(/\D/g, '');
+    input = input.replace(/\D/g, ''); // Nur Zahlen beibehalten
 
     let formattedIban = land;
     for (let i = 0; i < input.length; i++) {
@@ -28,8 +28,8 @@ const MitarbeiterErfassen = () => {
       formattedIban += input[i];
     }
 
-    if (formattedIban.length >= 26) {
-      formattedIban = formattedIban.substring(0, 26);
+    if (formattedIban.length > 26) {
+      formattedIban = formattedIban.substring(0, 26); // Maximal 26 Zeichen
     }
 
     setIban(formattedIban);
@@ -38,10 +38,12 @@ const MitarbeiterErfassen = () => {
   const handleLandChange = (e) => {
     const selectedLand = e.target.value;
     setLand(selectedLand);
-    setIban(selectedLand);
+    setIban(selectedLand); // IBAN initialisieren
   };
 
-  const handleMitarbeiterHinzufügen = async () => {
+  const handleMitarbeiterHinzufügen = async (e) => {
+    e.preventDefault(); // Verhindert das Standard-Formularverhalten
+
     const newMitarbeiter = {
       geschlecht,
       vorname,
@@ -53,29 +55,37 @@ const MitarbeiterErfassen = () => {
       mobil,
       benutzername,
       passwort,
-      iban: land
+      iban // Hier wird die IBAN übergeben
     };
 
     try {
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter', newMitarbeiter);
+      const token = localStorage.getItem('token'); // Token aus localStorage holen
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter', newMitarbeiter, {
+        headers: {
+          Authorization: `Bearer ${token}` // Token im Header hinzufügen
+        }
+      });
       console.log('Response:', response.data);
-      window.location = "/mitarbeiter";
+      window.location = "/mitarbeiter"; // Weiterleitung nach dem erfolgreichen Hinzufügen
     } catch (error) {
       console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
+      alert('Fehler beim Hinzufügen des Mitarbeiters. Bitte versuche es später noch einmal.'); // Fehlerbenachrichtigung
     }
   };
 
   return (
     <div className="kunde-erfassen">
-      <h2>Kontakt</h2>
-      <div className="formular">
+      <h2>Mitarbeiter erfassen</h2>
+      <form className="formular" onSubmit={handleMitarbeiterHinzufügen}>
         <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
           <select
             id="geschlecht"
             value={geschlecht}
             onChange={(e) => setGeschlecht(e.target.value)}
+            required
           >
+            <option value="" disabled>Bitte wählen...</option>
             <option value="männlich">Männlich</option>
             <option value="weiblich">Weiblich</option>
           </select>
@@ -88,6 +98,7 @@ const MitarbeiterErfassen = () => {
             id="vorname"
             value={vorname}
             onChange={(e) => setVorname(e.target.value)}
+            required
           />
         </div>
 
@@ -98,6 +109,7 @@ const MitarbeiterErfassen = () => {
             id="nachname"
             value={nachname}
             onChange={(e) => setNachname(e.target.value)}
+            required
           />
         </div>
 
@@ -108,6 +120,7 @@ const MitarbeiterErfassen = () => {
             id="adresse"
             value={adresse}
             onChange={(e) => setAdresse(e.target.value)}
+            required
           />
         </div>
 
@@ -118,6 +131,7 @@ const MitarbeiterErfassen = () => {
             id="postleitzahl"
             value={postleitzahl}
             onChange={(e) => setPostleitzahl(e.target.value)}
+            required
           />
         </div>
 
@@ -128,26 +142,29 @@ const MitarbeiterErfassen = () => {
             id="ort"
             value={ort}
             onChange={(e) => setOrt(e.target.value)}
+            required
           />
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="email">Email-Adresse:</label>
+          <label htmlFor="email">E-Mail:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
 
         <div className="formular-gruppe">
           <label htmlFor="mobil">Mobil:</label>
           <input
-            type="tel"
+            type="text"
             id="mobil"
             value={mobil}
             onChange={(e) => setMobil(e.target.value)}
+            required
           />
         </div>
 
@@ -158,49 +175,49 @@ const MitarbeiterErfassen = () => {
             id="benutzername"
             value={benutzername}
             onChange={(e) => setBenutzername(e.target.value)}
-            />
-          </div>
-  
-          <div className="formular-gruppe">
-            <label htmlFor="passwort">Passwort:</label>
-            <input
-              type="password"
-              id="passwort"
-              value={passwort}
-              onChange={(e) => setPasswort(e.target.value)}
-            />
-          </div>
-  
-          <div className="formular-gruppe">
-            <label htmlFor="land">Land:</label>
-            <select
-              id="land"
-              value={land}
-              onChange={handleLandChange}
-            >
-              <option value="CH">Schweiz</option>
-              <option value="DE">Deutschland</option>
-              <option value="AT">Österreich</option>
-              <option value="UK">England</option>
-            </select>
-          </div>
-  
-          <div className="formular-gruppe">
-            <label htmlFor="iban">Iban:</label>
-            <input
-              type="text"
-              id="iban"
-              value={iban}
-              onChange={handleIbanChange}
-            />
-          </div>
-  
-          <button onClick={handleMitarbeiterHinzufügen}>Kontakt aufnehmen</button>
+            required
+          />
         </div>
-      </div>
-    );
-  };
-  
-  export default MitarbeiterErfassen;
 
-  
+        <div className="formular-gruppe">
+          <label htmlFor="passwort">Passwort:</label>
+          <input
+            type="password"
+            id="passwort"
+            value={passwort}
+            onChange={(e) => setPasswort(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="iban">IBAN:</label>
+          <input
+            type="text"
+            id="iban"
+            value={iban}
+            onChange={handleIbanChange}
+            required
+          />
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="land">Land:</label>
+          <select
+            id="land"
+            value={land}
+            onChange={handleLandChange}
+          >
+            <option value="CH">Schweiz</option>
+            <option value="DE">Deutschland</option>
+            {/* Fügen Sie weitere Länder hier hinzu */}
+          </select>
+        </div>
+
+        <button type="submit">Mitarbeiter hinzufügen</button>
+      </form>
+    </div>
+  );
+};
+
+export default MitarbeiterErfassen;

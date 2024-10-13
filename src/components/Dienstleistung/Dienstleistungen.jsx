@@ -90,9 +90,6 @@ const Dienstleistungen = () => {
               <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
               {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
                 <div className="admin-buttons">
-                  <Link to={`/service-edit/${service.id}`} className="edit-button">
-                    <FaEdit />
-                  </Link>
                   <button className="delete-button" onClick={() => handleDelete(service.id)}>
                     <FaTrash />
                   </button>
