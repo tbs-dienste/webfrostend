@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaSave, FaUndo, FaArchive, FaFileInvoice, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaSave, FaUndo, FaEdit } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
 
 const KundenAnzeigen = () => {
@@ -15,7 +15,12 @@ const KundenAnzeigen = () => {
   useEffect(() => {
     async function fetchKunde() {
       try {
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const kunde = response.data.data;
         if (kunde) {
           setSelectedKunde(kunde);
@@ -35,7 +40,10 @@ const KundenAnzeigen = () => {
     fetchKunde();
   }, [id]);
 
-  const handleEdit = () => setEditMode(true);
+  const handleEdit = () => {
+    setEditMode(true);
+    setEditedData(selectedKunde);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +52,13 @@ const KundenAnzeigen = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, editedData);
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, editedData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Serverantwort:', response);
       alert('Daten erfolgreich aktualisiert');
       setEditMode(false);
       setSelectedKunde(editedData);
@@ -55,54 +69,10 @@ const KundenAnzeigen = () => {
     }
   };
 
-  const handleArchivieren = async () => {
-    try {
-      const url = editedData.archiviert
-        ? `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/unarchive`
-        : `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/archive`;
-      
-      const response = await axios.post(url);
-
-      if (response.data.status === 'success') {
-        const updatedData = { ...editedData, archiviert: !editedData.archiviert };
-        setEditedData(updatedData);
-        alert(updatedData.archiviert ? 'Kunde erfolgreich archiviert' : 'Kunde erfolgreich reaktiviert');
-      } else {
-        alert('Fehler beim Archivieren des Kunden');
-      }
-    } catch (error) {
-      console.error('Fehler beim Archivieren des Kunden:', error);
-      alert('Fehler beim Archivieren des Kunden. Bitte versuche es später noch einmal.');
-    }
-  };
-
-  const handleRechnungGestellt = async () => {
-    try {
-      const updatedData = { ...editedData, rechnungGestellt: !editedData.rechnungGestellt };
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, updatedData);
-      alert(updatedData.rechnungGestellt ? 'Rechnung erfolgreich erstellt' : 'Rechnungserstellung rückgängig gemacht');
-      setEditedData(updatedData);
-    } catch (error) {
-      console.error('Fehler beim Erstellen der Rechnung:', error);
-      alert('Fehler beim Erstellen der Rechnung. Bitte versuche es später noch einmal.');
-    }
-  };
-
-  const handleRechnungBezahlt = async () => {
-    try {
-      const updatedData = { ...editedData, rechnungBezahlt: !editedData.rechnungBezahlt };
-      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, updatedData);
-      alert(updatedData.rechnungBezahlt ? 'Rechnung als bezahlt markiert' : 'Rechnung als bezahlt rückgängig gemacht');
-      setEditedData(updatedData);
-    } catch (error) {
-      console.error('Fehler beim Markieren der Rechnung als bezahlt:', error);
-      alert('Fehler beim Markieren der Rechnung als bezahlt. Bitte versuche es später noch einmal.');
-    }
-  };
-
   const handleUndo = () => {
     if (originalData) {
       setEditedData(originalData);
+      setEditMode(false);
     }
   };
 
@@ -110,78 +80,149 @@ const KundenAnzeigen = () => {
     return <div className="loading">Lade Kunde...</div>;
   }
 
-  const getArchivierenButtonText = () => editedData.archiviert ? 'Reaktivieren' : 'Archivieren';
-  const getRechnungGestelltButtonText = () => editedData.rechnungGestellt ? 'Rückgängig Rechnung erstellen' : 'Rechnung erstellen';
-  const getRechnungBezahltButtonText = () => editedData.rechnungBezahlt ? 'Rückgängig Rechnung bezahlt' : 'Rechnung bezahlt';
-
   return (
-    <div className="kunde-anzeigen-container">
-      <div className="kunde-anzeigen">
-        <h2>Kundendetails</h2>
-        {selectedKunde ? (
-          editMode ? (
-            <>
-              <label>
-                Vorname:
-                <input type="text" name="vorname" value={editedData.vorname} onChange={handleInputChange} />
-              </label>
-              <label>
-                Nachname:
-                <input type="text" name="nachname" value={editedData.nachname} onChange={handleInputChange} />
-              </label>
-              <label>
-                Straße und Hausnummer:
-                <input type="text" name="strasseHausnummer" value={editedData.strasseHausnummer} onChange={handleInputChange} />
-              </label>
-              <label>
-                Postleitzahl:
-                <input type="text" name="postleitzahl" value={editedData.postleitzahl} onChange={handleInputChange} />
-              </label>
-              <label>
-                Ort:
-                <input type="text" name="ort" value={editedData.ort} onChange={handleInputChange} />
-              </label>
-              <label>
-                Land:
-                <input type="text" name="land" value={editedData.land} onChange={handleInputChange} />
-              </label>
-              <label>
-                Email:
-                <input type="email" name="email" value={editedData.email} onChange={handleInputChange} />
-              </label>
-              <label>
-                Telefon:
-                <input type="tel" name="telefon" value={editedData.telefon} onChange={handleInputChange} />
-              </label>
-              <label>
-                Mobil:
-                <input type="tel" name="mobil" value={editedData.mobil} onChange={handleInputChange} />
-              </label>
-              <label>
-                Geschlecht:
-                <input type="text" name="geschlecht" value={editedData.geschlecht} onChange={handleInputChange} />
-              </label>
-              <label>
-                Auftragstyp:
-                <input type="text" name="auftragsTyp" value={editedData.auftragsTyp} onChange={handleInputChange} />
-              </label>
-              <label>
-                Auftragsbeschreibung:
-                <input type="text" name="auftragsBeschreibung" value={editedData.auftragsBeschreibung} onChange={handleInputChange} />
-              </label>
-              <label>
-                Preis:
-                <input type="text" name="preis" value={editedData.preis} onChange={handleInputChange} />
-              </label>
-              <label>
-                IP-Adresse:
-                <input type="text" name="ip_adresse" value={editedData.ip_adresse} onChange={handleInputChange} />
-              </label>
-              <button onClick={handleSave} className="save-button"><FaSave /> Speichern</button>
-              <button onClick={handleUndo} className="undo-button"><FaUndo /> Rückgängig</button>
-            </>
+    <div className="kunden-anzeigen-container">
+      <h2>Kundendetails anzeigen</h2>
+      {selectedKunde ? (
+        <div>
+          {editMode ? (
+            <div>
+              {/* Hier die Eingabefelder für die Kundendetails */}
+              <div className="input-group">
+                <label>Kundennummer:</label>
+                <input
+                  type="text"
+                  name="kundennummer"
+                  value={editedData.kundennummer || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Firma:</label>
+                <input
+                  type="text"
+                  name="firma"
+                  value={editedData.firma || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Vorname:</label>
+                <input
+                  type="text"
+                  name="vorname"
+                  value={editedData.vorname || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Nachname:</label>
+                <input
+                  type="text"
+                  name="nachname"
+                  value={editedData.nachname || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Straße und Hausnummer:</label>
+                <input
+                  type="text"
+                  name="strasseHausnummer"
+                  value={editedData.strasseHausnummer || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Postleitzahl:</label>
+                <input
+                  type="text"
+                  name="postleitzahl"
+                  value={editedData.postleitzahl || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Ort:</label>
+                <input
+                  type="text"
+                  name="ort"
+                  value={editedData.ort || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Land:</label>
+                <input
+                  type="text"
+                  name="land"
+                  value={editedData.land || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={editedData.email || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Mobil:</label>
+                <input
+                  type="text"
+                  name="mobil"
+                  value={editedData.mobil || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Geschlecht:</label>
+                <input
+                  type="text"
+                  name="geschlecht"
+                  value={editedData.geschlecht || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>IP-Adresse:</label>
+                <input
+                  type="text"
+                  name="ip_adresse"
+                  value={editedData.ip_adresse || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Code:</label>
+                <input
+                  type="text"
+                  name="code"
+                  value={editedData.code || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Auftragsnummer:</label>
+                <input
+                  type="text"
+                  name="auftragsnummer"
+                  value={editedData.auftragsnummer || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <button onClick={handleSave}><FaSave /> Speichern</button>
+              <button onClick={handleUndo}><FaUndo /> Änderungen zurücksetzen</button>
+            </div>
           ) : (
-            <>
+            <div>
+              {/* Hier die Anzeige der Kundendetails */}
+              <p><strong>Kundennummer:</strong> {selectedKunde.kundennummer}</p>
+              <p><strong>Firma:</strong> {selectedKunde.firma}</p>
               <p><strong>Vorname:</strong> {selectedKunde.vorname}</p>
               <p><strong>Nachname:</strong> {selectedKunde.nachname}</p>
               <p><strong>Straße und Hausnummer:</strong> {selectedKunde.strasseHausnummer}</p>
@@ -189,27 +230,28 @@ const KundenAnzeigen = () => {
               <p><strong>Ort:</strong> {selectedKunde.ort}</p>
               <p><strong>Land:</strong> {selectedKunde.land}</p>
               <p><strong>Email:</strong> {selectedKunde.email}</p>
-              <p><strong>Telefon:</strong> {selectedKunde.telefon}</p>
               <p><strong>Mobil:</strong> {selectedKunde.mobil}</p>
               <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
-              <p><strong>Auftragstyp:</strong> {selectedKunde.auftragsTyp}</p>
-              <p><strong>Auftragsbeschreibung:</strong> {selectedKunde.auftragsBeschreibung}</p>
-              <p><strong>Preis:</strong> {selectedKunde.preis}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
               <p><strong>Code:</strong> {selectedKunde.code}</p>
-              <button onClick={handleEdit} className="edit-button">Bearbeiten</button>
-              <button onClick={handleArchivieren} className="archive-button"><FaArchive /> {getArchivierenButtonText()}</button>
-              <button onClick={handleRechnungGestellt} className="invoice-button"><FaFileInvoice /> {getRechnungGestelltButtonText()}</button>
+              <p><strong>Auftragsnummer:</strong> {selectedKunde.auftragsnummer}</p>
               
-              {editedData.rechnungGestellt && !editedData.rechnungBezahlt && (
-                <button onClick={handleRechnungBezahlt} className="paid-button"><FaCheck /> {getRechnungBezahltButtonText()}</button>
-              )}
-            </>
-          )
-        ) : (
-          <div>Keine Daten gefunden</div>
-        )}
-      </div>
+              {/* Annahme: selectedKunde.dienstleistungen ist ein Array */}
+              <p><strong>Dienstleistungen:</strong> 
+                {selectedKunde.dienstleistungen && Array.isArray(selectedKunde.dienstleistungen)
+                  ? selectedKunde.dienstleistungen.map((dienstleistung, index) => (
+                      <span key={index}>{dienstleistung.title}{index < selectedKunde.dienstleistungen.length - 1 ? ', ' : ''}</span>
+                    ))
+                  : 'Keine Dienstleistungen verfügbar.'}
+              </p>
+
+              <button onClick={handleEdit}><FaEdit /> Bearbeiten</button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <p>Keine Kundendaten gefunden.</p>
+      )}
     </div>
   );
 };

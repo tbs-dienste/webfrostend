@@ -1,41 +1,38 @@
 .service-detail-container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #f8f8f8;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.service-detail-container img {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  margin-bottom: 20px;
+.service-image {
+  width: 100%;
+  border-radius: 8px;
 }
 
-.service-detail-container h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+.edit-form {
+  margin-top: 20px;
 }
 
-.service-detail-container p {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #333;
+.edit-form label {
+  display: block;
+  margin: 10px 0;
+}
+
+.success-message {
+  color: green;
+  margin: 10px 0;
+}
+
+.error-message {
+  color: red;
 }
 
 .back-btn {
+  display: inline-block;
   margin-top: 20px;
-  color: #007bff;
   text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.back-btn:hover {
-  color: #0056b3;
+  color: #007bff;
 }

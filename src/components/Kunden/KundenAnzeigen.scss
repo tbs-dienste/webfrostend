@@ -1,109 +1,108 @@
-.kunde-anzeigen-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.kunde-anzeigen {
-  background-color: #f9f9f9;
+.kunden-anzeigen-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
   border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
 
-.kunde-anzeigen h2 {
-  font-size: 26px;
-  margin-bottom: 20px;
-  color: #333;
-}
+  .loading {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #666;
+  }
 
-.kunde-anzeigen p {
-  margin-bottom: 12px;
-  color: #555;
-}
+  .kunden-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
-.kunde-anzeigen p strong {
-  font-weight: bold;
-}
+    .edit-form,
+    .details-view {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-.kunde-anzeigen label {
-  display: block;
-  margin-bottom: 15px;
-}
+    .input-group {
+      margin-bottom: 1rem;
 
-.kunde-anzeigen input[type="text"],
-.kunde-anzeigen input[type="email"],
-.kunde-anzeigen input[type="tel"] {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-}
+      label {
+        font-weight: bold;
+        color: #555;
+      }
 
-.kunde-anzeigen button {
-  display: inline-flex;
-  align-items: center;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 10px;
-  transition: background-color 0.3s, transform 0.2s;
-}
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
 
-.kunde-anzeigen button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+      }
+    }
 
-.kunde-anzeigen .save-button {
-  background-color: #28a745;
-}
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      
+      button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
 
-.kunde-anzeigen .save-button:hover {
-  background-color: #218838;
-}
+        &.save {
+          background-color: #28a745;
+          color: white;
 
-.kunde-anzeigen .undo-button {
-  background-color: #ffc107;
-}
+          &:hover {
+            background-color: #218838;
+          }
+        }
 
-.kunde-anzeigen .undo-button:hover {
-  background-color: #e0a800;
-}
+        &.undo {
+          background-color: #ffc107;
+          color: white;
 
-.kunde-anzeigen .archive-button {
-  background-color: #dc3545;
-}
+          &:hover {
+            background-color: #e0a800;
+          }
+        }
 
-.kunde-anzeigen .archive-button:hover {
-  background-color: #c82333;
-}
+        &.edit {
+          background-color: #007bff;
+          color: white;
 
-.kunde-anzeigen .invoice-button {
-  background-color: #17a2b8;
-}
+          &:hover {
+            background-color: #0056b3;
+          }
+        }
+      }
+    }
 
-.kunde-anzeigen .invoice-button:hover {
-  background-color: #138496;
-}
+    p {
+      margin: 0.5rem 0;
+      line-height: 1.5;
+      color: #444;
 
-.kunde-anzeigen .paid-button {
-  background-color: #28a745;
-}
-
-.kunde-anzeigen .paid-button:hover {
-  background-color: #218838;
-}
-
-.loading {
-  text-align: center;
-  font-size: 18px;
-  color: #666;
+      strong {
+        color: #007bff;
+      }
+    }
+  }
 }

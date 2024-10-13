@@ -1,3 +1,4 @@
+// CreateService Component
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CreateService.scss';
@@ -5,8 +6,8 @@ import './CreateService.scss';
 const CreateService = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [img, setImg] = useState('');
-  const [preis, setPreis] = useState(''); // Neue State für den Preis
+  const [img, setImg] = useState(''); // Keep img as a string for the URL
+  const [preis, setPreis] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -16,31 +17,24 @@ const CreateService = () => {
     setError(null);
 
     try {
-      // Token aus localStorage abrufen
       const token = localStorage.getItem('token');
-
-      // Axios POST-Request mit Token im Header
       await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung',
-        {
-          title,
-          description,
-          img,
-          preis, // Preis zum POST-Request hinzufügen
-        },
+        { title, description, img, preis }, // Send img as URL
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Token im Header setzen
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       alert('Dienstleistung erfolgreich erstellt!');
       window.location.href = "/dienstleistungen";
+      // Reset form fields
       setTitle('');
       setDescription('');
       setImg('');
-      setPreis(''); // Preis zurücksetzen
+      setPreis('');
     } catch (error) {
       console.error("Fehler beim Erstellen der Dienstleistung:", error);
       setError("Fehler beim Erstellen der Dienstleistung.");
@@ -77,7 +71,7 @@ const CreateService = () => {
           <input
             type="text"
             value={img}
-            onChange={(e) => setImg(e.target.value)}
+            onChange={(e) => setImg(e.target.value)} // Set URL directly
             placeholder="Geben Sie die URL des Bildes ein"
             required
           />
@@ -90,7 +84,7 @@ const CreateService = () => {
             onChange={(e) => setPreis(e.target.value)}
             placeholder="Geben Sie den Preis der Dienstleistung ein"
             required
-            min="0" // Preis sollte nicht negativ sein
+            min="0"
           />
         </label>
         <button type="submit" className="submit-button" disabled={loading}>

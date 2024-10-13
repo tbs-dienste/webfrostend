@@ -69,41 +69,39 @@ const Dienstleistungen = () => {
     <div className="services-container">
       <h1>
         Unsere Dienstleistungen
-        {/* "+"-Symbol, das für Admins angezeigt werden sollte */}
         {isAdmin && (
           <Link to="/service-create" className="add-button">+</Link>
         )}
       </h1>
   
       <div className="services-list">
-  {services.map(service => (
-    <div className="service-card" key={service.id}>
-      <div className="service-image-wrapper">
-        {service.img && <img src={service.img} alt={service.title} className="service-image" />}
-      </div>
-      <div className="service-content">
-        <h2>{service.title}</h2>
-        <p>
-          {service.description && service.description.length > 150
-            ? `${service.description.substring(0, 150)}...`
-            : service.description || "Keine Beschreibung verfügbar"} {/* Fallback Text */}
-        </p>
-        <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
-        {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
-          <div className="admin-buttons">
-            <Link to={`/service-edit/${service.id}`} className="edit-button">
-              <FaEdit />
-            </Link>
-            <button className="delete-button" onClick={() => handleDelete(service.id)}>
-              <FaTrash />
-            </button>
+        {services.map(service => (
+          <div className="service-card" key={service.id}>
+            <div className="service-image-wrapper">
+              {service.img && <img src={service.img} alt={service.title} className="service-image" />}
+            </div>
+            <div className="service-content">
+              <h2>{service.title}</h2>
+              <p>
+                {service.description && service.description.length > 150
+                  ? `${service.description.substring(0, 150)}...`
+                  : service.description || "Keine Beschreibung verfügbar"}
+              </p>
+              <Link to={`/service/${service.id}`} className="btn-more">Mehr erfahren</Link>
+              {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
+                <div className="admin-buttons">
+                  <Link to={`/service-edit/${service.id}`} className="edit-button">
+                    <FaEdit />
+                  </Link>
+                  <button className="delete-button" onClick={() => handleDelete(service.id)}>
+                    <FaTrash />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
     </div>
   );
 };
