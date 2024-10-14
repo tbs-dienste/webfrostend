@@ -1,103 +1,108 @@
 import React, { useState, useRef } from 'react';
-import SignatureCanvas from 'react-signature-canvas';
 import axios from 'axios';
-import './SignComponent.scss';
+import SignatureCanvas from 'react-signature-canvas';
 
 const SignComponent = () => {
-  const [code, setCode] = useState('');
-  const [status, setStatus] = useState('');
-  const [showSignatureField, setShowSignatureField] = useState(false);
-  const [signatureDataUrl, setSignatureDataUrl] = useState('');
-  const signatureRef = useRef(null);
+    const [code, setCode] = useState('');
+    const [codeToken, setCodeToken] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [signature, setSignature] = useState('');
+    const sigCanvas = useRef({});
 
-  const handleCodeChange = (e) => {
-    setCode(e.target.value);
-  };
-
-  const handleSubmitCode = async () => {
-    try {
-        setStatus('Verbindung herstellen...');
-        
-        // Senden des Codes zur Verifizierung
-        const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/verify', { code });
-        
-        if (response.data.id) {
-            setStatus('Verbunden');
-            setTimeout(() => {
-                setStatus('');
-                setShowSignatureField(true);  // Unterschriftenfeld wird angezeigt
-            }, 1000);
-        } else {
-            setStatus('Falscher Code!');
+    const handleCodeSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/sign/verify-code', { code });
+            setCodeToken(response.data.codeToken);
+            setSuccess('Code erfolgreich verifiziert.');
+            setError('');
+        } catch (err) {
+            setError(err.response.data.error || 'Fehler bei der Code-Überprüfung.');
+            setSuccess('');
         }
-    } catch (error) {
-        console.error('Fehler bei der Code-Überprüfung:', error);
-        setStatus('Fehler bei der Code-Überprüfung.');
-    }
-};
+    };
 
-  const handleClearSignature = () => {
-    if (signatureRef.current) {
-      signatureRef.current.clear();
-    }
-  };
+    const handleSignatureUpload = async (e) => {
+        e.preventDefault();
+        if (!codeToken) {
+            setError('Bitte verifizieren Sie zuerst den Code.');
+            return;
+        }
 
-  const handleSignatureSubmit = async () => {
-    if (signatureRef.current) {
-      const dataUrl = signatureRef.current.getTrimmedCanvas().toDataURL('image/png');
-      setSignatureDataUrl(dataUrl);
-      const base64String = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+        try {
+            const response = await axios.post(
+                'https://tbsdigitalsolutionsbackend.onrender.com/api/sign/upload-signature',
+                { unterschrift: signature },
+                {
+                    headers: {
+                        Authorization: `Bearer ${codeToken}`,
+                    },
+                }
+            );
 
-      try {
-        const response = await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/upload_signature`, {
-          unterschrift: base64String
-        });
-        alert('Unterschrift erfolgreich gespeichert!');
-        console.log('Server-Antwort:', response.data);
-      } catch (error) {
-        console.error('Fehler beim Hochladen der Unterschrift:', error);
-        alert('Fehler beim Speichern der Unterschrift.');
-      }
-    }
-  };
+            setSuccess(response.data.message);
+            setError('');
+            setSignature(''); // Reset the signature input
+            sigCanvas.current.clear(); // Clear the canvas
+        } catch (err) {
+            setError(err.response.data.error || 'Fehler beim Hochladen der Unterschrift.');
+            setSuccess('');
+        }
+    };
 
-  return (
-    <div className="sign-container">
-      {!showSignatureField && (
-        <div className="code-wrapper">
-          <input
-            type="text"
-            value={code}
-            onChange={handleCodeChange}
-            placeholder="Code eingeben"
-          />
-          <button onClick={handleSubmitCode}>Code einreichen</button>
+    const clearSignature = () => {
+        sigCanvas.current.clear();
+        setSignature('');
+    };
+
+    const saveSignature = () => {
+        setSignature(sigCanvas.current.getTrimmedCanvas().toDataURL('image/png'));
+    };
+
+    return (
+        <div>
+            <h2>Code Verifizieren und Unterschrift Hochladen</h2>
+
+            <form onSubmit={handleCodeSubmit}>
+                <div>
+                    <label htmlFor="code">Code:</label>
+                    <input
+                        type="text"
+                        id="code"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        required
+                    />
+                </div>
+                <button type="submit">Code Verifizieren</button>
+            </form>
+
+            {success && <p style={{ color: 'green' }}>{success}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            {codeToken && (
+                <div>
+                    <h3>Unterschrift erstellen</h3>
+                    <SignatureCanvas
+                        ref={sigCanvas}
+                        penColor="black"
+                        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                    />
+                    <button onClick={saveSignature}>Unterschrift speichern</button>
+                    <button onClick={clearSignature}>Löschen</button>
+
+                    {signature && (
+                        <div>
+                            <h4>Vorschau der Unterschrift:</h4>
+                            <img src={signature} alt="Unterschrift" width="200" />
+                        </div>
+                    )}
+                    <button onClick={handleSignatureUpload}>Unterschrift Hochladen</button>
+                </div>
+            )}
         </div>
-      )}
-      <div className={`status-message ${status === 'Verbindung herstellen...' ? 'connecting' : status === 'Verbunden' ? 'connected' : ''}`}>
-        {status}
-      </div>
-      {showSignatureField && (
-        <div className="signature-form">
-          <SignatureCanvas
-            ref={signatureRef}
-            penColor='black'
-            canvasProps={{ width: 600, height: 200, className: 'signature-canvas' }}
-          />
-          <div className="button-group">
-            <button onClick={handleClearSignature}>Löschen</button>
-            <button onClick={handleSignatureSubmit}>Speichern</button>
-          </div>
-        </div>
-      )}
-      {signatureDataUrl && (
-        <div className="signature-preview">
-          <h3>Unterschrift Vorschau:</h3>
-          <img src={signatureDataUrl} alt="Unterschrift Vorschau" />
-        </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default SignComponent;

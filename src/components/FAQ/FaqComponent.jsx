@@ -1,60 +1,101 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom'; // Ensure that `Link` is imported
+import { Link } from 'react-router-dom';
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Icons importieren
+import {jwtDecode} from 'jwt-decode'; // jwt-decode importieren
 import './FaqComponent.scss';
+import Loading from '../Loading/Loading';
 
-const FaqComponent = ({ isAdmin }) => {
+const FaqComponent = () => {
   const [faqs, setFaqs] = useState([]);
-  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // State für Admin-Status
 
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/faq'); // Update with your API endpoint
-        console.log(response.data); // Log the response data
-        if (Array.isArray(response.data.data)) {
-          setFaqs(response.data.data); // Correctly set the FAQs array
-        } else {
-          console.error('Response data is not an array:', response.data);
+        // Token aus localStorage abrufen
+        const token = localStorage.getItem('token');
+
+        // Überprüfen, ob ein Token vorhanden ist
+        if (token) {
+          // Benutzerinformationen aus dem Token dekodieren
+          const decodedToken = jwtDecode(token);
+          setIsAdmin(decodedToken.userType === 'admin'); // Benutzerstatus setzen
         }
+
+        // Axios GET-Request mit Token im Header
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/faq', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Token im Header setzen
+          },
+        });
+        setFaqs(response.data.data);
       } catch (error) {
-        console.error('Error fetching FAQs:', error);
+        console.error("Fehler beim Laden der FAQs:", error);
+        setError("Fehler beim Laden der FAQs.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchFaqs();
   }, []);
 
-  const toggleFaq = (index) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  const handleDelete = async (id) => {
+    if (window.confirm("Bist du sicher, dass du diese FAQ löschen möchtest?")) {
+      try {
+        // Token aus localStorage abrufen
+        const token = localStorage.getItem('token');
+
+        // Axios DELETE-Request mit Token im Header
+        await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/faq/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Token im Header setzen
+          },
+        });
+        setFaqs(faqs.filter(faq => faq.id !== id));
+      } catch (error) {
+        console.error("Fehler beim Löschen der FAQ:", error);
+      }
+    }
   };
+
+  if (loading) return <Loading />;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="faq-container">
-      {isAdmin && (
-        <Link to="/createfaq" className="add-button">+</Link>
-      )}
-
-      <h1>Frequently Asked Questions</h1>
+      <h1>
+        Häufig gestellte Fragen
+        {isAdmin && (
+          <Link to="/createfaq" className="add-button">+</Link>
+        )}
+      </h1>
 
       <div className="faq-list">
-        {faqs.length > 0 ? (
-          faqs.map((faq, index) => (
-            <div className="faq-item" key={faq.id}>
-              <div className="faq-question" onClick={() => toggleFaq(index)}>
-                {faq.question}
-                <span className="faq-toggle">
-                  <FontAwesomeIcon icon={openFaqIndex === index ? faChevronUp : faChevronDown} />
-                </span>
+        {faqs.map(faq => (
+          <div className="faq-card" key={faq.id}>
+            <h2>{faq.question}</h2>
+            <p>
+              {faq.answer && faq.answer.length > 150
+                ? `${faq.answer.substring(0, 150)}...`
+                : faq.answer || "Keine Antwort verfügbar"}
+            </p>
+            
+            {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
+              <div className="admin-buttons">
+                <Link to={`/faq-edit/${faq.id}`} className="edit-button">
+                  <FaEdit />
+                </Link>
+                <button className="delete-button" onClick={() => handleDelete(faq.id)}>
+                  <FaTrash />
+                </button>
               </div>
-              {openFaqIndex === index && <div className="faq-answer">{faq.answer}</div>}
-            </div>
-          ))
-        ) : (
-          <p>No FAQs available.</p>
-        )}
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

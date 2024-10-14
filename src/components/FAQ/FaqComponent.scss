@@ -2,82 +2,96 @@
   max-width: 700px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #ffffff; /* Weißer Hintergrund für ein sauberes Aussehen */
-  border-radius: 12px; /* Abgerundete Ecken für ein modernes Gefühl */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sanfter Schatten für mehr Tiefe */
-  position: relative; /* Wichtig für die Positionierung des "+"-Buttons */
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
 
   h1 {
-    text-align: center;
+    display: flex;
+    justify-content: space-between; /* Abstand zwischen Titel und Button */
+    align-items: center; /* Vertikale Ausrichtung */
     margin-bottom: 30px;
-    font-size: 2.5em; /* Größere Schriftgröße für den Titel */
-    color: #333; /* Dunkelgraue Farbe für besseren Kontrast */
-    font-weight: 700; /* Fett für bessere Lesbarkeit */
-  }
+    font-size: 2.5em;
+    color: #333;
+    font-weight: 700;
 
-  .add-button {
-    display: inline-block;
-    padding: 10px;
-    background-color: #007bff; /* Primärfarbe */
-    color: #fff;
-    font-size: 2rem; /* Größere Schriftgröße für den "+" */
-    font-weight: bold;
-    text-align: center;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    line-height: 40px; /* Anpassung der vertikalen Ausrichtung des "+" */
-    text-decoration: none; /* Kein Unterstrich */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    position: absolute; /* Absolute Positionierung */
-    top: 10px; /* Abstand vom oberen Rand des Containers */
-    right: 10px; /* Abstand vom rechten Rand des Containers */
-
-    &:hover {
-      background-color: #0056b3; /* Dunklere Farbe beim Hover */
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-  }
-}
-
-.faq-list {
-  .faq-item {
-    margin-bottom: 15px;
-    border-radius: 8px; /* Abgerundete Ecken für die FAQ-Elemente */
-    overflow: hidden;
-    border: 1px solid #e0e0e0; /* Helle Randfarbe für einen sanften Look */
-
-    .faq-question {
-      background-color: #f7f7f7; /* Heller Hintergrund für Fragen */
-      padding: 20px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.2em; /* Etwas größere Schriftgröße für Fragen */
-      color: #444; /* Sanfte, aber gut sichtbare Textfarbe */
-      font-weight: 600; /* Fett für besseren Kontrast */
-      transition: background-color 0.3s, color 0.3s; /* Sanfte Übergänge für Hover-Effekte */
+    .add-button {
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      line-height: 40px;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
       &:hover {
-        background-color: #e0e0e0; /* Dunklerer Hintergrund beim Hover */
-        color: #007bff; /* Wechsel der Textfarbe beim Hover */
-      }
-
-      .faq-toggle {
-        font-size: 1.3em; /* Größere Icons für bessere Sichtbarkeit */
-        color: #007bff; /* Farbe für das Toggle-Icon */
-        transition: transform 0.3s; /* Sanfter Übergang für das Icon */
+        background-color: #0056b3;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
       }
     }
+  }
 
-    .faq-answer {
+  .error {
+    color: red;
+    margin-bottom: 20px;
+  }
+
+  .faq-list {
+    .faq-card {
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
       padding: 20px;
-      background-color: #ffffff; /* Weißer Hintergrund für Antworten */
-      border-top: 1px solid #e0e0e0; /* Trennlinie zwischen Frage und Antwort */
-      font-size: 1em;
-      color: #666; /* Sanfte Farbe für die Antwort */
+      background-color: #f9f9f9;
+
+      h2 {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      p {
+        color: #666;
+        margin-bottom: 15px;
+      }
+
+      .btn-more {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+
+      .admin-buttons {
+        margin-top: 10px;
+
+        .edit-button, .delete-button {
+          background: none;
+          border: none;
+          color: #007bff;
+          cursor: pointer;
+          font-size: 1.2em;
+          margin-right: 10px;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
 }
@@ -85,15 +99,15 @@
 @media (max-width: 768px) {
   .faq-container {
     padding: 20px;
-  }
 
-  h1 {
-    font-size: 2em; /* Kleinere Schriftgröße für den Titel auf mobilen Geräten */
-  }
+    h1 {
+      font-size: 2em;
+    }
 
-  .faq-item {
-    .faq-question {
-      font-size: 1.1em; /* Kleinere Schriftgröße für Fragen auf mobilen Geräten */
+    .faq-card {
+      h2 {
+        font-size: 1.2em;
+      }
     }
   }
 }
