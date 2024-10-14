@@ -1,145 +1,125 @@
-.sign-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$primary-color: #007bff;
+$error-color: #dc3545;
+$success-color: #28a745;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$border-radius: 8px;
+$shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+$font-family: 'Arial', sans-serif;
 
-  .code-wrapper {
+.sign-component {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    max-width: 500px;
-
-    input[type='text'] {
-      padding: 15px;
-      border: 1px solid #d1d1d1;
-      border-radius: 8px;
-      font-size: 16px;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-
-      &:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        outline: none;
-      }
-    }
-
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      background-color: #007bff;
-      color: #ffffff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-
-      &:hover {
-        background-color: #0056b3;
-      }
-
-      &:active {
-        transform: scale(0.98);
-      }
-
-      &:disabled {
-        background-color: #b0bec5;
-        cursor: not-allowed;
-      }
-    }
-  }
-
-  .status-message {
-    margin: 20px 0;
-    font-size: 18px;
-    font-weight: 500;
-    color: #333;
-    text-align: center;
-    transition: opacity 0.3s ease;
-
-    &.connecting {
-      color: #f39c12;
-      animation: blink 1s step-start 0s infinite;
-    }
-
-    &.connected {
-      color: #2ecc71;
-    }
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  .signature-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+    align-items: center;
+    padding: 20px;
+    background-color: $background-color;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
     max-width: 600px;
-    text-align: center;
+    margin: 30px auto;
 
-    .signature-canvas {
-      border: 1px solid #d1d1d1;
-      border-radius: 8px;
-      width: 100%;
-      height: auto;
+    h2, h3, h4 {
+        color: $primary-color;
+        font-family: $font-family;
+        margin-bottom: 15px;
     }
 
-    .button-group {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
+    .code-form {
+        width: 100%;
+        margin-bottom: 20px;
 
-      button {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-
-        &:first-of-type {
-          background-color: #e0e0e0;
-          color: #333;
-
-          &:hover {
-            background-color: #c0c0c0;
-          }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
-        &:last-of-type {
-          background-color: #28a745;
-          color: #ffffff;
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: $border-radius;
+            font-family: $font-family;
 
-          &:hover {
-            background-color: #218838;
-          }
+            &:focus {
+                border-color: $primary-color;
+                outline: none;
+                box-shadow: 0 0 5px rgba($primary-color, 0.5);
+            }
         }
-      }
-    }
-  }
 
-  .signature-preview {
-    margin-top: 20px;
-    text-align: center;
+        button {
+            background-color: $primary-color;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: $border-radius;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
 
-    img {
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #d1d1d1;
-      border-radius: 8px;
+            &:hover {
+                background-color: darken($primary-color, 10%);
+            }
+        }
     }
-  }
+
+    .message {
+        font-family: $font-family;
+        margin: 10px 0;
+
+        &.success {
+            color: $success-color;
+        }
+
+        &.error {
+            color: $error-color;
+        }
+    }
+
+    .signature-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        padding: 20px;
+        background-color: $card-background;
+        border-radius: $border-radius;
+        box-shadow: $shadow;
+        width: 100%;
+
+        .sigCanvas {
+            border: 1px solid #ced4da;
+            border-radius: $border-radius;
+            margin-bottom: 10px;
+        }
+
+        .signature-buttons {
+            display: flex;
+            gap: 10px;
+
+            button {
+                background-color: $primary-color;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: $border-radius;
+                cursor: pointer;
+                font-size: 16px;
+
+                &:hover {
+                    background-color: darken($primary-color, 10%);
+                }
+            }
+        }
+
+        .signature-preview {
+            margin-top: 10px;
+
+            img {
+                border: 1px solid #ced4da;
+                border-radius: $border-radius;
+            }
+        }
+    }
 }

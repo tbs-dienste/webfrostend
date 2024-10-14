@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import SignatureCanvas from 'react-signature-canvas';
+import './SignComponent.scss'; // Importiere das SCSS
 
 const SignComponent = () => {
     const [code, setCode] = useState('');
@@ -61,39 +62,39 @@ const SignComponent = () => {
     };
 
     return (
-        <div>
+        <div className="sign-component">
             <h2>Code Verifizieren und Unterschrift Hochladen</h2>
 
-            <form onSubmit={handleCodeSubmit}>
-                <div>
-                    <label htmlFor="code">Code:</label>
-                    <input
-                        type="text"
-                        id="code"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        required
-                    />
-                </div>
+            <form className="code-form" onSubmit={handleCodeSubmit}>
+                <label htmlFor="code">Code:</label>
+                <input
+                    type="text"
+                    id="code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    required
+                />
                 <button type="submit">Code Verifizieren</button>
             </form>
 
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {success && <p className="message success">{success}</p>}
+            {error && <p className="message error">{error}</p>}
 
             {codeToken && (
-                <div>
+                <div className="signature-section">
                     <h3>Unterschrift erstellen</h3>
                     <SignatureCanvas
                         ref={sigCanvas}
                         penColor="black"
                         canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
                     />
-                    <button onClick={saveSignature}>Unterschrift speichern</button>
-                    <button onClick={clearSignature}>Löschen</button>
+                    <div className="signature-buttons">
+                        <button onClick={saveSignature}>Unterschrift speichern</button>
+                        <button onClick={clearSignature}>Löschen</button>
+                    </div>
 
                     {signature && (
-                        <div>
+                        <div className="signature-preview">
                             <h4>Vorschau der Unterschrift:</h4>
                             <img src={signature} alt="Unterschrift" width="200" />
                         </div>
