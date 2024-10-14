@@ -16,23 +16,25 @@ const SignComponent = () => {
 
   const handleSubmitCode = async () => {
     try {
-      setStatus('Verbindung herstellen...');
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/verify-code', { code });
-      
-      if (response.data.id) {
-        setStatus('Verbunden');
-        setTimeout(() => {
-          setStatus('');
-          setShowSignatureField(true);
-        }, 1000);
-      } else {
-        setStatus('Falscher Code!');
-      }
+        setStatus('Verbindung herstellen...');
+        
+        // Senden des Codes zur Verifizierung
+        const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/verify', { code });
+        
+        if (response.data.id) {
+            setStatus('Verbunden');
+            setTimeout(() => {
+                setStatus('');
+                setShowSignatureField(true);  // Unterschriftenfeld wird angezeigt
+            }, 1000);
+        } else {
+            setStatus('Falscher Code!');
+        }
     } catch (error) {
-      console.error('Fehler bei der Code-Überprüfung:', error);
-      setStatus('Fehler bei der Code-Überprüfung.');
+        console.error('Fehler bei der Code-Überprüfung:', error);
+        setStatus('Fehler bei der Code-Überprüfung.');
     }
-  };
+};
 
   const handleClearSignature = () => {
     if (signatureRef.current) {
