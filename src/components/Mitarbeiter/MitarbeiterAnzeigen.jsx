@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaDownload } from 'react-icons/fa';
 import { Document, Page, Text, StyleSheet, pdf } from '@react-pdf/renderer';
+import './MitarbeiterAnzeigen.scss'; // Importiere die SCSS-Datei
 
 // Styles für das PDF-Dokument
 const styles = StyleSheet.create({
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
     },
 });
 
-// Funktion zum Herunterladen des PDFs
 const handleDownloadPDF = async (formData) => {
     const doc = (
         <Document>
@@ -86,7 +86,6 @@ const handleDownloadPDF = async (formData) => {
                     - Passwort: {formData.benutzername} (gleich dem Benutzernamen)
                 </Text>
 
-
                 <Text style={styles.section}>
                     Bei Fragen stehen wir Ihnen gerne zur Verfügung.
                 </Text>
@@ -109,7 +108,6 @@ const handleDownloadPDF = async (formData) => {
     link.click();
     URL.revokeObjectURL(link.href);
 };
-
 
 const MitarbeiterAnzeigen = () => {
     const { id } = useParams();
@@ -201,28 +199,28 @@ const MitarbeiterAnzeigen = () => {
                 <div>
                     {editMode ? (
                         <div>
-                            <label>Mitarbeiternummer:</label>
-                            <input name="mitarbeiternummer" value={formData.mitarbeiternummer} onChange={handleChange} />
-                            <label>Vorname:</label>
-                            <input name="vorname" value={formData.vorname} onChange={handleChange} />
-                            <label>Nachname:</label>
-                            <input name="nachname" value={formData.nachname} onChange={handleChange} />
-                            <label>Adresse:</label>
-                            <input name="adresse" value={formData.adresse} onChange={handleChange} />
-                            <label>Postleitzahl:</label>
-                            <input name="postleitzahl" value={formData.postleitzahl} onChange={handleChange} />
-                            <label>Ort:</label>
-                            <input name="ort" value={formData.ort} onChange={handleChange} />
-                            <label>Email:</label>
-                            <input name="email" value={formData.email} onChange={handleChange} />
-                            <label>Mobil:</label>
-                            <input name="mobil" value={formData.mobil} onChange={handleChange} />
-                            <label>Geschlecht:</label>
-                            <input name="geschlecht" value={formData.geschlecht} onChange={handleChange} />
-                            <label>Benutzername:</label>
-                            <input name="benutzername" value={formData.benutzername} onChange={handleChange} />
-                            <label>IBAN:</label>
-                            <input name="iban" value={formData.iban} onChange={handleChange} />
+                            <label>Mitarbeiternummer</label>
+                            <input type="text" name="mitarbeiternummer" value={formData.mitarbeiternummer} onChange={handleChange} />
+                            <label>Vorname</label>
+                            <input type="text" name="vorname" value={formData.vorname} onChange={handleChange} />
+                            <label>Nachname</label>
+                            <input type="text" name="nachname" value={formData.nachname} onChange={handleChange} />
+                            <label>Adresse</label>
+                            <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} />
+                            <label>PLZ</label>
+                            <input type="text" name="postleitzahl" value={formData.postleitzahl} onChange={handleChange} />
+                            <label>Ort</label>
+                            <input type="text" name="ort" value={formData.ort} onChange={handleChange} />
+                            <label>Email</label>
+                            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                            <label>Mobil</label>
+                            <input type="text" name="mobil" value={formData.mobil} onChange={handleChange} />
+                            <label>Geschlecht</label>
+                            <input type="text" name="geschlecht" value={formData.geschlecht} onChange={handleChange} />
+                            <label>Benutzername</label>
+                            <input type="text" name="benutzername" value={formData.benutzername} onChange={handleChange} />
+                            <label>IBAN</label>
+                            <input type="text" name="iban" value={formData.iban} onChange={handleChange} />
                             <button onClick={handleSave}>Speichern</button>
                         </div>
                     ) : (
@@ -231,7 +229,7 @@ const MitarbeiterAnzeigen = () => {
                             <p><strong>Vorname:</strong> {selectedMitarbeiter.vorname}</p>
                             <p><strong>Nachname:</strong> {selectedMitarbeiter.nachname}</p>
                             <p><strong>Adresse:</strong> {selectedMitarbeiter.adresse}</p>
-                            <p><strong>Postleitzahl:</strong> {selectedMitarbeiter.postleitzahl}</p>
+                            <p><strong>PLZ:</strong> {selectedMitarbeiter.postleitzahl}</p>
                             <p><strong>Ort:</strong> {selectedMitarbeiter.ort}</p>
                             <p><strong>Email:</strong> {selectedMitarbeiter.email}</p>
                             <p><strong>Mobil:</strong> {selectedMitarbeiter.mobil}</p>
@@ -239,20 +237,14 @@ const MitarbeiterAnzeigen = () => {
                             <p><strong>Benutzername:</strong> {selectedMitarbeiter.benutzername}</p>
                             <p><strong>IBAN:</strong> {selectedMitarbeiter.iban}</p>
                             <button onClick={handleEditToggle}>Bearbeiten</button>
-                            <button onClick={() => handleDownloadPDF(selectedMitarbeiter)}>
-                                <FaDownload /> PDF herunterladen
-                            </button>
-                            <Link
-                                to={`/mitarbeiter/${id}/reset-password`}
-                                style={{ textDecoration: 'underline', color: 'blue' }}
-                            >
-                                Passwort zurücksetzen
-                            </Link>
+                            <button onClick={handleDownloadPDF.bind(null, selectedMitarbeiter)}>PDF herunterladen <FaDownload /></button>
+                            <button onClick={handleResetPassword}>Passwort zurücksetzen</button>
                         </div>
                     )}
+                    <Link to="/mitarbeiter">Zurück zur Mitarbeiterübersicht</Link>
                 </div>
             ) : (
-                <p>Mitarbeiter nicht gefunden.</p>
+                <p>Mitarbeiter nicht gefunden</p>
             )}
         </div>
     );

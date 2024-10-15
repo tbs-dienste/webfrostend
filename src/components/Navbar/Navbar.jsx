@@ -1,52 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Korrekt importieren
+import { jwtDecode } from 'jwt-decode';
 import './Navbar.scss';
 import logo from '../../logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSignOutAlt, 
-  faHome, 
-  faCogs as faServicestack, 
-  faPhoneAlt, 
-  faDollarSign, 
-  faQuestionCircle, 
-  faGift, 
-  faUser, 
-  faUsers, 
-  faBarcode, 
-  faBars as faMenu 
+import {
+  faSignOutAlt,
+  faHome,
+  faCogs as faServicestack,
+  faPhoneAlt,
+  faDollarSign,
+  faQuestionCircle,
+  faGift,
+  faUser,
+  faUsers,
+  faBarcode,
+  faBars as faMenu
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
   const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false); // Initialisiere Admin-Status mit false
+  const [isAdmin, setIsAdmin] = useState(false);
   const [benutzername, setBenutzername] = useState('');
   const [userType, setUserType] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Neuer Zustand für Login-Status
 
-  const navigate = useNavigate(); // Hook zum Navigieren
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedToken = jwtDecode(token); // Korrekt verwendet
+        const decodedToken = jwtDecode(token);
         setBenutzername(decodedToken.benutzername);
         setUserType(decodedToken.userType);
-
-        // Setze isAdmin auf true, wenn der Benutzer ein Admin ist
         setIsAdmin(decodedToken.userType === 'admin');
+        setIsLoggedIn(true); // Benutzer ist eingeloggt
       } catch (error) {
         console.error('Fehler beim Decodieren des Tokens:', error);
       }
+    } else {
+      setIsLoggedIn(false); // Benutzer ist nicht eingeloggt
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     setBenutzername('');
-    setIsAdmin(false); // Admin-Status zurücksetzen
+    setIsAdmin(false);
+    setIsLoggedIn(false); // Setze Login-Status auf false
     navigate('/login');
   };
 
@@ -58,7 +61,7 @@ function Navbar() {
     } else {
       document.body.classList.remove('no-scroll');
     }
-    return () => document.body.classList.remove('no-scroll'); // Cleanup
+    return () => document.body.classList.remove('no-scroll');
   }, [burgerMenuActive]);
 
   return (
@@ -74,7 +77,7 @@ function Navbar() {
           <ul>
             <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />            
+            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
 
@@ -86,19 +89,15 @@ function Navbar() {
             )}
 
             {userType === 'admin' || userType === 'mitarbeiter' ? (
-              <>
-                <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
+              <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
             ) : null}
-              
-           
-            
-            <button className="logout-button" onClick={handleLogout}>
-              <FontAwesomeIcon icon={faSignOutAlt} />
-              Logout
-            </button>
 
-            {!isAdmin && (
+            {isLoggedIn ? (
+              <button className="logout-button" onClick={handleLogout}>
+                <FontAwesomeIcon icon={faSignOutAlt} />
+                Logout
+              </button>
+            ) : (
               <NavItem to="/login" text="Login" icon={faSignOutAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
             )}
           </ul>

@@ -1,91 +1,95 @@
-.mitarbeiter-anzeigen {
-  padding: 20px;
-  background-color: #f8f9fa;
+// Farben
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$text-color: #343a40;
 
-  header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
+// Layout-Container
+.mitarbeiter-anzeigen-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: $background-color;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-      .logo {
-          height: 50px;
-          margin-right: 20px;
-      }
+// Titel
+h2 {
+    text-align: center;
+    color: $primary-color;
+    margin-bottom: 20px;
+}
 
-      h1 {
-          font-size: 2em;
-          color: #343a40;
-      }
-  }
+// Formularelemente
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: $secondary-color;
+}
 
-  .mitarbeiter-details {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      border: 1px solid #dee2e6;
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid $secondary-color;
+    border-radius: 4px;
+    transition: border-color 0.3s;
 
-      h2 {
-          color: #495057;
-          margin-bottom: 20px;
-      }
+    &:focus {
+        border-color: $primary-color;
+        outline: none;
+    }
+}
 
-      .details {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 15px;
+// Buttons
+button {
+    background-color: $primary-color;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
 
-          label {
-              font-weight: bold;
-              color: #6c757d;
-          }
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
 
-          input {
-              padding: 10px;
-              border: 1px solid #ced4da;
-              border-radius: 4px;
-              width: 60%;
-          }
+    & + button {
+        margin-left: 10px;
+    }
+}
 
-          span {
-              align-self: center;
-          }
-      }
+// Mitarbeiterdetails
+p {
+    font-size: 14px;
+    color: $text-color;
+    margin-bottom: 10px;
 
-      .actions {
-          display: flex;
-          gap: 10px;
-          justify-content: flex-end;
+    strong {
+        color: $primary-color;
+    }
+}
 
-          button {
-              display: flex;
-              align-items: center;
-              padding: 10px 15px;
-              border: none;
-              border-radius: 4px;
-              color: white;
-              cursor: pointer;
+// Link
+a {
+    text-decoration: underline;
+    color: $primary-color;
+    margin-top: 10px;
+    display: inline-block;
 
-              &.save-button {
-                  background-color: #28a745;
-              }
+    &:hover {
+        color: darken($primary-color, 10%);
+    }
+}
 
-              &.cancel-button {
-                  background-color: #dc3545;
-              }
-
-              &.edit-button {
-                  background-color: #007bff;
-              }
-
-              &.pdf-button {
-                  background-color: #ffc107;
-              }
-
-              svg {
-                  margin-right: 5px;
-              }
-          }
-      }
-  }
+// Ladespin
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: $secondary-color;
 }
