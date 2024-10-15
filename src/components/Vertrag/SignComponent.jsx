@@ -8,7 +8,6 @@ const SignComponent = () => {
     const [codeToken, setCodeToken] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [signature, setSignature] = useState('');
     const sigCanvas = useRef({});
 
     const handleCodeSubmit = async (e) => {
@@ -24,17 +23,17 @@ const SignComponent = () => {
         }
     };
 
-    const handleSignatureUpload = async (e) => {
-        e.preventDefault();
+    const handleSignatureUpload = async () => {
         if (!codeToken) {
             setError('Bitte verifizieren Sie zuerst den Code.');
             return;
         }
 
         try {
+            const signatureData = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
             const response = await axios.post(
                 'https://tbsdigitalsolutionsbackend.onrender.com/api/sign/upload-signature',
-                { unterschrift: signature },
+                { unterschrift: signatureData },
                 {
                     headers: {
                         Authorization: `Bearer ${codeToken}`,
@@ -44,7 +43,6 @@ const SignComponent = () => {
 
             setSuccess(response.data.message);
             setError('');
-            setSignature(''); // Reset the signature input
             sigCanvas.current.clear(); // Clear the canvas
         } catch (err) {
             setError(err.response.data.error || 'Fehler beim Hochladen der Unterschrift.');
@@ -54,28 +52,31 @@ const SignComponent = () => {
 
     const clearSignature = () => {
         sigCanvas.current.clear();
-        setSignature('');
     };
 
-    const saveSignature = () => {
-        setSignature(sigCanvas.current.getTrimmedCanvas().toDataURL('image/png'));
+    const handleSignatureChange = () => {
+        // Speichert die Unterschrift automatisch, wenn sich das Canvas ändert
+        const signatureData = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
+        // Hier könnte man einen Upload der Unterschrift einbauen, wenn erforderlich
     };
 
     return (
         <div className="sign-component">
             <h2>Code Verifizieren und Unterschrift Hochladen</h2>
 
-            <form className="code-form" onSubmit={handleCodeSubmit}>
-                <label htmlFor="code">Code:</label>
-                <input
-                    type="text"
-                    id="code"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                />
-                <button type="submit">Code Verifizieren</button>
-            </form>
+            {!codeToken && (
+                <form className="code-form" onSubmit={handleCodeSubmit}>
+                    <label htmlFor="code">Code:</label>
+                    <input
+                        type="text"
+                        id="code"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        required
+                    />
+                    <button type="submit">Code Verifizieren</button>
+                </form>
+            )}
 
             {success && <p className="message success">{success}</p>}
             {error && <p className="message error">{error}</p>}
@@ -87,19 +88,12 @@ const SignComponent = () => {
                         ref={sigCanvas}
                         penColor="black"
                         canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                        onEnd={handleSignatureChange} // Speichert die Unterschrift automatisch, wenn das Zeichnen endet
                     />
                     <div className="signature-buttons">
-                        <button onClick={saveSignature}>Unterschrift speichern</button>
                         <button onClick={clearSignature}>Löschen</button>
+                        <button onClick={handleSignatureUpload}>Unterschrift Hochladen</button>
                     </div>
-
-                    {signature && (
-                        <div className="signature-preview">
-                            <h4>Vorschau der Unterschrift:</h4>
-                            <img src={signature} alt="Unterschrift" width="200" />
-                        </div>
-                    )}
-                    <button onClick={handleSignatureUpload}>Unterschrift Hochladen</button>
                 </div>
             )}
         </div>

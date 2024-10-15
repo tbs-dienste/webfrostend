@@ -47,7 +47,7 @@ const KundenAnzeigen = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedData(prevData => ({ ...prevData, [name]: value }));
+    setEditedData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSave = async () => {
@@ -76,6 +76,41 @@ const KundenAnzeigen = () => {
     }
   };
 
+  const handleSignatureReset = async () => {
+    try {
+      const token = localStorage.getItem('token'); // Token für Authentifizierung abrufen
+      const customerId = selectedKunde.id; // Aktuelle Kunden-ID verwenden
+  
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/sign/reset-signature', {
+        customerId: customerId, // Hier wird die aktuelle ID verwendet
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Token für Authentifizierung
+        },
+      });
+  
+      console.log('Unterschrift erfolgreich zurückgesetzt:', response.data);
+      alert('Unterschrift erfolgreich zurückgesetzt');
+  
+      // Kundendaten nach dem Zurücksetzen der Unterschrift erneut abrufen
+      const updatedResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const updatedKunde = updatedResponse.data.data;
+      setSelectedKunde(updatedKunde); // Zustand mit aktualisierten Daten setzen
+      setOriginalData(updatedKunde); // Auch die originalen Daten aktualisieren
+  
+      setEditMode(false); // Editiermodus beenden
+    } catch (error) {
+      console.error('Fehler beim Zurücksetzen der Unterschrift:', error);
+      alert('Fehler beim Zurücksetzen der Unterschrift. Bitte versuche es später noch einmal.');
+    }
+  };
+  
+
   if (loading) {
     return <div className="loading">Lade Kunde...</div>;
   }
@@ -87,7 +122,7 @@ const KundenAnzeigen = () => {
         <div>
           {editMode ? (
             <div>
-              {/* Hier die Eingabefelder für die Kundendetails */}
+              {/* Eingabefelder für die Kundendetails */}
               <div className="input-group">
                 <label>Kundennummer:</label>
                 <input
@@ -206,21 +241,32 @@ const KundenAnzeigen = () => {
                 />
               </div>
               <div className="input-group">
-                <label>Auftragsnummer:</label>
-                <input
-                  type="text"
-                  name="auftragsnummer"
-                  value={editedData.auftragsnummer || ''}
-                  onChange={handleInputChange}
-                />
+                <label>Unterschrift:</label>
+                {editedData.unterschrift ? (
+                  <img
+                    src={`data:image/png;base64,${editedData.unterschrift}`}
+                    alt="Unterschrift"
+                    className="signature-image"
+                  />
+                ) : (
+                  <p>Keine Unterschrift vorhanden</p>
+                )}
+                <button onClick={handleSignatureReset}>
+                  <FaUndo /> Unterschrift zurücksetzen
+                </button>
               </div>
-
-              <button onClick={handleSave}><FaSave /> Speichern</button>
-              <button onClick={handleUndo}><FaUndo /> Änderungen zurücksetzen</button>
+              <div className="button-group">
+                <button onClick={handleSave}>
+                  <FaSave /> Speichern
+                </button>
+                <button onClick={handleUndo}>
+                  <FaUndo /> Änderungen zurücksetzen
+                </button>
+              </div>
             </div>
           ) : (
             <div>
-              {/* Hier die Anzeige der Kundendetails */}
+              {/* Kundendetails anzeigen */}
               <p><strong>Kundennummer:</strong> {selectedKunde.kundennummer}</p>
               <p><strong>Firma:</strong> {selectedKunde.firma}</p>
               <p><strong>Vorname:</strong> {selectedKunde.vorname}</p>
@@ -234,36 +280,28 @@ const KundenAnzeigen = () => {
               <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
               <p><strong>Code:</strong> {selectedKunde.code}</p>
-              <p><strong>Auftragsnummer:</strong> {selectedKunde.auftragsnummer}</p>
-              
-              {/* Annahme: selectedKunde.dienstleistungen ist ein Array */}
-              <p><strong>Dienstleistungen:</strong> 
-                {selectedKunde.dienstleistungen && Array.isArray(selectedKunde.dienstleistungen)
-                  ? selectedKunde.dienstleistungen.map((dienstleistung, index) => (
-                      <span key={index}>{dienstleistung.title}{index < selectedKunde.dienstleistungen.length - 1 ? ', ' : ''}</span>
-                    ))
-                  : 'Keine Dienstleistungen verfügbar.'}
-              </p>
-              
-{selectedKunde.unterschrift ? (
-  <div>
-    <p><strong>Unterschrift:</strong></p>
-    <img
-      src={`data:image/png;base64,${selectedKunde.unterschrift}`}
-      alt="Kunden Unterschrift"
-      style={{ maxWidth: '400px', height: 'auto' }}
-    />
-  </div>
-) : (
-  <p><strong>Unterschrift:</strong> Keine Unterschrift da</p>
-)}
-
-              <button onClick={handleEdit}><FaEdit /> Bearbeiten</button>
+              <div className="input-group">
+                <label>Unterschrift:</label>
+                {selectedKunde.unterschrift ? (
+                  <img
+                    src={`data:image/png;base64,${selectedKunde.unterschrift}`}
+                    alt="Unterschrift"
+                    className="signature-image"
+                  />
+                ) : (
+                  <p>Keine Unterschrift vorhanden</p>
+                )}
+              </div>
+              <div className="button-group">
+                <button onClick={handleEdit}>
+                  <FaEdit /> Bearbeiten
+                </button>
+              </div>
             </div>
           )}
         </div>
       ) : (
-        <p>Keine Kundendaten gefunden.</p>
+        <p>Kunde nicht gefunden.</p>
       )}
     </div>
   );
