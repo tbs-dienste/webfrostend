@@ -9,6 +9,7 @@ const SignComponent = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const sigCanvas = useRef({});
+    const [signatureUploaded, setSignatureUploaded] = useState(false); // Neuen State für den Upload-Status hinzufügen
 
     const handleCodeSubmit = async (e) => {
         e.preventDefault();
@@ -44,6 +45,7 @@ const SignComponent = () => {
             setSuccess(response.data.message);
             setError('');
             sigCanvas.current.clear(); // Clear the canvas
+            setSignatureUploaded(true); // Setze den Status auf true, wenn die Unterschrift hochgeladen wurde
         } catch (err) {
             setError(err.response.data.error || 'Fehler beim Hochladen der Unterschrift.');
             setSuccess('');
@@ -81,20 +83,24 @@ const SignComponent = () => {
             {success && <p className="message success">{success}</p>}
             {error && <p className="message error">{error}</p>}
 
-            {codeToken && (
-                <div className="signature-section">
-                    <h3>Unterschrift erstellen</h3>
-                    <SignatureCanvas
-                        ref={sigCanvas}
-                        penColor="black"
-                        canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
-                        onEnd={handleSignatureChange} // Speichert die Unterschrift automatisch, wenn das Zeichnen endet
-                    />
-                    <div className="signature-buttons">
-                        <button onClick={clearSignature}>Löschen</button>
-                        <button onClick={handleSignatureUpload}>Unterschrift Hochladen</button>
+            {signatureUploaded ? ( // Zeige permanenten Text an, wenn die Unterschrift hochgeladen wurde
+                <p className="message success">Ihre Unterschrift wurde erfolgreich hochgeladen!</p>
+            ) : (
+                codeToken && (
+                    <div className="signature-section">
+                        <h3>Unterschrift erstellen</h3>
+                        <SignatureCanvas
+                            ref={sigCanvas}
+                            penColor="black"
+                            canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
+                            onEnd={handleSignatureChange} // Speichert die Unterschrift automatisch, wenn das Zeichnen endet
+                        />
+                        <div className="signature-buttons">
+                            <button onClick={clearSignature}>Löschen</button>
+                            <button onClick={handleSignatureUpload}>Unterschrift Hochladen</button>
+                        </div>
                     </div>
-                </div>
+                )
             )}
         </div>
     );

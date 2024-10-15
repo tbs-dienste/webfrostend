@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Icons importieren
-import {jwtDecode} from 'jwt-decode'; // jwt-decode importieren
+import { jwtDecode } from 'jwt-decode'; // jwt-decode importieren
 import './FaqComponent.scss';
 import Loading from '../Loading/Loading';
 

@@ -51,6 +51,8 @@ import BewerbungForm from './components/Mitarbeiter/BewerbungForm';
 import Arbeitsvertrag from './components/Mitarbeiter/Arbeitsvertrag';
 import AGB from './components/AGB';
 import RechnungForm from './components/Rechnung/RechnungForm';
+import FaqEditComponent from './components/FAQ/FaqEditComponent';
+import ResetPassword from './components/Mitarbeiter/ResetPassword';
 
 const App = () => {
   
@@ -106,6 +108,7 @@ const App = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/faq-edit/:id" element={<FaqEditComponent />} />
           <Route path="/audiosettings" element={<AudioSettings />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/lizenzen" element={<Lizenzen />} />
@@ -126,7 +129,7 @@ const App = () => {
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
-           
+              <Route path="/mitarbeiter/:id/reset-password" element={<ResetPassword />} />
     
             <Route path="/login" element={<Login />} />
      

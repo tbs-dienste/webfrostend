@@ -1,83 +1,118 @@
-.mitarbeiter-anzeigen-container {
-  padding: 2rem;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-}
+.mitarbeiter-container {
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
 
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
 
-.mitarbeiter-anzeigen-title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
-}
+  .mitarbeiter-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 
-.add-btn {
-  background-color: #28a745;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
+    .mitarbeiter-box {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
 
-.add-btn span {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-}
+      &:hover {
+        transform: translateY(-3px);
+      }
 
-.mitarbeiter-liste {
-  list-style: none;
-  padding: 0;
-}
+      p {
+        font-size: 1.2em;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #333;
+      }
 
-.mitarbeiter-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: white;
-  margin-bottom: 1rem;
-  border-radius: 5px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
-}
+      .mitarbeiter-buttons {
+        display: flex;
+        justify-content: space-between;
 
-.mitarbeiter-name {
-  font-weight: 500;
-  color: #333;
-}
+        a {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #007bff;
+          font-weight: 600;
+          transition: color 0.2s;
 
-.mitarbeiter-status {
-  font-weight: 400;
-  color: #666;
-}
+          &:hover {
+            color: #0056b3;
+          }
 
-.details-link, .delete-button {
-  background-color: #007bff;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 0.5rem;
-}
+          svg {
+            margin-right: 5px;
+          }
+        }
 
-.delete-button {
-  background-color: #dc3545;
-}
+        button {
+          background-color: transparent;
+          border: none;
+          color: #dc3545;
+          font-weight: 600;
+          cursor: pointer;
+          transition: color 0.2s;
 
-.details-link:hover, .delete-button:hover {
-  background-color: #0056b3;
-}
+          &:hover {
+            color: #c82333;
+          }
+        }
+      }
+    }
+  }
 
-.delete-button:hover {
-  background-color: #c82333;
+  .confirmation-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+
+    p {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    button {
+      margin-right: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:first-of-type {
+        background-color: #dc3545;
+        color: white;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+
+      &:last-of-type {
+        background-color: #6c757d;
+        color: white;
+
+        &:hover {
+          background-color: #5a6268;
+        }
+      }
+    }
+  }
 }

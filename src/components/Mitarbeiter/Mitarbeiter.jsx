@@ -13,24 +13,21 @@ const Mitarbeiter = () => {
   useEffect(() => {
     const fetchMitarbeiter = async () => {
       try {
-        const token = localStorage.getItem('token'); // Token aus localStorage holen
+        const token = localStorage.getItem('token');
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter`, {
           headers: {
-            Authorization: `Bearer ${token}` // Token im Header einfügen
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        const data = response.data.data;
-        if (Array.isArray(data)) {
-          setMitarbeiterListe(data);
+        if (Array.isArray(response.data.data)) {
+          setMitarbeiterListe(response.data.data);
         } else {
-          console.error('Erwartet ein Array, aber erhalten:', data);
-          setMitarbeiterListe([]);
+          console.error('Expected an array but received:', response.data);
         }
       } catch (error) {
-        console.error('Fehler beim Abrufen der Mitarbeiter:', error);
-        alert('Fehler beim Abrufen der Mitarbeiter. Bitte versuche es später noch einmal.');
-        setMitarbeiterListe([]);
+        console.error('Error fetching employees:', error);
+        alert('Error fetching employees. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -46,57 +43,51 @@ const Mitarbeiter = () => {
 
   const handleDeleteConfirmation = async () => {
     try {
-      const token = localStorage.getItem('token'); // Token aus localStorage holen
+      const token = localStorage.getItem('token');
       await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${mitarbeiterIdToDelete}`, {
         headers: {
-          Authorization: `Bearer ${token}` // Token im Header einfügen
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      const updatedListe = mitarbeiterListe.filter(mitarbeiter => mitarbeiter.id !== mitarbeiterIdToDelete);
-      setMitarbeiterListe(updatedListe);
+      setMitarbeiterListe(mitarbeiterListe.filter((m) => m.id !== mitarbeiterIdToDelete));
       setShowConfirmationModal(false);
     } catch (error) {
-      console.error('Fehler beim Löschen des Mitarbeiters:', error);
-      alert('Fehler beim Löschen des Mitarbeiters. Bitte versuche es später noch einmal.');
+      console.error('Error deleting employee:', error);
+      alert('Error deleting employee. Please try again later.');
     }
   };
 
   const handleCancelDelete = () => {
     setShowConfirmationModal(false);
-    setMitarbeiterIdToDelete(null);
   };
 
   return (
     <div className="mitarbeiter-container">
-      <h2 className="mitarbeiter-title">Mitarbeiter</h2>
-
+      <h2>Mitarbeiter</h2>
       {loading ? (
         <p>Lade Mitarbeiter...</p>
       ) : (
         <div className="mitarbeiter-liste">
           {mitarbeiterListe.length > 0 ? (
-            mitarbeiterListe.map((mitarbeiter) => (
-              <div key={mitarbeiter.id} className="mitarbeiter-box">
-                <p className="mitarbeiter-name">{mitarbeiter.vorname} {mitarbeiter.nachname}</p>
+            mitarbeiterListe.map((m) => (
+              <div key={m.id} className="mitarbeiter-box">
+                  <p>Mitarbeiternummer: {m.mitarbeiternummer}</p>
+                <p>{m.vorname} {m.nachname}</p>
                 <div className="mitarbeiter-buttons">
-                  <Link to={`/mitarbeiteranzeigen/${mitarbeiter.id}`} className="mitarbeiter-button">
+                  <Link to={`/mitarbeiteranzeigen/${m.id}`}>
                     <FaUser /> Anzeigen
                   </Link>
-                  <Link to={`/mitarbeiterbearbeiten/${mitarbeiter.id}`} className="mitarbeiter-button">
-                    <FaPen /> Bearbeiten
-                  </Link>
-                  <button onClick={() => handleShowConfirmationModal(mitarbeiter.id)} className="mitarbeiter-button">
+                  <button onClick={() => handleShowConfirmationModal(m.id)}>
                     <FaTrash /> Löschen
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <p className="no-results">Keine Mitarbeiter gefunden.</p>
+            <p>Keine Mitarbeiter gefunden.</p>
           )}
         </div>
       )}
-      
       {showConfirmationModal && (
         <div className="confirmation-modal">
           <p>Bist du sicher, dass du diesen Mitarbeiter löschen möchtest?</p>

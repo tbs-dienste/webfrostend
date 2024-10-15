@@ -1,160 +1,258 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import './MitarbeiterAnzeigen.scss';
-import { useParams } from 'react-router-dom';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import { FaEdit, FaUndoAlt, FaSave, FaFilePdf } from 'react-icons/fa';
-import logo from '../../logo.png';
+import { FaDownload } from 'react-icons/fa';
+import { Document, Page, Text, StyleSheet, pdf } from '@react-pdf/renderer';
+
+// Styles für das PDF-Dokument
+const styles = StyleSheet.create({
+    page: {
+        padding: 30,
+        fontSize: 12,
+        fontFamily: 'Helvetica',
+    },
+    header: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    title: {
+        fontSize: 18,
+        textAlign: 'center',
+        marginVertical: 20,
+        fontWeight: 'bold',
+    },
+    section: {
+        marginBottom: 10,
+        lineHeight: 1.5,
+    },
+    content: {
+        marginBottom: 5,
+    },
+    signature: {
+        marginTop: 30,
+        fontSize: 12,
+        fontStyle: 'italic',
+    },
+    date: {
+        marginBottom: 20,
+    },
+});
+
+// Funktion zum Herunterladen des PDFs
+const handleDownloadPDF = async (formData) => {
+    const doc = (
+        <Document>
+            <Page style={styles.page}>
+                <Text style={styles.header}>TBS Solutions</Text>
+                <Text style={styles.header}>3001 Bern</Text>
+                <Text style={styles.header}>Telefon: +41 123 456 789</Text>
+                <Text style={styles.header}>Email: info@tbs-solutions.ch</Text>
+
+                <Text style={styles.date}>
+                    Bern, {new Date().toLocaleDateString()}
+                </Text>
+
+                <Text style={styles.section}>
+                    An:
+                    {'\n'}
+                    {formData.vorname} {formData.nachname}
+                    {'\n'}
+                    {formData.adresse}
+                    {'\n'}
+                    {formData.postleitzahl} {formData.ort}
+                </Text>
+
+                <Text style={styles.section}>
+                    Betreff: Bestätigung Ihrer Mitarbeiternummer und Zugangsdaten
+                </Text>
+
+                <Text style={styles.section}>
+                    Sehr geehrte/r {formData.geschlecht === 'männlich' ? 'Herr' : formData.geschlecht === 'weiblich' ? 'Frau' : ''} {formData.nachname},
+                </Text>
+
+                <Text style={styles.section}>
+                    Wir freuen uns, Ihnen mitzuteilen, dass Ihre Mitarbeiternummer und das zugehörige Benutzerkonto erfolgreich eingerichtet wurden.
+                    Nachfolgend finden Sie Ihre Zugangsdaten:
+                </Text>
+
+                <Text style={styles.content}>
+                    - Mitarbeiternummer: {formData.mitarbeiternummer}
+                </Text>
+                <Text style={styles.content}>
+                    - Benutzername: {formData.benutzername}
+                </Text>
+                <Text style={styles.content}>
+                    - Passwort: {formData.benutzername} (gleich dem Benutzernamen)
+                </Text>
+
+
+                <Text style={styles.section}>
+                    Bei Fragen stehen wir Ihnen gerne zur Verfügung.
+                </Text>
+
+                <Text style={styles.signature}>
+                    Mit freundlichen Grüßen,
+                    {'\n'}TBS Solutions
+                </Text>
+            </Page>
+        </Document>
+    );
+
+    const asPdf = pdf([]);
+    asPdf.updateContainer(doc);
+    const blob = await asPdf.toBlob();
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Bestaetigungsschreiben_${formData.vorname}_${formData.nachname}.pdf`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+};
+
 
 const MitarbeiterAnzeigen = () => {
-    const [mitarbeiter, setMitarbeiter] = useState(null);
-    const [editedMitarbeiter, setEditedMitarbeiter] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [loading, setLoading] = useState(true);
     const { id } = useParams();
+    const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [editMode, setEditMode] = useState(false);
+    const [formData, setFormData] = useState({
+        mitarbeiternummer: '',
+        vorname: '',
+        nachname: '',
+        adresse: '',
+        postleitzahl: '',
+        ort: '',
+        email: '',
+        mobil: '',
+        geschlecht: '',
+        benutzername: '',
+        iban: '',
+    });
 
     useEffect(() => {
-        const fetchMitarbeiter = async () => {
+        async function fetchMitarbeiter() {
             try {
-                const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`);
-                const data = response.data.data;
-                setMitarbeiter(data || null);
-                setEditedMitarbeiter(data || null);
-                setLoading(false);
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const mitarbeiter = response.data.data;
+                if (mitarbeiter) {
+                    setSelectedMitarbeiter(mitarbeiter);
+                    setFormData(mitarbeiter);
+                } else {
+                    console.error('Mitarbeiter nicht gefunden');
+                }
             } catch (error) {
-                console.error('Fehler beim Laden des Mitarbeiters:', error);
+                console.error('Fehler beim Abrufen des Mitarbeiters:', error);
+                alert('Fehler beim Abrufen der Mitarbeiterdaten. Bitte versuche es später noch einmal.');
+            } finally {
                 setLoading(false);
             }
-        };
+        }
+
         fetchMitarbeiter();
     }, [id]);
 
-    const handleEditClick = () => {
-        setIsEditing(true);
+    const handleResetPassword = () => {
+        window.location.href = `/mitarbeiter/${id}/reset-password`; // Weiterleitung zur Reset-Password-Seite
     };
 
-    const handleUndoClick = () => {
-        setEditedMitarbeiter(mitarbeiter);
-        setIsEditing(false);
-    };
-
-    const handleSaveClick = async () => {
-        try {
-            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, editedMitarbeiter);
-            setMitarbeiter(editedMitarbeiter);
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Fehler beim Speichern der Mitarbeiterdaten:', error);
-        }
-    };
-
-    const handleInputChange = (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditedMitarbeiter({
-            ...editedMitarbeiter,
+        setFormData({
+            ...formData,
             [name]: value,
         });
     };
 
-    const generatePDF = () => {
-        if (mitarbeiter) {
-            const doc = new jsPDF();
+    const handleEditToggle = () => {
+        setEditMode(!editMode);
+    };
 
-            const img = new Image();
-            img.src = logo;
-            doc.addImage(img, 'PNG', 10, 10, 50, 20);
-
-            doc.setFontSize(12);
-            doc.text(`TBs Solutions`, 170, 20, { align: 'right' });
-            doc.text(`3013 Bern`, 170, 26, { align: 'right' });
-            doc.text(`Schweiz`, 170, 32, { align: 'right' });
-
-            const today = new Date();
-            const dateStr = `${today.getDate()}.${today.getMonth() + 1}.${today.getFullYear()}`;
-            doc.text(dateStr, 150, 50, { align: 'right' });
-
-            doc.text(`${mitarbeiter.vorname} ${mitarbeiter.nachname}`, 20, 70);
-            doc.text(`${mitarbeiter.adresse}`, 20, 76);
-            doc.text(`${mitarbeiter.postleitzahl} ${mitarbeiter.ort}`, 20, 82);
-
-            doc.setFontSize(14);
-            doc.text(`Betreff: Ihre Anstellung bei TBs Solutions`, 20, 100);
-
-            doc.setFontSize(12);
-            doc.text(`Sehr geehrte/r Frau/Herr ${mitarbeiter.nachname},`, 20, 120);
-
-            const textBody = `Wir freuen uns, Ihnen mitteilen zu können, dass Sie als neuer Mitarbeiter bei uns anfangen werden. Hier sind Ihre Zugangsdaten für das interne System:\n\nBenutzername: ${mitarbeiter.benutzername}\nPasswort: ${mitarbeiter.passwort}\n\nBitte bewahren Sie diese Informationen sicher auf. Bei Fragen stehen wir Ihnen jederzeit zur Verfügung. Wir freuen uns auf eine erfolgreiche Zusammenarbeit.`;
-            doc.text(textBody, 20, 130, { maxWidth: 170 });
-
-            doc.text(`Mit freundlichen Grüßen,`, 20, 190);
-            doc.text(`Timo Blumer`, 20, 212);
-            doc.text(`TBs Solutions`, 20, 218);
-
-            doc.save(`Mitarbeiter_Brief_${mitarbeiter.id}.pdf`);
+    const handleSave = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            alert('Mitarbeiterdaten erfolgreich gespeichert');
+            setEditMode(false);
+            setSelectedMitarbeiter(formData);
+        } catch (error) {
+            console.error('Fehler beim Speichern der Mitarbeiterdaten:', error);
+            alert('Fehler beim Speichern der Daten. Bitte versuche es erneut.');
         }
     };
 
+    if (loading) {
+        return <div className="loading">Lade Mitarbeiter...</div>;
+    }
+
     return (
-        <div className="mitarbeiter-details">
-            {loading ? (
-                <p className="loading-message">Lade Mitarbeiterdetails...</p>
-            ) : mitarbeiter ? (
-                <>
-                    <h2 className="details-title">Mitarbeiterdetails</h2>
-                    <div className="details-container">
-                        {Object.entries({
-                            Geschlecht: editedMitarbeiter.geschlecht,
-                            Vorname: editedMitarbeiter.vorname,
-                            Nachname: editedMitarbeiter.nachname,
-                            Adresse: editedMitarbeiter.adresse,
-                            Postleitzahl: editedMitarbeiter.postleitzahl,
-                            Ort: editedMitarbeiter.ort,
-                            Email: editedMitarbeiter.email,
-                            Mobil: editedMitarbeiter.mobil,
-                            Benutzername: editedMitarbeiter.benutzername,
-                            Passwort: editedMitarbeiter.passwort,
-                            IBAN: editedMitarbeiter.iban,
-                            Sprachen: `${editedMitarbeiter.sprache1}, ${editedMitarbeiter.sprache2}`,
-                        }).map(([key, value]) => (
-                            <div className="detail" key={key}>
-                                <span className="detail-key">{key}:</span>
-                                {isEditing ? (
-                                    <input
-                                        className="detail-value-input"
-                                        type="text"
-                                        name={key.toLowerCase()}
-                                        value={value}
-                                        onChange={handleInputChange}
-                                    />
-                                ) : (
-                                    <span className="detail-value">{value}</span>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="button-group">
-                        <button onClick={generatePDF} className="action-button pdf-button">
-                            <FaFilePdf /> PDF generieren
-                        </button>
-                        {isEditing ? (
-                            <>
-                                <button onClick={handleSaveClick} className="action-button save-button">
-                                    <FaSave /> Speichern
-                                </button>
-                                <button onClick={handleUndoClick} className="action-button undo-button">
-                                    <FaUndoAlt /> Änderungen rückgängig machen
-                                </button>
-                            </>
-                        ) : (
-                            <button onClick={handleEditClick} className="action-button edit-button">
-                                <FaEdit /> Bearbeiten
+        <div className="mitarbeiter-anzeigen-container">
+            <h2>Mitarbeiterdetails anzeigen</h2>
+            {selectedMitarbeiter ? (
+                <div>
+                    {editMode ? (
+                        <div>
+                            <label>Mitarbeiternummer:</label>
+                            <input name="mitarbeiternummer" value={formData.mitarbeiternummer} onChange={handleChange} />
+                            <label>Vorname:</label>
+                            <input name="vorname" value={formData.vorname} onChange={handleChange} />
+                            <label>Nachname:</label>
+                            <input name="nachname" value={formData.nachname} onChange={handleChange} />
+                            <label>Adresse:</label>
+                            <input name="adresse" value={formData.adresse} onChange={handleChange} />
+                            <label>Postleitzahl:</label>
+                            <input name="postleitzahl" value={formData.postleitzahl} onChange={handleChange} />
+                            <label>Ort:</label>
+                            <input name="ort" value={formData.ort} onChange={handleChange} />
+                            <label>Email:</label>
+                            <input name="email" value={formData.email} onChange={handleChange} />
+                            <label>Mobil:</label>
+                            <input name="mobil" value={formData.mobil} onChange={handleChange} />
+                            <label>Geschlecht:</label>
+                            <input name="geschlecht" value={formData.geschlecht} onChange={handleChange} />
+                            <label>Benutzername:</label>
+                            <input name="benutzername" value={formData.benutzername} onChange={handleChange} />
+                            <label>IBAN:</label>
+                            <input name="iban" value={formData.iban} onChange={handleChange} />
+                            <button onClick={handleSave}>Speichern</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p><strong>Mitarbeiternummer:</strong> {selectedMitarbeiter.mitarbeiternummer}</p>
+                            <p><strong>Vorname:</strong> {selectedMitarbeiter.vorname}</p>
+                            <p><strong>Nachname:</strong> {selectedMitarbeiter.nachname}</p>
+                            <p><strong>Adresse:</strong> {selectedMitarbeiter.adresse}</p>
+                            <p><strong>Postleitzahl:</strong> {selectedMitarbeiter.postleitzahl}</p>
+                            <p><strong>Ort:</strong> {selectedMitarbeiter.ort}</p>
+                            <p><strong>Email:</strong> {selectedMitarbeiter.email}</p>
+                            <p><strong>Mobil:</strong> {selectedMitarbeiter.mobil}</p>
+                            <p><strong>Geschlecht:</strong> {selectedMitarbeiter.geschlecht}</p>
+                            <p><strong>Benutzername:</strong> {selectedMitarbeiter.benutzername}</p>
+                            <p><strong>IBAN:</strong> {selectedMitarbeiter.iban}</p>
+                            <button onClick={handleEditToggle}>Bearbeiten</button>
+                            <button onClick={() => handleDownloadPDF(selectedMitarbeiter)}>
+                                <FaDownload /> PDF herunterladen
                             </button>
-                        )}
-                    </div>
-                </>
+                            <Link
+                                to={`/mitarbeiter/${id}/reset-password`}
+                                style={{ textDecoration: 'underline', color: 'blue' }}
+                            >
+                                Passwort zurücksetzen
+                            </Link>
+                        </div>
+                    )}
+                </div>
             ) : (
-                <p className="error-message">Es konnten keine Mitarbeiterdetails gefunden werden.</p>
+                <p>Mitarbeiter nicht gefunden.</p>
             )}
         </div>
     );
