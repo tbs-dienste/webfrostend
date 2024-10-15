@@ -244,6 +244,19 @@ const KundenAnzeigen = () => {
                     ))
                   : 'Keine Dienstleistungen verfügbar.'}
               </p>
+              
+{selectedKunde.unterschrift ? (
+  <div>
+    <p><strong>Unterschrift:</strong></p>
+    <img
+      src={`data:image/png;base64,${selectedKunde.unterschrift}`}
+      alt="Kunden Unterschrift"
+      style={{ maxWidth: '400px', height: 'auto' }}
+    />
+  </div>
+) : (
+  <p><strong>Unterschrift:</strong> Keine Unterschrift da</p>
+)}
 
               <button onClick={handleEdit}><FaEdit /> Bearbeiten</button>
             </div>
