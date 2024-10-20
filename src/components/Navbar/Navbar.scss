@@ -1,4 +1,3 @@
-/* Add this to your global styles or in a suitable location */
 .no-scroll {
   overflow: hidden;
 }
@@ -6,7 +5,7 @@
 .navbar {
   z-index: 1000;
   height: 80px;
-  background: #000000; // Black background
+  background: #000000; // Schwarzer Hintergrund
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
@@ -37,7 +36,7 @@
       transition: color 0.3s ease;
 
       &:hover {
-        color: #ffffff; // Keep color white on hover
+        color: #ffffff; // Weiß auf Hover
       }
     }
   }
@@ -45,8 +44,8 @@
   .menu-icon {
     display: none;
     cursor: pointer;
-    font-size: 24px; // Adjust size if needed
-    color: #ffffff; // Ensure color matches your theme
+    font-size: 24px; // Größe anpassen, falls nötig
+    color: #ffffff; // Farbe anpassen, damit es zum Thema passt
 
     .bar {
       width: 35px;
@@ -104,8 +103,8 @@
         transition: background-color 0.3s ease, color 0.3s ease;
 
         &.active {
-          background-color: #ffffff; // White color for active link
-          color: #000000; // Black text color for active link
+          background-color: #ffffff; // Weißer Hintergrund für aktive Links
+          color: #000000; // Schwarzer Text für aktive Links
         }
 
         &:hover {
@@ -115,7 +114,7 @@
 
         .icon {
           margin-right: 12px;
-          font-size: 20px; // Slightly larger icons
+          font-size: 20px; // Leicht größere Icons
         }
       }
     }
@@ -179,12 +178,12 @@
           }
 
           &:hover {
-            background-color: #333333; // Darker shade of black on hover
+            background-color: #333333; // Dunklerer Schwarzton bei Hover
           }
 
           .icon {
             margin-right: 12px;
-            font-size: 18px; // Adjust icon size if needed
+            font-size: 18px; // Größe der Icons anpassen
           }
         }
       }
@@ -200,7 +199,7 @@
     transition: color 0.3s ease;
 
     &:hover {
-      color: #ff6666; // Light red on hover
+      color: #ff6666; // Helleres Rot bei Hover
     }
   }
 
@@ -215,14 +214,13 @@
       right: 0;
       background-color: #000000;
       width: 0;
-      height: 100vh;
-      overflow-y: auto;
+      height: 100vh; // Die Höhe auf den Viewport setzen
+      overflow-y: auto; // Ermöglicht das Scrollen im Menü
       transition: width 0.3s ease-in;
       z-index: 1000;
-      overflow: auto; // Ensure that the menu itself can scroll
 
       &.active {
-        width: 100%;
+        width: 100%; // Breite wird zu 100%, wenn das Burger-Menü aktiv ist
 
         ul {
           flex-direction: column;
