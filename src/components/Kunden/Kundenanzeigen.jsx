@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSave, FaUndo, FaEdit } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
@@ -295,6 +295,13 @@ const KundenAnzeigen = () => {
             </div>
           )}
 
+          {/* Link Button hinzufügen */}
+          <div className="link-button-container">
+            <Link to={`/${id}/gesamtarbeitszeit`} className="link-button">
+              Details anzeigen
+            </Link>
+          </div>
+          
           {/* Dienstleistungen anzeigen */}
           <div className="dienstleistungen-container">
             <h3>Verfügbare Dienstleistungen</h3>
