@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 import './Footer.scss';
+import Datenschutzrichtlinien from '../Mitarbeiter/Documents/Datenschutzrichtlinien.pdf';
 
 const Footer = () => {
   return (
@@ -22,7 +23,7 @@ const Footer = () => {
           <h2>Rechtliches</h2>
           <ul>
             <li><Link to="/impressum">Impressum</Link></li>
-            <li><span className="disabled-link">Datenschutz</span></li>
+            <li><a href={Datenschutzrichtlinien} target="_blank" rel="noopener noreferrer">Datenschutz</a></li>
             <li><Link to="/agb">AGB</Link></li>
           </ul>
         </div>
