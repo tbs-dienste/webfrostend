@@ -17,7 +17,7 @@ const Login = () => {
             const { token, userType } = response.data;
             localStorage.setItem('token', token);
             // Redirect or handle userType as needed
-            window.location.href = "/dashboard";
+            window.location.href = "/kunden";
             console.log('Login erfolgreich, User Type:', userType);
         } catch (error) {
             setError('Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.');

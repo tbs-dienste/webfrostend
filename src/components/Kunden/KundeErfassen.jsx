@@ -69,7 +69,7 @@ const KundeErfassen = () => {
       };
 
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
-      alert('Kunde erfolgreich erfasst!');
+     window.location.href = "/dankesnachricht"
     } catch (error) {
       console.error('Fehler beim Senden der Kundendaten:', error);
       alert('Fehler beim Erfassen der Kundendaten. Bitte versuchen Sie es erneut.');

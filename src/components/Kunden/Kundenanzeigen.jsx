@@ -78,38 +78,37 @@ const KundenAnzeigen = () => {
 
   const handleSignatureReset = async () => {
     try {
-      const token = localStorage.getItem('token'); // Token für Authentifizierung abrufen
-      const customerId = selectedKunde.id; // Aktuelle Kunden-ID verwenden
-  
+      const token = localStorage.getItem('token');
+      const customerId = selectedKunde.id;
+
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/sign/reset-signature', {
-        customerId: customerId, // Hier wird die aktuelle ID verwendet
+        customerId: customerId,
       }, {
         headers: {
-          Authorization: `Bearer ${token}`, // Token für Authentifizierung
+          Authorization: `Bearer ${token}`,
         },
       });
-  
+
       console.log('Unterschrift erfolgreich zurückgesetzt:', response.data);
       alert('Unterschrift erfolgreich zurückgesetzt');
-  
+
       // Kundendaten nach dem Zurücksetzen der Unterschrift erneut abrufen
       const updatedResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const updatedKunde = updatedResponse.data.data;
-      setSelectedKunde(updatedKunde); // Zustand mit aktualisierten Daten setzen
-      setOriginalData(updatedKunde); // Auch die originalen Daten aktualisieren
-  
-      setEditMode(false); // Editiermodus beenden
+      setSelectedKunde(updatedKunde);
+      setOriginalData(updatedKunde);
+
+      setEditMode(false);
     } catch (error) {
       console.error('Fehler beim Zurücksetzen der Unterschrift:', error);
       alert('Fehler beim Zurücksetzen der Unterschrift. Bitte versuche es später noch einmal.');
     }
   };
-  
 
   if (loading) {
     return <div className="loading">Lade Kunde...</div>;
@@ -280,25 +279,37 @@ const KundenAnzeigen = () => {
               <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
               <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
               <p><strong>Code:</strong> {selectedKunde.code}</p>
-              <div className="input-group">
-                <label>Unterschrift:</label>
-                {selectedKunde.unterschrift ? (
+              {selectedKunde.unterschrift && (
+                <div>
+                  <strong>Unterschrift:</strong>
                   <img
                     src={`data:image/png;base64,${selectedKunde.unterschrift}`}
                     alt="Unterschrift"
                     className="signature-image"
                   />
-                ) : (
-                  <p>Keine Unterschrift vorhanden</p>
-                )}
-              </div>
-              <div className="button-group">
-                <button onClick={handleEdit}>
-                  <FaEdit /> Bearbeiten
-                </button>
-              </div>
+                </div>
+              )}
+              <button onClick={handleEdit}>
+                <FaEdit /> Bearbeiten
+              </button>
             </div>
           )}
+
+          {/* Dienstleistungen anzeigen */}
+          <div className="dienstleistungen-container">
+            <h3>Verfügbare Dienstleistungen</h3>
+            {selectedKunde.dienstleistungen && selectedKunde.dienstleistungen.length > 0 ? (
+              <ul className="dienstleistungen-list">
+                {selectedKunde.dienstleistungen.map((dienstleistung) => (
+                  <li key={dienstleistung.id} className="dienstleistung-item">
+                    <p>{dienstleistung.title}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Keine Dienstleistungen verfügbar.</p>
+            )}
+          </div>
         </div>
       ) : (
         <p>Kunde nicht gefunden.</p>
