@@ -53,6 +53,7 @@ import AGB from './components/AGB';
 import RechnungForm from './components/Rechnung/RechnungForm';
 import FaqEditComponent from './components/FAQ/FaqEditComponent';
 import ResetPassword from './components/Mitarbeiter/ResetPassword';
+import ArbeitszeitErfassen from './components/Mitarbeiter/ArbeitszeitErfassen';
 
 const App = () => {
   
@@ -81,6 +82,8 @@ const App = () => {
       
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/arbeitszeit-erfassen" element={<ArbeitszeitErfassen />} />
+
           <Route path="/agb" element={<AGB />} />
           <Route path="/rechnungform" element={<RechnungForm />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
