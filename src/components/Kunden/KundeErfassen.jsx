@@ -18,7 +18,7 @@ const KundeErfassen = () => {
   });
 
   const [dienstleistungen, setDienstleistungen] = useState([]);
-  const [ausgewaehlteDienstleistungen, setAusgewaehlteDienstleistungen] = useState(['']); // Start with one empty dienstleistung
+  const [ausgewaehlteDienstleistungen, setAusgewaehlteDienstleistungen] = useState([{ id: '', beschreibung: '' }]);
   const [datenschutzAkzeptiert, setDatenschutzAkzeptiert] = useState(false);
 
   useEffect(() => {
@@ -40,16 +40,23 @@ const KundeErfassen = () => {
 
   const handleDienstleistungChange = (index, value) => {
     const newDienstleistungen = [...ausgewaehlteDienstleistungen];
-    newDienstleistungen[index] = value;
+    newDienstleistungen[index].id = value;
+    newDienstleistungen[index].beschreibung = ''; // Reset description when selecting a new service
+    setAusgewaehlteDienstleistungen(newDienstleistungen);
+  };
+
+  const handleBeschreibungChange = (index, value) => {
+    const newDienstleistungen = [...ausgewaehlteDienstleistungen];
+    newDienstleistungen[index].beschreibung = value;
     setAusgewaehlteDienstleistungen(newDienstleistungen);
   };
 
   const handleAddDienstleistung = () => {
-    setAusgewaehlteDienstleistungen([...ausgewaehlteDienstleistungen, '']); // Add a new empty dienstleistung
+    setAusgewaehlteDienstleistungen([...ausgewaehlteDienstleistungen, { id: '', beschreibung: '' }]);
   };
 
   const handleKundeErfassen = async () => {
-    if (!kunde.firma || !kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0 || !ausgewaehlteDienstleistungen[0]) {
+    if (!kunde.firma || !kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0 || !ausgewaehlteDienstleistungen[0].id) {
       alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       return;
     }
@@ -62,14 +69,15 @@ const KundeErfassen = () => {
         ...kunde,
         ip_adresse,
         dienstleistungen: ausgewaehlteDienstleistungen
-          .filter(dienstleistungsId => dienstleistungsId) // Ensure no empty values are sent
-          .map(dienstleistungsId => ({
-            dienstleistungsId: parseInt(dienstleistungsId),
+          .filter(dienstleistung => dienstleistung.id)
+          .map(dienstleistung => ({
+            dienstleistungsId: parseInt(dienstleistung.id),
+            beschreibung: dienstleistung.beschreibung,
           })),
       };
 
       const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
-     window.location.href = "/dankesnachricht"
+      window.location.href = "/dankesnachricht";
     } catch (error) {
       console.error('Fehler beim Senden der Kundendaten:', error);
       alert('Fehler beim Erfassen der Kundendaten. Bitte versuchen Sie es erneut.');
@@ -81,49 +89,19 @@ const KundeErfassen = () => {
       <h2>Kundendaten erfassen</h2>
       <div className="formular">
         {/* Formularfelder für die Kundendaten */}
-        <div className="formular-gruppe">
-          <label htmlFor="firma">Firma</label>
-          <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="vorname">Vorname</label>
-          <input type="text" id="vorname" name="vorname" value={kunde.vorname} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="nachname">Nachname</label>
-          <input type="text" id="nachname" name="nachname" value={kunde.nachname} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="strasseHausnummer">Strasse und Hausnummer</label>
-          <input type="text" id="strasseHausnummer" name="strasseHausnummer" value={kunde.strasseHausnummer} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="postleitzahl">Postleitzahl</label>
-          <input type="text" id="postleitzahl" name="postleitzahl" value={kunde.postleitzahl} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="ort">Ort</label>
-          <input type="text" id="ort" name="ort" value={kunde.ort} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="land">Land</label>
-          <input type="text" id="land" name="land" value={kunde.land} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" value={kunde.email} onChange={handleInputChange} />
-        </div>
-        <div className="formular-gruppe">
-          <label htmlFor="mobil">Mobil</label>
-          <input type="text" id="mobil" name="mobil" value={kunde.mobil} onChange={handleInputChange} />
-        </div>
+        {['firma', 'vorname', 'nachname', 'strasseHausnummer', 'postleitzahl', 'ort', 'land', 'email', 'mobil'].map((field, index) => (
+          <div className="formular-gruppe" key={index}>
+            <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <input type={field === 'email' ? 'email' : 'text'} id={field} name={field} value={kunde[field]} onChange={handleInputChange} />
+          </div>
+        ))}
 
         {/* Dienstleistungen */}
         <div className="dienstleistungen-bereich">
           <label>Dienstleistungen</label>
           {ausgewaehlteDienstleistungen.map((dienstleistung, index) => (
             <div className="dienstleistung-gruppe" key={index}>
-              <select value={dienstleistung} onChange={(e) => handleDienstleistungChange(index, e.target.value)}>
+              <select value={dienstleistung.id} onChange={(e) => handleDienstleistungChange(index, e.target.value)}>
                 <option value="">Dienstleistung auswählen</option>
                 {dienstleistungen.map((dl) => (
                   <option key={dl.id} value={dl.id}>
@@ -131,6 +109,15 @@ const KundeErfassen = () => {
                   </option>
                 ))}
               </select>
+
+              {/* Beschreibung als Textarea unter der Dienstleistung */}
+              {dienstleistung.id && (
+                <textarea
+                  placeholder="Beschreibung"
+                  value={dienstleistung.beschreibung}
+                  onChange={(e) => handleBeschreibungChange(index, e.target.value)}
+                />
+              )}
             </div>
           ))}
           <button type="button" className="add-dienstleistung-button" onClick={handleAddDienstleistung}>
@@ -162,4 +149,3 @@ const KundeErfassen = () => {
 };
 
 export default KundeErfassen;
-
