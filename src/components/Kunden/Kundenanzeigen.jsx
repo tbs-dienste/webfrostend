@@ -301,6 +301,12 @@ const KundenAnzeigen = () => {
               Details anzeigen
             </Link>
           </div>
+
+          <div className="link-button-container">
+            <Link to={`/arbeitszeiten/${id}`} className="link-button">
+              Arbeitszeiten anzeigen
+            </Link>
+          </div>
           
           {/* Dienstleistungen anzeigen */}
           <div className="dienstleistungen-container">

@@ -1,33 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; // useParams importieren
 import './ArbeitszeitErfassen.scss';
 import axios from 'axios';
 
 const ArbeitszeitErfassen = () => {
-    const [kundenSuche, setKundenSuche] = useState('');
+    const { kundenId, dienstleistungId } = useParams(); // dienstleistungId aus den URL-Parametern abrufen
     const [mitarbeiterSuche, setMitarbeiterSuche] = useState('');
-    const [kundenId, setKundenId] = useState('');
-    const [dienstleistungId, setDienstleistungId] = useState('');
     const [mitarbeiterId, setMitarbeiterId] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [message, setMessage] = useState('');
-    const [kundenVorschlaege, setKundenVorschlaege] = useState([]);
     const [mitarbeiterVorschlaege, setMitarbeiterVorschlaege] = useState([]);
-    const [kunden, setKunden] = useState([]); // Zustand für die Kunden
-    const [mitarbeiter, setMitarbeiter] = useState([]); // Zustand für die Mitarbeiter
-
-    // Funktion zum Abrufen der Kunden von der API
-    const fetchKunden = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setKunden(response.data.data); // Setze die erhaltenen Kunden in den Zustand
-        } catch (error) {
-            console.error('Fehler beim Abrufen der Kunden:', error);
-        }
-    };
+    const [mitarbeiter, setMitarbeiter] = useState([]);
 
     // Funktion zum Abrufen der Mitarbeiter von der API
     const fetchMitarbeiter = async () => {
@@ -54,53 +38,40 @@ const ArbeitszeitErfassen = () => {
         }
     };
 
-    // Funktion zum Abrufen der Kundenvorschläge basierend auf der Sucheingabe
-    const fetchKundenVorschlaege = () => {
-        if (kundenSuche.length > 2) {
-            const filteredKunden = kunden.filter((kunde) =>
-                `${kunde.vorname} ${kunde.nachname}`.toLowerCase().includes(kundenSuche.toLowerCase())
-            );
-            setKundenVorschlaege(filteredKunden);
-        } else {
-            setKundenVorschlaege([]);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         // Validierung der Felder
-        if (!kundenId || !dienstleistungId || !mitarbeiterId || !startTime || !endTime) {
+        if (!mitarbeiterId || !startTime || !endTime) {
             setMessage('Bitte alle Felder ausfüllen.');
             return;
         }
-
+    
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/mitarbeiter',
-                { kundenId, dienstleistungId, mitarbeiterId, startTime, endTime },
+                `https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/${kundenId}/${dienstleistungId}`, 
+                { mitarbeiterId, startTime, endTime }, // dienstleistungId wird automatisch aus den Parametern übergeben
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-
+    
             setMessage(response.data.message);
             // Felder zurücksetzen
-            setKundenId('');
-            setDienstleistungId('');
             setMitarbeiterId('');
             setStartTime('');
             setEndTime('');
-            setKundenSuche('');
             setMitarbeiterSuche('');
         } catch (error) {
             console.error('Fehler beim Erfassen der Arbeitszeit:', error);
-            setMessage('Fehler beim Erfassen der Arbeitszeit.');
+            if (error.response) {
+                setMessage(error.response.data.error || 'Fehler beim Erfassen der Arbeitszeit.');
+            }
         }
     };
+    
 
-    // Effekt für das Abrufen der Kunden und Mitarbeiter beim Laden der Komponente
+    // Effekt für das Abrufen der Mitarbeiter beim Laden der Komponente
     useEffect(() => {
-        fetchKunden();
         fetchMitarbeiter();
     }, []);
 
@@ -108,45 +79,10 @@ const ArbeitszeitErfassen = () => {
         fetchMitarbeiterVorschlaege();
     }, [mitarbeiterSuche, mitarbeiter]);
 
-    useEffect(() => {
-        fetchKundenVorschlaege();
-    }, [kundenSuche, kunden]);
-
     return (
         <div className="arbeitszeit-form">
             <h2>Arbeitszeit erfassen (Admin)</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Kunde suchen:</label>
-                    <input 
-                        type="text" 
-                        value={kundenSuche} 
-                        onChange={(e) => setKundenSuche(e.target.value)} 
-                        placeholder="Kunden Vor- oder Nachname eingeben" 
-                    />
-                    {kundenVorschlaege.length > 0 && (
-                        <ul>
-                            {kundenVorschlaege.map((kunde) => (
-                                <li key={kunde.id} onClick={() => {
-                                    setKundenId(kunde.id);
-                                    setKundenSuche(`${kunde.vorname} ${kunde.nachname}`); // Setze den Namen ins Eingabefeld
-                                    setKundenVorschlaege([]); // Leere die Vorschläge
-                                }}>
-                                    {kunde.vorname} {kunde.nachname}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-                <div>
-                    <label>Dienstleistung ID:</label>
-                    <input 
-                        type="text" 
-                        value={dienstleistungId} 
-                        onChange={(e) => setDienstleistungId(e.target.value)} 
-                        required 
-                    />
-                </div>
                 <div>
                     <label>Mitarbeiter suchen:</label>
                     <input 
@@ -160,8 +96,8 @@ const ArbeitszeitErfassen = () => {
                             {mitarbeiterVorschlaege.map((mitarbeiter) => (
                                 <li key={mitarbeiter.id} onClick={() => {
                                     setMitarbeiterId(mitarbeiter.id);
-                                    setMitarbeiterSuche(`${mitarbeiter.vorname} ${mitarbeiter.nachname}`); // Setze den Namen ins Eingabefeld
-                                    setMitarbeiterVorschlaege([]); // Leere die Vorschläge
+                                    setMitarbeiterSuche(`${mitarbeiter.vorname} ${mitarbeiter.nachname}`);
+                                    setMitarbeiterVorschlaege([]);
                                 }}>
                                     {mitarbeiter.vorname} {mitarbeiter.nachname}
                                 </li>
