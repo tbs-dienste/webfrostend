@@ -4,23 +4,39 @@ import axios from 'axios'; // Importiere Axios
 import './TotalWorktimePerMitarbeiterForCustomer.scss';
 
 const TotalWorktimePerMitarbeiterForCustomer = () => {
-    const { id } = useParams(); // Zugriff auf die Kunden-ID aus der URL
-    const [worktimeData, setWorktimeData] = useState([]);
+    const { id } = useParams(); // Zugriff auf die Mitarbeiter-ID aus der URL
+    const [worktimeData, setWorktimeData] = useState(null);
+    const [customerData, setCustomerData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Funktion zum Runden auf das nächste 0.05
+    const roundToNearest05 = (value) => {
+        return Math.round(value * 20) / 20; // Runden auf 0.05
+    };
+
     useEffect(() => {
-        const fetchWorktimeData = async () => {
+        const fetchData = async () => {
             const token = localStorage.getItem('token'); // Token aus localStorage abrufen
 
             try {
-                const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/total-mitarbeiter/${id}`, {
+                // Zuerst Arbeitszeitdaten abrufen
+                const worktimeResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/total-mitarbeiter/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`, // Token im Authorization-Header hinzufügen
                         'Content-Type': 'application/json' // Optional, je nach API-Anforderung
                     }
                 });
-                setWorktimeData(response.data.data); // Setze die Daten
+                setWorktimeData(worktimeResponse.data.data); // Setze die Arbeitszeitdaten
+
+                // Nach erfolgreichem Abruf der Arbeitszeitdaten, Kundeninformationen abrufen
+                const customerResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { // Verwende die gleiche ID für den Kunden
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Token im Authorization-Header hinzufügen
+                        'Content-Type': 'application/json' // Optional, je nach API-Anforderung
+                    }
+                });
+                setCustomerData(customerResponse.data.data); // Setze die Kundendaten
             } catch (err) {
                 setError(err.response ? err.response.data.message : 'Fehler beim Abrufen der Daten'); // Fehlerbehandlung
             } finally {
@@ -28,8 +44,8 @@ const TotalWorktimePerMitarbeiterForCustomer = () => {
             }
         };
 
-        fetchWorktimeData();
-    }, [id]);
+        fetchData();
+    }, [id]); // Nur die Mitarbeiter-ID als Abhängigkeit
 
     if (loading) {
         return <div className="loading-message">Lade Daten...</div>;
@@ -41,52 +57,46 @@ const TotalWorktimePerMitarbeiterForCustomer = () => {
 
     return (
         <div className="total-worktime-container">
-            <h2>Gesamtarbeitszeit für Kunden-ID: {id}</h2>
-            {worktimeData.length > 0 ? (
-                worktimeData.map((mitarbeiter) => (
-                    <div key={`${mitarbeiter.vorname}-${mitarbeiter.nachname}`} className="mitarbeiter-container">
-                        <h3>
-                            {mitarbeiter.vorname} {mitarbeiter.nachname}
-                        </h3>
+            <h2>Gesamtarbeitszeit für Mitarbeiter-ID: {id}</h2>
+
+            <h3>Kundendetails</h3>
+            {customerData ? (
+                <>
+                    <p><strong>Kunden-ID:</strong> {customerData.id}</p>
+                    <h4>Dienstleistungen</h4>
+                    {customerData.dienstleistungen.length > 0 ? (
                         <table className="worktime-table">
                             <thead>
                                 <tr>
                                     <th>Dienstleistung</th>
                                     <th>Gesamtarbeitszeit (Stunden)</th>
                                     <th>Kosten</th>
-                                    <th>Dienstleistungspreis</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {mitarbeiter.dienstleistungen.map((dienstleistung, index) => (
-                                    <tr key={index}>
-                                        <td>{dienstleistung.dienstleistung}</td>
-                                        <td>{dienstleistung.gesamtArbeitszeit.toFixed(2)}</td>
-                                        <td>{dienstleistung.kosten.toFixed(2)} CHF</td>
-                                        <td>{dienstleistung.dienstleistungsPreis} CHF</td>
+                                {customerData.dienstleistungen.map((dienstleistung) => (
+                                    <tr key={dienstleistung.id}>
+                                        <td>{dienstleistung.title}</td>
+                                        <td>{dienstleistung.gesamtArbeitszeit?.toFixed(2) || '0.00'}</td>
+                                        <td>{roundToNearest05(dienstleistung.kosten).toFixed(2) || '0.00'} CHF</td>
                                     </tr>
                                 ))}
                                 <tr>
                                     <td colSpan="2"><strong>Gesamtpreis:</strong></td>
-                                    <td>{mitarbeiter.gesamtPreis.toFixed(2)} CHF</td>
-                                    <td></td>
+                                    <td>{roundToNearest05(customerData.totalKosten).toFixed(2) || '0.00'} CHF</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="2"><strong>Ausgezahlter Betrag:</strong></td>
-                                    <td>{mitarbeiter.ausgezahlterBetrag.toFixed(2)} CHF</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colSpan="2"><strong>TBS Betrag:</strong></td>
-                                    <td>{mitarbeiter.tbsBetrag.toFixed(2)} CHF</td>
-                                    <td></td>
+                                    <td>{roundToNearest05(customerData.totalKostenMitMwst).toFixed(2) || '0.00'} CHF</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                ))
+                    ) : (
+                        <div>Keine Dienstleistungen verfügbar.</div>
+                    )}
+                </>
             ) : (
-                <div>Keine Daten verfügbar.</div>
+                <p>Kundendetails nicht verfügbar.</p>
             )}
         </div>
     );
