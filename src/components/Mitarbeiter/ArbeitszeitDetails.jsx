@@ -1,59 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // useParams importieren
-import { FaTrash } from 'react-icons/fa'; // Importiere das Trash-Icon
-import './ArbeitszeitDetails.scss'; // Importiere das SCSS-Stylesheet
+import { useParams } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
+import './ArbeitszeitDetails.scss';
 
 const ArbeitszeitDetails = () => {
-  const { id } = useParams(); // Hole die Kunden-ID aus den URL-Parametern
+  const { id } = useParams();
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Hole das Token aus dem localStorage
+    const token = localStorage.getItem('token');
 
     axios
       .get(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Füge das Token im Authorization-Header hinzu
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        console.log('API-Antwort:', response.data); // Gebe die komplette Antwort aus
-        setData(response.data.data);
+        console.log('API-Antwort:', response.data);
+        setData(response.data.dienstleistungen); // Setze die Dienstleistungen direkt
       })
       .catch((error) => {
         console.error('Fehler beim Abrufen der Daten:', error);
       });
   }, [id]);
 
-  // Funktion zur Behandlung des Klicks auf das "+"-Symbol
   const handleDetailClick = (dienstleistungId) => {
     if (!dienstleistungId) {
       console.error("Dienstleistungs-ID ist undefined");
       return;
     }
     console.log(`Details für Dienstleistung ID: ${dienstleistungId}`);
-    // Ändere die URL und leite weiter
     window.location.href = `/arbeitszeit-erfassen/${id}/${dienstleistungId}`;
   };
 
-  // Funktion zur Löschung der Arbeitszeit
   const handleDeleteClick = (arbeitszeitId) => {
     const token = localStorage.getItem('token');
 
     axios
       .delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/${arbeitszeitId}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Token für Authentifizierung
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         console.log('Arbeitszeit gelöscht:', response.data);
-        // Nach dem Löschen die Liste aktualisieren
         setData((prevData) => {
           return prevData.map((dienstleistung) => ({
             ...dienstleistung,
-            mitarbeiter: dienstleistung.mitarbeiter.filter((mitarbeiter) => mitarbeiter.arbeitszeit_id !== arbeitszeitId), // Filtere nach der Arbeitszeit-ID
+            arbeitszeiten: dienstleistung.arbeitszeiten.filter((mitarbeiter) => mitarbeiter.arbeitszeit_id !== arbeitszeitId),
           }));
         });
       })
@@ -67,43 +63,47 @@ const ArbeitszeitDetails = () => {
       <h1>Arbeitszeiten</h1>
       {data.length > 0 ? (
         data.map((dienstleistung) => {
-          const dienstleistungId = dienstleistung.dienstleistung_id; // Überprüfen, ob die ID vorhanden ist
+          const dienstleistungId = dienstleistung.dienstleistung_id;
 
           if (!dienstleistungId) {
             console.error(`Dienstleistung hat keine ID`);
-            return null; // Rückgabe null, wenn die ID nicht vorhanden ist
+            return null;
           }
 
           return (
             <div key={dienstleistungId} className="dienstleistung-section">
               <h2>
-                {dienstleistung.dienstleistung} (ID: {dienstleistungId}) {/* ID neben dem Titel anzeigen */}
+                {dienstleistung.dienstleistung} (ID: {dienstleistungId})
                 <button onClick={() => handleDetailClick(dienstleistungId)} className="details-button">
                   +
                 </button>
               </h2>
               <div className="arbeitszeit-box">
-                {dienstleistung.mitarbeiter.map((mitarbeiter) => (
-                  <div key={mitarbeiter.arbeitszeit_id} className="mitarbeiter-box"> {/* Verwende die Arbeitszeit-ID als Schlüssel */}
-                    <p><strong>Vorname:</strong> {mitarbeiter.vorname}</p>
-                    <p><strong>Nachname:</strong> {mitarbeiter.nachname}</p>
-                    <p><strong>Startzeit:</strong> {new Date(mitarbeiter.start_time).toLocaleString()}</p>
-                    <p><strong>Endzeit:</strong> {new Date(mitarbeiter.end_time).toLocaleString()}</p>
-                    <p><strong>Arbeitszeit (Stunden):</strong> {mitarbeiter.arbeitszeit}</p>
-                    <button 
-                      onClick={() => handleDeleteClick(mitarbeiter.arbeitszeit_id)} // Übergebe die Arbeitszeit-ID für das Löschen
-                      className="delete-button"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                ))}
+                {dienstleistung.arbeitszeiten.length > 0 ? (
+                  dienstleistung.arbeitszeiten.map((mitarbeiter) => (
+                    <div key={mitarbeiter.arbeitszeit_id} className="mitarbeiter-box">
+                      <p><strong>Vorname:</strong> {mitarbeiter.vorname}</p>
+                      <p><strong>Nachname:</strong> {mitarbeiter.nachname}</p>
+                      <p><strong>Startzeit:</strong> {new Date(mitarbeiter.start_time).toLocaleString()}</p>
+                      <p><strong>Endzeit:</strong> {new Date(mitarbeiter.end_time).toLocaleString()}</p>
+                      <p><strong>Arbeitszeit (Stunden):</strong> {mitarbeiter.arbeitszeit}</p>
+                      <button 
+                        onClick={() => handleDeleteClick(mitarbeiter.arbeitszeit_id)} 
+                        className="delete-button"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p>Keine Arbeitszeiten verfügbar.</p>
+                )}
               </div>
             </div>
           );
         })
       ) : (
-        <p>Keine Arbeitszeiten verfügbar.</p>
+        <p>Keine Dienstleistungen verfügbar.</p>
       )}
     </div>
   );

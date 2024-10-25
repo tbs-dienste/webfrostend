@@ -315,7 +315,7 @@ const KundenAnzeigen = () => {
               <ul className="dienstleistungen-list">
                 {selectedKunde.dienstleistungen.map((dienstleistung) => (
                   <li key={dienstleistung.id} className="dienstleistung-item">
-                    <p>{dienstleistung.title}</p>
+                    <p>{dienstleistung.title}: {dienstleistung.beschreibung}</p>
                   </li>
                 ))}
               </ul>
