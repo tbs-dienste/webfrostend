@@ -1,59 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios'; // Importiere Axios
+import axios from 'axios';
 import './TotalWorktimePerMitarbeiterForCustomer.scss';
 
 const TotalWorktimePerMitarbeiterForCustomer = () => {
-    const { id } = useParams(); // Zugriff auf die Mitarbeiter-ID aus der URL
+    const { id } = useParams();
     const [worktimeData, setWorktimeData] = useState(null);
     const [customerData, setCustomerData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Funktion zum Runden auf das nächste 0.05
-    const roundToNearest05 = (value) => {
-        return Math.round(value * 20) / 20; // Runden auf 0.05
-    };
+    const roundToNearest05 = (value) => Math.round(value * 20) / 20;
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = localStorage.getItem('token'); // Token aus localStorage abrufen
+            const token = localStorage.getItem('token');
 
             try {
-                // Zuerst Arbeitszeitdaten abrufen
                 const worktimeResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/total-mitarbeiter/${id}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Token im Authorization-Header hinzufügen
-                        'Content-Type': 'application/json' // Optional, je nach API-Anforderung
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
-                setWorktimeData(worktimeResponse.data.data); // Setze die Arbeitszeitdaten
+                setWorktimeData(worktimeResponse.data.data);
 
-                // Nach erfolgreichem Abruf der Arbeitszeitdaten, Kundeninformationen abrufen
-                const customerResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, { // Verwende die gleiche ID für den Kunden
+                const customerResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Token im Authorization-Header hinzufügen
-                        'Content-Type': 'application/json' // Optional, je nach API-Anforderung
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 });
-                setCustomerData(customerResponse.data.data); // Setze die Kundendaten
+                setCustomerData(customerResponse.data.data);
             } catch (err) {
-                setError(err.response ? err.response.data.message : 'Fehler beim Abrufen der Daten'); // Fehlerbehandlung
+                setError(err.response ? err.response.data.message : 'Fehler beim Abrufen der Daten');
             } finally {
-                setLoading(false); // Ladezustand beenden
+                setLoading(false);
             }
         };
 
         fetchData();
-    }, [id]); // Nur die Mitarbeiter-ID als Abhängigkeit
+    }, [id]);
 
-    if (loading) {
-        return <div className="loading-message">Lade Daten...</div>;
-    }
+    if (loading) return <div className="loading-message">Lade Daten...</div>;
+    if (error) return <div className="error-message">Fehler: {error}</div>;
 
-    if (error) {
-        return <div className="error-message">Fehler: {error}</div>;
-    }
+    // Calculate the 80%-20% split for both employee and TBS Solutions
+    const totalEarnings = customerData ? customerData.totalKosten : 0;
+    const employee80Percent = roundToNearest05(totalEarnings * 0.8);
+    const tbs20Percent = roundToNearest05(totalEarnings * 0.2);
 
     return (
         <div className="total-worktime-container">
@@ -86,8 +81,12 @@ const TotalWorktimePerMitarbeiterForCustomer = () => {
                                     <td>{roundToNearest05(customerData.totalKosten).toFixed(2) || '0.00'} CHF</td>
                                 </tr>
                                 <tr>
-                                    <td colSpan="2"><strong>Ausgezahlter Betrag:</strong></td>
-                                    <td>{roundToNearest05(customerData.totalKostenMitMwst).toFixed(2) || '0.00'} CHF</td>
+                                    <td colSpan="2"><strong>80% des Betrags an Mitarbeiter:</strong></td>
+                                    <td>{employee80Percent.toFixed(2)} CHF</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="2"><strong>20% des Betrags an TBS Solutions:</strong></td>
+                                    <td>{tbs20Percent.toFixed(2)} CHF</td>
                                 </tr>
                             </tbody>
                         </table>
