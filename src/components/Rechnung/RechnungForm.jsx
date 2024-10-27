@@ -21,7 +21,7 @@ const RechnungForm = () => {
     // Dienstleitungen für den Kunden abrufen
     const fetchDienstleistungen = async (id) => {
         try {
-            const response = await axios.get(`/api/dienstleistungen/${id}`);
+            const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`);
             setDienstleistungen(response.data);
         } catch (error) {
             console.error('Fehler beim Abrufen der Dienstleistungen:', error);
@@ -48,7 +48,7 @@ const RechnungForm = () => {
         };
 
         try {
-            const response = await axios.post('/api/rechnungen', invoiceData);
+            const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen', invoiceData);
             alert(`Rechnung erfolgreich erstellt: ${response.data.rechnungId}`);
         } catch (error) {
             console.error('Fehler beim Erstellen der Rechnung:', error);

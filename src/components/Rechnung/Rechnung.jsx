@@ -21,6 +21,7 @@ const Rechnung = () => {
     return (
         <div className="rechnung-container">
             <h2>Alle Rechnungen</h2>
+            <Link to="/rechnungform">+</Link>
             <div className="rechnung-list">
                 {rechnungen.length === 0 ? (
                     <p>Keine Rechnungen gefunden.</p>
