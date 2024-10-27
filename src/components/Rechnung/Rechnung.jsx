@@ -37,9 +37,11 @@ const Rechnung = () => {
                                     {rechnung.rechnungsnummer}
                                 </Link>
                             </p>
-                            <p>
-                                <span>Status:</span> {rechnung.status}
-                            </p>
+                            <div className={`status-box status-${rechnung.status.toLowerCase()}`}>
+                                <p>
+                                    <span>Status:</span> {rechnung.status}
+                                </p>
+                            </div>
                         </div>
                     ))
                 )}
