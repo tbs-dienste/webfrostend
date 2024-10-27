@@ -4,7 +4,7 @@ import axios from "axios";
 import "./RechnungDetails.scss";
 
 const RechnungDetails = () => {
-  const { id } = useParams(); // ID aus den URL-Parametern abrufen
+  const { id } = useParams();
   const [rechnung, setRechnung] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,11 +12,8 @@ const RechnungDetails = () => {
   useEffect(() => {
     const fetchRechnung = async () => {
       try {
-        // API-Aufruf zur Abfrage der Rechnung anhand der ID
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`);
-        
-        // Annahme: Die Antwort enthält das Rechnungsobjekt direkt
-        const gefundeneRechnung = response.data.rechnung; 
+        const gefundeneRechnung = response.data.rechnung;
 
         if (gefundeneRechnung) {
           setRechnung(gefundeneRechnung);
@@ -31,7 +28,20 @@ const RechnungDetails = () => {
     };
     
     fetchRechnung();
-  }, [id]); // ID als Abhängigkeit für den useEffect-Hook
+  }, [id]);
+
+  const updateStatus = async (newStatus) => {
+    try {
+      const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}/status`, { status: newStatus });
+      if (response.status === 200) {
+        setRechnung((prevRechnung) => ({ ...prevRechnung, status: newStatus }));
+      }
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Status:", error.response ? error.response.data : error.message);
+      alert(`Fehler beim Aktualisieren des Status: ${error.response ? error.response.data : error.message}`);
+    }
+  };
+  
 
   if (loading) return <div className="rechnung-detail__loading">Lade...</div>;
   if (error) return <div className="rechnung-detail__error">{error}</div>;
@@ -48,8 +58,29 @@ const RechnungDetails = () => {
           <p><strong>Status:</strong> {rechnung.status}</p>
           <p><strong>Gesamtkosten:</strong> {rechnung.totalKostenMitMwst} €</p>
           <p><strong>Gesamtarbeitszeit:</strong> {rechnung.gesamtArbeitszeit} Stunden</p>
+          
+          {/* Buttons für den Statuswechsel */}
+          {rechnung.status === "Entwurf" && (
+            <button onClick={() => updateStatus("Offen")}>Offen</button>
+          )}
+          {rechnung.status === "Offen" && (
+            <>
+              <button onClick={() => updateStatus("Entwurf")}>Entwurf</button>
+              <button onClick={() => updateStatus("Bezahlt")}>Bezahlt</button>
+              <button onClick={() => updateStatus("1. Mahnstufe")}>1. Mahnstufe</button>
+            </>
+          )}
+          {rechnung.status === "1. Mahnstufe" && (
+            <button onClick={() => updateStatus("2. Mahnstufe")}>2. Mahnstufe</button>
+          )}
+          {rechnung.status === "2. Mahnstufe" && (
+            <button onClick={() => updateStatus("3. Mahnstufe")}>3. Mahnstufe</button>
+          )}
+          {rechnung.status === "3. Mahnstufe" && (
+            <button onClick={() => updateStatus("Überfällig")}>Überfällig</button>
+          )}
+
           <h4>Dienstleistungen</h4>
-          {/* Überprüfung, ob Dienstleistungen vorhanden sind */}
           {rechnung.dienstleistungen && rechnung.dienstleistungen.length > 0 ? (
             <ul className="rechnung-detail__services">
               {rechnung.dienstleistungen.map((service) => (
@@ -61,8 +92,8 @@ const RechnungDetails = () => {
           ) : (
             <p>Keine Dienstleistungen gefunden.</p>
           )}
+
           <h4>Benutzerdefinierte Dienstleistungen</h4>
-          {/* Überprüfung, ob benutzerdefinierte Dienstleistungen vorhanden sind */}
           {rechnung.benutzerdefinierteDienstleistungen && rechnung.benutzerdefinierteDienstleistungen.length > 0 ? (
             <ul className="rechnung-detail__custom-services">
               {rechnung.benutzerdefinierteDienstleistungen.map((custom, index) => (
