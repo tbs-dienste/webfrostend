@@ -15,8 +15,10 @@ import {
   faUser,
   faUsers,
   faBarcode,
+  faPaperPlane,
   faBars as faMenu
 } from '@fortawesome/free-solid-svg-icons';
+import { FaApper, FaPaperPlane } from 'react-icons/fa';
 
 function Navbar() {
   const currentPath = window.location.pathname;
@@ -85,6 +87,7 @@ function Navbar() {
               <>
                 <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
 

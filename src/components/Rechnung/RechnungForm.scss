@@ -1,59 +1,70 @@
-.rechnung-form {
-    max-width: 600px;
-    margin: auto;
+.create-invoice {
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
     background-color: #f9f9f9;
-
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
     h2 {
-        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
         color: #333;
     }
 
-    .form-group {
-        margin-bottom: 15px;
+    .invoice-form {
+        display: flex;
+        flex-direction: column;
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .kunden-list {
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            margin-top: 5px;
-            padding: 0;
-            list-style: none;
-
-            li {
+        .form-group {
+            margin-bottom: 15px;
+            label {
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #555;
+            }
+            input {
                 padding: 10px;
-                cursor: pointer;
-
-                &:hover {
-                    background-color: #eee;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                &:focus {
+                    border-color: #007BFF;
+                    outline: none;
                 }
             }
         }
-    }
 
-    .selected-kunde {
-        margin: 15px 0;
-        font-style: italic;
-    }
+        .custom-service {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            input {
+                margin-right: 10px;
+            }
+            button {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                &:hover {
+                    background-color: #c82333;
+                }
+            }
+        }
 
-    .message {
-        margin-top: 20px;
-        text-align: center;
-        color: #d9534f;
+        .submit-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            &:hover {
+                background-color: #218838;
+            }
+        }
     }
 }

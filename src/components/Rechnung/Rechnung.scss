@@ -1,64 +1,40 @@
 .rechnung-container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    color: #333;
 
-  .rechnung-header {
-      text-align: center;
-      h1 {
-          font-size: 24px;
-          font-weight: bold;
-          color: #9b6d4f; // Goldfarbe
-      }
-      p {
-          font-size: 14px;
-          color: #777;
-      }
-  }
+    h2 {
+        color: #333;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
 
-  .rechnung-details {
-      margin: 20px 0;
-      p {
-          font-size: 14px;
-          color: #333;
-      }
-  }
+    .rechnung-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
 
-  .rechnung-body {
-      h2 {
-          font-size: 20px;
-          font-weight: bold;
-          margin-bottom: 10px;
-      }
+    .rechnung-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
 
-      table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 20px;
+        &:hover {
+            transform: translateY(-4px);
+        }
 
-          th, td {
-              border: 1px solid #ccc;
-              padding: 8px;
-              text-align: left;
-          }
+        p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
 
-          th {
-              background-color: #f0f0f0;
-          }
-      }
-
-      .gesamt-kosten {
-          font-weight: bold;
-          p {
-              margin: 5px 0;
-          }
-      }
-  }
-
-  .rechnung-footer {
-      margin-top: 20px;
-      p {
-          font-size: 14px;
-          color: #555;
-      }
-  }
+            span {
+                font-weight: bold;
+                color: #555;
+            }
+        }
+    }
 }

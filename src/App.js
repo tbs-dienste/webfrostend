@@ -56,6 +56,8 @@ import ResetPassword from './components/Mitarbeiter/ResetPassword';
 import ArbeitszeitErfassen from './components/Mitarbeiter/ArbeitszeitErfassen';
 import TotalWorktimePerMitarbeiterForCustomer from './components/Mitarbeiter/TotalWorktimePerMitarbeiter';
 import ArbeitszeitDetails from './components/Mitarbeiter/ArbeitszeitDetails';
+import RechnungDetail from './components/Rechnung/RechnungDetails';
+import RechnungDetails from './components/Rechnung/RechnungDetails';
 
 const App = () => {
   
@@ -119,7 +121,8 @@ const App = () => {
           <Route path="/lizenzen" element={<Lizenzen />} />
           <Route path="/bewerbungformular" element={<BewerbungForm />} />
         
-            
+          <Route path="/rechnungen/:id" element={<RechnungDetails />}  />
+
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/pdfmerger" element={<PdfMerger />} />
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
@@ -128,7 +131,7 @@ const App = () => {
               <Route path="/infos" element={<Infos />} />
               <Route path="/kontoangaben" element={<Kontoangaben />} />
               <Route path="/service-create" element={<CreateService />} />
-              <Route path="/rechnung/:id" element={<Rechnung />} />
+              <Route path="/rechnungen" element={<Rechnung />} />
               <Route path="/vertrag/:id" element={<Vertrag />} />
               <Route path="/auftragsbestaetigung/:id" element={<Auftragsbestaetigung />} />
               <Route path="/mitarbeitererfassen" element={<MitarbeiterErfassen />} />
