@@ -39,7 +39,7 @@ const Rechnung = () => {
                             </p>
                             <div className={`status-box status-${rechnung.status.toLowerCase()}`}>
                                 <p>
-                                    <span>Status:</span> {rechnung.status}
+                                 {rechnung.status}
                                 </p>
                             </div>
                         </div>
