@@ -1,78 +1,113 @@
 .rechnung-detail {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  
-    &__loading,
-    &__error {
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: 'Arial', sans-serif;
+
+  &__loading,
+  &__error {
       text-align: center;
       font-size: 1.2em;
       color: #555;
-    }
-  
-    &__title {
-      font-size: 1.8em;
+  }
+
+  &__title {
+      font-size: 2em;
       color: #333;
       margin-bottom: 20px;
       border-bottom: 2px solid #ccc;
-      padding-bottom: 5px;
-    }
-  
-    &__customer {
+      padding-bottom: 10px;
+  }
+
+  &__info {
       display: flex;
-      align-items: center;
       margin-bottom: 15px;
-  
+
       &__label {
-        font-weight: bold;
-        color: #666;
-        margin-right: 10px;
+          font-weight: bold;
+          color: #666;
+          margin-right: 10px;
+          min-width: 150px;
       }
-  
-      &__name {
-        font-size: 1.2em;
-        color: #333;
+
+      &__value {
+          font-size: 1.2em;
+          color: #333;
       }
-    }
-  
-    &__item {
-      margin: 20px 0;
-      padding: 15px;
-      background-color: #fff;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-  
-      h3 {
-        font-size: 1.4em;
-        color: #333;
+  }
+
+  p {
+      margin: 10px 0;
+      font-size: 1.1em;
+      color: #555;
+  }
+
+  &__status-buttons {
+      margin: 15px 0;
+
+      .status-button {
+          margin-right: 10px;
+          padding: 10px 15px;
+          font-size: 1em;
+          color: #fff;
+          background-color: #007bff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+
+          &:hover {
+              background-color: #0056b3;
+          }
       }
-  
-      p {
-        margin: 5px 0;
-        font-size: 1.1em;
-        color: #555;
-      }
-  
-      h4 {
-        font-size: 1.2em;
-        color: #666;
-        margin-top: 15px;
-      }
-  
-      &__services,
-      &__custom-services {
-        list-style: none;
-        padding: 0;
-        font-size: 1em;
-        color: #444;
-  
-        li {
+  }
+
+  h4 {
+      font-size: 1.5em;
+      color: #333;
+      margin-top: 20px;
+      margin-bottom: 10px;
+  }
+
+  &__services,
+  &__custom-services {
+      list-style: none;
+      padding: 0;
+      font-size: 1em;
+      color: #444;
+
+      li {
           padding: 5px 0;
           display: flex;
           justify-content: space-between;
-        }
+          border-bottom: 1px solid #e0e0e0;
+
+          &:last-child {
+              border-bottom: none;
+          }
       }
-    }
   }
-  
+
+  &__delete {
+      margin-top: 30px;
+      text-align: center;
+
+      .delete-button {
+          padding: 10px 20px;
+          font-size: 1em;
+          color: #fff;
+          background-color: #dc3545;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+
+          &:hover {
+              background-color: #c82333;
+          }
+      }
+  }
+}

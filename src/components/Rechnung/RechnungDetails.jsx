@@ -37,11 +37,22 @@ const RechnungDetails = () => {
         setRechnung((prevRechnung) => ({ ...prevRechnung, status: newStatus }));
       }
     } catch (error) {
-      console.error("Fehler beim Aktualisieren des Status:", error.response ? error.response.data : error.message);
       alert(`Fehler beim Aktualisieren des Status: ${error.response ? error.response.data : error.message}`);
     }
   };
-  
+
+  const deleteRechnung = async () => {
+    if (window.confirm("Möchten Sie diese Rechnung wirklich löschen?")) {
+      try {
+        const response = await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`);
+        if (response.status === 200) {
+          window.location.href = "/rechnungen";
+        }
+      } catch (error) {
+        alert(`Fehler beim Löschen der Rechnung: ${error.response ? error.response.data : error.message}`);
+      }
+    }
+  };
 
   if (loading) return <div className="rechnung-detail__loading">Lade...</div>;
   if (error) return <div className="rechnung-detail__error">{error}</div>;
@@ -51,34 +62,35 @@ const RechnungDetails = () => {
       <h2 className="rechnung-detail__title">Rechnungsdetails</h2>
       {rechnung && (
         <>
-          <div className="rechnung-detail__customer">
+          <div className="rechnung-detail__info">
             <span className="rechnung-detail__label">Rechnungsnummer:</span>
-            <span className="rechnung-detail__name">{rechnung.rechnungsnummer}</span>
+            <span className="rechnung-detail__value">{rechnung.rechnungsnummer}</span>
           </div>
           <p><strong>Status:</strong> {rechnung.status}</p>
           <p><strong>Gesamtkosten:</strong> {rechnung.totalKostenMitMwst} €</p>
           <p><strong>Gesamtarbeitszeit:</strong> {rechnung.gesamtArbeitszeit} Stunden</p>
           
-          {/* Buttons für den Statuswechsel */}
-          {rechnung.status === "Entwurf" && (
-            <button onClick={() => updateStatus("Offen")}>Offen</button>
-          )}
-          {rechnung.status === "Offen" && (
-            <>
-              <button onClick={() => updateStatus("Entwurf")}>Entwurf</button>
-              <button onClick={() => updateStatus("Bezahlt")}>Bezahlt</button>
-              <button onClick={() => updateStatus("1. Mahnstufe")}>1. Mahnstufe</button>
-            </>
-          )}
-          {rechnung.status === "1. Mahnstufe" && (
-            <button onClick={() => updateStatus("2. Mahnstufe")}>2. Mahnstufe</button>
-          )}
-          {rechnung.status === "2. Mahnstufe" && (
-            <button onClick={() => updateStatus("3. Mahnstufe")}>3. Mahnstufe</button>
-          )}
-          {rechnung.status === "3. Mahnstufe" && (
-            <button onClick={() => updateStatus("Überfällig")}>Überfällig</button>
-          )}
+          <div className="rechnung-detail__status-buttons">
+            {rechnung.status === "Entwurf" && (
+              <button className="status-button" onClick={() => updateStatus("Offen")}>Offen</button>
+            )}
+            {rechnung.status === "Offen" && (
+              <>
+                <button className="status-button" onClick={() => updateStatus("Entwurf")}>Entwurf</button>
+                <button className="status-button" onClick={() => updateStatus("Bezahlt")}>Bezahlt</button>
+                <button className="status-button" onClick={() => updateStatus("1. Mahnstufe")}>1. Mahnstufe</button>
+              </>
+            )}
+            {rechnung.status === "1. Mahnstufe" && (
+              <button className="status-button" onClick={() => updateStatus("2. Mahnstufe")}>2. Mahnstufe</button>
+            )}
+            {rechnung.status === "2. Mahnstufe" && (
+              <button className="status-button" onClick={() => updateStatus("3. Mahnstufe")}>3. Mahnstufe</button>
+            )}
+            {rechnung.status === "3. Mahnstufe" && (
+              <button className="status-button" onClick={() => updateStatus("Überfällig")}>Überfällig</button>
+            )}
+          </div>
 
           <h4>Dienstleistungen</h4>
           {rechnung.dienstleistungen && rechnung.dienstleistungen.length > 0 ? (
@@ -107,6 +119,10 @@ const RechnungDetails = () => {
           )}
         </>
       )}
+
+      <div className="rechnung-detail__delete">
+        <button className="delete-button" onClick={deleteRechnung}>Rechnung löschen</button>
+      </div>
     </div>
   );
 };
