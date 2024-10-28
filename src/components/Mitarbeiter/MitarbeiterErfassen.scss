@@ -1,94 +1,64 @@
-$primary-color: #004080;
-$secondary-color: #ffffff;
-$accent-color: #ffcc00;
-$background-color: #f0f4f8;
-$text-color: #333333;
-$border-color: #cccccc;
-$input-focus-color: #66afe9;
-
-body {
-  font-family: Arial, sans-serif;
-  background-color: $background-color;
-  color: $text-color;
-}
-
-.kunde-erfassen {
+.mitarbeiter-erfassen {
   max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: $secondary-color;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
   h2 {
     text-align: center;
-    color: $primary-color;
-    margin-bottom: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
   }
 
   .formular {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
 
     .formular-gruppe {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      margin-bottom: 15px;
 
       label {
-        font-weight: bold;
-        color: $primary-color;
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        color: #555;
+
+        svg {
+          margin-right: 8px;
+          color: #007bff; // Icon-Farbe
+        }
       }
 
       input,
-      select {
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 1px solid $border-color;
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
         border-radius: 5px;
         transition: border-color 0.3s;
 
         &:focus {
-          border-color: $input-focus-color;
+          border-color: #007bff; // Fokus-Farbe
           outline: none;
         }
       }
 
-      .languages {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
 
-        .language-checkbox {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-
-          input {
-            margin: 0;
-          }
-
-          .flag {
-            font-size: 1.5rem;
-          }
+        &:hover {
+          background-color: #0056b3; // Hover-Farbe
         }
-      }
-    }
-
-    button {
-      padding: 0.75rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: $secondary-color;
-      background-color: $primary-color;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-
-      &:hover {
-        background-color: darken($primary-color, 10%);
       }
     }
   }

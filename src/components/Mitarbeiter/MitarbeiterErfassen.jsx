@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaLock, FaBuilding } from 'react-icons/fa'; // Icons importieren
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
@@ -53,7 +54,7 @@ const MitarbeiterErfassen = () => {
 
   return (
     <div className="mitarbeiter-erfassen">
-      <h2>Mitarbeiter erfassen</h2>
+      <h2><FaBuilding /> Mitarbeiter erfassen</h2>
       <form className="formular" onSubmit={handleSubmit}>
         <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
@@ -71,7 +72,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="vorname">Vorname:</label>
+          <label htmlFor="vorname"><FaUser /> Vorname:</label>
           <input
             type="text"
             id="vorname"
@@ -83,7 +84,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="nachname">Nachname:</label>
+          <label htmlFor="nachname"><FaUser /> Nachname:</label>
           <input
             type="text"
             id="nachname"
@@ -95,7 +96,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="adresse">Adresse:</label>
+          <label htmlFor="adresse"><FaMapMarkerAlt /> Adresse:</label>
           <input
             type="text"
             id="adresse"
@@ -131,7 +132,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="email">E-Mail:</label>
+          <label htmlFor="email"><FaEnvelope /> E-Mail:</label>
           <input
             type="email"
             id="email"
@@ -143,7 +144,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="mobil">Mobil:</label>
+          <label htmlFor="mobil"><FaPhone /> Mobil:</label>
           <input
             type="text"
             id="mobil"
@@ -167,7 +168,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="passwort">Passwort:</label>
+          <label htmlFor="passwort"><FaLock /> Passwort:</label>
           <input
             type="password"
             id="passwort"
@@ -179,7 +180,7 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="geburtstagdatum">Geburtsdatum:</label>
+          <label htmlFor="geburtstagdatum"><FaCalendarAlt /> Geburtsdatum:</label>
           <input
             type="date"
             id="geburtstagdatum"
