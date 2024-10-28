@@ -1,251 +1,308 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './BewerbungForm.scss';
 
-const BewerbungForm = () => {
+function BewerbungForm() {
+  const currentYear = new Date().getFullYear();
+  const minYear = currentYear - 13; // Mindestalter 13 Jahre
+  const maxYear = currentYear - 40; // Maximales Alter 40 Jahre
+
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = [
+    "Januar", "Februar", "März", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Dezember"
+  ];
+  const years = Array.from({ length: minYear - maxYear + 1 }, (_, i) => minYear - i);
+
+  const cantons = [
+    "Zürich", "Bern", "Luzern", "Uri", "Schwyz", "Obwalden", "Nidwalden", "Glarus",
+    "Zug", "Freiburg", "Solothurn", "Basel-Stadt", "Basel-Landschaft", "Schaffhausen",
+    "Appenzell Ausserrhoden", "Appenzell Innerrhoden", "St. Gallen", "Graubünden",
+    "Aargau", "Thurgau", "Tessin", "Waadt", "Wallis", "Neuenburg", "Genf", "Jura"
+  ];
+
   const [formData, setFormData] = useState({
-    vorname: '',
-    name: '',
-    geburtstag: '',
-    adresse: '',
-    plz: '',
-    ort: '',
-    email: '',
+    gender: 'frau',
+    firstname: '',
+    lastname: '',
+    birthDay: '',
+    birthMonth: '',
+    birthYear: '',
+    street: '',
+    zip: '',
+    city: '',
+    canton: '',
     phone: '',
-    experience: '',
-    skills: '',
-    languages: '',
-    interests: '',
-    motivation: '',
-    position: '',
-    serviceId: ''
+    email: '',
+    termsAccepted: false,
+    startDate: '',
+    endDate: '',
+    cvFile: '',
+    coverLetterFile: '',
+    transcriptsFile: '',
+    otherDocsFile: '',
   });
 
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch services when component mounts
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
-        setServices(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching services:', error);
-        setLoading(false);
-      }
-    };
-    fetchServices();
+    const savedFormData = JSON.parse(localStorage.getItem('applicationFormData'));
+    if (savedFormData) {
+      setFormData(savedFormData);
+    }
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSaveForLater = () => {
+    localStorage.setItem('applicationFormData', JSON.stringify(formData));
+    alert("Formulardaten wurden gespeichert!");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3000/bewerbungen', formData);
-      alert(`Bewerbung erfolgreich gesendet! ID: ${response.data.id}`);
-      setFormData({
-        vorname: '',
-        name: '',
-        geburtstag: '',
-        adresse: '',
-        plz: '',
-        ort: '',
-        email: '',
-        phone: '',
-        experience: '',
-        skills: '',
-        languages: '',
-        interests: '',
-        motivation: '',
-        position: '',
-        serviceId: ''
-      });
-    } catch (error) {
-      console.error('Error creating application:', error);
-      alert('Fehler beim Senden der Bewerbung.');
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const handleFileChange = (event, fileKey) => {
+    const file = event.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [fileKey]: file.name // Storing just the file name
+      }));
+    } else {
+      alert("Bitte nur PDF-Dateien hochladen.");
+      event.target.value = null; // Reset input
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('applicationFormData');
+    alert("Formular wurde erfolgreich eingereicht!");
+    setFormData({
+      gender: 'frau',
+      firstname: '',
+      lastname: '',
+      birthDay: '',
+      birthMonth: '',
+      birthYear: '',
+      street: '',
+      zip: '',
+      city: '',
+      canton: '',
+      phone: '',
+      email: '',
+      termsAccepted: false,
+      startDate: '',
+      endDate: '',
+      cvFile: '',
+      coverLetterFile: '',
+      transcriptsFile: '',
+      otherDocsFile: '',
+    });
+  };
+
   return (
-    <div className="application-form-container">
-      <h2>Bewerbungsformular</h2>
-      <form onSubmit={handleSubmit} className="application-form">
-        <div className="form-group">
-          <label htmlFor="vorname">Vorname</label>
+    <form className="application-form" onSubmit={handleSubmit}>
+      <section className="section personal-info">
+        <h2>Meine Daten</h2>
+        <div className="form-row">
+          <select name="gender" value={formData.gender} onChange={handleInputChange} required>
+            <option value="frau">Frau</option>
+            <option value="herr">Herr</option>
+          </select>
           <input
             type="text"
-            name="vorname"
-            id="vorname"
-            value={formData.vorname}
-            onChange={handleChange}
+            name="firstname"
+            placeholder="Vorname*"
+            value={formData.firstname}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="lastname"
+            placeholder="Nachname*"
+            value={formData.lastname}
+            onChange={handleInputChange}
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="name">Nachname</label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="geburtstag">Geburtstag</label>
-          <input
-            type="date"
-            name="geburtstag"
-            id="geburtstag"
-            value={formData.geburtstag}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="adresse">Adresse</label>
-          <input
-            type="text"
-            name="adresse"
-            id="adresse"
-            value={formData.adresse}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="plz">PLZ</label>
-          <input
-            type="text"
-            name="plz"
-            id="plz"
-            value={formData.plz}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="ort">Ort</label>
-          <input
-            type="text"
-            name="ort"
-            id="ort"
-            value={formData.ort}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="phone">Telefonnummer</label>
-          <input
-            type="tel"
-            name="phone"
-            id="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="experience">Berufserfahrung</label>
-          <input
-            type="text"
-            name="experience"
-            id="experience"
-            value={formData.experience}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="skills">Fähigkeiten</label>
-          <input
-            type="text"
-            name="skills"
-            id="skills"
-            value={formData.skills}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="languages">Sprachen</label>
-          <input
-            type="text"
-            name="languages"
-            id="languages"
-            value={formData.languages}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="interests">Interessen</label>
-          <input
-            type="text"
-            name="interests"
-            id="interests"
-            value={formData.interests}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="motivation">Motivationsschreiben</label>
-          <textarea
-            name="motivation"
-            id="motivation"
-            value={formData.motivation}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="position">Position</label>
-          <input
-            type="text"
-            name="position"
-            id="position"
-            value={formData.position}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="serviceId">Dienstleistung</label>
-          <select
-            name="serviceId"
-            id="serviceId"
-            value={formData.serviceId}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Bitte wählen</option>
-            {!loading &&
-              services.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {service.title}
-                </option>
-              ))}
+        <div className="form-row">
+          <label>Geburtsdatum*</label>
+          <select name="birthDay" value={formData.birthDay} onChange={handleInputChange} required>
+            <option value="">Tag wählen</option>
+            {days.map(day => (
+              <option key={day} value={day}>{day}</option>
+            ))}
+          </select>
+          <select name="birthMonth" value={formData.birthMonth} onChange={handleInputChange} required>
+            <option value="">Monat wählen</option>
+            {months.map((month, index) => (
+              <option key={index} value={index + 1}>{month}</option>
+            ))}
+          </select>
+          <select name="birthYear" value={formData.birthYear} onChange={handleInputChange} required>
+            <option value="">Jahr wählen</option>
+            {years.map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
           </select>
         </div>
-        <button type="submit" className="submit-button">
-          Bewerbung senden
-        </button>
-      </form>
-    </div>
+        <input
+          type="text"
+          name="street"
+          placeholder="Strasse*"
+          value={formData.street}
+          onChange={handleInputChange}
+          required
+        />
+        <div className="form-row">
+          <input
+            type="text"
+            name="zip"
+            placeholder="PLZ*"
+            value={formData.zip}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="city"
+            placeholder="Ort*"
+            value={formData.city}
+            onChange={handleInputChange}
+            required
+          />
+          <select name="canton" value={formData.canton} onChange={handleInputChange} required>
+            <option value="">Kanton auswählen</option>
+            {cantons.map(canton => (
+              <option key={canton} value={canton}>{canton}</option>
+            ))}
+          </select>
+        </div>
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Telefon*"
+          value={formData.phone}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="E-Mail*"
+          value={formData.email}
+          onChange={handleInputChange}
+          required
+        />
+        <label>
+          <input
+            type="checkbox"
+            name="termsAccepted"
+            checked={formData.termsAccepted}
+            onChange={handleInputChange}
+            required
+          />
+          Ich akzeptiere die <a href="#">Nutzungsbedingungen*</a>
+        </label>
+      </section>
+
+      <section className="section wish-dates">
+        <h2>Wunschdaten</h2>
+        <label>
+          Von wann bis wann möchtest du schnuppern?
+          <span className="tooltip">
+            <span className="tooltip-icon">i</span>
+            <span className="tooltip-text">Gebe ein Wunschdatum ein, wann sich eine Schnupperlehre für dich besonders gut organisieren lässt.</span>
+          </span>
+        </label>
+        <div className="form-row">
+          <input
+            type="date"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleInputChange}
+            required
+          />
+          <span>bis</span>
+          <input
+            type="date"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+      </section>
+
+      <section className="section documents">
+        <h2>Meine Unterlagen</h2>
+        <div className="form-row">
+          <label>Lebenslauf*</label>
+          <input
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            onChange={(e) => handleFileChange(e, 'cvFile')}
+            id="cv-upload"
+          />
+          <button type="button" onClick={() => document.getElementById('cv-upload').click()}>
+            Hochladen
+          </button>
+          {formData.cvFile && <span>{formData.cvFile}</span>}
+        </div>
+        <div className="form-row">
+          <label>Motivationsschreiben*</label>
+          <input
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            onChange={(e) => handleFileChange(e, 'coverLetterFile')}
+            id="cover-letter-upload"
+          />
+          <button type="button" onClick={() => document.getElementById('cover-letter-upload').click()}>
+            Hochladen
+          </button>
+          {formData.coverLetterFile && <span>{formData.coverLetterFile}</span>}
+        </div>
+        <div className="form-row">
+          <label>Zeugnisse*</label>
+          <input
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            onChange={(e) => handleFileChange(e, 'transcriptsFile')}
+            id="transcripts-upload"
+          />
+          <button type="button" onClick={() => document.getElementById('transcripts-upload').click()}>
+            Hochladen
+          </button>
+          {formData.transcriptsFile && <span>{formData.transcriptsFile}</span>}
+        </div>
+        <div className="form-row">
+          <label>Weitere Dokumente</label>
+          <input
+            type="file"
+            accept=".pdf"
+            style={{ display: 'none' }}
+            onChange={(e) => handleFileChange(e, 'otherDocsFile')}
+            id="other-docs-upload"
+          />
+          <button type="button" onClick={() => document.getElementById('other-docs-upload').click()}>
+            Hochladen
+          </button>
+          {formData.otherDocsFile && <span>{formData.otherDocsFile}</span>}
+        </div>
+      </section>
+
+      <div className="form-actions">
+        <button type="button" onClick={handleSaveForLater}>Später speichern</button>
+        <button type="submit">Formular abschicken</button>
+      </div>
+    </form>
   );
-};
+}
 
 export default BewerbungForm;
