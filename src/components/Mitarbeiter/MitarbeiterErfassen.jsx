@@ -3,86 +3,62 @@ import axios from 'axios';
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
-  const [geschlecht, setGeschlecht] = useState('');
-  const [vorname, setVorname] = useState('');
-  const [nachname, setNachname] = useState('');
-  const [adresse, setAdresse] = useState('');
-  const [postleitzahl, setPostleitzahl] = useState('');
-  const [ort, setOrt] = useState('');
-  const [email, setEmail] = useState('');
-  const [mobil, setMobil] = useState('');
-  const [benutzername, setBenutzername] = useState('');
-  const [passwort, setPasswort] = useState('');
-  const [land, setLand] = useState('CH');
-  const [iban, setIban] = useState('');
+  const [formData, setFormData] = useState({
+    geschlecht: '',
+    vorname: '',
+    nachname: '',
+    adresse: '',
+    postleitzahl: '',
+    ort: '',
+    email: '',
+    mobil: '',
+    benutzername: '',
+    passwort: '',
+    geburtstagdatum: '',
+    iban: '',
+    land: 'DE'
+  });
 
-  const handleIbanChange = (e) => {
-    let input = e.target.value.toUpperCase();
-    input = input.replace(/\D/g, ''); // Nur Zahlen beibehalten
-
-    let formattedIban = land;
-    for (let i = 0; i < input.length; i++) {
-      if (i === 2 || i === 6 || i === 10 || i === 14 || i === 18) {
-        formattedIban += ' ';
-      }
-      formattedIban += input[i];
-    }
-
-    if (formattedIban.length > 26) {
-      formattedIban = formattedIban.substring(0, 26); // Maximal 26 Zeichen
-    }
-
-    setIban(formattedIban);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleLandChange = (e) => {
-    const selectedLand = e.target.value;
-    setLand(selectedLand);
-    setIban(selectedLand); // IBAN initialisieren
-  };
-
-  const handleMitarbeiterHinzufügen = async (e) => {
-    e.preventDefault(); // Verhindert das Standard-Formularverhalten
-
-    const newMitarbeiter = {
-      geschlecht,
-      vorname,
-      nachname,
-      adresse,
-      postleitzahl,
-      ort,
-      email,
-      mobil,
-      benutzername,
-      passwort,
-      iban // Hier wird die IBAN übergeben
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      const token = localStorage.getItem('token'); // Token aus localStorage holen
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter', newMitarbeiter, {
-        headers: {
-          Authorization: `Bearer ${token}` // Token im Header hinzufügen
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter',
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
-      console.log('Response:', response.data);
-      window.location = "/mitarbeiter"; // Weiterleitung nach dem erfolgreichen Hinzufügen
+      );
+      console.log('Mitarbeiter erfolgreich hinzugefügt:', response.data);
+      alert('Mitarbeiter erfolgreich hinzugefügt');
+      window.location = "/mitarbeiter";
     } catch (error) {
       console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
-      alert('Fehler beim Hinzufügen des Mitarbeiters. Bitte versuche es später noch einmal.'); // Fehlerbenachrichtigung
+      alert('Fehler beim Hinzufügen des Mitarbeiters. Bitte überprüfe die Daten.');
     }
   };
 
   return (
-    <div className="kunde-erfassen">
+    <div className="mitarbeiter-erfassen">
       <h2>Mitarbeiter erfassen</h2>
-      <form className="formular" onSubmit={handleMitarbeiterHinzufügen}>
+      <form className="formular" onSubmit={handleSubmit}>
         <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
           <select
             id="geschlecht"
-            value={geschlecht}
-            onChange={(e) => setGeschlecht(e.target.value)}
+            name="geschlecht"
+            value={formData.geschlecht}
+            onChange={handleChange}
             required
           >
             <option value="" disabled>Bitte wählen...</option>
@@ -96,8 +72,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="vorname"
-            value={vorname}
-            onChange={(e) => setVorname(e.target.value)}
+            name="vorname"
+            value={formData.vorname}
+            onChange={handleChange}
             required
           />
         </div>
@@ -107,19 +84,21 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="nachname"
-            value={nachname}
-            onChange={(e) => setNachname(e.target.value)}
+            name="nachname"
+            value={formData.nachname}
+            onChange={handleChange}
             required
           />
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="adresse">Strasse und Hausnummer:</label>
+          <label htmlFor="adresse">Adresse:</label>
           <input
             type="text"
             id="adresse"
-            value={adresse}
-            onChange={(e) => setAdresse(e.target.value)}
+            name="adresse"
+            value={formData.adresse}
+            onChange={handleChange}
             required
           />
         </div>
@@ -129,8 +108,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="postleitzahl"
-            value={postleitzahl}
-            onChange={(e) => setPostleitzahl(e.target.value)}
+            name="postleitzahl"
+            value={formData.postleitzahl}
+            onChange={handleChange}
             required
           />
         </div>
@@ -140,8 +120,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="ort"
-            value={ort}
-            onChange={(e) => setOrt(e.target.value)}
+            name="ort"
+            value={formData.ort}
+            onChange={handleChange}
             required
           />
         </div>
@@ -151,8 +132,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             required
           />
         </div>
@@ -162,8 +144,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="mobil"
-            value={mobil}
-            onChange={(e) => setMobil(e.target.value)}
+            name="mobil"
+            value={formData.mobil}
+            onChange={handleChange}
             required
           />
         </div>
@@ -173,8 +156,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="benutzername"
-            value={benutzername}
-            onChange={(e) => setBenutzername(e.target.value)}
+            name="benutzername"
+            value={formData.benutzername}
+            onChange={handleChange}
             required
           />
         </div>
@@ -184,8 +168,21 @@ const MitarbeiterErfassen = () => {
           <input
             type="password"
             id="passwort"
-            value={passwort}
-            onChange={(e) => setPasswort(e.target.value)}
+            name="passwort"
+            value={formData.passwort}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="geburtstagdatum">Geburtsdatum:</label>
+          <input
+            type="date"
+            id="geburtstagdatum"
+            name="geburtstagdatum"
+            value={formData.geburtstagdatum}
+            onChange={handleChange}
             required
           />
         </div>
@@ -195,8 +192,9 @@ const MitarbeiterErfassen = () => {
           <input
             type="text"
             id="iban"
-            value={iban}
-            onChange={handleIbanChange}
+            name="iban"
+            value={formData.iban}
+            onChange={handleChange}
             required
           />
         </div>
@@ -205,12 +203,13 @@ const MitarbeiterErfassen = () => {
           <label htmlFor="land">Land:</label>
           <select
             id="land"
-            value={land}
-            onChange={handleLandChange}
+            name="land"
+            value={formData.land}
+            onChange={handleChange}
           >
-            <option value="CH">Schweiz</option>
             <option value="DE">Deutschland</option>
-            {/* Fügen Sie weitere Länder hier hinzu */}
+            <option value="CH">Schweiz</option>
+            {/* Weitere Länderoptionen */}
           </select>
         </div>
 

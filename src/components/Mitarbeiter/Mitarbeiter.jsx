@@ -64,6 +64,7 @@ const Mitarbeiter = () => {
   return (
     <div className="mitarbeiter-container">
       <h2>Mitarbeiter</h2>
+      <Link to="/mitarbeitererfassen">+</Link>
       {loading ? (
         <p>Lade Mitarbeiter...</p>
       ) : (
