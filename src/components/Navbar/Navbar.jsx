@@ -16,7 +16,8 @@ import {
   faUsers,
   faBarcode,
   faPaperPlane,
-  faBars as faMenu
+  faBars as faMenu,
+  faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
 import { FaApper, FaPaperPlane } from 'react-icons/fa';
 
@@ -82,6 +83,7 @@ function Navbar() {
             <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/bewerbungformular" text="Bewerben" icon={faPaperclip} currentPath={currentPath} onClick={toggleBurgerMenu} />
 
             {userType === 'admin' && (
               <>
