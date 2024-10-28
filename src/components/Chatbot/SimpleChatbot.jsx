@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faTimes } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import './SimpleChatbot.scss'; // Stil für die Chatbot-Komponente
 
 const SimpleChatbot = () => {
@@ -10,45 +11,12 @@ const SimpleChatbot = () => {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const faqs = [
-    { question: 'hallo', reply: 'Hallo! Wie kann ich Ihnen helfen?' },
-    { question: 'wie viel kostet', reply: 'Die Preise variieren. Möchten Sie eine spezifische Information? <br/><a href="https://tbs-solutions.vercel.app/preisinformationen" class="chatbot-link" target="_blank">Preisinformationen</a>' },
-    { question: 'ich brauche hilfe', reply: 'Ich bin hier, um Ihnen zu helfen. Was brauchen Sie? <br/><a href="https://tbs-solutions.vercel.app/kundeerfassen" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>' },
-    { question: 'was sind die öffnungszeiten', reply: 'Unsere Öffnungszeiten sind Montag bis Freitag von 9 bis 17 Uhr. <br/><a href="https://tbs-solutions.vercel.app" class="chatbot-link" target="_blank">Website besuchen</a>' },
-    { question: 'was ist deine funktion', reply: 'Ich bin ein virtueller Assistent, um Ihre Fragen zu beantworten und Ihnen Informationen zu geben.' },
-    { question: 'wer bist du', reply: 'Ich bin ein Chatbot, entwickelt um Ihnen zu helfen.' },
-    { question: 'wo finde ich euch', reply: 'Sie können uns auf unserer Website finden: <br/><a href="https://tbs-solutions.vercel.app" class="chatbot-link" target="_blank">TBS Solutions</a>' }
-  ];
-
-  const synonyms = {
-    hallo: ['hi', 'hey', 'hallo', 'guten tag'],
-    'wie viel kostet': ['kosten', 'preis', 'kostenpunkt'],
-    'ich brauche hilfe': ['hilfe', 'unterstützung'],
-    'was sind die öffnungszeiten': ['öffnungszeiten', 'stunden', 'arbeitszeiten'],
-    'was ist deine funktion': ['funktion', 'aufgabe', 'rolle'],
-    'wer bist du': ['identität', 'wer', 'name'],
-    'wo finde ich euch': ['standort', 'adresse', 'finden']
+  const toggleChatbot = () => {
+    setIsOpen(!isOpen);
+    setHasUnreadMessages(false); // Benachrichtigung zurücksetzen, wenn geöffnet
   };
 
-  const getBotReply = (text) => {
-    for (let faq of faqs) {
-      for (let synonym of synonyms[faq.question] || [faq.question]) {
-        if (text.toLowerCase().includes(synonym.toLowerCase())) {
-          return faq.reply;
-        }
-      }
-    }
-    return `
-      Entschuldigung, ich verstehe Ihre Frage nicht.
-      <br/><a href="https://www.example.com/kontakt" class="chatbot-link" target="_blank">Kontakt aufnehmen</a>
-      <br/><div class="button-container">
-        <button class="chatbot-button" onClick={handleChatWithAgent}>Chat</button>
-        <button class="chatbot-button" onClick={handleVideoConsultation}>Videoberatung</button>
-      </div>
-    `;
-  };
-
-  const handleUserMessage = (text) => {
+  const handleUserMessage = async (text) => {
     if (!text.trim()) return;
 
     const newMessages = [...messages, { text, sender: 'user' }];
@@ -56,25 +24,17 @@ const SimpleChatbot = () => {
     setHasUnreadMessages(!isOpen); // Setzt die Benachrichtigung, wenn der Chat geschlossen ist
 
     setTyping(true);
-    setTimeout(() => {
-      const reply = getBotReply(text);
+    try {
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/chatbot-answers/findAnswer', { question: text });
+      const reply = response.data.reply;
+
       setMessages([...newMessages, { text: reply, sender: 'bot' }]);
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Antwort:", error);
+      setMessages([...newMessages, { text: "Entschuldigung, ich kann die Antwort nicht abrufen.", sender: 'bot' }]);
+    } finally {
       setTyping(false);
-      setHasUnreadMessages(true); // Nachricht als ungelesen markieren
-    }, 1500);
-  };
-
-  const toggleChatbot = () => {
-    setIsOpen(!isOpen);
-    setHasUnreadMessages(false); // Benachrichtigung zurücksetzen, wenn geöffnet
-  };
-
-  const handleChatWithAgent = () => {
-    window.open("https://www.example.com/chat", "_blank");
-  };
-
-  const handleVideoConsultation = () => {
-    window.open("https://www.example.com/videoberatung", "_blank");
+    }
   };
 
   useEffect(() => {
