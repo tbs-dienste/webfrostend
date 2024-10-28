@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Home.scss';
 import Loading from '../Loading/Loading';
-import SimpleChatbot from '../Chatbot/SimpleChatbot';
+
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
-    <SimpleChatbot />
+   
       <div className="slide-container">
         <div className="slides" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
           {slides.map((slide) => (
