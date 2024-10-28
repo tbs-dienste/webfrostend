@@ -16,7 +16,10 @@ const MitarbeiterErfassen = () => {
     passwort: '',
     geburtstagdatum: '',
     iban: '',
-    land: 'DE'
+    land: 'DE',
+    verfügbarkeit: '',
+    teilzeit_prozent: '',
+    fähigkeiten: ''
   });
 
   const handleChange = (e) => {
@@ -211,6 +214,49 @@ const MitarbeiterErfassen = () => {
             <option value="CH">Schweiz</option>
             {/* Weitere Länderoptionen */}
           </select>
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="verfügbarkeit">Verfügbarkeit:</label>
+          <select
+            id="verfügbarkeit"
+            name="verfügbarkeit"
+            value={formData.verfügbarkeit}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>Bitte wählen...</option>
+            <option value="flexibel">Flexibel</option>
+            <option value="vollzeit">Vollzeit</option>
+            <option value="teilzeit">Teilzeit</option>
+          </select>
+        </div>
+
+        {formData.verfügbarkeit === 'teilzeit' && (
+          <div className="formular-gruppe">
+            <label htmlFor="teilzeit_prozent">Teilzeit-Prozent:</label>
+            <input
+              type="number"
+              id="teilzeit_prozent"
+              name="teilzeit_prozent"
+              value={formData.teilzeit_prozent}
+              onChange={handleChange}
+              min="0"
+              max="100"
+              required
+            />
+          </div>
+        )}
+
+        <div className="formular-gruppe">
+          <label htmlFor="fähigkeiten">Fähigkeiten:</label>
+          <textarea
+            id="fähigkeiten"
+            name="fähigkeiten"
+            value={formData.fähigkeiten}
+            onChange={handleChange}
+            placeholder="Fähigkeiten eingeben..."
+          />
         </div>
 
         <button type="submit">Mitarbeiter hinzufügen</button>
