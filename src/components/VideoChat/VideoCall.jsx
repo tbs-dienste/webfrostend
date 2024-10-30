@@ -18,7 +18,7 @@ const VideoCall = () => {
     const [screenSharingInitiatedBy, setScreenSharingInitiatedBy] = useState(null); // Track who started screen sharing
 
     useEffect(() => {
-        const ws = new WebSocket('ws://https://tbsdigitalsolutionsbackend.onrender.com');
+        const ws = new WebSocket('wss://tbsdigitalsolutionsbackend.onrender.com');
         setSocket(ws);
 
         ws.onopen = () => {
