@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReactStars from 'react-stars';
 import './KundeBewertungformular.scss';
 
 const KundeBewertungformular = () => {
+    const { kundennummer } = useParams(); // Kundennummer aus den URL-Parametern auslesen
     const [formValues, setFormValues] = useState({
         arbeitsqualität: '',
         arbeitsqualität_rating: 0,
@@ -21,6 +23,22 @@ const KundeBewertungformular = () => {
         preis_rating: 0,
         gesamttext: ''
     });
+    const [bereitsBewertet, setBereitsBewertet] = useState(false);
+
+    useEffect(() => {
+        // Überprüfen, ob für diesen Kunden bereits eine Bewertung existiert
+        const checkExistingReview = async () => {
+            try {
+                const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`);
+                if (response.data && response.data.exists) {
+                    setBereitsBewertet(true); // Falls Bewertung existiert, setze den Status auf true
+                }
+            } catch (error) {
+                console.error('Fehler beim Überprüfen der vorhandenen Bewertung:', error);
+            }
+        };
+        checkExistingReview();
+    }, [kundennummer]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,14 +58,23 @@ const KundeBewertungformular = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen', formValues);
+            await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`, formValues);
             alert('Bewertung erfolgreich erstellt.');
-            // Optional: Weiterleitung oder Erfolgsmeldung hier hinzufügen
         } catch (error) {
             console.error('Fehler beim Erstellen der Bewertung:', error);
             alert('Fehler beim Erstellen der Bewertung. Bitte versuchen Sie es erneut.');
         }
     };
+
+    // Falls bereits bewertet, "Danke"-Nachricht anzeigen
+    if (bereitsBewertet) {
+        return (
+            <div className="bewertung-danke">
+                <h2>Vielen Dank für Ihre Bewertung!</h2>
+                <p>Wir freuen uns, dass Sie uns Feedback gegeben haben.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bewertung-formular">
