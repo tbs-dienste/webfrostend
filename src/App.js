@@ -111,7 +111,7 @@ const App = () => {
           <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/videocall" element={<VideoCall />} />
-          <Route path="/kundenbewertung" element={<KundeBewertungformular />} />
+          <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
