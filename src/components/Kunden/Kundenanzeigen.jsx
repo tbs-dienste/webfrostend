@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaSave, FaUndo, FaEdit } from 'react-icons/fa';
+import { FaSave, FaUndo, FaEdit, FaCopy } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
 
 const KundenAnzeigen = () => {
@@ -53,12 +53,11 @@ const KundenAnzeigen = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, editedData, {
+      await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, editedData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('Serverantwort:', response);
       alert('Daten erfolgreich aktualisiert');
       setEditMode(false);
       setSelectedKunde(editedData);
@@ -76,37 +75,25 @@ const KundenAnzeigen = () => {
     }
   };
 
-  const handleSignatureReset = async () => {
+  const copyLinkToClipboard = () => {
+    const reviewLink = `${window.location.origin}/bewertung/posten/${id}`;
+    navigator.clipboard.writeText(reviewLink);
+    alert('Link zum Bewerten wurde kopiert!');
+  };
+
+  const handleStatusUpdate = async (newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const customerId = selectedKunde.id;
-
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/sign/reset-signature', {
-        customerId: customerId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Unterschrift erfolgreich zurückgesetzt:', response.data);
-      alert('Unterschrift erfolgreich zurückgesetzt');
-
-      // Kundendaten nach dem Zurücksetzen der Unterschrift erneut abrufen
-      const updatedResponse = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${customerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const updatedKunde = updatedResponse.data.data;
-      setSelectedKunde(updatedKunde);
-      setOriginalData(updatedKunde);
-
-      setEditMode(false);
+      await axios.put(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setSelectedKunde((prevKunde) => ({ ...prevKunde, status: newStatus }));
+      alert(`Status erfolgreich auf ${newStatus} aktualisiert!`);
     } catch (error) {
-      console.error('Fehler beim Zurücksetzen der Unterschrift:', error);
-      alert('Fehler beim Zurücksetzen der Unterschrift. Bitte versuche es später noch einmal.');
+      console.error('Fehler beim Aktualisieren des Status:', error);
+      alert('Fehler beim Aktualisieren des Status. Bitte versuche es später noch einmal.');
     }
   };
 
@@ -121,7 +108,6 @@ const KundenAnzeigen = () => {
         <div>
           {editMode ? (
             <div>
-              {/* Eingabefelder für die Kundendetails */}
               <div className="input-group">
                 <label>Kundennummer:</label>
                 <input
@@ -159,7 +145,25 @@ const KundenAnzeigen = () => {
                 />
               </div>
               <div className="input-group">
-                <label>Straße und Hausnummer:</label>
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={editedData.email || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Mobil:</label>
+                <input
+                  type="tel"
+                  name="mobil"
+                  value={editedData.mobil || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Adresse:</label>
                 <input
                   type="text"
                   name="strasseHausnummer"
@@ -168,7 +172,7 @@ const KundenAnzeigen = () => {
                 />
               </div>
               <div className="input-group">
-                <label>Postleitzahl:</label>
+                <label>PLZ:</label>
                 <input
                   type="text"
                   name="postleitzahl"
@@ -185,75 +189,6 @@ const KundenAnzeigen = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="input-group">
-                <label>Land:</label>
-                <input
-                  type="text"
-                  name="land"
-                  value={editedData.land || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={editedData.email || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Mobil:</label>
-                <input
-                  type="text"
-                  name="mobil"
-                  value={editedData.mobil || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Geschlecht:</label>
-                <input
-                  type="text"
-                  name="geschlecht"
-                  value={editedData.geschlecht || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>IP-Adresse:</label>
-                <input
-                  type="text"
-                  name="ip_adresse"
-                  value={editedData.ip_adresse || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Code:</label>
-                <input
-                  type="text"
-                  name="code"
-                  value={editedData.code || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Unterschrift:</label>
-                {editedData.unterschrift ? (
-                  <img
-                    src={`data:image/png;base64,${editedData.unterschrift}`}
-                    alt="Unterschrift"
-                    className="signature-image"
-                  />
-                ) : (
-                  <p>Keine Unterschrift vorhanden</p>
-                )}
-                <button onClick={handleSignatureReset}>
-                  <FaUndo /> Unterschrift zurücksetzen
-                </button>
-              </div>
               <div className="button-group">
                 <button onClick={handleSave}>
                   <FaSave /> Speichern
@@ -265,50 +200,75 @@ const KundenAnzeigen = () => {
             </div>
           ) : (
             <div>
-              {/* Kundendetails anzeigen */}
               <p><strong>Kundennummer:</strong> {selectedKunde.kundennummer}</p>
               <p><strong>Firma:</strong> {selectedKunde.firma}</p>
               <p><strong>Vorname:</strong> {selectedKunde.vorname}</p>
               <p><strong>Nachname:</strong> {selectedKunde.nachname}</p>
-              <p><strong>Straße und Hausnummer:</strong> {selectedKunde.strasseHausnummer}</p>
-              <p><strong>Postleitzahl:</strong> {selectedKunde.postleitzahl}</p>
-              <p><strong>Ort:</strong> {selectedKunde.ort}</p>
-              <p><strong>Land:</strong> {selectedKunde.land}</p>
               <p><strong>Email:</strong> {selectedKunde.email}</p>
               <p><strong>Mobil:</strong> {selectedKunde.mobil}</p>
-              <p><strong>Geschlecht:</strong> {selectedKunde.geschlecht}</p>
-              <p><strong>IP-Adresse:</strong> {selectedKunde.ip_adresse}</p>
-              <p><strong>Code:</strong> {selectedKunde.code}</p>
-              {selectedKunde.unterschrift && (
-                <div>
-                  <strong>Unterschrift:</strong>
-                  <img
-                    src={`data:image/png;base64,${selectedKunde.unterschrift}`}
-                    alt="Unterschrift"
-                    className="signature-image"
-                  />
-                </div>
-              )}
+              <p><strong>Adresse:</strong> {selectedKunde.strasseHausnummer}</p>
+              <p><strong>PLZ:</strong> {selectedKunde.postleitzahl}</p>
+              <p><strong>Ort:</strong> {selectedKunde.ort}</p>
+              <p><strong>Status:</strong> {selectedKunde.status}</p>
               <button onClick={handleEdit}>
                 <FaEdit /> Bearbeiten
               </button>
             </div>
           )}
 
-          {/* Link Button hinzufügen */}
+
+
+          {/* Status Buttons */}
+          <div className="status-buttons">
+            <h3>Status aktualisieren</h3>
+            {['offen', 'inBearbeitung', 'abgeschlossen'].map((status) => (
+              <button
+                key={status}
+                onClick={() => handleStatusUpdate(status)}
+                className={selectedKunde.status === status ? 'active' : ''}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Display Bewertungen or Button for Link */}
+{selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
+  <div>
+    <h3>Bewertungen:</h3>
+    {selectedKunde.bewertungen.map((bewertung, index) => (
+      <div key={index} className="bewertung">
+        <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
+        <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
+        <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
+        <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
+        <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
+        <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
+        <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
+        <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
+      </div>
+    ))}
+  </div>
+) : (
+  <button onClick={copyLinkToClipboard} className="copy-link-button">
+    <FaCopy /> Link zum Bewerten kopieren
+  </button>
+)}
+
+
+          {/* Link Buttons */}
           <div className="link-button-container">
             <Link to={`/${id}/gesamtarbeitszeit`} className="link-button">
               Details anzeigen
             </Link>
           </div>
-
           <div className="link-button-container">
             <Link to={`/arbeitszeiten/${id}`} className="link-button">
               Arbeitszeiten anzeigen
             </Link>
           </div>
-          
-          {/* Dienstleistungen anzeigen */}
+
+          {/* Dienstleistungen und Rechnungen anzeigen */}
           <div className="dienstleistungen-container">
             <h3>Verfügbare Dienstleistungen</h3>
             {selectedKunde.dienstleistungen && selectedKunde.dienstleistungen.length > 0 ? (
@@ -323,6 +283,19 @@ const KundenAnzeigen = () => {
               <p>Keine Dienstleistungen verfügbar.</p>
             )}
           </div>
+
+          <h3>Rechnungen</h3>
+          {selectedKunde.rechnungen && selectedKunde.rechnungen.length > 0 ? (
+            <ul className="rechnungen-list">
+              {selectedKunde.rechnungen.map((rechnung) => (
+                <li key={rechnung.id} className="rechnung-item">
+                  <p>Rechnung #{rechnung.id}: {rechnung.betrag} € - Status: {rechnung.status}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Keine Rechnungen verfügbar.</p>
+          )}
         </div>
       ) : (
         <p>Kunde nicht gefunden.</p>

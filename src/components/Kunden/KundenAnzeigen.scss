@@ -1,107 +1,147 @@
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$accent-color: #e74c3c;
+$text-color: #333;
+$background-color: #f9f9f9;
+$border-radius: 8px;
+$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$transition-speed: 0.3s;
+
 .kunden-anzeigen-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  
+  background-color: $background-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+
   h2 {
-    text-align: center;
-    color: #333;
+    color: $primary-color;
     margin-bottom: 1.5rem;
   }
 
   .loading {
     text-align: center;
     font-size: 1.5rem;
-    color: #666;
+    color: $text-color;
   }
 
-  .kunden-details {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  .input-group {
+    margin-bottom: 1rem;
 
-    .edit-form,
-    .details-view {
-      background-color: #ffffff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: $text-color;
     }
 
-    .input-group {
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: $border-radius;
+      transition: border-color $transition-speed;
+
+      &:focus {
+        border-color: $primary-color;
+        outline: none;
+      }
+    }
+  }
+
+  .button-group {
+    margin-top: 1rem;
+
+    button {
+      background-color: $primary-color;
+      color: #fff;
+      border: none;
+      border-radius: $border-radius;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color $transition-speed;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+    }
+  }
+
+  .signature-image {
+    max-width: 200px;
+    margin: 1rem 0;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+  }
+
+  .link-button-container {
+    margin-top: 1.5rem;
+
+    .link-button {
+      display: inline-block;
+      background-color: $secondary-color;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
+      text-decoration: none;
+      transition: background-color $transition-speed;
+
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+  }
+
+  .dienstleistungen-container {
+    margin-top: 2rem;
+
+    h3 {
+      color: $accent-color;
       margin-bottom: 1rem;
+    }
 
-      label {
-        font-weight: bold;
-        color: #555;
-      }
+    .dienstleistungen-list {
+      list-style-type: none;
+      padding: 0;
 
-      input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
+      .dienstleistung-item {
+        background-color: #e9ecef;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border-radius: $border-radius;
+        box-shadow: $box-shadow;
 
-        &:focus {
-          border-color: #007bff;
-          outline: none;
-          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        p {
+          margin: 0;
         }
       }
     }
+  }
 
-    .button-group {
-      display: flex;
-      justify-content: space-between;
-      
-      button {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+  .rechnungsliste {
+    margin-top: 2rem;
+    list-style-type: none;
+    padding: 0;
 
-        &.save {
-          background-color: #28a745;
-          color: white;
+    .rechnung-item {
+      background-color: #f8f9fa;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
 
-          &:hover {
-            background-color: #218838;
-          }
+      a {
+        text-decoration: none;
+        color: $text-color;
+
+        &:hover {
+          text-decoration: underline;
         }
-
-        &.undo {
-          background-color: #ffc107;
-          color: white;
-
-          &:hover {
-            background-color: #e0a800;
-          }
-        }
-
-        &.edit {
-          background-color: #007bff;
-          color: white;
-
-          &:hover {
-            background-color: #0056b3;
-          }
-        }
-      }
-    }
-
-    p {
-      margin: 0.5rem 0;
-      line-height: 1.5;
-      color: #444;
-
-      strong {
-        color: #007bff;
       }
     }
   }
