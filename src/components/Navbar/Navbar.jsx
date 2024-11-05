@@ -14,12 +14,10 @@ import {
   faGift,
   faUser,
   faUsers,
-  faBarcode,
   faPaperPlane,
   faBars as faMenu,
   faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
-import { FaApper, FaPaperPlane } from 'react-icons/fa';
 
 function Navbar() {
   const currentPath = window.location.pathname;
@@ -27,7 +25,7 @@ function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [benutzername, setBenutzername] = useState('');
   const [userType, setUserType] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Neuer Zustand für Login-Status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navigate = useNavigate();
 
@@ -39,12 +37,12 @@ function Navbar() {
         setBenutzername(decodedToken.benutzername);
         setUserType(decodedToken.userType);
         setIsAdmin(decodedToken.userType === 'admin');
-        setIsLoggedIn(true); // Benutzer ist eingeloggt
+        setIsLoggedIn(true);
       } catch (error) {
         console.error('Fehler beim Decodieren des Tokens:', error);
       }
     } else {
-      setIsLoggedIn(false); // Benutzer ist nicht eingeloggt
+      setIsLoggedIn(false);
     }
   }, []);
 
@@ -52,7 +50,7 @@ function Navbar() {
     localStorage.removeItem('token');
     setBenutzername('');
     setIsAdmin(false);
-    setIsLoggedIn(false); // Setze Login-Status auf false
+    setIsLoggedIn(false);
     navigate('/login');
   };
 
@@ -69,14 +67,18 @@ function Navbar() {
 
   return (
     <nav className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
-      <div className='container'>
-        <div className='logobox'>
-          <Link to="/"><img src={logo} alt="Logo" className='logo' /></Link>
+      <div className='navbar-container'>
+        <div className='logo-box'>
+          <Link to="/">
+            <img src={logo} alt="Logo" className='logo' />
+          </Link>
         </div>
+
         <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
           <FontAwesomeIcon icon={faMenu} />
         </div>
-        <div className={`nav-elements ${burgerMenuActive ? 'active' : ''}`}>
+
+        <div className={`nav-items ${burgerMenuActive ? 'active' : ''}`}>
           <ul>
             <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={toggleBurgerMenu} />
