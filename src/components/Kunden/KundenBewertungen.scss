@@ -1,54 +1,99 @@
 .bewertung-app {
-    text-align: center;
+    background: #f9f9f9;
+    padding: 50px 20px;
     font-family: 'Roboto', sans-serif;
-    color: #333;
-    padding: 20px;
-    background-color: #f4f4f4;
-
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  
     h1 {
-        font-size: 2.5em;
-        margin-bottom: 20px;
+      font-size: 2.5rem;
+      color: #333;
+      font-weight: 600;
+    }
+  
+    p {
+      font-size: 1.2rem;
+      color: #666;
+    }
+  }
+  
+  .durchschnitt-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+  
+    .rating-value {
+      font-size: 2rem;
+      color: #333;
+      margin-left: 10px;
+      font-weight: 600;
+    }
+  }
+  
+  .bewertungen-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+  }
+  
+  .bewertung-box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    
+    &:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+  
+    .bewertung-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  
+      .bewertung-text {
+        font-size: 1.4rem;
+        font-weight: 500;
+        color: #333;
+      }
+    }
+  
+    .bewertung-details {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #777;
+      cursor: pointer;
+      transition: color 0.3s ease;
+  
+      &:hover {
         color: #007BFF;
-        font-weight: 700;
+      }
     }
-
-    .durchschnitt-rating {
-        margin-bottom: 20px;
-
-        .rating-value {
-            font-size: 1.5em;
-            font-weight: 500;
-            margin-left: 10px;
-        }
+  }
+  
+  @media (max-width: 768px) {
+    .bewertung-app {
+      padding: 30px 15px;
     }
-
+  
     .bewertungen-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-
-        .bewertung-box {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px;
-            width: 250px;
-            cursor: pointer;
-            transition: box-shadow 0.3s, transform 0.2s;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-            &:hover {
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                transform: translateY(-5px);
-            }
-
-            .bewertung-text {
-                margin-bottom: 10px;
-                font-size: 1.2em;
-                font-weight: 600;
-                color: #555;
-            }
-        }
+      grid-template-columns: 1fr 1fr;
     }
-}
+  
+    .bewertung-box {
+      padding: 15px;
+    }
+  }
+  

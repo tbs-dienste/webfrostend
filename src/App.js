@@ -113,7 +113,7 @@ const App = () => {
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/sign" element={<SignComponent />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/kundenbewertungen" element={<KundenBewertungen />} />
+          <Route path="/bewertungen" element={<KundenBewertungen />} />
           <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/videocall" element={<VideoCall />} />
           <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />

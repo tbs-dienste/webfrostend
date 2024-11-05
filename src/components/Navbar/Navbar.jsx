@@ -15,9 +15,11 @@ import {
   faUser,
   faUsers,
   faPaperPlane,
+  faStar,
   faBars as faMenu,
   faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
+import { FaStar } from 'react-icons/fa';
 
 function Navbar() {
   const currentPath = window.location.pathname;
@@ -85,13 +87,15 @@ function Navbar() {
             <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/bewerbungformular" text="Bewerben" icon={faPaperclip} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
 
             {userType === 'admin' && (
               <>
                 <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/bewerbungformular" text="Bewerben" icon={faPaperclip} currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
 
