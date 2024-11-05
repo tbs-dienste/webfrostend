@@ -1,82 +1,100 @@
-.bewertung-formular {
-    max-width: 700px;
-    margin: 0 auto;
+.bewertung-container {
+    max-width: 800px;
+    margin: 20px auto;
     padding: 30px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    color: #333;
+    background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 
     h2 {
         text-align: center;
-        margin-bottom: 20px;
-        font-size: 2em;
-        color: #007bff;
+        font-size: 28px;
+        color: #0d47a1;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        font-weight: bold;
     }
 
-    .formular-gruppe {
-        margin-bottom: 20px;
+    .danke-box {
+        padding: 20px;
+        text-align: center;
+        background-color: #e0ffe0;
+        color: #2e7d32;
+        border-radius: 12px;
+        font-size: 20px;
+        font-weight: bold;
+    }
 
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-            color: #555;
-        }
+    .bewertung-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
 
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s ease;
-
-            &:focus {
-                border-color: #007bff;
-                outline: none;
-            }
-
-            &::placeholder {
-                color: #aaa;
-                font-style: italic;
-            }
-        }
-
-        textarea {
-            height: 120px;
-            resize: vertical;
-        }
-
-        .react-stars {
+        .bewertung-feld {
             display: flex;
-            justify-content: center;
-            margin-top: 10px;
+            flex-direction: column;
+            gap: 10px;
+
+            .label-und-rating {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                label {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #1a237e;
+                }
+                .bewertung-sterne {
+                    margin-right: 10px;
+                }
+            }
+
+            .bewertung-input,
+            textarea {
+                padding: 14px;
+                border: 1px solid #c5cae9;
+                border-radius: 8px;
+                font-size: 16px;
+                outline: none;
+                transition: border-color 0.3s, box-shadow 0.3s;
+
+                &:focus {
+                    border-color: #3f51b5;
+                    box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
+                }
+            }
+
+            .capitalized-input {
+                text-transform: capitalize;
+            }
+
+            .uppercase-input {
+                text-transform: uppercase;
+            }
         }
-    }
 
-    button[type="submit"] {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        .submit-button {
+            padding: 15px;
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: background 0.3s ease;
 
-        &:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
+            &:hover {
+                background: linear-gradient(135deg, #1565c0, #0d47a1);
+            }
         }
 
-        &:focus {
-            outline: none;
+        .fehler-nachricht {
+            color: #d32f2f;
+            font-size: 16px;
+            text-align: center;
+            margin-top: -10px;
         }
     }
 }
