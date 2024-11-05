@@ -76,7 +76,7 @@ const KundenAnzeigen = () => {
   };
 
   const copyLinkToClipboard = () => {
-    const reviewLink = `${window.location.origin}/bewertung/p/${selectedKunde.kundennummer}`;
+    const reviewLink = `${window.location.origin}/kundenbewertung/${selectedKunde.kundennummer}`;
     navigator.clipboard.writeText(reviewLink);
     alert('Link zum Bewerten wurde kopiert!');
   };

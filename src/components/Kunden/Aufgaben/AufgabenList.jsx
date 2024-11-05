@@ -52,16 +52,16 @@ const AufgabenList = () => {
             ) : (
                 <ul className="task-list">
                     {aufgaben.map((aufgabe) => {
-                        const dienstleistungId = aufgabe.dienstleistungenId; // ID hier extrahieren
                         return (
                             <li key={aufgabe.id} className="task-item">
                                 <h2 className="task-title">
                                     <FontAwesomeIcon icon={faClipboardList} className="task-icon" />
-                                    {truncateText(aufgabe.titel, MAX_TITLE_LENGTH)} {/* Titel gekürzt */}
+                                    {truncateText(aufgabe.titel)} {/* Titel gekürzt */}
                                     <Link to={`/aufgaben/${aufgabe.id}/unteraufgabe/create`} className="add-subtask-link">
                                         <FontAwesomeIcon icon={faPlus} />
                                     </Link>
                                 </h2>
+                                <p>{aufgabe.dienstleistung_id}</p>
                                 {/* Unteraufgaben in einer Tabelle anzeigen */}
                                 {aufgabe.unteraufgaben && aufgabe.unteraufgaben.length > 0 && (
                                     <table className="subtask-table">
