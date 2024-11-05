@@ -1,0 +1,97 @@
+$primary-color: #007bff; // Primärfarbe
+$text-color: #333; // Textfarbe
+$error-color: #dc3545; // Fehlerfarbe
+$comic-font: 'Comic Sans MS', cursive, sans-serif; // Comic-Schriftart
+
+.aufgaben-list {
+    padding: 20px;
+    background-color: #f8f9fa; // Sekundärfarbe
+
+    margin: 20px auto;
+
+    .heading {
+        font-size: 36px; // Große Schriftgröße
+        font-family: $comic-font; // Comic-Schriftart
+        color: $primary-color;
+        margin-bottom: 10px;
+        text-align: center;
+        position: relative;
+
+        &::after {
+            content: ''; // Dekorative Linie
+            display: block;
+            width: 50%; // Breite der Linie
+            height: 2px; // Höhe der Linie
+            background-color: $primary-color; // Farbe der Linie
+            margin: 10px auto 0; // Abstand nach oben
+            border-radius: 5px; // Abgerundete Ecken für die Linie
+        }
+    }
+
+    .no-tasks, .loading, .error {
+        text-align: center;
+        color: $error-color;
+        font-size: 20px;
+        margin-top: 20px;
+        font-family: $comic-font; // Comic-Schriftart
+    }
+
+    .task-list {
+        list-style: none;
+        padding: 0;
+
+        .task-item {
+            padding: 20px; // Padding erhöhen
+            margin: 10px 0;
+            display: flex;
+            flex-direction: column; // Elemente untereinander anordnen
+            background-color: #ffffff; // Hintergrundfarbe für Aufgaben
+            border: 1px solid #ddd; // Rand um die Aufgaben
+            border-radius: 8px; // Abgerundete Ecken
+
+            .task-title {
+                font-size: 36px; // Große Schriftgröße
+                font-family: $comic-font; // Comic-Schriftart
+                color: $primary-color;
+                margin-bottom: 10px;
+                text-align: left; // Links ausgerichtet
+            }
+        }
+    }
+
+    .subtask-table {
+        border-collapse: collapse;
+        margin-top: 20px; // Abstand zur Aufgabe
+        width: 100%; // Tabelle auf volle Breite setzen
+
+        thead {
+            tr {
+                background-color: $primary-color; // Header-Hintergrundfarbe
+                color: #fff; // Schriftfarbe im Header
+
+                th {
+                    padding: 15px; // Padding erhöhen
+                    text-align: left;
+                    border: 1px solid #ddd; // Rand um die Header-Zellen
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                &:nth-child(odd) {
+                    background-color: #f9f9f9; // Hellgraue Hintergrundfarbe für ungerade Zeilen
+                }
+
+                td {
+                    padding: 15px; // Padding erhöhen
+                    border: 1px solid #ddd; // Rand um die Zellen
+
+                    &:hover {
+                        background-color: #f1f1f1; // Hintergrundfarbe bei Hover über eine Zelle
+                    }
+                }
+            }
+        }
+    }
+}

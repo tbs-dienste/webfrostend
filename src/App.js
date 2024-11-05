@@ -58,6 +58,8 @@ import TotalWorktimePerMitarbeiterForCustomer from './components/Mitarbeiter/Tot
 import ArbeitszeitDetails from './components/Mitarbeiter/ArbeitszeitDetails';
 import RechnungDetail from './components/Rechnung/RechnungDetails';
 import RechnungDetails from './components/Rechnung/RechnungDetails';
+import AufgabenList from './components/Kunden/Aufgaben/AufgabenList';
+import AufgabenDetail from './components/Kunden/Aufgaben/AufgabenDetail';
 
 const App = () => {
   
@@ -92,6 +94,8 @@ const App = () => {
           <Route path="/rechnungform" element={<RechnungForm />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
+          <Route path="/aufgaben/:kundenId" element={<AufgabenList />} />
+          <Route path="/unteraufgaben/:unteraufgabenId" element={<AufgabenDetail />}/>
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />

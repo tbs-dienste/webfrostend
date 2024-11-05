@@ -1,0 +1,70 @@
+.unteraufgabe-detail {
+    max-width: 800px; // Maximale Breite der Detailansicht
+    margin: 20px auto; // Zentriert die Komponente
+    padding: 20px;
+    border: 1px solid #e0e0e0; // Graue Umrandung
+    border-radius: 8px; // Abgerundete Ecken
+    background-color: #f9f9f9; // Hellgrauer Hintergrund
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Leichter Schatten für Tiefe
+
+    .detail-title {
+        font-size: 24px; // Titelgröße
+        margin-bottom: 20px; // Abstand unter dem Titel
+        display: flex;
+        align-items: center; // Vertikale Ausrichtung des Icons
+        font-weight: bold; // Fetter Titel
+        color: #333; // Dunklere Schriftfarbe
+    }
+
+    .detail-info {
+        display: flex;
+        flex-direction: column; // Vertikale Anordnung der Infos
+        margin-bottom: 20px;
+
+        .info-item {
+            display: flex;
+            align-items: center; // Vertikale Ausrichtung
+            margin-bottom: 10px; // Abstand zwischen den Info-Elementen
+            font-size: 16px; // Schriftgröße der Info
+            color: #555; // Mittelgraue Schriftfarbe
+
+            FontAwesomeIcon {
+                margin-right: 8px; // Abstand zwischen Icon und Text
+                color: #007bff; // Blaue Icons
+            }
+        }
+    }
+
+    h2 {
+        font-size: 20px; // Überschriftgröße für Beschreibung, Status und Schwierigkeitsgrad
+        margin-bottom: 10px; // Abstand unter den Überschriften
+        color: #333; // Dunklere Schriftfarbe
+    }
+
+    p {
+        font-size: 16px; // Schriftgröße für den Text
+        color: #666; // Hellgraue Schriftfarbe
+        margin-bottom: 20px; // Abstand unter dem Text
+    }
+
+    .no-data {
+        color: #d9534f; // Rote Farbe für keine Daten
+        font-weight: bold; // Fetter Text
+        text-align: center; // Zentrierter Text
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 15px;
+        background-color: #007bff; // Primärfarbe
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+    
+        &:hover {
+            background-color: #0056b3; // Dunklere Farbe beim Hover
+        }
+    }
+    
+}

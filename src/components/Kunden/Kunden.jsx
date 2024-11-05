@@ -154,11 +154,8 @@ const Kunden = () => {
                     <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                       <FaUser /> Kunden anzeigen
                     </Link>
-                    <Link to={`/auftragsbestaetigung/${kunde.id}`} className="kunden-button">
-                      <FaFileAlt /> Auftragsbestätigung
-                    </Link>
-                    <Link to={`/vertrag/${kunde.id}?code=${kunde.code || ''}`} className="kunden-button">
-                      <FaFileSignature /> Vertrag
+                    <Link to={`/aufgaben/${kunde.id}`} className="kunden-button">
+                      Aufgaben
                     </Link>
                     <button onClick={() => handleShowConfirmationModal(kunde.id)} className="kunden-button">
                       <FaTrash /> Kunde löschen
