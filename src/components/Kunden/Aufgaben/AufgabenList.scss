@@ -3,6 +3,11 @@ $text-color: #333; // Textfarbe
 $error-color: #dc3545; // Fehlerfarbe
 $comic-font: 'Comic Sans MS', cursive, sans-serif; // Comic-Schriftart
 
+// Globale Schriftart
+body {
+    font-family: $comic-font; // Setze die Schriftart für die gesamte Seite
+}
+
 .aufgaben-list {
     padding: 20px;
     background-color: #f8f9fa; // Sekundärfarbe
