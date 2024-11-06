@@ -32,7 +32,9 @@ const Kunden = () => {
     const fetchKunden = async () => {
       try {
         const token = localStorage.getItem('token'); // Token aus localStorage holen
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', {
+        const archiviertParam = showArchived ? 'true' : 'false'; // Den archiviert-Status in der Anfrage berücksichtigen
+
+        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden?archiviert=${archiviertParam}`, {
           headers: {
             Authorization: `Bearer ${token}` // Token im Header einfügen
           }
@@ -55,7 +57,7 @@ const Kunden = () => {
     };
 
     fetchKunden();
-  }, []);
+  }, [showArchived]); // Der Effekt wird jedes Mal ausgeführt, wenn sich der archiviert-Status ändert.
 
   const handleShowConfirmationModal = (id) => {
     setShowConfirmationModal(true);
@@ -91,8 +93,7 @@ const Kunden = () => {
     return (
       (kunde.id.toString().includes(searchTerm) ||
         fullName.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === 'alle' || status === statusFilter) &&
-      (showArchived ? kunde.archiviert : !kunde.archiviert)
+      (statusFilter === 'alle' || status === statusFilter)
     );
   });
 

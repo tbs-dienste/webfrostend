@@ -62,7 +62,7 @@ const KundeErfassen = () => {
   };
 
   const handleKundeErfassen = async () => {
-    if (!kunde.firma || !kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0 || !ausgewaehlteDienstleistungen[0]) {
+    if (!kunde.vorname || !kunde.nachname || !kunde.email || !kunde.mobil || ausgewaehlteDienstleistungen.length === 0 || !ausgewaehlteDienstleistungen[0]) {
       alert('Bitte füllen Sie alle erforderlichen Felder aus.');
       return;
     }
