@@ -40,6 +40,7 @@ const CreateUnteraufgabe = () => {
         try {
             const response = await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/aufgaben/${aufgabenId}/unteraufgaben`, unteraufgabeData);
             setMessage(response.data.message);
+            
             setError('');
         } catch (error) {
             console.error("Fehler beim Erstellen der Unteraufgabe:", error);

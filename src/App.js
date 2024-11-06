@@ -61,6 +61,7 @@ import RechnungDetails from './components/Rechnung/RechnungDetails';
 import AufgabenList from './components/Kunden/Aufgaben/AufgabenList';
 import AufgabenDetail from './components/Kunden/Aufgaben/AufgabenDetail';
 import CreateUnteraufgabe from './components/Kunden/Aufgaben/CreateUnteraufgabe';
+import CreateAufgabe from './components/Kunden/Aufgaben/CreateAufgaben';
 
 const App = () => {
   
@@ -91,6 +92,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
+          <Route path="/aufgaben/erstellen/:kundenId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
           <Route path="/agb" element={<AGB />} />
           <Route path="/rechnungform" element={<RechnungForm />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />

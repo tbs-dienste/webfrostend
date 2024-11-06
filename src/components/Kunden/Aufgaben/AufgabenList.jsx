@@ -42,7 +42,7 @@ const AufgabenList = () => {
     return (
         <div className="aufgaben-list">
             <h1>Aufgaben</h1>
-            <Link to={`/create-aufgabe/${kundenId}`} className="create-task-link">
+            <Link to={`/aufgaben/erstellen/${kundenId}`} className="create-task-link">
                 <FontAwesomeIcon icon={faPlus} /> Aufgabe erstellen
             </Link>
             {aufgaben.length === 0 ? (

@@ -1,0 +1,101 @@
+// Global styles
+$primary-color: #007bff;
+$secondary-color: #f8f9fa;
+$error-color: #e74c3c;
+$success-color: #28a745;
+$button-hover-color: darken($primary-color, 10%);
+$input-border-color: #ccc;
+$border-radius: 8px;
+
+// Container for the form
+.create-aufgabe-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: $secondary-color;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333;
+
+    h2 {
+        text-align: center;
+        color: $primary-color;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            label {
+                font-size: 1.1rem;
+                color: #333;
+            }
+
+            input, select {
+                padding: 0.8rem;
+                border: 1px solid $input-border-color;
+                border-radius: $border-radius;
+                font-size: 1rem;
+                outline: none;
+                transition: all 0.3s ease;
+                width: 100%;
+
+                &:focus {
+                    border-color: $primary-color;
+                    box-shadow: 0 0 5px rgba($primary-color, 0.4);
+                }
+            }
+
+            select {
+                padding-right: 2rem;
+            }
+        }
+
+        button {
+            padding: 1rem;
+            background-color: $primary-color;
+            border: none;
+            border-radius: $border-radius;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: $button-hover-color;
+            }
+
+            &:active {
+                background-color: darken($primary-color, 15%);
+            }
+        }
+    }
+
+    .message {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 1rem;
+
+        &.error {
+            color: $error-color;
+        }
+
+        &.success {
+            color: $success-color;
+        }
+    }
+
+    .loading {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #333;
+    }
+}
