@@ -140,7 +140,7 @@ const Kunden = () => {
           {filteredKunden.length > 0 ? (
             filteredKunden.map((kunde) => {
               const dienstleistungen = kunde.dienstleistungen || [];
-              
+
               return (
                 <div key={kunde.id} className="kunden-box">
                   <p className="kunden-nummer">Kundennummer: {kunde.kundennummer}</p>
@@ -162,6 +162,7 @@ const Kunden = () => {
                       <FaTrash /> Kunde löschen
                     </button>
                   </div>
+
                   <div className="dienstleistungen">
                     {dienstleistungen.map((dienstleistung) => {
                       const farbe = dienstleistungsFarben[dienstleistung.id] || dienstleistungsFarben["default"];
@@ -188,7 +189,7 @@ const Kunden = () => {
           )}
         </div>
       )}
-      
+
       {showConfirmationModal && (
         <div className="confirmation-modal">
           <p>Bist du sicher, dass du diesen Kunden löschen möchtest?</p>

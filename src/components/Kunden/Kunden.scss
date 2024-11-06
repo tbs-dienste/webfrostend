@@ -74,46 +74,69 @@
 
     .kunden-buttons {
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap; // Make buttons wrap on small screens
 
       .kunden-button {
         display: flex;
         align-items: center;
-        padding: 10px 15px;
-        background-color: #3498db;
+        padding: 12px 20px;
+        background-color: #3498db; // Main button color
         color: #fff;
-        border-radius: 5px;
         font-size: 1rem;
+        font-weight: 500;
+        border-radius: 50px; // Fully rounded buttons
         text-decoration: none;
-        transition: background-color 0.3s;
-
-        &:hover {
-          background-color: #2980b9;
-        }
-
-        svg {
-          margin-right: 8px;
-        }
-      }
-
-      button {
-        display: flex;
-        align-items: center;
-        padding: 10px 15px;
-        background-color: #e74c3c;
-        color: #fff;
-        border-radius: 5px;
-        font-size: 1rem;
-        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
         cursor: pointer;
 
         &:hover {
-          background-color: #c0392b;
+          background-color: #2980b9;
+          transform: scale(1.05); // Slight scale effect on hover
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+          background-color: #1f618d; // Darker shade when clicked
+          transform: scale(1);
         }
 
         svg {
-          margin-right: 8px;
+          margin-right: 10px;
+          font-size: 1.2rem; // Slightly larger icons
+        }
+      }
+
+      button.delete-button {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        background-color: #e74c3c; // Delete button color
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 50px;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          background-color: #c0392b;
+          transform: scale(1.05);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+          background-color: #992d22;
+          transform: scale(1);
+        }
+
+        svg {
+          margin-right: 10px;
+          font-size: 1.2rem;
         }
       }
     }
@@ -139,22 +162,8 @@
       border-radius: 5px;
       font-size: 1rem;
       display: inline-block;
-      margin-top: 10px;
-
-      &.bezahlt {
-        background-color: #2ecc71;
-        color: #fff;
-      }
-
-      &.offen {
-        background-color: #f1c40f;
-        color: #fff;
-      }
-
-      &.entwurf {
-        background-color: #e67e22;
-        color: #fff;
-      }
+      background-color: #ecf0f1;
+      color: #34495e;
     }
 
     .archiviert-label {
@@ -162,51 +171,116 @@
       top: 10px;
       right: 10px;
       padding: 5px 10px;
-      background-color: #bdc3c7;
+      background-color: #f39c12;
       color: #fff;
-      font-size: 0.9rem;
-      border-radius: 5px;
+      border-radius: 20px;
+      font-weight: 600;
     }
   }
 
   .no-results {
     font-size: 1.2rem;
-    color: #888;
-    text-align: center;
-    width: 100%;
+    color: #333;
+    margin-top: 20px;
   }
 
   .confirmation-modal {
-    background-color: rgba(0, 0, 0, 0.7);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 
     p {
-      font-size: 1.2rem;
       color: #fff;
+      font-size: 1.2rem;
       margin-bottom: 20px;
     }
 
     button {
-      padding: 10px 15px;
-      font-size: 1rem;
-      background-color: #3498db;
+      background-color: #e74c3c;
       color: #fff;
-      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 1rem;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
-      margin: 5px;
+      transition: all 0.3s ease-in-out;
 
       &:hover {
-        background-color: #2980b9;
+        background-color: #c0392b;
+        transform: scale(1.05);
       }
+
+      &:active {
+        background-color: #992d22;
+        transform: scale(1);
+      }
+
+      margin: 0 10px;
+    }
+  }
+
+  // Responsive Styles
+  @media (max-width: 768px) {
+    .filter-bar {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .search-input {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .status-filter {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .archiv-filter {
+        width: 100%;
+      }
+    }
+
+    .kunden-box {
+      width: 100%; // Full width on small screens
+      padding: 15px;
+    }
+
+    .kunden-buttons {
+      flex-direction: column; // Stack buttons vertically on small screens
+      gap: 10px;
+    }
+
+    .kunden-button,
+    .delete-button {
+      width: 100%; // Full width for buttons on smaller screens
+      padding: 10px 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .kunden-title {
+      font-size: 1.5rem; // Smaller font size for title
+    }
+
+    .kunden-nummer,
+    .kunden-name {
+      font-size: 1rem; // Smaller font size for details
+    }
+
+    .kunden-buttons {
+      gap: 8px; // Adjust gap for smaller screens
+    }
+
+    .kunden-button,
+    .delete-button {
+      font-size: 0.9rem; // Smaller font size for buttons
     }
   }
 }
