@@ -34,11 +34,11 @@ const BewertungDetail = () => {
 
   return (
     <div className="bewertung-detail">
-      <Link to="/kundenbewertungen" className="back-button">Zurück</Link>
+      <Link to="/bewertungen" className="back-button">Zurück</Link>
       <h2>Bewertungsdetails</h2>
       <div className="bewertung-container">
         {/* Dynamisch alle Bewertungskriterien anzeigen */}
-        {['arbeitsqualität', 'tempo', 'gesamt', 'team', 'freundlichkeit', 'zufriedenheit', 'preis'].map((field) => (
+        {['arbeitsqualität', 'tempo', 'gesamt', 'freundlichkeit', 'zufriedenheit'].map((field) => (
           <div key={field} className="bewertung-section">
             <p className="bewertung-label">
               <strong>{capitalizeFirstLetter(field)}:</strong> {bewertung[field]}
