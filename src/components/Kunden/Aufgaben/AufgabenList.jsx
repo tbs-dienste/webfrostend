@@ -63,10 +63,11 @@ const AufgabenList = () => {
                 {dienstleistung.aufgaben && dienstleistung.aufgaben.length > 0 ? (
                   dienstleistung.aufgaben.map((aufgabe) => (
                     <li key={aufgabe.aufgaben_id} className="task-item">
-                      <h3 className="task-title">{truncateText(aufgabe.aufgaben_titel, MAX_TITLE_LENGTH)}</h3>
+                      <Link to={`/aufgabe/${aufgabe.aufgaben_id}`} className="task-link">
+                        <h3 className="task-title">{truncateText(aufgabe.aufgaben_titel, MAX_TITLE_LENGTH)}</h3>
+                      </Link>
                       <p>{truncateText(aufgabe.beschreibung, MAX_DESCRIPTION_LENGTH)}</p>
 
-                      {/* Table for subtasks under each task */}
                       {aufgabe.unteraufgaben && aufgabe.unteraufgaben.length > 0 && (
                         <table className="unteraufgaben-table">
                           <thead>
@@ -83,7 +84,11 @@ const AufgabenList = () => {
                           <tbody>
                             {aufgabe.unteraufgaben.map((unteraufgabe) => (
                               <tr key={unteraufgabe.unteraufgaben_id}>
-                                <td>{truncateText(unteraufgabe.unteraufgaben_titel, MAX_TITLE_LENGTH)}</td>
+                                <td>
+                                  <Link to={`/unteraufgabe/${unteraufgabe.unteraufgaben_id}`} className="unteraufgabe-link">
+                                    {truncateText(unteraufgabe.unteraufgaben_titel, MAX_TITLE_LENGTH)}
+                                  </Link>
+                                </td>
                                 <td>{truncateText(unteraufgabe.unteraufgaben_beschreibung, MAX_DESCRIPTION_LENGTH)}</td>
                                 <td>{new Date(unteraufgabe.unteraufgaben_abgabedatum).toLocaleDateString()}</td>
                                 <td>{unteraufgabe.unteraufgaben_status}</td>
@@ -98,7 +103,7 @@ const AufgabenList = () => {
                     </li>
                   ))
                 ) : (
-                  <li className="no-tasks">Keine Aufgaben für diese Dienstleistung.</li>
+                  <p className="no-tasks">Keine Aufgaben vorhanden.</p>
                 )}
               </ul>
             </div>

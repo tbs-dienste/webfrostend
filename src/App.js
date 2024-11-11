@@ -98,7 +98,7 @@ const App = () => {
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
           <Route path="/aufgaben/:kundenId" element={<AufgabenList />} />
-          <Route path="/unteraufgaben/:unteraufgabenId" element={<AufgabenDetail />}/>
+          <Route path="/unteraufgabe/:unteraufgabenId" element={<AufgabenDetail />}/>
           <Route path="/kunden" element={<Kunden />} />
           <Route path="/dankesnachricht" element={<Dankesnachricht />} />
           <Route path="/kurse" element={<KursListe />} />
