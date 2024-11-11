@@ -1,119 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaDownload } from 'react-icons/fa';
-import { Document, Page, Text, StyleSheet, pdf } from '@react-pdf/renderer';
+import { FaDownload, FaCheck, FaEdit, FaTrash } from 'react-icons/fa';
 import './MitarbeiterAnzeigen.scss'; // Importiere die SCSS-Datei
-
-// Styles für das PDF-Dokument
-const styles = StyleSheet.create({
-    page: {
-        padding: 30,
-        fontSize: 12,
-        fontFamily: 'Helvetica',
-    },
-    header: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    title: {
-        fontSize: 18,
-        textAlign: 'center',
-        marginVertical: 20,
-        fontWeight: 'bold',
-    },
-    section: {
-        marginBottom: 10,
-        lineHeight: 1.5,
-    },
-    content: {
-        marginBottom: 5,
-    },
-    signature: {
-        marginTop: 30,
-        fontSize: 12,
-        fontStyle: 'italic',
-    },
-    date: {
-        marginBottom: 20,
-    },
-});
-
-const handleDownloadPDF = async (formData) => {
-    const doc = (
-        <Document>
-            <Page style={styles.page}>
-                <Text style={styles.header}>TBS Solutions</Text>
-                <Text style={styles.header}>3001 Bern</Text>
-                <Text style={styles.header}>Telefon: +41 123 456 789</Text>
-                <Text style={styles.header}>Email: info@tbs-solutions.ch</Text>
-
-                <Text style={styles.date}>
-                    Bern, {new Date().toLocaleDateString()}
-                </Text>
-
-                <Text style={styles.section}>
-                    An:
-                    {'\n'}
-                    {formData.vorname} {formData.nachname}
-                    {'\n'}
-                    {formData.adresse}
-                    {'\n'}
-                    {formData.postleitzahl} {formData.ort}
-                </Text>
-
-                <Text style={styles.section}>
-                    Betreff: Bestätigung Ihrer Mitarbeiternummer und Zugangsdaten
-                </Text>
-
-                <Text style={styles.section}>
-                    Sehr geehrte/r {formData.geschlecht === 'männlich' ? 'Herr' : formData.geschlecht === 'weiblich' ? 'Frau' : ''} {formData.nachname},
-                </Text>
-
-                <Text style={styles.section}>
-                    Wir freuen uns, Ihnen mitzuteilen, dass Ihre Mitarbeiternummer und das zugehörige Benutzerkonto erfolgreich eingerichtet wurden.
-                    Nachfolgend finden Sie Ihre Zugangsdaten:
-                </Text>
-
-                <Text style={styles.content}>
-                    - Mitarbeiternummer: {formData.mitarbeiternummer}
-                </Text>
-                <Text style={styles.content}>
-                    - Benutzername: {formData.benutzername}
-                </Text>
-                <Text style={styles.content}>
-                    - Passwort: {formData.benutzername} (gleich dem Benutzernamen)
-                </Text>
-
-                <Text style={styles.section}>
-                    Bei Fragen stehen wir Ihnen gerne zur Verfügung.
-                </Text>
-
-                <Text style={styles.signature}>
-                    Mit freundlichen Grüßen,
-                    {'\n'}TBS Solutions
-                </Text>
-            </Page>
-        </Document>
-    );
-
-    const asPdf = pdf([]);
-    asPdf.updateContainer(doc);
-    const blob = await asPdf.toBlob();
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Bestaetigungsschreiben_${formData.vorname}_${formData.nachname}.pdf`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-};
 
 const MitarbeiterAnzeigen = () => {
     const { id } = useParams();
     const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);
+    const [checkliste, setCheckliste] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
+    const [editModeCheckliste, setEditModeCheckliste] = useState(false); // Edit mode für Checkliste
     const [formData, setFormData] = useState({
         mitarbeiternummer: '',
         vorname: '',
@@ -137,9 +34,12 @@ const MitarbeiterAnzeigen = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                const mitarbeiter = response.data.data;
+                const mitarbeiter = response.data.data.mitarbeiter;
+                const checkliste = response.data.data.checkliste;
+
                 if (mitarbeiter) {
                     setSelectedMitarbeiter(mitarbeiter);
+                    setCheckliste(checkliste);
                     setFormData(mitarbeiter);
                 } else {
                     console.error('Mitarbeiter nicht gefunden');
@@ -154,18 +54,6 @@ const MitarbeiterAnzeigen = () => {
 
         fetchMitarbeiter();
     }, [id]);
-
-    const handleResetPassword = () => {
-        window.location.href = `/mitarbeiter/${id}/reset-password`; // Weiterleitung zur Reset-Password-Seite
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
 
     const handleEditToggle = () => {
         setEditMode(!editMode);
@@ -188,6 +76,38 @@ const MitarbeiterAnzeigen = () => {
         }
     };
 
+    const handleResetPassword = () => {
+        window.location.href = `/mitarbeiter/${id}/reset-password`;
+    };
+
+    // Handle Edit Mode für Checkliste
+    const handleChecklisteEditToggle = () => {
+        setEditModeCheckliste(!editModeCheckliste);
+    };
+
+    // Speichern der bearbeiteten Checkliste
+    const handleSaveCheckliste = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await Promise.all(
+                checkliste.map((item) => 
+                    axios.put(
+                        `https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/checkliste/${item.id}`,
+                        { erledigt: true },  // Nur den Status auf TRUE setzen
+                        {
+                            headers: { Authorization: `Bearer ${token}` },
+                        }
+                    )
+                )
+            );
+            alert('Checkliste erfolgreich gespeichert');
+            setEditModeCheckliste(false);
+        } catch (error) {
+            console.error('Fehler beim Speichern der Checkliste:', error);
+            alert('Fehler beim Speichern der Checkliste. Bitte versuche es erneut.');
+        }
+    };
+
     if (loading) {
         return <div className="loading">Lade Mitarbeiter...</div>;
     }
@@ -198,33 +118,33 @@ const MitarbeiterAnzeigen = () => {
             {selectedMitarbeiter ? (
                 <div>
                     {editMode ? (
-                        <div>
+                        <div className="edit-form">
                             <label>Mitarbeiternummer</label>
-                            <input type="text" name="mitarbeiternummer" value={formData.mitarbeiternummer} onChange={handleChange} />
+                            <input type="text" name="mitarbeiternummer" value={formData.mitarbeiternummer} onChange={(e) => setFormData({ ...formData, mitarbeiternummer: e.target.value })} />
                             <label>Vorname</label>
-                            <input type="text" name="vorname" value={formData.vorname} onChange={handleChange} />
+                            <input type="text" name="vorname" value={formData.vorname} onChange={(e) => setFormData({ ...formData, vorname: e.target.value })} />
                             <label>Nachname</label>
-                            <input type="text" name="nachname" value={formData.nachname} onChange={handleChange} />
+                            <input type="text" name="nachname" value={formData.nachname} onChange={(e) => setFormData({ ...formData, nachname: e.target.value })} />
                             <label>Adresse</label>
-                            <input type="text" name="adresse" value={formData.adresse} onChange={handleChange} />
+                            <input type="text" name="adresse" value={formData.adresse} onChange={(e) => setFormData({ ...formData, adresse: e.target.value })} />
                             <label>PLZ</label>
-                            <input type="text" name="postleitzahl" value={formData.postleitzahl} onChange={handleChange} />
+                            <input type="text" name="postleitzahl" value={formData.postleitzahl} onChange={(e) => setFormData({ ...formData, postleitzahl: e.target.value })} />
                             <label>Ort</label>
-                            <input type="text" name="ort" value={formData.ort} onChange={handleChange} />
+                            <input type="text" name="ort" value={formData.ort} onChange={(e) => setFormData({ ...formData, ort: e.target.value })} />
                             <label>Email</label>
-                            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                            <input type="email" name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                             <label>Mobil</label>
-                            <input type="text" name="mobil" value={formData.mobil} onChange={handleChange} />
+                            <input type="text" name="mobil" value={formData.mobil} onChange={(e) => setFormData({ ...formData, mobil: e.target.value })} />
                             <label>Geschlecht</label>
-                            <input type="text" name="geschlecht" value={formData.geschlecht} onChange={handleChange} />
+                            <input type="text" name="geschlecht" value={formData.geschlecht} onChange={(e) => setFormData({ ...formData, geschlecht: e.target.value })} />
                             <label>Benutzername</label>
-                            <input type="text" name="benutzername" value={formData.benutzername} onChange={handleChange} />
+                            <input type="text" name="benutzername" value={formData.benutzername} onChange={(e) => setFormData({ ...formData, benutzername: e.target.value })} />
                             <label>IBAN</label>
-                            <input type="text" name="iban" value={formData.iban} onChange={handleChange} />
-                            <button onClick={handleSave}>Speichern</button>
+                            <input type="text" name="iban" value={formData.iban} onChange={(e) => setFormData({ ...formData, iban: e.target.value })} />
+                            <button className="btn-save" onClick={handleSave}>Speichern</button>
                         </div>
                     ) : (
-                        <div>
+                        <div className="employee-details">
                             <p><strong>Mitarbeiternummer:</strong> {selectedMitarbeiter.mitarbeiternummer}</p>
                             <p><strong>Vorname:</strong> {selectedMitarbeiter.vorname}</p>
                             <p><strong>Nachname:</strong> {selectedMitarbeiter.nachname}</p>
@@ -236,15 +156,36 @@ const MitarbeiterAnzeigen = () => {
                             <p><strong>Geschlecht:</strong> {selectedMitarbeiter.geschlecht}</p>
                             <p><strong>Benutzername:</strong> {selectedMitarbeiter.benutzername}</p>
                             <p><strong>IBAN:</strong> {selectedMitarbeiter.iban}</p>
-                            <button onClick={handleEditToggle}>Bearbeiten</button>
-                            <button onClick={handleDownloadPDF.bind(null, selectedMitarbeiter)}>PDF herunterladen <FaDownload /></button>
+                            <button onClick={handleEditToggle}><FaEdit /> Bearbeiten</button>
                             <button onClick={handleResetPassword}>Passwort zurücksetzen</button>
+
+                            <h3>Checkliste</h3>
+                            <div className="checklist">
+                                {checkliste.map((item) => (
+                                    <div className="checklist-item" key={item.id}>
+                                        <input
+                                            type="checkbox"
+                                            checked={item.erledigt}
+                                            onChange={() => {
+                                                const updatedCheckliste = checkliste.map((check) =>
+                                                    check.id === item.id ? { ...check, erledigt: !check.erledigt } : check
+                                                );
+                                                setCheckliste(updatedCheckliste);
+                                            }}
+                                        />
+                                        <span>{item.titel}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            {editModeCheckliste && (
+                                <button onClick={handleSaveCheckliste}>Speichern</button>
+                            )}
+                            <button onClick={handleChecklisteEditToggle}><FaEdit /> Checkliste bearbeiten</button>
                         </div>
                     )}
-                    <Link to="/mitarbeiter">Zurück zur Mitarbeiterübersicht</Link>
                 </div>
             ) : (
-                <p>Mitarbeiter nicht gefunden</p>
+                <div>Mitarbeiter nicht gefunden</div>
             )}
         </div>
     );
