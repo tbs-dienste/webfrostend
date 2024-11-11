@@ -1,110 +1,110 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboardList, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link } from 'react-router-dom';
 import './AufgabenList.scss';
 
-const MAX_DESCRIPTION_LENGTH = 50; // Maximal zulässige Zeichenanzahl für die Beschreibung
-const MAX_TITLE_LENGTH = 50; // Maximal zulässige Zeichenanzahl für den Titel
+const MAX_DESCRIPTION_LENGTH = 50;
+const MAX_TITLE_LENGTH = 50;
 
-// Funktion zum Kürzen von Text, falls er zu lang ist
+// Function to truncate text
 const truncateText = (text, maxLength) => {
-  if (text.length > maxLength) {
-    return text.substring(0, maxLength) + '...';
-  }
-  return text;
+  if (!text) return '';
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
 
 const AufgabenList = () => {
-  const { kundenId } = useParams(); // Holen der Kunden-ID aus der URL
-  const [aufgaben, setAufgaben] = useState([]); // Aufgaben-Daten im Zustand speichern
-  const [dienstleistungenId, setDienstleistungenId] = useState(null); // Dienstleistungs-ID speichern
-  const [loading, setLoading] = useState(true); // Ladezustand
-  const [error, setError] = useState(null); // Fehlerzustand
+  const { kundenId } = useParams();
+  const [aufgaben, setAufgaben] = useState([]);
+  const [dienstleistungen, setDienstleistungen] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Funktion zum Abrufen der Aufgaben und Unteraufgaben vom Backend
+  // Fetch tasks and services data
   useEffect(() => {
-    const fetchAufgaben = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/aufgaben/${kundenId}`);
-        const data = response.data.data[0]; // Die erste Antwort im Array
-        setDienstleistungenId(data?.dienstleistungen_id); // Dienstleistungs-ID setzen
-        setAufgaben(data?.aufgaben || []); // Aufgaben setzen
+        const data = response.data.data;
+        
+        // Set the services and tasks
+        setDienstleistungen(data);
+        setAufgaben(data.flatMap(item => item.aufgaben || [])); // Flatten all tasks
       } catch (err) {
-        setError(err.message); // Fehler setzen
+        setError(err.message);
       } finally {
-        setLoading(false); // Ladezustand beenden
+        setLoading(false);
       }
     };
 
-    fetchAufgaben(); // Abrufen der Aufgaben
-  }, [kundenId]); // Nur erneut laden, wenn die Kunden-ID sich ändert
+    fetchData();
+  }, [kundenId]);
 
-  if (loading) return <p className="loading">Lade Aufgaben...</p>; // Ladeanzeige
-  if (error) return <p className="error">Fehler: {error}</p>; // Fehleranzeige
+  if (loading) return <p className="loading">Lade Aufgaben...</p>;
+  if (error) return <p className="error">Fehler: {error}</p>;
 
   return (
     <div className="aufgaben-list">
       <h1>Aufgaben</h1>
-      <p>Dienstleistung ID: {dienstleistungenId}</p> {/* Dienstleistungs-ID anzeigen */}
-      <Link to={`/aufgaben/erstellen/${kundenId}`} className="create-task-link">
-        <FontAwesomeIcon icon={faPlus} /> Aufgabe erstellen
-      </Link>
-
-      {aufgaben.length === 0 ? (
-        <p className="no-tasks">
-          Keine Aufgaben gefunden. <FontAwesomeIcon icon={faClipboardList} />
-        </p>
+      
+      {dienstleistungen.length === 0 ? (
+        <p className="no-tasks">Keine Dienstleistungen verfügbar.</p>
       ) : (
-        <ul className="task-list">
-          {aufgaben.map((aufgabe) => (
-            <li key={aufgabe.id} className="task-item">
-              <h2 className="task-title">
-                <FontAwesomeIcon icon={faClipboardList} className="task-icon" />
-                {truncateText(aufgabe.titel, MAX_TITLE_LENGTH)} {/* Titel gekürzt */}
-                <Link to={`/aufgaben/${aufgabe.id}/unteraufgabe/create`} className="add-subtask-link">
-                  <FontAwesomeIcon icon={faPlus} />
-                </Link>
-              </h2>
-              {/* Unteraufgaben in einer Tabelle anzeigen */}
-              {aufgabe.unteraufgaben && aufgabe.unteraufgaben.length > 0 && (
-                <table className="subtask-table">
-                  <thead>
-                    <tr>
-                      <th>Titel</th>
-                      <th>Beschreibung</th>
-                      <th>Abgabedatum</th>
-                      <th>Status</th>
-                      <th>Schwierigkeitsgrad</th>
-                      <th>Mitarbeiter</th>
-                      <th>Admin</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {aufgabe.unteraufgaben.map((unteraufgabe) => (
-                      <tr key={unteraufgabe.id}>
-                        <td>
-                          <Link to={`/unteraufgaben/${unteraufgabe.id}?kundenId=${kundenId}`}>
-                            {truncateText(unteraufgabe.titel, MAX_TITLE_LENGTH)}
-                          </Link>
-                        </td> {/* Titel der Unteraufgabe mit Link */}
-                        <td>{truncateText(unteraufgabe.beschreibung, MAX_DESCRIPTION_LENGTH)}</td>
-                        <td>{new Date(unteraufgabe.abgabedatum).toLocaleDateString()}</td>
-                        <td>{unteraufgabe.status}</td>
-                        <td>{unteraufgabe.schwierigkeitsgrad}</td>
-                        <td>{unteraufgabe.mitarbeiter_id || 'N/A'}</td>
-                        <td>{unteraufgabe.admin_id || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </li>
+        <div className="dienstleistungen-container">
+          {dienstleistungen.map((dienstleistung) => (
+            <div key={dienstleistung.dienstleistungen_id} className="dienstleistung-box">
+              <h2>{dienstleistung.dienstleistungen_title}</h2>
+              <Link to={`/aufgaben/erstellen/${kundenId}/${dienstleistung.dienstleistungen_id}`} className="add-task-link">
+                <FontAwesomeIcon icon={faPlus} /> Aufgabe zu dieser Dienstleistung hinzufügen
+              </Link>
+
+              <ul className="task-list">
+                {dienstleistung.aufgaben && dienstleistung.aufgaben.length > 0 ? (
+                  dienstleistung.aufgaben.map((aufgabe) => (
+                    <li key={aufgabe.aufgaben_id} className="task-item">
+                      <h3 className="task-title">{truncateText(aufgabe.aufgaben_titel, MAX_TITLE_LENGTH)}</h3>
+                      <p>{truncateText(aufgabe.beschreibung, MAX_DESCRIPTION_LENGTH)}</p>
+
+                      {/* Table for subtasks under each task */}
+                      {aufgabe.unteraufgaben && aufgabe.unteraufgaben.length > 0 && (
+                        <table className="unteraufgaben-table">
+                          <thead>
+                            <tr>
+                              <th>Titel</th>
+                              <th>Beschreibung</th>
+                              <th>Abgabedatum</th>
+                              <th>Status</th>
+                              <th>Schwierigkeitsgrad</th>
+                              <th>Mitarbeiter ID</th>
+                              <th>Admin ID</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {aufgabe.unteraufgaben.map((unteraufgabe) => (
+                              <tr key={unteraufgabe.unteraufgaben_id}>
+                                <td>{truncateText(unteraufgabe.unteraufgaben_titel, MAX_TITLE_LENGTH)}</td>
+                                <td>{truncateText(unteraufgabe.unteraufgaben_beschreibung, MAX_DESCRIPTION_LENGTH)}</td>
+                                <td>{new Date(unteraufgabe.unteraufgaben_abgabedatum).toLocaleDateString()}</td>
+                                <td>{unteraufgabe.unteraufgaben_status}</td>
+                                <td>{unteraufgabe.unteraufgaben_schwierigkeitsgrad}</td>
+                                <td>{unteraufgabe.unteraufgaben_mitarbeiter_id}</td>
+                                <td>{unteraufgabe.unteraufgaben_admin_id}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </li>
+                  ))
+                ) : (
+                  <li className="no-tasks">Keine Aufgaben für diese Dienstleistung.</li>
+                )}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
-      <Link to="/kunden" className="back-to-customers">Zurück zu Kunden</Link>
     </div>
   );
 };
