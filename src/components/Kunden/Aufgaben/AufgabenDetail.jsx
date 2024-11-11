@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEdit, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEdit, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import './AufgabenDetail.scss';
 
@@ -44,6 +44,15 @@ const AufgabenDetail = () => {
             setEditMode(false);
         } catch (err) {
             setError('Fehler beim Speichern der Änderungen.');
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/aufgaben/unteraufgabe/${unteraufgabenId}`);
+           window.location.href = `/aufgaben/${kundenId}`;  // Weiterleiten zur Aufgabenliste nach dem Löschen
+        } catch (err) {
+            setError('Fehler beim Löschen der Unteraufgabe.');
         }
     };
 
@@ -157,6 +166,9 @@ const AufgabenDetail = () => {
                                 <FontAwesomeIcon icon={faSave} /> Speichern
                             </button>
                         )}
+                        <button className="delete-button" onClick={handleDelete}>
+                            <FontAwesomeIcon icon={faTrash} /> Löschen
+                        </button>
                     </div>
                     <Link to={`/aufgaben/${kundenId}`} className="back-link">
                         Zurück zu Aufgaben

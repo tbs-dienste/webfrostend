@@ -1,162 +1,111 @@
-/* AufgabenDetail.scss */
-
-/* Container für die gesamte Seite */
 .unteraufgabe-detail {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Header der Detailseite */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    
-    .detail-title {
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .detail-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: #007bff;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+
+            &:hover {
+                color: #0056b3;
+            }
+        }
     }
-  
-    button {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 10px;
-      font-size: 18px;
-      color: #007bff;
-      transition: color 0.3s ease;
-  
-      &:hover {
-        color: #0056b3;
-      }
+
+    .description, .status, .schwierigkeitsgrad, .info-item {
+        margin-bottom: 20px;
+
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        p, span {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 150px;
+            resize: none;
+        }
     }
-  }
-  
-  /* Abschnitt für die Beschreibung */
-  .description, .status, .schwierigkeitsgrad, .info-item {
-    margin-bottom: 20px;
-  
-    h2 {
-      font-size: 18px;
-      color: #555;
-      margin-bottom: 8px;
+
+    .actions {
+        display: flex;
+        gap: 15px;
+
+        .save-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+
+            &:hover {
+                background-color: #218838;
+            }
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+
+            &:hover {
+                background-color: #c82333;
+            }
+        }
     }
-  
-    p, span {
-      font-size: 16px;
-      color: #444;
-    }
-  
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 16px;
-      background-color: #fff;
-      transition: border-color 0.3s ease;
-  
-      &:focus {
-        border-color: #007bff;
-        outline: none;
-      }
-  
-      &:disabled {
-        background-color: #f0f0f0;
-      }
-    }
-  
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-  
-    input[type="date"] {
-      width: auto;
-    }
-  }
-  
-  /* Detailinformationen zu Mitarbeitern und Admin */
-  .detail-info {
-    .info-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      
-      FontAwesomeIcon {
-        margin-right: 8px;
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        font-size: 1rem;
         color: #007bff;
-      }
-  
-      span {
-        font-size: 16px;
-        color: #444;
-      }
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
-  }
-  
-  /* Button für den Speichern-Modus */
-  .actions {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 20px;
-  
-    .save-button {
-      padding: 10px 20px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 0.3s ease;
-  
-      &:hover {
-        background-color: #218838;
-      }
-  
-      FontAwesomeIcon {
-        font-size: 16px;
-      }
+
+    .no-data {
+        text-align: center;
+        color: #777;
+        font-size: 1.2rem;
     }
-  }
-  
-  /* Lade- und Fehleranzeigen */
-  .loading, .error {
-    font-size: 18px;
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .no-data {
-    text-align: center;
-    font-size: 18px;
-    color: #888;
-  }
-  
-  /* Link zurück zu Aufgaben */
-  .back-link {
-    display: block;
-    margin-top: 20px;
-    text-align: center;
-    font-size: 16px;
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  
-    &:hover {
-      color: #0056b3;
+
+    .loading, .error {
+        text-align: center;
+        color: #f8d7da;
+        font-size: 1.2rem;
     }
-  }
-  
+}
