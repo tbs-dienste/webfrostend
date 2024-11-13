@@ -7,6 +7,7 @@ import './MitarbeiterAnzeigen.scss'; // Importiere die SCSS-Datei
 const MitarbeiterAnzeigen = () => {
     const { id } = useParams();
     const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);
+    const [selectedChecklisteIds, setSelectedChecklisteIds] = useState([]); // Beispiel für die Definition der Variable
     const [checkliste, setCheckliste] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
@@ -59,6 +60,14 @@ const MitarbeiterAnzeigen = () => {
         setEditMode(!editMode);
     };
 
+    const handleCheckboxChange = (id) => {
+        setSelectedChecklisteIds((prev) =>
+            prev.includes(id)
+                ? prev.filter((checkId) => checkId !== id)
+                : [...prev, id]
+        );
+    };
+
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -90,7 +99,7 @@ const MitarbeiterAnzeigen = () => {
         try {
             const token = localStorage.getItem('token');
             await Promise.all(
-                checkliste.map((item) => 
+                checkliste.map((item) =>
                     axios.put(
                         `https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/checkliste/${item.id}`,
                         { erledigt: true },  // Nur den Status auf TRUE setzen
@@ -160,26 +169,35 @@ const MitarbeiterAnzeigen = () => {
                             <button onClick={handleResetPassword}>Passwort zurücksetzen</button>
 
                             <h3>Checkliste</h3>
-                            <div className="checklist">
-                                {checkliste.map((item) => (
-                                    <div className="checklist-item" key={item.id}>
-                                        <input
-                                            type="checkbox"
-                                            checked={item.erledigt}
-                                            onChange={() => {
-                                                const updatedCheckliste = checkliste.map((check) =>
-                                                    check.id === item.id ? { ...check, erledigt: !check.erledigt } : check
-                                                );
-                                                setCheckliste(updatedCheckliste);
-                                            }}
-                                        />
-                                        <span>{item.titel}</span>
-                                    </div>
-                                ))}
+                            {/* Checkliste */}
+                            <div className="checkliste-section">
+                                <h3>Checkliste</h3>
+                                <button onClick={handleChecklisteEditToggle} className="edit-button">
+                                    {editModeCheckliste ? 'Speichern' : 'Bearbeiten'}
+                                </button>
+                                <ul className="checkliste">
+                                    {checkliste.map((item) => (
+                                        <li key={item.id} className={`checkliste-item ${item.erledigt ? 'completed' : ''}`}>
+                                            {editModeCheckliste ? (
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedChecklisteIds.includes(item.id)}
+                                                    onChange={() => handleCheckboxChange(item.id)}
+                                                />
+                                            ) : (
+                                                <span>{item.erledigt ? <FaCheck /> : '○'}</span>
+                                            )}
+                                            <span className="aufgabe-text">{item.aufgabe}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                {editModeCheckliste && (
+                                    <button onClick={handleSaveCheckliste} className="save-button">
+                                        Änderungen speichern
+                                    </button>
+                                )}
                             </div>
-                            {editModeCheckliste && (
-                                <button onClick={handleSaveCheckliste}>Speichern</button>
-                            )}
+                            
                             <button onClick={handleChecklisteEditToggle}><FaEdit /> Checkliste bearbeiten</button>
                         </div>
                     )}
