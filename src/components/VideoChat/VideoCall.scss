@@ -1,73 +1,69 @@
-.videoCallContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.videoContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-    max-width: 1200px;
-    height: 60%;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.videoElement {
-    border: 2px solid #ddd;
-    border-radius: 8px;
+.video-call-container {
+    position: relative;
     width: 100%;
-    max-width: 600px;
     height: 100%;
-    object-fit: cover;
     background-color: #000;
-}
-
-.buttonContainer {
+  }
+  
+  .video-container {
+    position: relative;
+    width: 100%;
+    height: 50%;
+  }
+  
+  .small-video {
+    width: 30%;
+    height: auto;
+  }
+  
+  .mute-indicator-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: red;
+    font-size: 24px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 50%;
+  }
+  
+  .controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    flex-direction: row;
     gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.button {
-    background-color: #007bff;
+  }
+  
+  .control-button {
+    background-color: #333;
+    color: #fff;
     border: none;
-    color: white;
-    padding: 10px 20px;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    transition: background-color 0.3s;
+  }
+  
+  .control-button:hover {
+    background-color: #555;
+  }
+  
+  .screen-share-display {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #0f0;
     font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.button:hover {
-    background-color: #0056b3;
-}
-
-.button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-.remoteVideoHidden {
-    display: none; /* Hides the remote video */
-}
-
-.remoteVideoMinimized {
-    width: 200px; /* Adjust as needed */
-    height: 150px; /* Adjust as needed */
-    opacity: 0.5; /* Make it semi-transparent */
-}
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .minimized {
+    height: 150px;
+    overflow: hidden;
+  }
+  

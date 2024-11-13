@@ -1,7 +1,8 @@
+// Import necessary React hooks and other resources
 import React, { useEffect, useRef, useState } from 'react';
 import './VideoCall.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faPhoneSlash, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash, faShareSquare, faStopCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPhoneSlash, faVideo, faVideoSlash, faMicrophone, faMicrophoneSlash, faShareSquare, faStopCircle, faCompressArrowsAlt, faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 
 const VideoCall = () => {
     const [stream, setStream] = useState(null);
@@ -15,7 +16,8 @@ const VideoCall = () => {
     const screenStreamRef = useRef(null);
     const [isCallActive, setIsCallActive] = useState(false);
     const [remoteStreamVisible, setRemoteStreamVisible] = useState(true);
-    const [screenSharingInitiatedBy, setScreenSharingInitiatedBy] = useState(null); // Track who started screen sharing
+    const [screenSharingInitiatedBy, setScreenSharingInitiatedBy] = useState(null);
+    const [isMinimized, setIsMinimized] = useState(false);
 
     useEffect(() => {
         const ws = new WebSocket('wss://tbsdigitalsolutionsbackend.onrender.com');
@@ -65,10 +67,8 @@ const VideoCall = () => {
         };
 
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
-
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
-
         socket.send(JSON.stringify({
             type: 'answer',
             answer: answer,
@@ -90,192 +90,125 @@ const VideoCall = () => {
         }
     };
 
-    const startCall = async (recipientId) => {
-        if (!peerConnection) {
-            const pc = new RTCPeerConnection();
+    const handleScreenShareStart = (from) => {
+        setIsScreenSharing(true);
+        setScreenSharingInitiatedBy(from);
+        setRemoteStreamVisible(false); // Hide the remote video during screen share
+    };
 
-            pc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.send(JSON.stringify({
-                        type: 'ice-candidate',
-                        candidate: event.candidate,
-                        to: recipientId
-                    }));
-                }
-            };
+    const handleScreenShareStop = (from) => {
+        setIsScreenSharing(false);
+        setScreenSharingInitiatedBy(null);
+        setRemoteStreamVisible(true); // Show the remote video when screen share stops
+    };
 
-            pc.ontrack = (event) => {
-                remoteVideoRef.current.srcObject = event.streams[0];
-            };
+    const startScreenShare = async () => {
+        try {
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            screenStreamRef.current = screenStream;
+            setIsScreenSharing(true);
+            screenStream.getTracks()[0].onended = stopScreenShare;
 
-            setPeerConnection(pc);
-
-            const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            localVideoRef.current.srcObject = localStream;
-            setStream(localStream);
-
-            localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
+            localVideoRef.current.srcObject = screenStream; // Display the shared screen locally
 
             socket.send(JSON.stringify({
-                type: 'offer',
-                offer: offer,
-                to: recipientId
+                type: 'screen-share-start',
+                from: 'me'
             }));
-
-            setIsCallActive(true);
+        } catch (error) {
+            console.error('Error starting screen share:', error);
         }
     };
 
-    const endCall = () => {
-        if (peerConnection) {
-            peerConnection.close();
-            setPeerConnection(null);
-        }
-
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            setStream(null);
-        }
-
+    const stopScreenShare = () => {
         if (screenStreamRef.current) {
             screenStreamRef.current.getTracks().forEach(track => track.stop());
             screenStreamRef.current = null;
-            setIsScreenSharing(false);
         }
-
-        setIsCallActive(false);
-        setRemoteStreamVisible(true);
-        setScreenSharingInitiatedBy(null);
+        setIsScreenSharing(false);
+        socket.send(JSON.stringify({
+            type: 'screen-share-stop',
+            from: 'me'
+        }));
+        setRemoteStreamVisible(true); // Restore the remote video visibility
+        localVideoRef.current.srcObject = stream; // Revert to the user's webcam stream
     };
 
     const toggleVideo = () => {
         if (stream) {
-            const videoTrack = stream.getVideoTracks()[0];
-            videoTrack.enabled = !videoTrack.enabled;
-            setIsVideoEnabled(videoTrack.enabled);
+            stream.getVideoTracks()[0].enabled = !isVideoEnabled;
+            setIsVideoEnabled(!isVideoEnabled);
         }
     };
 
     const toggleAudio = () => {
         if (stream) {
-            const audioTrack = stream.getAudioTracks()[0];
-            audioTrack.enabled = !audioTrack.enabled;
-            setIsAudioEnabled(audioTrack.enabled);
+            stream.getAudioTracks()[0].enabled = !isAudioEnabled;
+            setIsAudioEnabled(!isAudioEnabled);
         }
     };
 
-    const startScreenShare = async () => {
-        if (isScreenSharing) {
-            alert('Screen sharing is already active.');
-            return;
-        }
-
+    const startCall = async () => {
         try {
-            const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-            screenStreamRef.current = screenStream;
-
-            if (peerConnection) {
-                screenStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, screenStream);
-                });
-            }
-
-            setIsScreenSharing(true);
-            setRemoteStreamVisible(false);
-
-            // Notify other users that screen sharing has started
-            socket.send(JSON.stringify({
-                type: 'screen-share-start',
-                from: 'your-user-id' // Replace with actual user ID or identifier
-            }));
-            setScreenSharingInitiatedBy('your-user-id'); // Track who initiated screen sharing
-
+            const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setStream(userStream);
+            localVideoRef.current.srcObject = userStream;
+            setIsCallActive(true);
         } catch (error) {
-            console.error('Error sharing screen:', error);
-            alert('Unable to share screen. Please check your permissions and try again.');
+            console.error('Error starting call:', error);
         }
     };
 
-    const stopScreenShare = () => {
-        if (!isScreenSharing) {
-            alert('Screen sharing is not active.');
-            return;
+    const endCall = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+            setIsCallActive(false);
         }
-
-        if (screenStreamRef.current) {
-            screenStreamRef.current.getTracks().forEach(track => track.stop());
-            screenStreamRef.current = null;
-            setIsScreenSharing(false);
-            setRemoteStreamVisible(true);
-
-            // Notify other users that screen sharing has stopped
-            socket.send(JSON.stringify({
-                type: 'screen-share-stop',
-                from: 'your-user-id' // Replace with actual user ID or identifier
-            }));
-            setScreenSharingInitiatedBy(null);
+        if (peerConnection) {
+            peerConnection.close();
+            setPeerConnection(null);
         }
     };
 
-    const handleScreenShareStart = (from) => {
-        // Handle incoming screen share start message
-        if (screenSharingInitiatedBy === null) {
-            // If no one is currently sharing the screen
-            setScreenSharingInitiatedBy(from);
-            setRemoteStreamVisible(false);
-        }
-    };
-
-    const handleScreenShareStop = (from) => {
-        // Handle incoming screen share stop message
-        if (screenSharingInitiatedBy === from) {
-            // If the screen share was initiated by this user
-            setScreenSharingInitiatedBy(null);
-            setRemoteStreamVisible(true);
-        }
+    const toggleMinimize = () => {
+        setIsMinimized(!isMinimized);
     };
 
     return (
-        <div className="videoCallContainer">
-            <div className="videoContainer">
-                <video ref={localVideoRef} autoPlay muted className="videoElement" />
-                {remoteStreamVisible && (
-                    <video
-                        ref={remoteVideoRef}
-                        autoPlay
-                        className={`videoElement ${isScreenSharing ? 'remoteVideoMinimized' : ''}`}
-                    />
-                )}
-            </div>
-            <div className="buttonContainer">
-                <button onClick={() => startCall('recipient-id')} className="button">
-                    <FontAwesomeIcon icon={faPhone} /> Start Call
-                </button>
-                <button onClick={endCall} disabled={!isCallActive} className="button">
-                    <FontAwesomeIcon icon={faPhoneSlash} /> End Call
-                </button>
-                <button onClick={toggleVideo} className="button">
-                    <FontAwesomeIcon icon={isVideoEnabled ? faVideo : faVideoSlash} />
-                    {isVideoEnabled ? ' Turn Off Video' : ' Turn On Video'}
-                </button>
-                <button onClick={toggleAudio} className="button">
-                    <FontAwesomeIcon icon={isAudioEnabled ? faMicrophone : faMicrophoneSlash} />
-                    {isAudioEnabled ? ' Mute Audio' : ' Unmute Audio'}
-                </button>
-                {isScreenSharing ? (
-                    <button onClick={stopScreenShare} className="button">
-                        <FontAwesomeIcon icon={faStopCircle} /> Stop Sharing Screen
-                    </button>
-                ) : (
-                    <button onClick={startScreenShare} disabled={!isCallActive} className="button">
-                        <FontAwesomeIcon icon={faShareSquare} /> Share Screen
-                    </button>
-                )}
-            </div>
+        <div className={`video-call-container ${isScreenSharing ? 'screen-sharing-active' : ''} ${isMinimized ? 'minimized' : ''}`}>
+        <div className={`video-container ${isScreenSharing ? 'small-video' : ''}`} id="local-video">
+            <video ref={localVideoRef} autoPlay muted playsInline></video>
         </div>
+        <div className={`video-container ${isScreenSharing ? 'small-video' : ''}`} id="remote-video">
+            {remoteStreamVisible && <video ref={remoteVideoRef} autoPlay playsInline></video>}
+            {!remoteStreamVisible && <div className="placeholder">Video hidden during screen share</div>}
+        </div>
+        {isScreenSharing && <div className="screen-share-display">Screen sharing active</div>}
+        <div className="controls">
+            <button onClick={startCall} disabled={isCallActive}>
+                <FontAwesomeIcon icon={faPhone} /> Start Call
+            </button>
+            <button onClick={endCall} disabled={!isCallActive}>
+                <FontAwesomeIcon icon={faPhoneSlash} /> End Call
+            </button>
+            <button onClick={toggleAudio} disabled={!isCallActive}>
+                <FontAwesomeIcon icon={isAudioEnabled ? faMicrophone : faMicrophoneSlash} /> {isAudioEnabled ? 'Mute' : 'Unmute'}
+            </button>
+            <button onClick={toggleVideo} disabled={!isCallActive}>
+                <FontAwesomeIcon icon={isVideoEnabled ? faVideo : faVideoSlash} /> {isVideoEnabled ? 'Cam Off' : 'Cam On'}
+            </button> {/* Add the muted microphone icon here */}
+    
+            <button onClick={isScreenSharing ? stopScreenShare : startScreenShare} disabled={!isCallActive}>
+                <FontAwesomeIcon icon={isScreenSharing ? faStopCircle : faShareSquare} /> {isScreenSharing ? 'Stop Share' : 'Share Screen'}
+            </button>
+            <button onClick={toggleMinimize}>
+                <FontAwesomeIcon icon={isMinimized ? faExpandArrowsAlt : faCompressArrowsAlt} /> {isMinimized ? 'Expand' : 'Minimize'}
+            </button>
+        </div>
+       
+    </div>
+    
     );
 };
 
