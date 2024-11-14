@@ -1,0 +1,50 @@
+.requests-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.loading, .error-message, .no-requests {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+}
+
+.request-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.request-box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 250px;
+    transition: transform 0.2s;
+}
+
+.request-box:hover {
+    transform: translateY(-5px);
+}
+
+.request-box p {
+    margin: 10px 0;
+    color: #444;
+    font-size: 1rem;
+}
+
+.request-box strong {
+    color: #222;
+}
