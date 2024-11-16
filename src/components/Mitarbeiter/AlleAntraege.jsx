@@ -54,6 +54,14 @@ const AlleAntraege = () => {
         <div className="requests-container">
             <h1>Alle Anträge</h1>
 
+            {/* + Button zum Erstellen eines neuen Antrags */}
+            <div className="add-request-button">
+                <Link to="/antrag" className="add-request-link">
+                    <button className="add-button">+</button>
+                    Neuer Antrag
+                </Link>
+            </div>
+
             {/* Anzeige der offenen Anträge */}
             <div className="requests-section">
                 <h2>Offene Anträge</h2>

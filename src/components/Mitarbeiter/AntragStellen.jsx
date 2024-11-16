@@ -80,7 +80,7 @@ const AntragStellen = () => {
                     },
                 }
             );
-            alert(response.data.message);
+            window.location.href = "/alleantraege";
         } catch (error) {
             setError(error.response?.data?.error || 'Fehler beim Erstellen der Anträge');
         } finally {
