@@ -21,7 +21,6 @@ const AlleAntraege = () => {
                     }
                 });
 
-                // Überprüfen, ob das Datenformat korrekt ist
                 if (response.data && response.data.data) {
                     const openRequests = response.data.data.filter(request => request.status === 'offen');
                     const acceptedRequests = response.data.data.filter(request => request.status === 'akzeptiert');
@@ -33,7 +32,7 @@ const AlleAntraege = () => {
                         rejected: rejectedRequests,
                     });
                 } else {
-                    throw new Error("Datenformat stimmt nicht überein.");
+                    setError("Datenformat stimmt nicht überein.");
                 }
             } catch (err) {
                 setError('Fehler beim Abrufen der Anträge. Bitte versuchen Sie es später erneut.');
@@ -54,6 +53,15 @@ const AlleAntraege = () => {
         return <div className="error-message">{error}</div>;
     }
 
+    const noRequestsMessage = (
+        <div className="no-requests-message">
+            <p>Es gibt keine Anträge von dir. Du kannst jetzt einen neuen Antrag stellen.</p>
+            <Link to="/antrag" className="add-request-link">
+                <button className="add-button">+</button> Neuer Antrag
+            </Link>
+        </div>
+    );
+
     return (
         <div className="requests-container">
             <h1>Alle Anträge</h1>
@@ -68,7 +76,7 @@ const AlleAntraege = () => {
             <div className="requests-section">
                 <h2>Offene Anträge</h2>
                 {requests.open.length === 0 ? (
-                    <p className="no-requests">Es wurden keine offenen Anträge gefunden.</p>
+                    <div>{noRequestsMessage}</div>
                 ) : (
                     <div className="request-boxes">
                         {requests.open.map((request) => (
@@ -85,7 +93,6 @@ const AlleAntraege = () => {
                 )}
             </div>
 
-            {/* Wiederholen für die anderen Status (Akzeptiert, Abgelehnt) */}
             {['accepted', 'rejected'].map((status) => (
                 <div className="requests-section" key={status}>
                     <h2>{status === 'accepted' ? 'Akzeptierte' : 'Abgelehnte'} Anträge</h2>

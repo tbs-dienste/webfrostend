@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaLock, FaBuilding } from 'react-icons/fa'; // Icons importieren
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaLock, FaBuilding, FaGlobe, FaClipboardList } from 'react-icons/fa';
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
@@ -30,12 +30,18 @@ const MitarbeiterErfassen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Wenn "Vollzeit" gewählt wurde, setze teilzeit_prozent auf null
+    const formDataToSubmit = {
+      ...formData,
+      teilzeit_prozent: formData.verfügbarkeit === 'teilzeit' ? formData.teilzeit_prozent : null, // Null setzen, wenn nicht Teilzeit
+    };
+  
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter',
-        formData,
+        formDataToSubmit,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,6 +57,7 @@ const MitarbeiterErfassen = () => {
       alert('Fehler beim Hinzufügen des Mitarbeiters. Bitte überprüfe die Daten.');
     }
   };
+  
 
   return (
     <div className="mitarbeiter-erfassen">
@@ -103,7 +110,6 @@ const MitarbeiterErfassen = () => {
             name="adresse"
             value={formData.adresse}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -115,7 +121,6 @@ const MitarbeiterErfassen = () => {
             name="postleitzahl"
             value={formData.postleitzahl}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -127,7 +132,6 @@ const MitarbeiterErfassen = () => {
             name="ort"
             value={formData.ort}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -146,17 +150,16 @@ const MitarbeiterErfassen = () => {
         <div className="formular-gruppe">
           <label htmlFor="mobil"><FaPhone /> Mobil:</label>
           <input
-            type="text"
+            type="tel"
             id="mobil"
             name="mobil"
             value={formData.mobil}
             onChange={handleChange}
-            required
           />
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="benutzername">Benutzername:</label>
+          <label htmlFor="benutzername"><FaUser /> Benutzername:</label>
           <input
             type="text"
             id="benutzername"
@@ -180,18 +183,6 @@ const MitarbeiterErfassen = () => {
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="geburtstagdatum"><FaCalendarAlt /> Geburtsdatum:</label>
-          <input
-            type="date"
-            id="geburtstagdatum"
-            name="geburtstagdatum"
-            value={formData.geburtstagdatum}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="formular-gruppe">
           <label htmlFor="iban">IBAN:</label>
           <input
             type="text"
@@ -199,22 +190,29 @@ const MitarbeiterErfassen = () => {
             name="iban"
             value={formData.iban}
             onChange={handleChange}
-            required
           />
         </div>
 
         <div className="formular-gruppe">
-          <label htmlFor="land">Land:</label>
-          <select
+          <label htmlFor="land"><FaGlobe /> Land:</label>
+          <input
+            type="text"
             id="land"
             name="land"
             value={formData.land}
             onChange={handleChange}
-          >
-            <option value="DE">Deutschland</option>
-            <option value="CH">Schweiz</option>
-            {/* Weitere Länderoptionen */}
-          </select>
+          />
+        </div>
+
+        <div className="formular-gruppe">
+          <label htmlFor="geburtstagdatum"><FaCalendarAlt /> Geburtstag:</label>
+          <input
+            type="date"
+            id="geburtstagdatum"
+            name="geburtstagdatum"
+            value={formData.geburtstagdatum}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="formular-gruppe">
@@ -227,7 +225,6 @@ const MitarbeiterErfassen = () => {
             required
           >
             <option value="" disabled>Bitte wählen...</option>
-            <option value="flexibel">Flexibel</option>
             <option value="vollzeit">Vollzeit</option>
             <option value="teilzeit">Teilzeit</option>
           </select>
@@ -244,19 +241,17 @@ const MitarbeiterErfassen = () => {
               onChange={handleChange}
               min="0"
               max="100"
-              required
             />
           </div>
         )}
 
         <div className="formular-gruppe">
-          <label htmlFor="fähigkeiten">Fähigkeiten:</label>
+          <label htmlFor="fähigkeiten"><FaClipboardList /> Fähigkeiten:</label>
           <textarea
             id="fähigkeiten"
             name="fähigkeiten"
             value={formData.fähigkeiten}
             onChange={handleChange}
-            placeholder="Fähigkeiten eingeben..."
           />
         </div>
 

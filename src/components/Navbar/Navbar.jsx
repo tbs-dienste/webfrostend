@@ -98,24 +98,24 @@ function Navbar() {
                 <NavItem to="/bewerbungformular" text="Bewerben" icon={faPaperclip} currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
-{(userType === 'admin' || userType === 'mitarbeiter') && (
-  <>
-    <NavItem 
-      to="/kunden" 
-      text="Kunden" 
-      icon={faUser} 
-      currentPath={currentPath} 
-      onClick={toggleBurgerMenu} 
-    />
-    <NavItem 
-      to="/alleantraege" 
-      text="Anträge" 
-      icon={faGift} 
-      currentPath={currentPath} 
-      onClick={toggleBurgerMenu} 
-    />
-  </>
-)}
+            {(userType === 'admin' || userType === 'mitarbeiter') && (
+              <>
+                <NavItem
+                  to="/kunden"
+                  text="Kunden"
+                  icon={faUser}
+                  currentPath={currentPath}
+                  onClick={toggleBurgerMenu}
+                />
+                <NavItem
+                  to="/alleantraege"
+                  text="Anträge"
+                  icon={faGift}
+                  currentPath={currentPath}
+                  onClick={toggleBurgerMenu}
+                />
+              </>
+            )}
 
 
             {isLoggedIn ? (
