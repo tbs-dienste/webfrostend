@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Zum Erstellen von Links
-import './AlleAntraege.scss'; // Import für benutzerdefiniertes Styling
+import { Link } from 'react-router-dom';
+import './AlleAntraege.scss';
 
 const AlleAntraege = () => {
     const [requests, setRequests] = useState({
@@ -17,20 +17,24 @@ const AlleAntraege = () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/wunsch', {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}` // Token für Authentifizierung
+                        Authorization: `Bearer ${localStorage.getItem('token')}` 
                     }
                 });
 
-                // Aufteilen der Anträge in verschiedene Statusgruppen
-                const openRequests = response.data.data.filter(request => request.status === 'offen');
-                const acceptedRequests = response.data.data.filter(request => request.status === 'akzeptiert');
-                const rejectedRequests = response.data.data.filter(request => request.status === 'abgelehnt');
+                // Überprüfen, ob das Datenformat korrekt ist
+                if (response.data && response.data.data) {
+                    const openRequests = response.data.data.filter(request => request.status === 'offen');
+                    const acceptedRequests = response.data.data.filter(request => request.status === 'akzeptiert');
+                    const rejectedRequests = response.data.data.filter(request => request.status === 'abgelehnt');
 
-                setRequests({
-                    open: openRequests,
-                    accepted: acceptedRequests,
-                    rejected: rejectedRequests,
-                });
+                    setRequests({
+                        open: openRequests,
+                        accepted: acceptedRequests,
+                        rejected: rejectedRequests,
+                    });
+                } else {
+                    throw new Error("Datenformat stimmt nicht überein.");
+                }
             } catch (err) {
                 setError('Fehler beim Abrufen der Anträge. Bitte versuchen Sie es später erneut.');
                 console.error('Fehler:', err);
@@ -54,7 +58,6 @@ const AlleAntraege = () => {
         <div className="requests-container">
             <h1>Alle Anträge</h1>
 
-            {/* + Button zum Erstellen eines neuen Antrags */}
             <div className="add-request-button">
                 <Link to="/antrag" className="add-request-link">
                     <button className="add-button">+</button>
@@ -62,7 +65,6 @@ const AlleAntraege = () => {
                 </Link>
             </div>
 
-            {/* Anzeige der offenen Anträge */}
             <div className="requests-section">
                 <h2>Offene Anträge</h2>
                 {requests.open.length === 0 ? (
@@ -83,47 +85,28 @@ const AlleAntraege = () => {
                 )}
             </div>
 
-            {/* Anzeige der akzeptierten Anträge */}
-            <div className="requests-section">
-                <h2>Akzeptierte Anträge</h2>
-                {requests.accepted.length === 0 ? (
-                    <p className="no-requests">Es wurden keine akzeptierten Anträge gefunden.</p>
-                ) : (
-                    <div className="request-boxes">
-                        {requests.accepted.map((request) => (
-                            <div key={request.id} className="request-box">
-                                <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
-                                <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
-                                <p><strong>Beschreibung:</strong> {request.description}</p>
-                                <Link to={`/antragdetail/${request.id}`} className="request-link">
-                                    Weitere Details
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Anzeige der abgelehnten Anträge */}
-            <div className="requests-section">
-                <h2>Abgelehnte Anträge</h2>
-                {requests.rejected.length === 0 ? (
-                    <p className="no-requests">Es wurden keine abgelehnten Anträge gefunden.</p>
-                ) : (
-                    <div className="request-boxes">
-                        {requests.rejected.map((request) => (
-                            <div key={request.id} className="request-box">
-                                <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
-                                <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
-                                <p><strong>Beschreibung:</strong> {request.description}</p>
-                                <Link to={`/antragdetail/${request.id}`} className="request-link">
-                                    Weitere Details
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+            {/* Wiederholen für die anderen Status (Akzeptiert, Abgelehnt) */}
+            {['accepted', 'rejected'].map((status) => (
+                <div className="requests-section" key={status}>
+                    <h2>{status === 'accepted' ? 'Akzeptierte' : 'Abgelehnte'} Anträge</h2>
+                    {requests[status].length === 0 ? (
+                        <p className="no-requests">Es wurden keine {status} Anträge gefunden.</p>
+                    ) : (
+                        <div className="request-boxes">
+                            {requests[status].map((request) => (
+                                <div key={request.id} className="request-box">
+                                    <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
+                                    <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
+                                    <p><strong>Beschreibung:</strong> {request.description}</p>
+                                    <Link to={`/antragdetail/${request.id}`} className="request-link">
+                                        Weitere Details
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ))}
         </div>
     );
 };
