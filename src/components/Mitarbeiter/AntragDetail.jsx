@@ -11,8 +11,16 @@ const AntragDetail = () => {
     const [rejected, setRejected] = useState(null);
     const [reason, setReason] = useState('');
     const [message, setMessage] = useState('');
+    const [userRole, setUserRole] = useState(''); // Benutzerrolle
 
     useEffect(() => {
+        // Benutzerrolle aus dem Token im LocalStorage extrahieren
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            setUserRole(decodedToken.userType); // Benutzerrolle extrahieren
+        }
+
         // Antragdetails anhand der wunschId laden
         const fetchAntrag = async () => {
             try {
@@ -72,37 +80,46 @@ const AntragDetail = () => {
                     <p><strong>Enddatum:</strong> {new Date(antrag.endDate).toLocaleDateString()}</p>
                 </div>
 
-                <div className="actions">
-                    <button
-                        className="accept-btn"
-                        onClick={() => { setAccepted(true); setRejected(false); }}
-                        disabled={accepted === true}
-                    >
-                        <FaCheckCircle /> Akzeptieren
-                    </button>
-                    <button
-                        className="reject-btn"
-                        onClick={() => { setRejected(true); setAccepted(false); }}
-                        disabled={rejected === true}
-                    >
-                        <FaTimesCircle /> Ablehnen
-                    </button>
-                    {accepted || rejected ? (
-                        <div className="reason-input">
-                            <label htmlFor="reason">Grund:</label>
-                            <textarea
-                                id="reason"
-                                value={reason}
-                                onChange={(e) => setReason(e.target.value)}
-                                placeholder="Geben Sie einen Grund ein"
-                            ></textarea>
-                        </div>
-                    ) : null}
-                </div>
+                {/* Anzeige der Buttons nur für Administratoren */}
+                {userRole === 'admin' ? (
+                    <div className="actions">
+                        <button
+                            className="accept-btn"
+                            onClick={() => { setAccepted(true); setRejected(false); }}
+                            disabled={accepted === true}
+                        >
+                            <FaCheckCircle /> Akzeptieren
+                        </button>
+                        <button
+                            className="reject-btn"
+                            onClick={() => { setRejected(true); setAccepted(false); }}
+                            disabled={rejected === true}
+                        >
+                            <FaTimesCircle /> Ablehnen
+                        </button>
+                        {accepted || rejected ? (
+                            <div className="reason-input">
+                                <label htmlFor="reason">Grund:</label>
+                                <textarea
+                                    id="reason"
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="Geben Sie einen Grund ein"
+                                ></textarea>
+                            </div>
+                        ) : null}
+                    </div>
+                ) : (
+                    <div className="no-access-message">
+                        <p>Sie haben keine Berechtigung, diesen Antrag zu bearbeiten.</p>
+                    </div>
+                )}
 
-                <div className="update-btn">
-                    <button onClick={handleStatusUpdate}>Status aktualisieren</button>
-                </div>
+                {userRole === 'admin' && (
+                    <div className="update-btn">
+                        <button onClick={handleStatusUpdate}>Status aktualisieren</button>
+                    </div>
+                )}
 
                 {message && <div className="message">{message}</div>}
             </div>
