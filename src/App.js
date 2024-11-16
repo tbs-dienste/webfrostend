@@ -64,6 +64,7 @@ import CreateUnteraufgabe from './components/Kunden/Aufgaben/CreateUnteraufgabe'
 import CreateAufgabe from './components/Kunden/Aufgaben/CreateAufgaben';
 import AntragStellen from './components/Mitarbeiter/AntragStellen';
 import AlleAntraege from './components/Mitarbeiter/AlleAntraege';
+import AntragDetail from './components/Mitarbeiter/AntragDetail';
 
 const App = () => {
   
@@ -93,6 +94,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/antrag" element={<AntragStellen />} />
+          <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
