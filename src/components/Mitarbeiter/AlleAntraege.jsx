@@ -65,6 +65,7 @@ const AlleAntraege = () => {
                             <div key={request.id} className="request-box">
                                 <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
                                 <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
+                                <p><strong>Beschreibung:</strong> {request.description}</p>
                                 <Link to={`/antragdetail/${request.id}`} className="request-link">
                                     Weitere Details
                                 </Link>
@@ -85,6 +86,7 @@ const AlleAntraege = () => {
                             <div key={request.id} className="request-box">
                                 <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
                                 <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
+                                <p><strong>Beschreibung:</strong> {request.description}</p>
                                 <Link to={`/antragdetail/${request.id}`} className="request-link">
                                     Weitere Details
                                 </Link>
@@ -105,6 +107,7 @@ const AlleAntraege = () => {
                             <div key={request.id} className="request-box">
                                 <p><strong>Mitarbeiter ID:</strong> {request.mitarbeiterId}</p>
                                 <p><strong>Typ:</strong> {request.isHoliday ? 'Urlaub' : 'Freizeit'}</p>
+                                <p><strong>Beschreibung:</strong> {request.description}</p>
                                 <Link to={`/antragdetail/${request.id}`} className="request-link">
                                     Weitere Details
                                 </Link>
