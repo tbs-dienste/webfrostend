@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaDownload, FaCheck, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaCheck, FaEdit } from 'react-icons/fa';
 import './MitarbeiterAnzeigen.scss'; // Importiere die SCSS-Datei
 
 const MitarbeiterAnzeigen = () => {
-    const { id } = useParams();
-    const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);
-    const [selectedChecklisteIds, setSelectedChecklisteIds] = useState([]);
-    const [checkliste, setCheckliste] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [editMode, setEditMode] = useState(false);
-    const [editModeCheckliste, setEditModeCheckliste] = useState(false);
+    const { id } = useParams();  // Zugriff auf die Mitarbeiter-ID aus der URL
+    const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);  // Mitarbeiterdaten
+    const [loading, setLoading] = useState(true);  // Ladezustand
+    const [editMode, setEditMode] = useState(false);  // Schalter für Bearbeitungsmodus
     const [formData, setFormData] = useState({
         mitarbeiternummer: '',
         vorname: '',
@@ -19,11 +16,13 @@ const MitarbeiterAnzeigen = () => {
         adresse: '',
         postleitzahl: '',
         ort: '',
+      
         email: '',
         mobil: '',
         geschlecht: '',
         benutzername: '',
         iban: '',
+        geburtstagdatum: '' // Hinzugefügt
     });
 
     useEffect(() => {
@@ -36,12 +35,10 @@ const MitarbeiterAnzeigen = () => {
                     },
                 });
                 const mitarbeiter = response.data.data.mitarbeiter;
-                const checkliste = response.data.data.checkliste;
 
                 if (mitarbeiter) {
                     setSelectedMitarbeiter(mitarbeiter);
-                    setCheckliste(checkliste);
-                    setFormData(mitarbeiter);
+                    setFormData(mitarbeiter); // Setze die Mitarbeiterdaten im Formular
                 } else {
                     console.error('Mitarbeiter nicht gefunden');
                 }
@@ -57,28 +54,21 @@ const MitarbeiterAnzeigen = () => {
     }, [id]);
 
     const handleEditToggle = () => {
-        setEditMode(!editMode);
-    };
-
-    const handleCheckboxChange = (id) => {
-        setSelectedChecklisteIds((prev) =>
-            prev.includes(id)
-                ? prev.filter((checkId) => checkId !== id)
-                : [...prev, id]
-        );
+        setEditMode(!editMode); // Umschalten zwischen Bearbeitungs- und Anzeige-Modus
     };
 
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
+            // Sende die Daten an den Backend-Server
             await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             alert('Mitarbeiterdaten erfolgreich gespeichert');
-            setEditMode(false);
-            setSelectedMitarbeiter(formData);
+            setEditMode(false);  // Verlasse den Bearbeitungsmodus
+            setSelectedMitarbeiter(formData);  // Setze die geänderten Daten als aktuelle Mitarbeiterdaten
         } catch (error) {
             console.error('Fehler beim Speichern der Mitarbeiterdaten:', error);
             alert('Fehler beim Speichern der Daten. Bitte versuche es erneut.');
@@ -105,11 +95,15 @@ const MitarbeiterAnzeigen = () => {
                     {editMode ? 'Abbrechen' : 'Bearbeiten'} <FaEdit />
                 </button>
             </div>
+
+            {/* Edit Mode Form */}
             {editMode ? (
                 <div className="form-section">
                     {Object.keys(formData).map((field) => (
                         <div key={field}>
-                            <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                            <label htmlFor={field}>
+                                {field.charAt(0).toUpperCase() + field.slice(1)}
+                            </label>
                             <input
                                 type="text"
                                 id={field}
@@ -120,10 +114,13 @@ const MitarbeiterAnzeigen = () => {
                         </div>
                     ))}
                     <div className="button-group">
-                        <button className="save-button" onClick={handleSave}>Speichern <FaCheck /></button>
+                        <button className="save-button" onClick={handleSave}>
+                            Speichern <FaCheck />
+                        </button>
                     </div>
                 </div>
             ) : (
+                // Anzeige-Modus (nur Lesemodus)
                 <div className="form-section">
                     {selectedMitarbeiter &&
                         Object.keys(selectedMitarbeiter).map((field) => (
@@ -134,20 +131,6 @@ const MitarbeiterAnzeigen = () => {
                         ))}
                 </div>
             )}
-
-            <div className="checklist-section">
-                <h3>Checkliste</h3>
-                {checkliste.map((item) => (
-                    <div key={item.id} className="checklist-item">
-                        <input
-                            type="checkbox"
-                            checked={selectedChecklisteIds.includes(item.id)}
-                            onChange={() => handleCheckboxChange(item.id)}
-                        />
-                        <span>{item.aufgabe}</span>
-                    </div>
-                ))}
-            </div>
         </div>
     );
 };
