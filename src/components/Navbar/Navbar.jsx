@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './Navbar.scss';
 import logo from '../../logo.png';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSignOutAlt,
@@ -50,12 +51,39 @@ function Navbar() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setBenutzername('');
-    setIsAdmin(false);
-    setIsLoggedIn(false);
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Den Token im Header übergeben und den Logout-Request an das Backend senden
+      const token = localStorage.getItem('token'); // Holen des Tokens aus dem localStorage
+  
+      if (token) {
+        // Sende den Logout-Request an das Backend
+        const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/login/logout', {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Token im Header übergeben
+          },
+        });
+  
+        // Wenn der Backend-Request erfolgreich war, Token entfernen und den Benutzer abmelden
+        if (response.status === 200) {
+          // Entferne den Token nach erfolgreichem Logout
+          localStorage.removeItem('token');
+          setBenutzername('');
+          setIsAdmin(false);
+          setIsLoggedIn(false);
+          
+          // Weiterleitung zur Login-Seite
+          navigate('/');
+        } else {
+          throw new Error('Fehler beim Logout im Backend');
+        }
+      } else {
+        // Falls kein Token vorhanden ist, direkt zum Login weiterleiten
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Logout-Fehler:', error);
+    }
   };
 
   const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
