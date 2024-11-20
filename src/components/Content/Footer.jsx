@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 import './Footer.scss';
 import Datenschutzrichtlinien from '../Mitarbeiter/Documents/Datenschutzrichtlinien.pdf';
+import Leitbild from '../Mitarbeiter/Documents/Leitbild.pdf';
 
 const Footer = () => {
   return (
@@ -23,8 +24,16 @@ const Footer = () => {
           <h2>Rechtliches</h2>
           <ul>
             <li><Link to="/impressum">Impressum</Link></li>
-            <li><a href={Datenschutzrichtlinien} target="_blank" rel="noopener noreferrer">Datenschutz</a></li>
-            <li><Link to="/agb">AGB</Link></li>
+            <li><a href={Datenschutzrichtlinien} target="_blank" rel="noopener noreferrer">Datenschutzrichtlinien</a></li>
+            <li><Link to="/agb">Allgemeine Geschäftsbedingungen</Link></li>
+          </ul>
+        </div>
+
+        {/* Leitbild-Link */}
+        <div className="footer-section">
+          <h2>Unser Leitbild</h2>
+          <ul>
+            <li><a href={Leitbild} target="_blank" rel="noopener noreferrer">Leitbild von TBS Solutions</a></li>
           </ul>
         </div>
 
@@ -36,7 +45,14 @@ const Footer = () => {
               <FaTiktok />
               <span className="social-text">TikTok</span>
             </a>
-            
+            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="social-icon">
+              <FaInstagram />
+              <span className="social-text">Instagram</span>
+            </a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="social-icon">
+              <FaFacebookF />
+              <span className="social-text">Facebook</span>
+            </a>
           </div>
         </div>
       </div>

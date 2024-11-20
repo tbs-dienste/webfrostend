@@ -1,83 +1,77 @@
 .footer-container {
-    background-color: #333;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
-    font-size: 0.9rem;
-  
-    .footer-content {
-      display: flex;
-      justify-content: space-around;
-      padding-bottom: 20px;
-  
-      .footer-section {
-        flex: 1;
-        max-width: 250px;
-  
-        h2 {
-          font-size: 1.2rem;
-          margin-bottom: 10px;
-        }
-  
-        p, ul {
-          font-size: 0.9rem;
-          line-height: 1.6;
-  
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 2rem 1rem;
+
+  .footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    .footer-section {
+      flex: 1;
+      min-width: 200px;
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #e67e22;
+      }
+
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          margin-bottom: 0.5rem;
+
           a {
-            color: #1e90ff;
+            color: #ecf0f1;
             text-decoration: none;
-  
+
             &:hover {
+              color: #e67e22;
               text-decoration: underline;
-            }
-          }
-        }
-  
-        ul {
-          list-style: none;
-          padding: 0;
-  
-          li {
-            margin-bottom: 5px;
-  
-            .disabled-link {
-              color: #aaa;
-              cursor: not-allowed;
-              pointer-events: none;
-            }
-          }
-        }
-  
-        .footer-socials {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 15px;
-  
-          .social-icon {
-            display: flex;
-            align-items: center;
-            color: #1e90ff;
-            text-decoration: none;
-            font-size: 1.5rem;
-  
-            .social-text {
-              margin-left: 5px;
-              font-size: 1rem;
-            }
-  
-            &:hover {
-              color: #ff9900;
             }
           }
         }
       }
     }
-  
-    .footer-bottom {
-      padding-top: 10px;
-      border-top: 1px solid #444;
-      font-size: 0.8rem;
+
+    .footer-socials {
+      display: flex;
+      gap: 1rem;
+
+      .social-icon {
+        display: flex;
+        align-items: center;
+        color: #ecf0f1;
+        text-decoration: none;
+        font-size: 1.2rem;
+
+        .social-text {
+          margin-left: 0.5rem;
+          font-size: 1rem;
+        }
+
+        &:hover {
+          color: #e67e22;
+        }
+      }
     }
   }
-  
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    border-top: 1px solid #34495e;
+    padding-top: 1rem;
+  }
+}

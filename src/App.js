@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {jwtDecode} from 'jwt-decode'; // Importiere jwt-decode
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
@@ -71,6 +72,7 @@ import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 const App = () => {
   
   const [isAdmin, setIsAdmin] = useState(false);
+  const [timer, setTimer] = useState(null); 
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // Hole den Token aus localStorage
@@ -84,6 +86,45 @@ const App = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const handleActivity = () => {
+      // Lösche den vorherigen Timer, wenn der Benutzer aktiv ist
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      // Setze neuen Timer auf 10 Minuten
+      const newTimer = setTimeout(() => {
+        updateStatusOnBackend(); // Sende Anfrage an Backend, um Status zu ändern
+      }, 10 * 60 * 1000); // 10 Minuten Inaktivität
+      setTimer(newTimer);
+    };
+
+    const updateStatusOnBackend = async () => {
+      try {
+        // Sende die Anfrage zum Backend, um den Status zu aktualisieren
+        await axios.post('/api/update-status', { status: 'abwesend' });
+      } catch (error) {
+        console.error('Fehler beim Senden der Anfrage:', error);
+      }
+    };
+
+    // Überwache Mausbewegung, Tastatureingaben und Klicks
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('keydown', handleActivity);
+    window.addEventListener('click', handleActivity);
+
+    // Aufräumen bei Komponentendemontage
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('click', handleActivity);
+      if (timer) {
+        clearTimeout(timer); // Lösche den Timer bei der Demontage
+      }
+    };
+  }, [timer]);
 
   
 
