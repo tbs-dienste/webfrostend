@@ -1,145 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import './Vertrag.scss';
-import { FaCopy } from 'react-icons/fa';
 
-const Vertrag = () => {
-  const { id } = useParams();
-  const [selectedKunde, setSelectedKunde] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    async function fetchKunde() {
-      try {
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`);
-        const kunde = response.data.data;
-        if (kunde) {
-          setSelectedKunde(kunde);
-        } else {
-          console.error('Kunde nicht gefunden');
-          alert('Kunde nicht gefunden');
-        }
-      } catch (error) {
-        console.error('Fehler beim Abrufen des Kunden:', error);
-        alert('Fehler beim Abrufen der Kundendaten. Bitte versuche es später noch einmal.');
-      } finally {
-        setLoading(false);
-      }
-    }
+import React from 'react';
+import { Document, Page, Text, View, StyleSheet, pdf, Font } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import corbel from "./CORBEL.TTF"; // Import your custom font
 
-    fetchKunde();
-  }, [id]);
+// Register the Corbel font
+Font.register({
+  family: 'Corbel',
+  src: corbel, // Adjust path as needed
+});
 
-  const generatePDF = () => {
-    if (!selectedKunde) return;
+// Define styles
+const styles = StyleSheet.create({
+  page: {
+    padding: 40,
+    fontFamily: 'Corbel',
+    backgroundColor: '#f4f4f4',
+  },
+  section: {
+    marginBottom: 20,
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#2c3e50',
+    marginBottom: 10,
+    borderBottom: '2px solid #2c3e50',
+    paddingBottom: 5,
+  },
+  subHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#34495e',
+    marginBottom: 8,
+    borderBottom: '1px solid #bdc3c7',
+    paddingBottom: 5,
+  },
+  paragraph: {
+    fontSize: 12,
+    lineHeight: 1.6,
+    marginBottom: 10,
+    textAlign: 'justify',
+    color: '#34495e',
+  },
+  footer: {
+    fontSize: 10,
+    textAlign: 'center',
+    color: '#7f8c8d',
+    marginTop: 40,
+  },
+  button: {
+    marginTop: 20,
+    padding: '10px 20px',
+    backgroundColor: '#3498db',
+    color: 'white',
+    fontSize: 16,
+    border: 'none',
+    borderRadius: 5,
+    cursor: 'pointer',
+    textAlign: 'center',
+    width: '200px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  buttonText: {
+    fontWeight: 'bold',
+  },
+});
 
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'A4' });
+// Define the Vertrag document
+const Vertrag = () => (
+  <Document>
+  <Page size="A4" style={styles.page}>
+    {/* Präambel */}
+    <View style={styles.section}>
+      <Text style={styles.header}>Vertrag zwischen TBS Solutions und dem Auftraggeber</Text>
+      <Text style={styles.paragraph}>
+        Dieser Vertrag regelt die allgemeinen Bedingungen und die Erbringung von Dienstleistungen durch TBS Solutions für den Auftraggeber. TBS Solutions verpflichtet sich, alle vereinbarten Dienstleistungen gemäß den im Vertrag spezifizierten Anforderungen und dem Stand der Technik zu erbringen. Der Auftraggeber beauftragt den Dienstleister mit der Erbringung dieser Dienstleistungen, die den geschäftlichen Anforderungen und Zielen des Auftraggebers entsprechen.
+      </Text>
+    </View>
 
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Vertrag', 10, 20);
+    {/* Abschnitt 1 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>1. Gegenstand des Vertrages</Text>
+      <Text style={styles.paragraph}>1.1 TBS Solutions verpflichtet sich, dem Auftraggeber die im Vertrag vereinbarten Dienstleistungen zu erbringen. Diese Dienstleistungen umfassen alle Aktivitäten, die zur Erreichung der vereinbarten Ziele notwendig sind, und können sowohl technische, beratende, organisatorische als auch andere spezifizierte Tätigkeiten beinhalten.</Text>
+      <Text style={styles.paragraph}>1.2 Der genaue Umfang der Dienstleistungen wird detailliert in einer Leistungsbeschreibung oder einem separat vereinbarten Dokument festgelegt, das als Bestandteil dieses Vertrages gilt.</Text>
+      <Text style={styles.paragraph}>1.3 Im Rahmen dieses Vertrages können sowohl einmalige Dienstleistungen als auch wiederkehrende Leistungen oder fortlaufende Beratungs- und Wartungsleistungen vereinbart werden. Details zu den jeweiligen Leistungen sind in den jeweiligen Angeboten oder Aufträgen des Dienstleisters aufgeführt.</Text>
+    </View>
 
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Zwischen ${selectedKunde.vorname} ${selectedKunde.nachname}, im Folgenden „Auftraggeber“ genannt, und TBs Solutions, im Folgenden „Auftragnehmer“ genannt, wird folgender Vertrag betreffend der Dienstleistung ${selectedKunde.auftragsTyp} geschlossen.`, 10, 30, { maxWidth: 180 });
+    {/* Abschnitt 2 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>2. Leistungsbeschreibung und Umfang</Text>
+      <Text style={styles.paragraph}>2.1 Der Dienstleister wird die zu erbringenden Leistungen in der vereinbarten Qualität und innerhalb des definierten Zeitrahmens erbringen. Die genaue Definition der Leistungen wird in der Leistungsbeschreibung oder in den entsprechenden Aufträgen festgehalten.</Text>
+      <Text style={styles.paragraph}>2.2 Der Dienstleister verpflichtet sich, alle zur Leistungserbringung notwendigen Ressourcen und Fachkenntnisse bereitzustellen, um die vereinbarten Ergebnisse zu erzielen. Dies umfasst auch die Nutzung aktueller Technologien, Best Practices und die Einhaltung geltender Normen.</Text>
+      <Text style={styles.paragraph}>2.3 Der Dienstleister wird in engem Austausch mit dem Auftraggeber arbeiten, um sicherzustellen, dass die erbrachten Dienstleistungen den Anforderungen und Erwartungen entsprechen. Sollte eine Anpassung der Leistungen erforderlich sein, wird diese in einem gemeinsamen Prozess vorgenommen.</Text>
+    </View>
 
-    doc.text('1. Leistungsgegenstand', 10, 50);
-    doc.text(`Der Auftragnehmer verpflichtet sich, die Dienstleistung des Auftraggebers gemäß den detaillierten Spezifikationen und Anforderungen, wie in Anlage 1 festgelegt, fachgerecht auszuführen.`, 10, 60, { maxWidth: 180 });
+    {/* Abschnitt 3 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>3. Pflichten des Auftraggebers</Text>
+      <Text style={styles.paragraph}>3.1 Der Auftraggeber stellt sicher, dass alle erforderlichen Informationen, Daten und Ressourcen, die zur Erbringung der Dienstleistung notwendig sind, in ausreichender Menge und Qualität zur Verfügung gestellt werden. Dies umfasst auch den Zugang zu relevanten Systemen, Räumlichkeiten und Mitarbeitern, sofern erforderlich.</Text>
+      <Text style={styles.paragraph}>3.2 Der Auftraggeber verpflichtet sich, den Dienstleister zeitnah über etwaige Änderungen in den Anforderungen oder der Zielsetzung zu informieren, die die Dienstleistungen betreffen könnten. Der Dienstleister wird dann gemeinsam mit dem Auftraggeber eine Lösung entwickeln, um die Änderungen zu integrieren.</Text>
+    </View>
 
-    doc.text('2. Änderung der Anforderungen', 10, 80);
-    doc.text(`Der Auftraggeber hat das Recht, die Anforderungen an die Dienstleistungen jederzeit zu ändern, sofern dies schriftlich mitgeteilt wird. Änderungsanforderungen können sich auf Design, Funktionalität, Inhalte und weitere Aspekte der Dienstleistung beziehen.`, 10, 90, { maxWidth: 180 });
-    doc.text(`Der Auftragnehmer verpflichtet sich, unverzüglich auf Änderungsanforderungen zu reagieren und eine schriftliche Einschätzung der Auswirkungen auf den Umfang, die Zeitplanung und die Leistungen zu erstellen.`, 10, 105, { maxWidth: 180 });
+    {/* Abschnitt 4 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>4. Vergütung und Zahlungsbedingungen</Text>
+      <Text style={styles.paragraph}>4.1 Die Vergütung für die erbrachten Dienstleistungen wird im jeweiligen Auftrag oder in der Leistungsbeschreibung festgelegt. Diese kann als Pauschalpreis, nach Aufwand oder in einer anderen Form vereinbart werden.</Text>
+      <Text style={styles.paragraph}>4.2 Der Dienstleister stellt dem Auftraggeber nach Abschluss der jeweiligen Leistung eine Rechnung aus. Die Zahlungsbedingungen sind in der Rechnung detailliert angegeben. Die Zahlung ist innerhalb der im Vertrag oder auf der Rechnung angegebenen Frist ohne Abzüge zu leisten.</Text>
+    </View>
 
-    if (selectedKunde.auftragsTyp === 1) {
-      doc.text('3. Admin-Rolle und Bearbeitung der Webseite', 10, 125);
-      doc.text(`Der Auftraggeber erhält das Recht, die Webseite in seiner Funktion als Administrator zu bearbeiten und Änderungen vorzunehmen. Dies umfasst die Möglichkeit, Inhalte, Bilder, Texte, Videos und andere Informationen auf der Webseite eigenständig zu verwalten und zu aktualisieren.`, 10, 135, { maxWidth: 180 });
-      doc.text(`Der Auftragnehmer wird dem Auftraggeber eine benutzerfreundliche und sichere Admin-Oberfläche zur Verfügung stellen, die es dem Auftraggeber ermöglicht, Änderungen an der Webseite vorzunehmen, ohne die Integrität oder Funktionsfähigkeit der Webseite zu beeinträchtigen.`, 10, 150, { maxWidth: 180 });
+    {/* Abschnitt 5 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>5. Vertragslaufzeit und Kündigung</Text>
+      <Text style={styles.paragraph}>5.1 Der Vertrag tritt mit der Unterzeichnung durch beide Parteien in Kraft und bleibt bis zur vollständigen Erbringung der vereinbarten Leistungen gültig. Die genaue Laufzeit des Vertrages und etwaige Verlängerungsoptionen sind in den jeweiligen Aufträgen festgelegt.</Text>
+    </View>
 
-      doc.text('4. Rücktrittsrecht des Auftraggebers', 10, 170);
-      doc.text(`Der Auftraggeber hat das Recht, vom Vertrag zurückzutreten, wenn der Auftragnehmer wesentliche Vertragsverpflichtungen nicht erfüllt. Im Falle eines Rücktritts wird eine angemessene Entschädigung für bereits erbrachte Leistungen fällig.`, 10, 180, { maxWidth: 180 });
+    {/* Abschnitt 6 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>6. Haftung</Text>
+      <Text style={styles.paragraph}>6.1 TBS Solutions haftet nur für Schäden, die durch vorsätzliche oder grob fahrlässige Handlungen seinerseits oder seiner Erfüllungsgehilfen verursacht wurden. Eine Haftung für leichte Fahrlässigkeit ist ausgeschlossen.</Text>
+    </View>
 
-      doc.text('5. Einsicht in den Source Code', 10, 200);
-      doc.text(`Der Auftraggeber hat das Recht, Einsicht in den Source Code der Webseite zu nehmen, um die Qualität und Übereinstimmung der Programmierung zu überprüfen. Der Zugriff auf den Source Code wird dem Auftraggeber in einem angemessenen Umfang gewährt.`, 10, 210, { maxWidth: 180 });
+    {/* Abschnitt 7 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>7. Vertraulichkeit</Text>
+      <Text style={styles.paragraph}>7.1 Beide Parteien verpflichten sich, alle im Rahmen dieses Vertrages erhaltenen vertraulichen Informationen geheim zu halten und nur für die Zwecke dieses Vertrages zu verwenden. Dies gilt insbesondere für technische Daten, Geschäftsgeheimnisse und alle anderen Informationen, die ausdrücklich als vertraulich bezeichnet werden.</Text>
+    </View>
 
-      doc.text('6. Berichtspflicht', 10, 230);
-      doc.text(`Der Auftragnehmer verpflichtet sich, dem Auftraggeber regelmäßig über den Fortschritt der Arbeiten zu berichten. Diese Berichte umfassen den Stand der Umsetzung, eventuelle Probleme und die voraussichtliche Fertigstellung.`, 10, 240, { maxWidth: 180 });
+    {/* Abschnitt 8 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>8. Rechte an Arbeitsergebnissen</Text>
+      <Text style={styles.paragraph}>8.1 Alle im Rahmen dieses Vertrages erstellten Arbeitsergebnisse, Software, Dokumentationen und sonstige kreative Leistungen gehören dem Auftraggeber, nachdem die Vergütung vollständig gezahlt wurde. Der Dienstleister räumt dem Auftraggeber alle notwendigen Rechte zur Nutzung, Bearbeitung und Weitergabe dieser Ergebnisse ein.</Text>
+    </View>
 
-      doc.text('7. Vertraulichkeit', 10, 260);
-      doc.text(`Der Auftragnehmer verpflichtet sich, alle vom Auftraggeber bereitgestellten Informationen und Daten vertraulich zu behandeln und diese nicht ohne ausdrückliche Zustimmung des Auftraggebers an Dritte weiterzugeben.`, 10, 270, { maxWidth: 180 });
+    {/* Abschnitt 9 */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>9. Gerichtsstand und anwendbares Recht</Text>
+      <Text style={styles.paragraph}>9.1 Dieser Vertrag unterliegt dem Recht von [Land des Dienstleisters]. Der Gerichtsstand für alle Streitigkeiten im Zusammenhang mit diesem Vertrag ist [Ort des Dienstleisters].</Text>
+    </View>
 
-      doc.text('8. Urheberrecht und Eigentum', 10, 290);
-      doc.text(`Alle Urheberrechte und geistigen Eigentumsrechte an der von dem Auftragnehmer erstellten Webseite verbleiben bis zur vollständigen Bezahlung beim Auftragnehmer. Nach vollständiger Bezahlung gehen die Rechte an der Webseite und ihren Inhalten auf den Auftraggeber über.`, 10, 300, { maxWidth: 180 });
+    {/* Schlussbestimmungen */}
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>10. Sonstige Bestimmungen</Text>
+      <Text style={styles.paragraph}>10.1 Änderungen dieses Vertrages bedürfen der Schriftform und der Zustimmung beider Parteien. Mündliche Vereinbarungen sind nur dann gültig, wenn sie schriftlich bestätigt werden.</Text>
+    </View>
 
-      doc.text('9. Vergütung', 10, 320);
-      doc.text(`Die Vergütung für die Erstellung und Betreuung der Webseite wird in Anlage 2 festgelegt. Zahlungen sind gemäß dem vereinbarten Zahlungsplan zu leisten. Bei Zahlungsverzug behält sich der Auftragnehmer vor, die Arbeit bis zur Begleichung der ausstehenden Beträge einzustellen.`, 10, 330, { maxWidth: 180 });
-    }
+    <View style={styles.section}>
+      <Text style={styles.subHeader}>11. Schlussbestimmungen</Text>
+      <Text style={styles.paragraph}>11.1 Beide Parteien bestätigen, dass sie diesen Vertrag nach eingehender Prüfung verstanden haben und freiwillig zustimmen, alle Bedingungen zu erfüllen.</Text>
+    </View>
+  </Page>
+</Document>
+);
 
-    doc.save('Vertrag.pdf');
+// Download Button component
+const DownloadButton = () => {
+  const handleDownload = () => {
+    // Create the PDF document using the Vertrag component
+    const doc = <Vertrag />;
+    
+    // Use pdf() to generate the PDF Blob and download
+    pdf(doc)
+      .toBlob()
+      .then((blob) => {
+        saveAs(blob, 'vertrag.pdf');
+      })
+      .catch((error) => console.error('Error generating PDF:', error));
   };
-
-  const copyCode = () => {
-    navigator.clipboard.writeText(selectedKunde.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  if (loading) {
-    return <div>Lade Kunde...</div>;
-  }
 
   return (
-    <div className="vertrag-anzeigen-container">
-      <div className="vertrag-anzeigen">
-        <h2>Vertrag</h2>
-        {selectedKunde ? (
-          <>
-            <p className="vertrag-text">Zwischen {selectedKunde.vorname} {selectedKunde.nachname}, im Folgenden „Auftraggeber“ genannt, und TBs Solutions, im Folgenden „Auftragnehmer“ genannt, wird folgender Vertrag betreffend der Dienstleistung {selectedKunde.auftragsTyp} geschlossen.</p>
-            <p className="vertrag-text">1. Leistungsgegenstand</p>
-            <p className="vertrag-text">Der Auftragnehmer verpflichtet sich, die Dienstleistung des Auftraggebers gemäß den detaillierten Spezifikationen und Anforderungen, wie in Anlage 1 festgelegt, fachgerecht auszuführen.</p>
-            <p className="vertrag-text">2. Änderung der Anforderungen</p>
-            <p className="vertrag-text">Der Auftraggeber hat das Recht, die Anforderungen an die Dienstleistungen jederzeit zu ändern, sofern dies schriftlich mitgeteilt wird. Änderungsanforderungen können sich auf Design, Funktionalität, Inhalte und weitere Aspekte der Dienstleistung beziehen.</p>
-            <p className="vertrag-text">Der Auftragnehmer verpflichtet sich, unverzüglich auf Änderungsanforderungen zu reagieren und eine schriftliche Einschätzung der Auswirkungen auf den Umfang, die Zeitplanung und die Leistungen zu erstellen.</p>
-
-            {selectedKunde.auftragsTyp === 1 && (
-              <>
-                <p className="vertrag-text">3. Admin-Rolle und Bearbeitung der Webseite</p>
-                <p className="vertrag-text">Der Auftraggeber erhält das Recht, die Webseite in seiner Funktion als Administrator zu bearbeiten und Änderungen vorzunehmen. Dies umfasst die Möglichkeit, Inhalte, Bilder, Texte, Videos und andere Informationen auf der Webseite eigenständig zu verwalten und zu aktualisieren.</p>
-                <p className="vertrag-text">Der Auftragnehmer wird dem Auftraggeber eine benutzerfreundliche und sichere Admin-Oberfläche zur Verfügung stellen, die es dem Auftraggeber ermöglicht, Änderungen an der Webseite vorzunehmen, ohne die Integrität oder Funktionsfähigkeit der Webseite zu beeinträchtigen.</p>
-                <p className="vertrag-text">4. Rücktrittsrecht des Auftraggebers</p>
-                <p className="vertrag-text">Der Auftraggeber hat das Recht, vom Vertrag zurückzutreten, wenn der Auftragnehmer wesentliche Vertragsverpflichtungen nicht erfüllt. Im Falle eines Rücktritts wird eine angemessene Entschädigung für bereits erbrachte Leistungen fällig.</p>
-                <p className="vertrag-text">5. Einsicht in den Source Code</p>
-                <p className="vertrag-text">Der Auftraggeber hat das Recht, Einsicht in den Source Code der Webseite zu nehmen, um die Qualität und Übereinstimmung der Programmierung zu überprüfen. Der Zugriff auf den Source Code wird dem Auftraggeber in einem angemessenen Umfang gewährt.</p>
-                <p className="vertrag-text">6. Berichtspflicht</p>
-                <p className="vertrag-text">Der Auftragnehmer verpflichtet sich, dem Auftraggeber regelmäßig über den Fortschritt der Arbeiten zu berichten. Diese Berichte umfassen den Stand der Umsetzung, eventuelle Probleme und die voraussichtliche Fertigstellung.</p>
-                <p className="vertrag-text">7. Vertraulichkeit</p>
-                <p className="vertrag-text">Der Auftragnehmer verpflichtet sich, alle vom Auftraggeber bereitgestellten Informationen und Daten vertraulich zu behandeln und diese nicht ohne ausdrückliche Zustimmung des Auftraggebers an Dritte weiterzugeben.</p>
-                <p className="vertrag-text">8. Urheberrecht und Eigentum</p>
-                <p className="vertrag-text">Alle Urheberrechte und geistigen Eigentumsrechte an der von dem Auftragnehmer erstellten Webseite verbleiben bis zur vollständigen Bezahlung beim Auftragnehmer. Nach vollständiger Bezahlung gehen die Rechte an der Webseite und ihren Inhalten auf den Auftraggeber über.</p>
-                <p className="vertrag-text">9. Vergütung</p>
-                <p className="vertrag-text">Die Vergütung für die Erstellung und Betreuung der Webseite wird in Anlage 2 festgelegt. Zahlungen sind gemäß dem vereinbarten Zahlungsplan zu leisten. Bei Zahlungsverzug behält sich der Auftragnehmer vor, die Arbeit bis zur Begleichung der ausstehenden Beträge einzustellen.</p>
-              </>
-            )}
-            
-            <div className="code-container">
-              <p className="code"><strong>Code:</strong> {selectedKunde.code}</p>
-              <button className="copy-button" onClick={copyCode}>
-                <FaCopy />
-                {copied ? 'Code kopiert!' : 'Code kopieren'}
-              </button>
-            </div>
-
-            <button className="pdf-button" onClick={generatePDF}>PDF generieren</button>
-          </>
-        ) : (
-          <div>Keine Daten gefunden</div>
-        )}
-      </div>
-    </div>
+    <button style={styles.button} onClick={handleDownload}>
+      <Text style={styles.buttonText}>Download Vertrag als PDF</Text>
+    </button>
   );
 };
 
-export default Vertrag;
+export default DownloadButton;

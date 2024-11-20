@@ -17,7 +17,9 @@ import {
   faPaperPlane,
   faStar,
   faBars as faMenu,
-  faPaperclip
+  faPaperclip,
+  faDownload,
+  faVirus
 } from '@fortawesome/free-solid-svg-icons';
 import { FaStar } from 'react-icons/fa';
 
@@ -94,8 +96,14 @@ function Navbar() {
               <>
                 <NavItem to="/gutscheine-liste" text="Gutscheinliste" icon={faGift} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUsers} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/download" text="Download" icon={faDownload} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/bewerbungformular" text="Bewerben" icon={faPaperclip} currentPath={currentPath} onClick={toggleBurgerMenu} />
+              </>
+            )}
+            {userType === 'mitarbeiter' && (
+              <>
+                <NavItem to="/createkrankmeldung" text="Krank melden" icon={faVirus} currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
             {(userType === 'admin' || userType === 'mitarbeiter') && (

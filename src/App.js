@@ -65,6 +65,8 @@ import CreateAufgabe from './components/Kunden/Aufgaben/CreateAufgaben';
 import AntragStellen from './components/Mitarbeiter/AntragStellen';
 import AlleAntraege from './components/Mitarbeiter/AlleAntraege';
 import AntragDetail from './components/Mitarbeiter/AntragDetail';
+import Download from './components/Mitarbeiter/Documents/Download';
+import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 
 const App = () => {
   
@@ -96,6 +98,7 @@ const App = () => {
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
+          <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
@@ -133,7 +136,8 @@ const App = () => {
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/lizenzen" element={<Lizenzen />} />
           <Route path="/bewerbungformular" element={<BewerbungForm />} />
-        
+          <Route path="/createkrankmeldung" element={<CreateKrankmeldung />}  />
+
           <Route path="/rechnungen/:id" element={<RechnungDetails />}  />
 
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />

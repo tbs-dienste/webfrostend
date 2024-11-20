@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaUser, FaPen } from 'react-icons/fa';
+import { FaTrash, FaUser, FaPen, FaVirus } from 'react-icons/fa';  // Füge das FaVirus-Icon hinzu
 import './Mitarbeiter.scss';
 
 const Mitarbeiter = () => {
@@ -71,9 +71,10 @@ const Mitarbeiter = () => {
         <div className="mitarbeiter-liste">
           {mitarbeiterListe.length > 0 ? (
             mitarbeiterListe.map((m) => (
-              <div key={m.id} className="mitarbeiter-box">
-                  <p>Mitarbeiternummer: {m.mitarbeiternummer}</p>
+              <div key={m.id} className={`mitarbeiter-box ${m.krankGemeldet ? 'krank' : ''}`}>
+                <p>Mitarbeiternummer: {m.mitarbeiternummer}</p>
                 <p>{m.vorname} {m.nachname}</p>
+                {m.krankGemeldet && <FaVirus className="krank-icon" />} {/* Nur anzeigen, wenn krankGemeldet true ist */}
                 <div className="mitarbeiter-buttons">
                   <Link to={`/mitarbeiteranzeigen/${m.id}`}>
                     <FaUser /> Anzeigen

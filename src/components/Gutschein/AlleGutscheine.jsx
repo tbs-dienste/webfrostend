@@ -80,6 +80,9 @@ const AlleGutscheine = () => {
                             <strong>Gutschein Code:</strong> {gutschein.gutscheincode}
                         </div>
                         <div>
+                            <strong>Guthaben:</strong> {gutschein.guthaben} CHF
+                        </div>
+                        <div>
                             <label className="switch">
                                 <input
                                     type="checkbox"
