@@ -68,6 +68,18 @@ const Mitarbeiter = () => {
     return today.getDate() === birthday.getDate() && today.getMonth() === birthday.getMonth();
   };
 
+  // Funktion zur Berechnung des Geburtstagsjubiläums
+  const calculateAge = (geburtstag) => {
+    const today = new Date();
+    const birthday = new Date(geburtstag);
+    let age = today.getFullYear() - birthday.getFullYear();
+    const isBeforeBirthdayThisYear =
+      today.getMonth() < birthday.getMonth() ||
+      (today.getMonth() === birthday.getMonth() && today.getDate() < birthday.getDate());
+    if (isBeforeBirthdayThisYear) age -= 1;
+    return age;
+  };
+
   return (
     <div className="mitarbeiter-container">
       <h2>Mitarbeiter</h2>
@@ -101,7 +113,7 @@ const Mitarbeiter = () => {
                     {checkBirthday(m.geburtstag) && (
                       <FaBirthdayCake
                         className="birthday-icon"
-                        title="Mitarbeiter hat heute Geburtstag!"
+                        title={`Heute ist der ${calculateAge(m.geburtstag)}. Geburtstag!`}
                       />
                     )}
                     {m.status === 'online' && (
