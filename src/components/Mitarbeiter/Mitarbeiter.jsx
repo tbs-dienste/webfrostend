@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaUser, FaVirus } from 'react-icons/fa';  // Füge das FaVirus-Icon hinzu
+import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake } from 'react-icons/fa';
 import './Mitarbeiter.scss';
 
 const Mitarbeiter = () => {
@@ -61,6 +61,13 @@ const Mitarbeiter = () => {
     setShowConfirmationModal(false);
   };
 
+  // Funktion zur Überprüfung, ob der Mitarbeiter heute Geburtstag hat
+  const checkBirthday = (geburtstag) => {
+    const today = new Date();
+    const birthday = new Date(geburtstag);
+    return today.getDate() === birthday.getDate() && today.getMonth() === birthday.getMonth();
+  };
+
   return (
     <div className="mitarbeiter-container">
       <h2>Mitarbeiter</h2>
@@ -68,32 +75,65 @@ const Mitarbeiter = () => {
       {loading ? (
         <p>Lade Mitarbeiter...</p>
       ) : (
-        <div className="mitarbeiter-liste">
-          {mitarbeiterListe.length > 0 ? (
-            mitarbeiterListe.map((m) => (
-              <div key={m.id} className={`mitarbeiter-box ${m.krankGemeldet ? 'krank' : ''}`}>
-                <p>Mitarbeiternummer: {m.mitarbeiternummer}</p>
-                <p>{m.vorname} {m.nachname}</p>
-                {m.krankGemeldet && (
-                  <FaVirus 
-                    className="krank-icon" 
-                    title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`} 
-                  /> 
-                )} {/* Das Startdatum der Krankmeldung als Hover-Text */}
-                <div className="mitarbeiter-buttons">
-                  <Link to={`/mitarbeiteranzeigen/${m.id}`}>
-                    <FaUser /> Anzeigen
-                  </Link>
-                  <button onClick={() => handleShowConfirmationModal(m.id)}>
-                    <FaTrash /> Löschen
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>Keine Mitarbeiter gefunden.</p>
-          )}
-        </div>
+        <table className="mitarbeiter-tabelle">
+          <thead>
+            <tr>
+              <th>Mitarbeiternummer</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mitarbeiterListe.length > 0 ? (
+              mitarbeiterListe.map((m) => (
+                <tr
+                  key={m.id}
+                  className={`
+                    ${m.krankGemeldet ? 'krank' : ''} 
+                    ${m.status === 'online' ? 'online' : ''}
+                  `}
+                >
+                  <td>{m.mitarbeiternummer}</td>
+                  <td>{m.vorname} {m.nachname}</td>
+                  <td>
+                    {/* Geburtsstagsicon anzeigen, wenn heute Geburtstag ist */}
+                    {checkBirthday(m.geburtstag) && (
+                      <FaBirthdayCake
+                        className="birthday-icon"
+                        title="Mitarbeiter hat heute Geburtstag!"
+                      />
+                    )}
+                    {m.status === 'online' && (
+                      <FaGlobe
+                        className="online-icon"
+                        title="Mitarbeiter ist online"
+                      />
+                    )}
+                    {m.krankGemeldet && (
+                      <FaVirus
+                        className="krank-icon"
+                        title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    <Link to={`/mitarbeiteranzeigen/${m.id}`}>
+                      <FaUser /> Anzeigen
+                    </Link>
+                    <button onClick={() => handleShowConfirmationModal(m.id)}>
+                      <FaTrash /> Löschen
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4">Keine Mitarbeiter gefunden.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       )}
       {showConfirmationModal && (
         <div className="confirmation-modal">
