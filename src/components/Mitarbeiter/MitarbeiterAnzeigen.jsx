@@ -16,15 +16,18 @@ const MitarbeiterAnzeigen = () => {
         adresse: '',
         postleitzahl: '',
         ort: '',
-      
         email: '',
         mobil: '',
         geschlecht: '',
         benutzername: '',
         iban: '',
-        geburtstagdatum: '' // Hinzugefügt
+        geburtstagdatum: '', // Hinzugefügt
+        verfügung: '',
+        teilzeit_prozent: null,
+        fähigkeiten: ''
     });
 
+    // Daten des Mitarbeiters abrufen
     useEffect(() => {
         async function fetchMitarbeiter() {
             try {
@@ -53,28 +56,39 @@ const MitarbeiterAnzeigen = () => {
         fetchMitarbeiter();
     }, [id]);
 
+    // Bearbeitungsmodus umschalten
     const handleEditToggle = () => {
         setEditMode(!editMode); // Umschalten zwischen Bearbeitungs- und Anzeige-Modus
     };
 
+    // Änderungen speichern
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
-            // Sende die Daten an den Backend-Server
-            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, formData, {
+    
+            // Überprüfen, ob das Geburtsdatum vorhanden ist, andernfalls nicht in die Anfrage aufnehmen
+            const updatedFormData = { ...formData };
+            if (!updatedFormData.geburtstagdatum) {
+                updatedFormData.geburtstagdatum = null;  // Geburtsdatum auf null setzen, wenn leer
+            }
+    
+            // Sende die aktualisierten Daten an den Backend-Server
+            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, updatedFormData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
+    
             alert('Mitarbeiterdaten erfolgreich gespeichert');
             setEditMode(false);  // Verlasse den Bearbeitungsmodus
-            setSelectedMitarbeiter(formData);  // Setze die geänderten Daten als aktuelle Mitarbeiterdaten
+            setSelectedMitarbeiter(updatedFormData);  // Setze die geänderten Daten als aktuelle Mitarbeiterdaten
         } catch (error) {
             console.error('Fehler beim Speichern der Mitarbeiterdaten:', error);
             alert('Fehler beim Speichern der Daten. Bitte versuche es erneut.');
         }
     };
 
+    // Eingabewerte ändern
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -83,9 +97,16 @@ const MitarbeiterAnzeigen = () => {
         });
     };
 
+    // Ladezustand anzeigen
     if (loading) {
         return <div className="loading">Lädt...</div>;
     }
+
+    // Funktion zum Formatieren des Geburtsdatums
+    const formatDate = (date) => {
+        const newDate = new Date(date);
+        return newDate.toLocaleDateString('de-DE');  // Format: DD.MM.YYYY
+    };
 
     return (
         <div className="mitarbeiter-anzeigen">
@@ -100,17 +121,30 @@ const MitarbeiterAnzeigen = () => {
             {editMode ? (
                 <div className="form-section">
                     {Object.keys(formData).map((field) => (
-                        <div key={field}>
+                        <div key={field} className="input-group">
                             <label htmlFor={field}>
                                 {field.charAt(0).toUpperCase() + field.slice(1)}
                             </label>
-                            <input
-                                type="text"
-                                id={field}
-                                name={field}
-                                value={formData[field]}
-                                onChange={handleInputChange}
-                            />
+                            {field === 'geburtstagdatum' ? (
+                                // Geburtsdatum als Date-Feld im Bearbeitungsmodus
+                                <input
+                                    type="date"
+                                    id={field}
+                                    name={field}
+                                    value={formData[field] || ''}  // Fallback auf einen leeren String
+                                    onChange={handleInputChange}
+                                    className="input-date"
+                                />
+                            ) : (
+                                <input
+                                    type="text"
+                                    id={field}
+                                    name={field}
+                                    value={formData[field] || ''}  // Fallback auf einen leeren String
+                                    onChange={handleInputChange}
+                                    className="input-text"
+                                />
+                            )}
                         </div>
                     ))}
                     <div className="button-group">
@@ -124,9 +158,13 @@ const MitarbeiterAnzeigen = () => {
                 <div className="form-section">
                     {selectedMitarbeiter &&
                         Object.keys(selectedMitarbeiter).map((field) => (
-                            <div key={field}>
+                            <div key={field} className="info-group">
                                 <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                                <p>{selectedMitarbeiter[field]}</p>
+                                {field === 'geburtstagdatum' ? (
+                                    <p>{formatDate(selectedMitarbeiter[field])}</p>
+                                ) : (
+                                    <p>{selectedMitarbeiter[field]}</p>
+                                )}
                             </div>
                         ))}
                 </div>

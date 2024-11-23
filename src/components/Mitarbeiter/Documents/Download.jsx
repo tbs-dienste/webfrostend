@@ -3,6 +3,8 @@ import { FaFilePdf, FaFileWord } from 'react-icons/fa';
 import Arbeitsvertrag from './Arbeitsvertrag.docx'; // Ersetze dies mit dem tatsächlichen Pfad
 import Unternehmensrichtlinien from './Unternehmensrichtlinien.pdf'; // Ersetze dies mit dem tatsächlichen Pfad
 import Datenschutzrichtlinien from './Datenschutzrichtlinien.pdf'; // Ersetze dies mit dem tatsächlichen Pfad
+import KündigungWord from './Kündigung.docx';
+import Kündigung from './Kündigung.pdf';
 
 import "./Download.scss";
 
@@ -10,7 +12,10 @@ function Download() {
   const documents = [
     { name: 'Arbeitsvertrag', url: Arbeitsvertrag, icon: <FaFileWord />, type: 'Word', description: 'Offizieller Arbeitsvertrag zur Ansicht.' },
     { name: 'Unternehmensrichtlinien', url: Unternehmensrichtlinien, icon: <FaFilePdf />, type: 'PDF', description: 'Hier sind unsere Unternehmensrichtlinien.' },
-    { name: 'Datenschutzrichtlinien', url: Datenschutzrichtlinien, icon: <FaFilePdf />, type: 'PDF', description: 'Hier sind unsere Datenschutzrichtlinien.' }
+    { name: 'Datenschutzrichtlinien', url: Datenschutzrichtlinien, icon: <FaFilePdf />, type: 'PDF', description: 'Hier sind unsere Datenschutzrichtlinien.' },
+    { name: 'Kündigung', url: KündigungWord, icon: <FaFileWord />, type: 'Word', description: 'Kündigung als WOrd' },
+    { name: 'Kündigung', url: Kündigung, icon: <FaFilePdf />, type: 'PDF', description: 'Kündigung als PDF' },
+
   ];
 
   const handleDownload = (url, fileName) => {

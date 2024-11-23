@@ -21,7 +21,11 @@ const Mitarbeiter = () => {
         });
 
         if (Array.isArray(response.data.data)) {
-          setMitarbeiterListe(response.data.data);
+          const updatedMitarbeiter = response.data.data.map((m) => ({
+            ...m,
+            hatGeburtstag: checkBirthday(m.geburtstag), // Berechne, ob der Mitarbeiter heute Geburtstag hat
+          }));
+          setMitarbeiterListe(updatedMitarbeiter);
         } else {
           console.error('Expected an array but received:', response.data);
         }
@@ -110,7 +114,7 @@ const Mitarbeiter = () => {
                   <td>{m.vorname} {m.nachname}</td>
                   <td>
                     {/* Geburtsstagsicon anzeigen, wenn heute Geburtstag ist */}
-                    {checkBirthday(m.geburtstag) && (
+                    {m.hatGeburtstag && (
                       <FaBirthdayCake
                         className="birthday-icon"
                         title={`Heute ist der ${calculateAge(m.geburtstag)}. Geburtstag!`}
