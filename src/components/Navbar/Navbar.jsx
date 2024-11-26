@@ -20,7 +20,8 @@ import {
   faBars as faMenu,
   faPaperclip,
   faDownload,
-  faVirus
+  faVirus,
+  faChartBar
 } from '@fortawesome/free-solid-svg-icons';
 import { FaStar } from 'react-icons/fa';
 
@@ -147,6 +148,13 @@ function Navbar() {
                   to="/alleantraege"
                   text="Anträge"
                   icon={faGift}
+                  currentPath={currentPath}
+                  onClick={toggleBurgerMenu}
+                />
+                <NavItem
+                  to="/statistiken"
+                  text="Statistik"
+                  icon={faChartBar}
                   currentPath={currentPath}
                   onClick={toggleBurgerMenu}
                 />

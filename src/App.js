@@ -68,6 +68,7 @@ import AlleAntraege from './components/Mitarbeiter/AlleAntraege';
 import AntragDetail from './components/Mitarbeiter/AntragDetail';
 import Download from './components/Mitarbeiter/Documents/Download';
 import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
+import Statistik from './components/Administrativ/Statistik';
 
 const App = () => {
   
@@ -138,6 +139,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
+          <Route path="/statistik" element={<Statistik />} />
+
           <Route path="/alleAntraege" element={<AlleAntraege />} />
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
