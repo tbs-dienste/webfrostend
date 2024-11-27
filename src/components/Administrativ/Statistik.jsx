@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Line, Pie } from "react-chartjs-2"; // 'Bar' zu 'Line' geändert
+import { Line, Pie } from "react-chartjs-2"; 
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -29,7 +29,7 @@ const Statistik = () => {
   const [statistikData, setStatistikData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeChart, setActiveChart] = useState("tag"); // "tag", "monat", "jahr"
+  const [activeChart, setActiveChart] = useState("tag");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +65,11 @@ const Statistik = () => {
   }
 
   const {
+    totalKunden,
+    archivierteKunden,
+    aktiveKunden,
+    privatKunden,
+    geschaeftKunden,
     kontakteProTag,
     kontakteProMonat,
     kontakteProJahr,
@@ -75,26 +80,85 @@ const Statistik = () => {
     durchschnittBewertung,
   } = statistikData;
 
-  // Dynamische Daten für die Button-Auswahl
   const chartData = {
     tag: {
       title: "Kontakte pro Tag",
       labels: kontakteProTag.map((item) =>
         new Date(item.datum).toLocaleDateString("de-DE")
       ),
-      data: kontakteProTag.map((item) => item.anzahl),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProTag.filter(item => item.art === "privat").map((item) => item.anzahl),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProTag.filter(item => item.art === "geschäft").map((item) => item.anzahl),
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
     },
     monat: {
       title: "Kontakte pro Monat",
-      labels: kontakteProMonat.map((item) =>
-        new Date(item.datum).toLocaleDateString("de-DE", { month: "long" })
-      ),
-      data: kontakteProMonat.map((item) => item.anzahl),
+      labels: Array.from({ length: 31 }, (_, i) => {
+        const date = new Date(2024, 10, i + 1); // Annahme: November 2024
+        return date.getDate();
+      }),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: Array.from({ length: 31 }, (_, i) => {
+            const date = new Date(2024, 10, i + 1);
+            const data = kontakteProMonat.find(item => new Date(item.datum).getDate() === date.getDate() && item.art === "privat");
+            return data ? data.anzahl : 0;
+          }),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: Array.from({ length: 31 }, (_, i) => {
+            const date = new Date(2024, 10, i + 1);
+            const data = kontakteProMonat.find(item => new Date(item.datum).getDate() === date.getDate() && item.art === "geschäft");
+            return data ? data.anzahl : 0;
+          }),
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
     },
     jahr: {
       title: "Kontakte pro Jahr",
       labels: kontakteProJahr.map((item) => item.jahr),
-      data: kontakteProJahr.map((item) => item.anzahl),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProJahr.filter(item => item.art === "privat").map((item) => item.anzahl),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProJahr.filter(item => item.art === "geschaeft").map((item) => item.anzahl),
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
     },
   };
 
@@ -104,7 +168,31 @@ const Statistik = () => {
     <div className="statistik-container">
       <h2 className="statistik-title">Statistik Übersicht</h2>
 
-      {/* Auswahl Buttons */}
+      {/* Übersicht der wichtigsten Statistiken */}
+      <div className="statistik-summary">
+        <div className="statistik-item">
+          <h3>Gesamtzahl der Kunden</h3>
+          <p>{totalKunden}</p>
+        </div>
+        <div className="statistik-item">
+          <h3>Archivierte Kunden</h3>
+          <p>{archivierteKunden}</p>
+        </div>
+        <div className="statistik-item">
+          <h3>Aktive Kunden</h3>
+          <p>{aktiveKunden}</p>
+        </div>
+        <div className="statistik-item">
+          <h3>Private Kunden</h3>
+          <p>{privatKunden}</p>
+        </div>
+        <div className="statistik-item">
+          <h3>Geschäftliche Kunden</h3>
+          <p>{geschaeftKunden}</p>
+        </div>
+      </div>
+
+      {/* Auswahl Buttons für die Diagramme */}
       <div className="chart-buttons">
         <button
           className={activeChart === "tag" ? "active" : ""}
@@ -132,28 +220,19 @@ const Statistik = () => {
         <Line
           data={{
             labels: currentChart.labels,
-            datasets: [
-              {
-                label: currentChart.title,
-                data: currentChart.data,
-                fill: false, // Kein Hintergrund
-                borderColor: "rgba(75, 192, 192, 1)", // Linienfarbe
-                tension: 0.1, // Weichheit der Linie
-                borderWidth: 2, // Linienstärke
-              },
-            ],
+            datasets: currentChart.datasets,
           }}
           options={{
             responsive: true,
             plugins: {
-              legend: { display: false },
+              legend: { display: true },
               tooltip: { enabled: true },
             },
             scales: {
               x: {
                 title: {
                   display: true,
-                  text: "Zeit",
+                  text: "Datum",
                 },
               },
               y: {
@@ -161,14 +240,14 @@ const Statistik = () => {
                   display: true,
                   text: "Anzahl",
                 },
-                min: 0, // Y-Achse startet bei 0
+                min: 0,
               },
             },
           }}
         />
       </div>
 
-      {/* Kunden pro Land */}
+      {/* Weitere Diagramme */}
       <div className="chart-container">
         <h3>Kunden pro Land</h3>
         <Pie
@@ -197,7 +276,6 @@ const Statistik = () => {
         />
       </div>
 
-      {/* Top Dienstleistungen */}
       <div className="chart-container">
         <h3>Top Dienstleistungen</h3>
         <Line
@@ -208,7 +286,7 @@ const Statistik = () => {
                 label: "Anzahl",
                 data: topDienstleistungen.map((item) => item.anzahl),
                 fill: false,
-                borderColor: "rgba(153, 102, 255, 1)",
+                borderColor: "rgba(75, 192, 192, 1)",
                 tension: 0.1,
                 borderWidth: 2,
               },
@@ -217,25 +295,26 @@ const Statistik = () => {
           options={{
             responsive: true,
             plugins: {
-              legend: { display: false },
+              legend: { display: true },
               tooltip: { enabled: true },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Dienstleistung",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Anzahl",
+                },
+                min: 0,
+              },
             },
           }}
         />
-      </div>
-
-      {/* Offene und abgeschlossene Aufträge */}
-      <div className="auftrag-stats">
-        <h3>Auftragsstatistik</h3>
-        <p>
-          <strong>Offene Aufträge:</strong> {offeneAufträge}
-        </p>
-        <p>
-          <strong>Abgeschlossene Aufträge:</strong> {abgeschlosseneAufträge}
-        </p>
-        <p>
-          <strong>Durchschnittliche Bewertung:</strong> {durchschnittBewertung}
-        </p>
       </div>
     </div>
   );
