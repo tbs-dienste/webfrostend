@@ -130,6 +130,42 @@ const KundeErfassen = () => {
         )}
 
         <div className="formular-gruppe">
+          <label>Geschlecht</label>
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="geschlecht"
+                value="männlich"
+                checked={kunde.geschlecht === 'männlich'}
+                onChange={handleInputChange}
+              />
+              Männlich
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="geschlecht"
+                value="weiblich"
+                checked={kunde.geschlecht === 'weiblich'}
+                onChange={handleInputChange}
+              />
+              Weiblich
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="geschlecht"
+                value="divers"
+                checked={kunde.geschlecht === 'divers'}
+                onChange={handleInputChange}
+              />
+              Divers
+            </label>
+          </div>
+        </div>
+
+        <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname</label>
           <input type="text" id="vorname" name="vorname" value={kunde.vorname} onChange={handleInputChange} />
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Line, Pie } from "react-chartjs-2";
+import { Line, Pie, Bar } from "react-chartjs-2";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  BarElement,
 } from "chart.js";
 import "./Statistik.scss";
 
@@ -22,7 +23,8 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  BarElement
 );
 
 const Statistik = () => {
@@ -76,9 +78,49 @@ const Statistik = () => {
     kundenProLand,
     topDienstleistungen,
     offeneAufträge,
+    kundenProGeschlecht,
     abgeschlosseneAufträge,
     durchschnittBewertung,
+    geschlechtVerteilung,
   } = statistikData;
+
+  // Prepare data for Pie and Bar charts
+  const pieChartDataLand = {
+    labels: kundenProLand.map(item => item.land),
+    datasets: [
+      {
+        data: kundenProLand.map(item => item.anzahl),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"],
+        hoverOffset: 4,
+      },
+    ],
+  };
+// Beispiel für die Vorbereitung der Daten für ein Pie- und Bar-Diagramm basierend auf Geschlecht
+const pieChartDataGeschlecht = {
+    labels: kundenProGeschlecht.map(item => item.geschlecht), // Labels für jedes Geschlecht
+    datasets: [
+      {
+        data: kundenProGeschlecht.map(item => item.anzahl), // Anzahl der Kunden pro Geschlecht
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"], // Farben für jedes Segment
+        hoverOffset: 4, // Offset, wenn das Segment mit der Maus hoveriert wird
+      },
+    ],
+  };
+
+  
+
+  const barChartDataTopDienstleistungen = {
+    labels: topDienstleistungen.map(item => item.dienstleistung),
+    datasets: [
+      {
+        label: "Top Dienstleistungen",
+        data: topDienstleistungen.map(item => item.anzahl),
+        backgroundColor: "#36A2EB",
+        borderColor: "#36A2EB",
+        borderWidth: 1,
+      },
+    ],
+  };
 
   const chartData = {
     tag: {
@@ -152,7 +194,7 @@ const Statistik = () => {
         },
         {
           label: "Geschäftliche Kunden",
-          data: kontakteProJahr.filter(item => item.art === "geschaeft").map((item) => item.anzahl),
+          data: kontakteProJahr.filter(item => item.art === "geschäft").map((item) => item.anzahl),
           fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
@@ -218,6 +260,24 @@ const Statistik = () => {
       <div className="chart-container">
         <h3>{currentChart.title}</h3>
         <Line data={currentChart} />
+      </div>
+
+      {/* Pie Chart für Kunden nach Land */}
+      <div className="chart-container">
+        <h3>Verteilung der Kunden nach Land</h3>
+        <Pie data={pieChartDataLand} />
+      </div>
+
+      {/* Pie Chart für Geschlecht */}
+      <div className="chart-container">
+        <h3>Verteilung nach Geschlecht</h3>
+        <Pie data={pieChartDataGeschlecht} />
+      </div>
+
+      {/* Bar Chart für Top Dienstleistungen */}
+      <div className="chart-container">
+        <h3>Top Dienstleistungen</h3>
+        <Bar data={barChartDataTopDienstleistungen} />
       </div>
     </div>
   );
