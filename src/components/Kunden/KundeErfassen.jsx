@@ -15,6 +15,7 @@ const KundeErfassen = () => {
     email: '',
     mobil: '',
     geschlecht: '',
+    art: '' // Hinzugefügt für 'privat' oder 'geschäft'
   });
 
   const [dienstleistungen, setDienstleistungen] = useState([]);
@@ -95,10 +96,39 @@ const KundeErfassen = () => {
       <h2>Kundendaten erfassen</h2>
       <div className="formular">
         {/* Formularfelder für die Kundendaten */}
+        {/* Radio buttons für Privat- oder Geschäftskunde */}
         <div className="formular-gruppe">
-          <label htmlFor="firma">Firma</label>
-          <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
+          <label>Art des Kunden</label>
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="art"
+                value="privat"
+                checked={kunde.art === 'privat'}
+                onChange={handleInputChange}
+              />
+              Privatkunde
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="art"
+                value="geschäft"
+                checked={kunde.art === 'geschäft'}
+                onChange={handleInputChange}
+              />
+              Geschäftskunde
+            </label>
+          </div>
         </div>
+        {kunde.art === 'geschäft' && (
+          <div className="formular-gruppe">
+            <label htmlFor="firma">Firma</label>
+            <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
+          </div>
+        )}
+
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname</label>
           <input type="text" id="vorname" name="vorname" value={kunde.vorname} onChange={handleInputChange} />
@@ -131,6 +161,8 @@ const KundeErfassen = () => {
           <label htmlFor="mobil">Mobil</label>
           <input type="text" id="mobil" name="mobil" value={kunde.mobil} onChange={handleInputChange} />
         </div>
+
+
 
         {/* Dienstleistungen */}
         <div className="dienstleistungen-bereich">

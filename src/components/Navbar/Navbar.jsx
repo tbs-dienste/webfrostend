@@ -18,7 +18,8 @@ import {
   faDownload,
   faMoneyBill,
   faPaperPlane,
-  faBarChart
+  faBarChart,
+  faVirus
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -109,6 +110,7 @@ function Navbar() {
               <>
                 <NavItem to="/antrag" text="Antrag stellen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/alleAntraege" text="Alle Anträge" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/createkrankmeldung" text="Krank Melden" icon={faVirus} currentPath={currentPath} onClick={toggleBurgerMenu} />
 
               </>
             )}

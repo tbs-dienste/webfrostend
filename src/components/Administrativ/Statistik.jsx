@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { Line, Pie } from "react-chartjs-2"; // 'Bar' zu 'Line' geändert
 import axios from "axios";
-import { Bar, Pie } from "react-chartjs-2";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
-  BarElement,
-  ArcElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 import "./Statistik.scss";
 
@@ -20,7 +18,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
-  BarElement,
+  LineElement,
   ArcElement,
   Title,
   Tooltip,
@@ -31,7 +29,7 @@ const Statistik = () => {
   const [statistikData, setStatistikData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [view, setView] = useState("Tag");
+  const [activeChart, setActiveChart] = useState("tag"); // "tag", "monat", "jahr"
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,153 +73,73 @@ const Statistik = () => {
     offeneAufträge,
     abgeschlosseneAufträge,
     durchschnittBewertung,
-    totalKunden,
-    aktiveKunden,
-    archivierteKunden,
   } = statistikData;
 
+  // Dynamische Daten für die Button-Auswahl
   const chartData = {
-    Tag: {
+    tag: {
+      title: "Kontakte pro Tag",
       labels: kontakteProTag.map((item) =>
         new Date(item.datum).toLocaleDateString("de-DE")
       ),
       data: kontakteProTag.map((item) => item.anzahl),
-      label: "Kontakte pro Tag",
     },
-    Monat: {
-      labels: kontakteProMonat.map((item) => item.monat),
+    monat: {
+      title: "Kontakte pro Monat",
+      labels: kontakteProMonat.map((item) =>
+        new Date(item.datum).toLocaleDateString("de-DE", { month: "long" })
+      ),
       data: kontakteProMonat.map((item) => item.anzahl),
-      label: "Kontakte pro Monat",
     },
-    Jahr: {
+    jahr: {
+      title: "Kontakte pro Jahr",
       labels: kontakteProJahr.map((item) => item.jahr),
       data: kontakteProJahr.map((item) => item.anzahl),
-      label: "Kontakte pro Jahr",
     },
   };
 
-  const currentData = chartData[view];
+  const currentChart = chartData[activeChart];
 
-  const generatePDF = async () => {
-    const doc = new jsPDF();
-  
-    // Add Title
-    doc.setFontSize(18);
-    doc.text("Statistik Übersicht", 20, 20);
-  
-    // Add Summary Cards
-    doc.setFontSize(12);
-    doc.text(`Gesamtkunden: ${totalKunden}`, 20, 30);
-    doc.text(`Aktive Kunden: ${aktiveKunden}`, 20, 40);
-    doc.text(`Archivierte Kunden: ${archivierteKunden}`, 20, 50);
-    doc.text(`Offene Aufträge: ${offeneAufträge}`, 20, 60);
-    doc.text(`Abgeschlossene Aufträge: ${abgeschlosseneAufträge}`, 20, 70);
-    doc.text(`Durchschnittsbewertung: ${durchschnittBewertung}`, 20, 80);
-  
-    // Create a page break if the content exceeds the current page
-    let currentY = 90;
-    if (currentY > 250) {
-      doc.addPage();
-      currentY = 20;
-    }
-  
-    // Capture chart as image using html2canvas
-    const chartContainer1 = document.getElementById("chart-container-1");
-    const chartContainer2 = document.getElementById("chart-container-2");
-    const chartContainer3 = document.getElementById("chart-container-3");
-  
-    const canvas1 = await html2canvas(chartContainer1);
-    const canvas2 = await html2canvas(chartContainer2);
-    const canvas3 = await html2canvas(chartContainer3);
-  
-    const imgData1 = canvas1.toDataURL("image/png");
-    const imgData2 = canvas2.toDataURL("image/png");
-    const imgData3 = canvas3.toDataURL("image/png");
-  
-    // Add the first chart image to the PDF
-    doc.addImage(imgData1, "PNG", 20, currentY, 180, 100);
-    currentY += 120; // Move down the page for the next chart
-  
-    // Create a page break if there's not enough space for the next chart
-    if (currentY > 250) {
-      doc.addPage();
-      currentY = 20;
-    }
-  
-    // Add the second chart image to the PDF
-    doc.addImage(imgData2, "PNG", 20, currentY, 180, 100);
-    currentY += 120; // Move down the page for the next chart
-  
-    // Create a page break if there's not enough space for the next chart
-    if (currentY > 250) {
-      doc.addPage();
-      currentY = 20;
-    }
-  
-    // Add the third chart image to the PDF
-    doc.addImage(imgData3, "PNG", 20, currentY, 180, 100);
-  
-    // Generate the filename with current date
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Ensure 2 digits
-    const day = currentDate.getDate().toString().padStart(2, '0'); // Ensure 2 digits
-  
-    // Construct the filename
-    const filename = `${year}-${month}-${day}-Statistik.pdf`;
-  
-    // Save the PDF with the dynamically generated filename
-    doc.save(filename);
-  };
-  
-  
-  
   return (
     <div className="statistik-container">
       <h2 className="statistik-title">Statistik Übersicht</h2>
 
-      <div className="summary-cards">
-        <div className="card">Gesamtkunden: {totalKunden}</div>
-        <div className="card">Aktive Kunden: {aktiveKunden}</div>
-        <div className="card">Archivierte Kunden: {archivierteKunden}</div>
-        <div className="card">Offene Aufträge: {offeneAufträge}</div>
-        <div className="card">Abgeschlossene Aufträge: {abgeschlosseneAufträge}</div>
-        <div className="card">Durchschnittsbewertung: {durchschnittBewertung}</div>
-      </div>
-
-      <div className="filter-buttons">
+      {/* Auswahl Buttons */}
+      <div className="chart-buttons">
         <button
-          className={view === "Tag" ? "active" : ""}
-          onClick={() => setView("Tag")}
+          className={activeChart === "tag" ? "active" : ""}
+          onClick={() => setActiveChart("tag")}
         >
           Tag
         </button>
         <button
-          className={view === "Monat" ? "active" : ""}
-          onClick={() => setView("Monat")}
+          className={activeChart === "monat" ? "active" : ""}
+          onClick={() => setActiveChart("monat")}
         >
           Monat
         </button>
         <button
-          className={view === "Jahr" ? "active" : ""}
-          onClick={() => setView("Jahr")}
+          className={activeChart === "jahr" ? "active" : ""}
+          onClick={() => setActiveChart("jahr")}
         >
           Jahr
         </button>
       </div>
 
-      <div id="chart-container-1" className="chart-container">
-        <h3>{currentData.label}</h3>
-        <Bar
+      {/* Dynamische Grafik */}
+      <div className="chart-container">
+        <h3>{currentChart.title}</h3>
+        <Line
           data={{
-            labels: currentData.labels,
+            labels: currentChart.labels,
             datasets: [
               {
-                label: currentData.label,
-                data: currentData.data,
-                backgroundColor: "rgba(54, 162, 235, 0.5)",
-                borderColor: "rgba(54, 162, 235, 1)",
-                borderWidth: 1,
+                label: currentChart.title,
+                data: currentChart.data,
+                fill: false, // Kein Hintergrund
+                borderColor: "rgba(75, 192, 192, 1)", // Linienfarbe
+                tension: 0.1, // Weichheit der Linie
+                borderWidth: 2, // Linienstärke
               },
             ],
           }}
@@ -232,14 +150,26 @@ const Statistik = () => {
               tooltip: { enabled: true },
             },
             scales: {
-              x: { beginAtZero: true },
-              y: { beginAtZero: true },
+              x: {
+                title: {
+                  display: true,
+                  text: "Zeit",
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Anzahl",
+                },
+                min: 0, // Y-Achse startet bei 0
+              },
             },
           }}
         />
       </div>
 
-      <div id="chart-container-2" className="chart-container">
+      {/* Kunden pro Land */}
+      <div className="chart-container">
         <h3>Kunden pro Land</h3>
         <Pie
           data={{
@@ -261,24 +191,26 @@ const Statistik = () => {
           options={{
             responsive: true,
             plugins: {
-              legend: { position: "top" },
+              tooltip: { enabled: true },
             },
           }}
         />
       </div>
 
-      <div id="chart-container-3" className="chart-container">
+      {/* Top Dienstleistungen */}
+      <div className="chart-container">
         <h3>Top Dienstleistungen</h3>
-        <Bar
+        <Line
           data={{
             labels: topDienstleistungen.map((item) => item.dienstleistung),
             datasets: [
               {
-                label: "Top Dienstleistungen",
+                label: "Anzahl",
                 data: topDienstleistungen.map((item) => item.anzahl),
-                backgroundColor: "rgba(153, 102, 255, 0.5)",
+                fill: false,
                 borderColor: "rgba(153, 102, 255, 1)",
-                borderWidth: 1,
+                tension: 0.1,
+                borderWidth: 2,
               },
             ],
           }}
@@ -288,17 +220,23 @@ const Statistik = () => {
               legend: { display: false },
               tooltip: { enabled: true },
             },
-            scales: {
-              x: { beginAtZero: true },
-              y: { beginAtZero: true },
-            },
           }}
         />
       </div>
 
-      <button className="download-pdf-button" onClick={generatePDF}>
-        PDF herunterladen
-      </button>
+      {/* Offene und abgeschlossene Aufträge */}
+      <div className="auftrag-stats">
+        <h3>Auftragsstatistik</h3>
+        <p>
+          <strong>Offene Aufträge:</strong> {offeneAufträge}
+        </p>
+        <p>
+          <strong>Abgeschlossene Aufträge:</strong> {abgeschlosseneAufträge}
+        </p>
+        <p>
+          <strong>Durchschnittliche Bewertung:</strong> {durchschnittBewertung}
+        </p>
+      </div>
     </div>
   );
 };
