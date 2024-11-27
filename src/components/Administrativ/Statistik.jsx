@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Line, Pie } from "react-chartjs-2"; 
+import { Line, Pie } from "react-chartjs-2";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -198,123 +198,26 @@ const Statistik = () => {
           className={activeChart === "tag" ? "active" : ""}
           onClick={() => setActiveChart("tag")}
         >
-          Tag
+          Kontakte pro Tag
         </button>
         <button
           className={activeChart === "monat" ? "active" : ""}
           onClick={() => setActiveChart("monat")}
         >
-          Monat
+          Kontakte pro Monat
         </button>
         <button
           className={activeChart === "jahr" ? "active" : ""}
           onClick={() => setActiveChart("jahr")}
         >
-          Jahr
+          Kontakte pro Jahr
         </button>
       </div>
 
-      {/* Dynamische Grafik */}
+      {/* Chart Anzeige */}
       <div className="chart-container">
         <h3>{currentChart.title}</h3>
-        <Line
-          data={{
-            labels: currentChart.labels,
-            datasets: currentChart.datasets,
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: { display: true },
-              tooltip: { enabled: true },
-            },
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: "Datum",
-                },
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: "Anzahl",
-                },
-                min: 0,
-              },
-            },
-          }}
-        />
-      </div>
-
-      {/* Weitere Diagramme */}
-      <div className="chart-container">
-        <h3>Kunden pro Land</h3>
-        <Pie
-          data={{
-            labels: kundenProLand.map((item) => item.land),
-            datasets: [
-              {
-                data: kundenProLand.map((item) => item.anzahl),
-                backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#4BC0C0",
-                  "#9966FF",
-                  "#FF9F40",
-                ],
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              tooltip: { enabled: true },
-            },
-          }}
-        />
-      </div>
-
-      <div className="chart-container">
-        <h3>Top Dienstleistungen</h3>
-        <Line
-          data={{
-            labels: topDienstleistungen.map((item) => item.dienstleistung),
-            datasets: [
-              {
-                label: "Anzahl",
-                data: topDienstleistungen.map((item) => item.anzahl),
-                fill: false,
-                borderColor: "rgba(75, 192, 192, 1)",
-                tension: 0.1,
-                borderWidth: 2,
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: { display: true },
-              tooltip: { enabled: true },
-            },
-            scales: {
-              x: {
-                title: {
-                  display: true,
-                  text: "Dienstleistung",
-                },
-              },
-              y: {
-                title: {
-                  display: true,
-                  text: "Anzahl",
-                },
-                min: 0,
-              },
-            },
-          }}
-        />
+        <Line data={currentChart} />
       </div>
     </div>
   );
