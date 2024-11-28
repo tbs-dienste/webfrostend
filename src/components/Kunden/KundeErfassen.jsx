@@ -122,12 +122,7 @@ const KundeErfassen = () => {
             </label>
           </div>
         </div>
-        {kunde.art === 'geschäft' && (
-          <div className="formular-gruppe">
-            <label htmlFor="firma">Firma</label>
-            <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
-          </div>
-        )}
+
 
         <div className="formular-gruppe">
           <label>Geschlecht</label>
@@ -152,19 +147,15 @@ const KundeErfassen = () => {
               />
               Weiblich
             </label>
-            <label>
-              <input
-                type="radio"
-                name="geschlecht"
-                value="divers"
-                checked={kunde.geschlecht === 'divers'}
-                onChange={handleInputChange}
-              />
-              Divers
-            </label>
+
           </div>
         </div>
-
+        {kunde.art === 'geschäft' && (
+          <div className="formular-gruppe">
+            <label htmlFor="firma">Firma</label>
+            <input type="text" id="firma" name="firma" value={kunde.firma} onChange={handleInputChange} />
+          </div>
+        )}
         <div className="formular-gruppe">
           <label htmlFor="vorname">Vorname</label>
           <input type="text" id="vorname" name="vorname" value={kunde.vorname} onChange={handleInputChange} />
@@ -221,27 +212,29 @@ const KundeErfassen = () => {
             </div>
           ))}
           <button type="button" className="add-dienstleistung-button" onClick={handleAddDienstleistung}>
-            Dienstleistung hinzufügen
+            Weitere Dienstleistungen hinzufügen
           </button>
         </div>
 
-        {/* Checkbox für Datenschutz */}
         <div className="checkbox-gruppe">
           <input
             type="checkbox"
             id="datenschutzAkzeptiert"
             name="datenschutzAkzeptiert"
-            checked={datenschutzAkzeptiert}
-            onChange={() => setDatenschutzAkzeptiert(!datenschutzAkzeptiert)}
+            required
           />
           <label htmlFor="datenschutzAkzeptiert">
-            Ich akzeptiere die <a href={agb} target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>.
+            Ich akzeptiere die{" "}
+            <a href={agb} target="_blank" rel="noopener noreferrer">
+              Allgemeinen Geschäftsbedingungen (AGB)
+            </a>.
           </label>
         </div>
 
+
         {/* Submit-Button */}
         <button type="button" className="submit-button" onClick={handleKundeErfassen}>
-          Kunde erfassen
+          Kontakt aufnehmen
         </button>
       </div>
     </div>
