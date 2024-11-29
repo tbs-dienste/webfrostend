@@ -149,9 +149,7 @@ const Kunden = () => {
                     <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
                       <FaClock /> Arbeitszeit
                     </Link>
-                    <Link to={`/rechnung/${kunde.id}`} className="kunden-button">
-                      <FaFileInvoice /> Rechnung erstellen
-                    </Link>
+                
                     <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                       <FaUser /> Kunden anzeigen
                     </Link>
