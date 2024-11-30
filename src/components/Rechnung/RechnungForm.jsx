@@ -37,7 +37,10 @@ const RechnungForm = () => {
 
     // Benutzerdefinierte Dienstleistungen hinzufügen
     const handleAddBenutzerdefinierteDienstleistung = () => {
-        setBenutzerdefinierteDienstleistungen([...benutzerdefinierteDienstleistungen, { title: '', anzahl: 1, preisProEinheit: 0 }]);
+        setBenutzerdefinierteDienstleistungen([
+            ...benutzerdefinierteDienstleistungen,
+            { title: '', anzahl: 1, preisProEinheit: 0 },
+        ]);
     };
 
     // Benutzerdefinierte Dienstleistungen entfernen
@@ -57,15 +60,19 @@ const RechnungForm = () => {
 
         const invoiceData = {
             kundenId,
-            benutzerdefinierteDienstleistungen
+            benutzerdefinierteDienstleistungen,
         };
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen', invoiceData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            alert(`Rechnung erfolgreich erstellt: ${response.data.rechnungId}`);
+            const response = await axios.post(
+                'https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen',
+                invoiceData,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+           window.location.href = "/rechnungen";
             setMessage('');
             setBenutzerdefinierteDienstleistungen([{ title: '', anzahl: 1, preisProEinheit: 0 }]);
             setKundenSuche('');
@@ -151,7 +158,9 @@ const RechnungForm = () => {
                             min="0"
                             required
                         />
-                        <button type="button" onClick={() => handleRemoveBenutzerdefinierteDienstleistung(index)}>Entfernen</button>
+                        <button type="button" onClick={() => handleRemoveBenutzerdefinierteDienstleistung(index)}>
+                            Entfernen
+                        </button>
                     </div>
                 ))}
                 <button type="button" onClick={handleAddBenutzerdefinierteDienstleistung}>
