@@ -118,6 +118,8 @@ function Navbar() {
             {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
               <>
                 <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/profile" text="Profil" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
               </>
             )}
 

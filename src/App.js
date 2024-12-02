@@ -69,6 +69,7 @@ import AntragDetail from './components/Mitarbeiter/AntragDetail';
 import Download from './components/Mitarbeiter/Documents/Download';
 import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 import Statistik from './components/Administrativ/Statistik';
+import Profile from './components/Mitarbeiter/Profile';
 
 const App = () => {
   
@@ -181,6 +182,7 @@ const App = () => {
           <Route path="/lizenzen" element={<Lizenzen />} />
           <Route path="/bewerbungformular" element={<BewerbungForm />} />
           <Route path="/createkrankmeldung" element={<CreateKrankmeldung />}  />
+          <Route path="/profile" element={<Profile />}  />
 
           <Route path="/rechnungen/:id" element={<RechnungDetails />}  />
 
