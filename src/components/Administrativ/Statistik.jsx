@@ -73,6 +73,7 @@ const Statistik = () => {
     privatKunden,
     geschaeftKunden,
     kontakteProTag,
+    kontakteProJahrMonate,
     kontakteProMonat,
     kontakteProJahr,
     kundenProLand,
@@ -180,6 +181,29 @@ const pieChartDataGeschlecht = {
         },
       ],
     },
+    monate: {
+      title: "Kontakte pro Monat im Jahr",
+      labels: kontakteProJahrMonate.map((item) => item.monat), // Monate als Labels
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProJahrMonate.map((item) => item.privat), // Private Daten
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProJahrMonate.map((item) => item.geschaeft), // Geschäftsdaten
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
+    },
+    
     jahr: {
       title: "Kontakte pro Jahr",
       labels: kontakteProJahr.map((item) => item.jahr),
@@ -247,6 +271,12 @@ const pieChartDataGeschlecht = {
           onClick={() => setActiveChart("monat")}
         >
           Kontakte pro Monat
+        </button>
+        <button
+          className={activeChart === "monate" ? "active" : ""}
+          onClick={() => setActiveChart("monate")}
+        >
+          Kontakte pro Monat im Jahr
         </button>
         <button
           className={activeChart === "jahr" ? "active" : ""}
