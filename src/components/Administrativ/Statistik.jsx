@@ -73,6 +73,7 @@ const Statistik = () => {
     privatKunden,
     geschaeftKunden,
     kontakteProTag,
+    kontakteProWoche,
     kontakteProJahrMonate,
     kontakteProMonat,
     kontakteProJahr,
@@ -148,6 +149,41 @@ const pieChartDataGeschlecht = {
         },
       ],
     },
+    woche: {
+      title: "Kontakte pro Woche",
+      labels: kontakteProWoche.map((item) => {
+        const wochenTageDeutsch = {
+          "Monday": "Montag",
+          "Tuesday": "Dienstag",
+          "Wednesday": "Mittwoch",
+          "Thursday": "Donnerstag",
+          "Friday": "Freitag",
+          "Saturday": "Samstag",
+          "Sunday": "Sonntag",
+        };
+        return wochenTageDeutsch[item.wochentag];  // Wochentage auf Deutsch
+      }),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProWoche.map((item) => item.privat),  // Privatwerte
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProWoche.map((item) => item.geschaeft),  // Geschäftswerte
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 1,
+          borderWidth: 2,
+        },
+      ],
+    },
+    
+    
     monat: {
       title: "Kontakte pro Monat",
       labels: Array.from({ length: 31 }, (_, i) => {
@@ -265,6 +301,12 @@ const pieChartDataGeschlecht = {
           onClick={() => setActiveChart("tag")}
         >
           Kontakte pro Tag
+        </button>
+        <button
+          className={activeChart === "woche" ? "active" : ""}
+          onClick={() => setActiveChart("woche")}
+        >
+          Kontakte pro Woche
         </button>
         <button
           className={activeChart === "monat" ? "active" : ""}
