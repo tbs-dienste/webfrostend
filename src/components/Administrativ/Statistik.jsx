@@ -127,24 +127,28 @@ const pieChartDataGeschlecht = {
   const chartData = {
     tag: {
       title: "Kontakte pro Tag",
-      labels: kontakteProTag.map((item) =>
-        new Date(item.datum).toLocaleDateString("de-DE")
-      ),
+      labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),  // Stunden von 0 bis 23
       datasets: [
         {
           label: "Private Kunden",
-          data: kontakteProTag.filter(item => item.art === "privat").map((item) => item.anzahl),
+          data: Array.from({ length: 24 }, (_, i) => {
+            const data = kontakteProTag.find(item => item.stunde === i && item.art === "privat");
+            return data ? data.anzahl : 0; // Anzahl der privaten Kontakte für diese Stunde
+          }),
           fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
-          tension: 0.1,
+          tension: 1,
           borderWidth: 2,
         },
         {
           label: "Geschäftliche Kunden",
-          data: kontakteProTag.filter(item => item.art === "geschäft").map((item) => item.anzahl),
+          data: Array.from({ length: 24 }, (_, i) => {
+            const data = kontakteProTag.find(item => item.stunde === i && item.art === "geschäft");
+            return data ? data.anzahl : 0; // Anzahl der geschäftlichen Kontakte für diese Stunde
+          }),
           fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
-          tension: 0.1,
+          tension: 1,
           borderWidth: 2,
         },
       ],
