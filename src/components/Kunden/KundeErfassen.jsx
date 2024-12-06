@@ -196,7 +196,11 @@ const KundeErfassen = () => {
           <label>Dienstleistungen</label>
           {ausgewaehlteDienstleistungen.map((dienstleistung, index) => (
             <div className="dienstleistung-gruppe" key={index}>
-              <select value={dienstleistung} onChange={(e) => handleDienstleistungChange(index, e.target.value)}>
+              <select
+                className="custom-select"
+                value={dienstleistung}
+                onChange={(e) => handleDienstleistungChange(index, e.target.value)}
+              >
                 <option value="">Dienstleistung auswählen</option>
                 {dienstleistungen.map((dl) => (
                   <option key={dl.id} value={dl.id}>
@@ -204,10 +208,12 @@ const KundeErfassen = () => {
                   </option>
                 ))}
               </select>
+
               <textarea
                 placeholder="Beschreibung der Dienstleistung"
                 value={beschreibungen[index]}
                 onChange={(e) => handleBeschreibungChange(index, e.target.value)}
+                className='dienstleistungen-textarea'
               />
             </div>
           ))}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake } from 'react-icons/fa';
+import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake, FaLongArrowAltLeft } from 'react-icons/fa';
 import './Mitarbeiter.scss';
 
 const Mitarbeiter = () => {
@@ -122,6 +122,12 @@ const Mitarbeiter = () => {
                     )}
                     {m.status === 'online' && (
                       <FaGlobe
+                        className="online-icon"
+                        title="Mitarbeiter ist online"
+                      />
+                    )}
+                     {m.status === 'online' && (
+                      <FaLongArrowAltLeft
                         className="online-icon"
                         title="Mitarbeiter ist online"
                       />
