@@ -70,6 +70,7 @@ import Download from './components/Mitarbeiter/Documents/Download';
 import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 import Statistik from './components/Administrativ/Statistik';
 import Profile from './components/Mitarbeiter/Profile';
+import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
 
 const App = () => {
   
@@ -141,7 +142,7 @@ const App = () => {
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
           <Route path="/statistiken" element={<Statistik />} />
-
+          <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
