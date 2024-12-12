@@ -1,67 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { BrowserBarcodeReader } from '@zxing/library';
+import React, { useState, useRef } from 'react';
+import { BrowserMultiFormatReader, Code128Reader, Exception } from '@zxing/library';
 import './GutscheinScanner.scss';
-
-// Importiere das transparente Bild für den Muster-Barcode
 import transparentBarcodePatternImage from './transparent-barcode-pattern.png';
 
 const GutscheinScanner = () => {
   const [error, setError] = useState(null);
+  const [scanResult, setScanResult] = useState(null);
   const videoRef = useRef(null);
-  const codeReader = useRef(null);
+  const reader = new BrowserMultiFormatReader();
 
-  const startScan = async () => {
+  const handleScan = (result) => {
+    if (result) {
+      setScanResult(result);
+      alert(`Barcode erfolgreich gescannt: ${result.getText()}`);
+    }
+  };
+
+  const handleError = (err) => {
+    setError(new Error('Scan error: ' + err.message));
+  };
+
+  const startScanner = () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-      codeReader.current.decodeFromVideoDevice(undefined, videoRef.current, (result, error) => {
+      reader.decodeFromVideoElement(videoRef.current, (result, error) => {
         if (result) {
-          handleScan(result.getText());
-        } else {
-          setError(error);
+          handleScan(result);
+        } else if (error && error instanceof Exception) {
+          handleError(error);
         }
       });
     } catch (err) {
-      setError(new Error('Die Kamera wird von diesem Browser nicht unterstützt.'));
+      handleError(err);
     }
   };
-
-  const stopScan = () => {
-    if (codeReader.current) {
-      codeReader.current.reset();
-    }
-    const stream = videoRef.current.srcObject;
-    if (stream) {
-      const tracks = stream.getTracks();
-      tracks.forEach(track => {
-        track.stop();
-      });
-      videoRef.current.srcObject = null;
-    }
-  };
-
-  const handleScan = (data) => {
-    if (data) {
-      // Navigiere zur Kunden-Detailseite mit der Kunden-ID aus dem Barcode
-      window.location.href = `/gutscheine/${data}`;
-    }
-  };
-
-  useEffect(() => {
-    codeReader.current = new BrowserBarcodeReader();
-    startScan();
-    return () => {
-      stopScan();
-    };
-  }, []);
 
   return (
     <div className="gutscheine-scanner-container">
       <div className="qr-scanner">
-        <video ref={videoRef} autoPlay className="video-element"></video>
+        <video ref={videoRef} width="100%" height="100%" autoPlay></video>
         {/* Overlay mit dem transparenten Muster-Barcode */}
         <img src={transparentBarcodePatternImage} alt="Transparent Barcode Pattern" className="transparent-barcode-pattern" />
         {error && <p className="error-message">{error.message}</p>}
+        {scanResult && <p className="scan-result">Barcode: {scanResult.getText()}</p>}
       </div>
     </div>
   );

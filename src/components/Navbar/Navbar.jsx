@@ -20,6 +20,7 @@ import {
   faPaperPlane,
   faBarChart,
   faVirus,
+  faBarcode,
 
 } from '@fortawesome/free-solid-svg-icons';
 import { FaSalesforce } from 'react-icons/fa';
@@ -100,6 +101,8 @@ function Navbar() {
               <>
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/download" text="Download" icon={faDownload} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/gutscheinscanner" text="Gutscheinescanner" icon={faBarcode} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
                 <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/statistiken" text="Statistik" icon={faBarChart} currentPath={currentPath} onClick={toggleBurgerMenu} />
