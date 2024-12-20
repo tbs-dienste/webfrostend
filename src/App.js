@@ -71,11 +71,18 @@ import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 import Statistik from './components/Administrativ/Statistik';
 import Profile from './components/Mitarbeiter/Profile';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
+import Kasse from './components/Administrativ/Kasse';
 
 const App = () => {
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [timer, setTimer] = useState(null); 
+
+  const [isKassenModus, setIsKassenModus] = useState(false);
+
+  const toggleKassenModus = (status) => {
+    setIsKassenModus(status);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // Hole den Token aus localStorage
@@ -135,7 +142,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-        <Navbar />
+      {!isKassenModus && <Navbar />}
       
         <Routes>
           <Route path="/" element={<Home />} />
@@ -144,6 +151,11 @@ const App = () => {
           <Route path="/statistiken" element={<Statistik />} />
           <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
+          <Route
+            path="/kasse"
+            element={<Kasse onKassenModusChange={toggleKassenModus} />}
+          />
+
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
@@ -208,7 +220,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
      
         </Routes>
-        <Footer />
+        {!isKassenModus && <Footer />}
       </Router>
     </div>
   );
