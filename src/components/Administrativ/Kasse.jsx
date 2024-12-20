@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Kasse.scss'; // SCSS für Styling und Icons
 
 const Kasse = () => {
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
+  const [articleNumber, setArticleNumber] = useState(''); // Artikelnummer für das Scannen
   const [paymentMethod, setPaymentMethod] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [kasseMode, setKasseMode] = useState(false);
+  const [showDiscounts, setShowDiscounts] = useState(false); // Zustand, ob Rabatte angezeigt werden
   const token = localStorage.getItem("token");
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
@@ -37,6 +41,32 @@ const Kasse = () => {
       setAvailableDiscounts(response.data.data);
     } catch (error) {
       console.error('Fehler beim Abrufen der Rabatte:', error);
+    }
+  };
+
+  // Produkt scannen
+  const scanProduct = async () => {
+    if (!articleNumber) {
+      setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/scan-product`,
+        { article_number: articleNumber },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSuccessMessage('Produkt erfolgreich gescannt.');
+      fetchScannedProducts(); // Liste aktualisieren
+      setArticleNumber(''); // Eingabefeld zurücksetzen
+    } catch (error) {
+      console.error('Fehler beim Scannen des Produkts:', error);
+      setErrorMessage('Produkt konnte nicht gescannt werden.');
     }
   };
 
@@ -118,133 +148,126 @@ const Kasse = () => {
     }
   };
 
+  const startKasseMode = () => {
+    setKasseMode(true);
+  };
+
+  const cancelKasseMode = () => {
+    setKasseMode(false);
+  };
+
+  const toggleDiscounts = () => {
+    setShowDiscounts(!showDiscounts);
+  };
+
   useEffect(() => {
     fetchScannedProducts();
     fetchDiscounts();
   }, []);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Kasse</h1>
+    <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
+      {!kasseMode ? (
+        <div className="kasse-prompt">
+          <h2>Willst du den Kassenmodus starten?</h2>
+          <div className="buttons">
+            <button onClick={startKasseMode} className="btn-yes">
+              <i className="fas fa-check"></i> Ja
+            </button>
+            <button onClick={cancelKasseMode} className="btn-no">
+              <i className="fas fa-times"></i> Nein
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <h1>Kasse</h1>
 
-      {/* Fehlermeldungen */}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+          {/* Fehlermeldungen */}
+          {errorMessage && <p className="error">{errorMessage}</p>}
+          {successMessage && <p className="success">{successMessage}</p>}
 
-      {/* Gescannte Produkte */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Gescannte Produkte</h2>
-        {scannedProducts.length === 0 ? (
-          <p>Keine Produkte gescannt.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  Artikelnummer
-                </th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  Name
-                </th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  Preis (€)
-                </th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  Rabatte
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {scannedProducts.map((product) => (
-                <tr
-                  key={product.article_number}
-                  onClick={() => setSelectedProduct(product)} // Produkt auswählen
-                  style={{
-                    backgroundColor:
-                      selectedProduct?.article_number ===
-                      product.article_number
-                        ? '#f0f8ff'
-                        : 'transparent',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                    {product.article_number}
-                  </td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                    {product.article_short_text}
-                  </td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                    {typeof product.price === 'number'
-                      ? product.price.toFixed(2)
-                      : '0.00'}
-                  </td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                    {product.discounts?.length
-                      ? product.discounts.map((discount) => discount.title).join(', ')
-                      : 'Keine'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+          {/* Produkt scannen */}
+          <div className="scan-product">
+            <h2>Produkt scannen</h2>
+            <input
+              type="text"
+              value={articleNumber}
+              onChange={(e) => setArticleNumber(e.target.value)}
+              placeholder="Artikelnummer eingeben"
+            />
+            <button onClick={scanProduct}>
+              <i className="fas fa-barcode"></i> Scannen
+            </button>
+          </div>
 
-      {/* Rabatte */}
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Rabatte hinzufügen</h2>
-        {selectedProduct ? (
-          <div>
-            <p>
-              Ausgewähltes Produkt:{' '}
-              <strong>{selectedProduct.article_short_text}</strong>
-            </p>
-            {availableDiscounts.map((discount) => (
+          {/* Gescannte Produkte */}
+          <div className="scanned-products">
+            <h2>Gescannte Produkte</h2>
+            {scannedProducts.length === 0 ? (
+              <p>Keine Produkte gescannt.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Artikelnummer</th>
+                    <th>Name</th>
+                    <th>Preis (€)</th>
+                    <th>Rabatte</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {scannedProducts.map((product) => (
+                    <tr
+                      key={product.article_number}
+                      onClick={() => setSelectedProduct(product)} // Produkt auswählen
+                      className={selectedProduct?.article_number === product.article_number ? 'selected' : ''}
+                    >
+                      <td>{product.article_number}</td>
+                      <td>{product.article_short_text}</td>
+                      <td>{typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}</td>
+                      <td>
+                        {product.discounts?.length
+                          ? product.discounts.map((discount) => discount.title).join(', ')
+                          : 'Keine'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* Rabatte */}
+          <div className="available-discounts">
+            <button onClick={toggleDiscounts} className="toggle-discounts">
+              {showDiscounts ? 'Rabatte' : 'Rabatt'}
+            </button>
+            {showDiscounts && availableDiscounts.map((discount) => (
               <button
                 key={discount.title}
                 onClick={() => addDiscount(discount.title)}
-                style={{
-                  margin: '5px',
-                  padding: '10px',
-                  backgroundColor: '#add8e6',
-                  border: 'none',
-                  borderRadius: '5px',
-                }}
+                className="discount-button"
               >
                 {discount.title}
               </button>
             ))}
           </div>
-        ) : (
-          <p>Wählen Sie ein Produkt, um einen Rabatt hinzuzufügen.</p>
-        )}
-      </div>
 
-      {/* Zahlung */}
-      <div>
-        <h2>Zahlung abschließen</h2>
-        <select
-          onChange={(e) => setPaymentMethod(e.target.value)}
-          style={{ padding: '10px', marginRight: '10px' }}
-        >
-          <option value="">Zahlungsmethode wählen</option>
-          <option value="bar">Bar</option>
-          <option value="karte">Karte</option>
-        </select>
-        <button
-          onClick={pay}
-          style={{
-            padding: '10px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-          }}
-        >
-          Bezahlen
-        </button>
-      </div>
+          {/* Zahlung */}
+          <div className="pay">
+            <h2>Zahlung abschließen</h2>
+            <select onChange={(e) => setPaymentMethod(e.target.value)}>
+              <option value="">Zahlungsmethode wählen</option>
+              <option value="bar">Bar</option>
+              <option value="karte">Karte</option>
+            </select>
+            <button onClick={pay}>
+              <i className="fas fa-credit-card"></i> Bezahlen
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
