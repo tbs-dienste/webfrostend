@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Kasse.scss'; // SCSS für Styling und Icons
 
-const Kasse = () => {
+const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
@@ -148,13 +148,17 @@ const Kasse = () => {
     }
   };
 
-  const startKasseMode = () => {
-    setKasseMode(true);
-  };
+ // Kassenmodus starten/beenden
+ const startKasseMode = () => {
+  setKasseMode(true);
+  onKassenModusChange(true); // Übermittelt den Modusstatus an App.js
+};
 
-  const cancelKasseMode = () => {
-    setKasseMode(false);
-  };
+const cancelKasseMode = () => {
+  setKasseMode(false);
+  onKassenModusChange(false);
+};
+
 
   const toggleDiscounts = () => {
     setShowDiscounts(!showDiscounts);
