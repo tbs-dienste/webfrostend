@@ -6,10 +6,11 @@ const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
-  const [articleNumber, setArticleNumber] = useState(''); // Artikelnummer für das Scannen
+  const [quantity, setQuantity] = useState(1); // Menge für das Produkt
   const [paymentMethod, setPaymentMethod] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [articleNumber, setArticleNumber] = useState(''); // Add this line to define articleNumber state
   const [kasseMode, setKasseMode] = useState(false);
   const [showDiscounts, setShowDiscounts] = useState(false); // Zustand, ob Rabatte angezeigt werden
   const token = localStorage.getItem("token");
@@ -44,31 +45,34 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  // Produkt scannen
-  const scanProduct = async () => {
-    if (!articleNumber) {
-      setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
-      return;
-    }
+// Produkt scannen
+const scanProduct = async () => {
+  if (!articleNumber || !quantity) {
+    setErrorMessage('Bitte geben Sie eine Artikelnummer und eine Menge ein.');
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/scan-product`,
-        { article_number: articleNumber },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setSuccessMessage('Produkt erfolgreich gescannt.');
-      fetchScannedProducts(); // Liste aktualisieren
-      setArticleNumber(''); // Eingabefeld zurücksetzen
-    } catch (error) {
-      console.error('Fehler beim Scannen des Produkts:', error);
-      setErrorMessage('Produkt konnte nicht gescannt werden.');
-    }
-  };
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/scan-product`,
+      { article_number: articleNumber, quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setSuccessMessage('Produkt erfolgreich gescannt.');
+    fetchScannedProducts(); // Gescannte Produkte Liste aktualisieren
+    setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
+    setQuantity(1); // Menge zurücksetzen
+  } catch (error) {
+    console.error('Fehler beim Scannen des Produkts:', error);
+    setErrorMessage('Produkt konnte nicht gescannt werden.');
+  }
+};
+
 
   // Rabatt hinzufügen
   const addDiscount = async (discountTitle) => {
@@ -148,17 +152,16 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
- // Kassenmodus starten/beenden
- const startKasseMode = () => {
-  setKasseMode(true);
-  onKassenModusChange(true); // Übermittelt den Modusstatus an App.js
-};
+  // Kassenmodus starten/beenden
+  const startKasseMode = () => {
+    setKasseMode(true);
+    onKassenModusChange(true); // Übermittelt den Modusstatus an App.js
+  };
 
-const cancelKasseMode = () => {
-  setKasseMode(false);
-  onKassenModusChange(false);
-};
-
+  const cancelKasseMode = () => {
+    setKasseMode(false);
+    onKassenModusChange(false);
+  };
 
   const toggleDiscounts = () => {
     setShowDiscounts(!showDiscounts);
@@ -168,6 +171,12 @@ const cancelKasseMode = () => {
     fetchScannedProducts();
     fetchDiscounts();
   }, []);
+
+  const handleNumericKeypadClick = (number) => {
+    setQuantity(prev => prev === 0 ? number : prev * 10 + number); // Adds the number to the quantity
+  };
+
+  const clearQuantity = () => setQuantity(0); // Clear the quantity field
 
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
@@ -191,19 +200,24 @@ const cancelKasseMode = () => {
           {errorMessage && <p className="error">{errorMessage}</p>}
           {successMessage && <p className="success">{successMessage}</p>}
 
-          {/* Produkt scannen */}
           <div className="scan-product">
             <h2>Produkt scannen</h2>
+
+            {/* Input field for article number */}
             <input
               type="text"
               value={articleNumber}
               onChange={(e) => setArticleNumber(e.target.value)}
               placeholder="Artikelnummer eingeben"
+              className="article-input" // Apply styles for the article number input field
             />
+
+            {/* Scan button */}
             <button onClick={scanProduct}>
               <i className="fas fa-barcode"></i> Scannen
             </button>
           </div>
+
 
           {/* Gescannte Produkte */}
           <div className="scanned-products">
@@ -257,21 +271,20 @@ const cancelKasseMode = () => {
               </button>
             ))}
           </div>
-
-          {/* Zahlung */}
-          <div className="pay">
-            <h2>Zahlung abschließen</h2>
-            <select onChange={(e) => setPaymentMethod(e.target.value)}>
-              <option value="">Zahlungsmethode wählen</option>
-              <option value="bar">Bar</option>
-              <option value="karte">Karte</option>
-            </select>
-            <button onClick={pay}>
-              <i className="fas fa-credit-card"></i> Bezahlen
-            </button>
-          </div>
         </>
       )}
+
+      {/* Numeric Keypad for Quantity */}
+      <div className="numeric-keypad">
+        <div className="keypad">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (
+            <button key={number} onClick={() => handleNumericKeypadClick(number)}>
+              {number}
+            </button>
+          ))}
+        </div>
+        <button className="clear-btn" onClick={clearQuantity}>Clear</button>
+      </div>
     </div>
   );
 };
