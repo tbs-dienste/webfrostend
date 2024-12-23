@@ -14,12 +14,15 @@ const Kasse = ({ onKassenModusChange }) => {
   const [kasseMode, setKasseMode] = useState(false);
   const [showDiscounts, setShowDiscounts] = useState(false); // Zustand für Rabatte
   const [showScan, setShowScan] = useState(false); // Zustand für Artikel scannen
+  const [dailyCloseCompleted, setDailyCloseCompleted] = useState(false);
+  const [loading, setLoading] = useState(false); // Zustand für Ladeanimation
   const token = localStorage.getItem("token");
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
   // Gescannte Produkte abrufen
   const fetchScannedProducts = async () => {
+    setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.get(`${API_BASE_URL}/scanned-products`, {
         headers: {
@@ -29,11 +32,14 @@ const Kasse = ({ onKassenModusChange }) => {
       setScannedProducts(response.data.data);
     } catch (error) {
       console.error('Fehler beim Abrufen der gescannten Produkte:', error);
+    } finally {
+      setLoading(false); // Ladeanimation stoppen
     }
   };
 
   // Rabatte abrufen
   const fetchDiscounts = async () => {
+    setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.get(`${API_BASE_URL}/discounts`, {
         headers: {
@@ -43,6 +49,8 @@ const Kasse = ({ onKassenModusChange }) => {
       setAvailableDiscounts(response.data.data);
     } catch (error) {
       console.error('Fehler beim Abrufen der Rabatte:', error);
+    } finally {
+      setLoading(false); // Ladeanimation stoppen
     }
   };
 
@@ -53,6 +61,7 @@ const Kasse = ({ onKassenModusChange }) => {
       return;
     }
 
+    setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.post(
         `${API_BASE_URL}/scan-product`,
@@ -71,6 +80,8 @@ const Kasse = ({ onKassenModusChange }) => {
     } catch (error) {
       console.error('Fehler beim Scannen des Produkts:', error);
       setErrorMessage('Produkt konnte nicht gescannt werden.');
+    } finally {
+      setLoading(false); // Ladeanimation stoppen
     }
   };
 
@@ -108,50 +119,6 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  // Produkt löschen
-  const deleteScannedProduct = async (articleNumber) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/delete/${articleNumber}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setSuccessMessage('Produkt erfolgreich entfernt.');
-      fetchScannedProducts();
-      if (selectedProduct?.article_number === articleNumber) {
-        setSelectedProduct(null); // Auswahl zurücksetzen, falls gelöscht
-      }
-    } catch (error) {
-      console.error('Fehler beim Entfernen des Produkts:', error);
-      setErrorMessage('Produkt konnte nicht entfernt werden.');
-    }
-  };
-
-  // Zahlung abschließen
-  const pay = async () => {
-    if (!paymentMethod) {
-      setErrorMessage('Bitte eine Zahlungsmethode wählen.');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/pay`,
-        { payment_method: paymentMethod },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setSuccessMessage('Zahlung erfolgreich abgeschlossen.');
-      fetchScannedProducts(); // Liste zurücksetzen
-    } catch (error) {
-      console.error('Fehler beim Abschließen der Zahlung:', error);
-      setErrorMessage('Zahlung konnte nicht abgeschlossen werden.');
-    }
-  };
-
   // Kassenmodus starten/beenden
   const startKasseMode = () => {
     setKasseMode(true);
@@ -167,19 +134,32 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowDiscounts(!showDiscounts);
   };
 
+  const completeDailyClose = () => {
+    setDailyCloseCompleted(true);
+    alert("Tagesabschluss abgeschlossen.");
+  };
+
+  // Numerische Tastatur für Menge
+  const handleNumericKeypadClick = (number) => {
+    setQuantity(prev => prev === 0 ? number : prev * 10 + number);
+  };
+
+  const clearQuantity = () => setQuantity(0); // Löscht die Menge
+
   useEffect(() => {
     fetchScannedProducts();
     fetchDiscounts();
   }, []);
 
-  const handleNumericKeypadClick = (number) => {
-    setQuantity(prev => prev === 0 ? number : prev * 10 + number); // Fügt die Zahl zur Menge hinzu
-  };
-
-  const clearQuantity = () => setQuantity(0); // Löscht die Menge
-
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
+      {/* Ladebalken */}
+      {loading && (
+        <div className="loading-bar">
+          <div className="loading-progress"></div>
+        </div>
+      )}
+
       {!kasseMode ? (
         <div className="kasse-prompt">
           <h2>Willst du den Kassenmodus starten?</h2>
@@ -205,6 +185,12 @@ const Kasse = ({ onKassenModusChange }) => {
             <button onClick={() => setShowScan(!showScan)} className="toggle-discounts">
               {showScan ? 'Eingabefeld ausblenden' : 'Artikel scannen'}
             </button>
+            {/* Tagesabschluss Button */}
+            <div className="tagesabschluss">
+              <button onClick={completeDailyClose} className="toggle-daily-close">
+                Tagesabschluss abschließen
+              </button>
+            </div>
 
             <button onClick={toggleDiscounts} className="toggle-discounts">
               {showDiscounts ? 'Rabatte ausblenden' : 'Rabatte anzeigen'}
