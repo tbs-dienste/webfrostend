@@ -146,6 +146,16 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const clearQuantity = () => setQuantity(0); // Löscht die Menge
 
+  // Berechnet den Gesamtpreis
+  const calculateTotalPrice = (price, quantity) => {
+    return price * quantity;
+  };
+
+  // Toggelt die Anzeige des Scan-Input-Feldes
+  const toggleScanInput = () => {
+    setShowScan(prev => !prev);
+  };
+
   useEffect(() => {
     fetchScannedProducts();
     fetchDiscounts();
@@ -182,20 +192,20 @@ const Kasse = ({ onKassenModusChange }) => {
 
           {/* Links: Buttons für Artikel scannen und Rabatte */}
           <div className="left-buttons">
-            <button onClick={() => setShowScan(!showScan)} className="toggle-discounts">
-              {showScan ? 'Eingabefeld ausblenden' : 'Artikel scannen'}
-            </button>
-            {/* Tagesabschluss Button */}
-            <div className="tagesabschluss">
-              <button onClick={completeDailyClose} className="toggle-daily-close">
-                Tagesabschluss abschließen
-              </button>
-            </div>
-
-            <button onClick={toggleDiscounts} className="toggle-discounts">
-              {showDiscounts ? 'Rabatte ausblenden' : 'Rabatte anzeigen'}
-            </button>
+            <button onClick={completeDailyClose}>Tagesabschluss</button>
+            <button onClick={toggleScanInput}>Artikel scannen</button>
+            <button>Rabatte anzeigen</button>
+            <button>Kassierer wechseln</button>
+            <button>Kunden suchen</button>
+            <button>Schublade öffnen</button>
+            <button>Kundenkarte</button>
+            <button>GS-Karte</button>
+            <button>GS-Karte</button>
+            <button>GS-Karte</button>
+            <button>Artikel suchen</button>
+            <button>Einstellungen</button>
           </div>
+
 
           {/* Artikel scannen Eingabefeld */}
           {showScan && (
@@ -227,9 +237,13 @@ const Kasse = ({ onKassenModusChange }) => {
                     onClick={() => setSelectedProduct(product)} // Produkt auswählen
                   >
                     <div className="product-details">
+                      <span className="product-name">{product.article_number}</span>
                       <span className="product-name">{product.article_short_text}</span>
                       <span className="product-price">
                         {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
+                      </span>
+                      <span className="total-price">
+                        {calculateTotalPrice(product.price, quantity).toFixed(2)} €
                       </span>
                     </div>
                     <div className="product-discounts">

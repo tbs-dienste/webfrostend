@@ -7,8 +7,10 @@
   margin: 0 auto;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  position: relative; /* Sicherstellen, dass der Container in Bezug auf die Buttons relativ bleibt */
+  flex-direction: row; /* Flexbox für horizontale Ausrichtung */
+  position: relative;
+  justify-content: space-between; /* Aufteilung auf drei Bereiche */
+  gap: 20px;
 }
 
 /* Kassenmodus active */
@@ -16,114 +18,44 @@
   background-color: #ffffff;
 }
 
-/* Buttons außerhalb des Containers, außerhalb des Viewports */
-.scan-buttons {
-  position: fixed;
-  top: 50%;
-  left: -70px; /* Positionierung außerhalb des Containers und des Viewports */
-  transform: translateY(-50%);
+/* Links: Buttons für Artikel scannen und Rabatte */
+.left-buttons {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  z-index: 1000; /* Damit die Buttons immer sichtbar sind */
+  gap: 10px;
+  width: 200px; /* Breite der linken Spalte */
 }
 
-.scan-button {
-  padding: 10px;
-  font-size: 18px;
+.left-buttons button {
+  padding: 12px;
+  font-size: 14px;
   background-color: #3498db;
   color: white;
-  width: 100px; /* Größe anpassen */
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-}
-
-/* Kassenmodus Prompt */
-.kasse-prompt {
+  display: flex;
+  align-items: center;
+  height: 60px;
   text-align: center;
-  margin-bottom: 20px;
 }
 
-.kasse-prompt h2 {
-  font-size: 24px;
-  color: #333;
-}
-
-.buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  background-color: #4caf50;
-  color: white;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-/* Fehlermeldungen und Erfolgsnachrichten */
-.error {
-  color: #e74c3c;
-  font-size: 14px;
-}
-
-.success {
-  color: #2ecc71;
-  font-size: 14px;
-}
-
-/* Produkt Scannen */
-.scan-product-section {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.toggle-discounts {
-  padding: 10px;
-  font-size: 18px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-
-  cursor: pointer;
-  width: 100px; /* Größe anpassen */
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.toggle-discounts:hover {
+.left-buttons button:hover {
   background-color: #2980b9;
 }
 
+/* Artikel scannen Eingabefeld */
 .scan-input {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-top: 20px;
 
   input {
     padding: 10px;
     font-size: 16px;
     width: 100%;
-    max-width: 300px;
+    max-width: 250px;
     border-radius: 5px;
     border: 1px solid #ccc;
   }
@@ -134,10 +66,10 @@ button:hover {
   }
 
   .scan-button {
-    padding: 10px 20px;
+    padding: 8px 16px;
     background-color: #3498db;
     color: white;
-    font-size: 18px;
+    font-size: 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -150,16 +82,23 @@ button:hover {
 
 /* Gescannte Produkte */
 .scanned-products {
-  margin-bottom: 20px;
+  flex-grow: 1; /* Produktausgabe nimmt den verbleibenden Platz ein */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  h2 {
+    text-align: center;
+  }
 
   .product-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
   }
 
   .product-item {
-    padding: 15px;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
@@ -204,42 +143,6 @@ button:hover {
   }
 }
 
-/* Rabatte */
-.available-discounts {
-  margin-bottom: 20px;
-  text-align: center;
-
-  .toggle-discounts {
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 10px;
-    background-color: #f39c12;
-    color: white;
-    border: none;
-    border-radius: 50%; /* quadratisch gemacht */
-    cursor: pointer;
-    width: 50px; /* Größe anpassen */
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .discount-button {
-    padding: 8px 15px;
-    margin: 5px;
-    font-size: 16px;
-    background-color: #8e44ad;
-    color: white;
-    border: none;
-    border-radius: 5px;
-
-    &:hover {
-      background-color: #9b59b6;
-    }
-  }
-}
-
 /* Numeric Keypad */
 .numeric-keypad {
   position: fixed;
@@ -252,11 +155,11 @@ button:hover {
   .keypad {
     display: grid;
     grid-template-columns: repeat(3, 50px);
-    grid-gap: 10px;
+    grid-gap: 8px;
 
     button {
-      padding: 15px;
-      font-size: 18px;
+      padding: 12px;
+      font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 5px;
       cursor: pointer;
@@ -269,7 +172,7 @@ button:hover {
   }
 
   .clear-btn {
-    margin-top: 10px;
+    margin-top: 8px;
     padding: 10px;
     background-color: #ff4d4d;
     color: white;
@@ -283,64 +186,16 @@ button:hover {
   }
 }
 
-/* Allgemeines Styling */
-.kasse-container h1 {
-  font-size: 28px;
+/* Fehlermeldungen und Erfolgsnachrichten */
+.error, .success {
+  font-size: 14px;
   text-align: center;
-  color: #333;
-  margin-bottom: 20px;
 }
 
-.kasse-container .scan-product,
-.kasse-container .scanned-products,
-.kasse-container .available-discounts {
-  margin-bottom: 20px;
-}
-/* Pop-up */
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 8px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 1000;
-  animation: popupAnimation 0.5s ease-in-out;
+.error {
+  color: #e74c3c;
 }
 
-.popup-content {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.progress-bar-background {
-  width: 100%;
-  height: 10px;
-  background-color: #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: #3498db;
-  width: 0;
-  transition: width 0.1s linear;
-}
-
-/* Pop-up Animation */
-@keyframes popupAnimation {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -60%);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
+.success {
+  color: #2ecc71;
 }
