@@ -10,10 +10,10 @@ const Kasse = ({ onKassenModusChange }) => {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [articleNumber, setArticleNumber] = useState(''); // Add this line to define articleNumber state
+  const [articleNumber, setArticleNumber] = useState(''); // Artikelnummer
   const [kasseMode, setKasseMode] = useState(false);
-  const [showDiscounts, setShowDiscounts] = useState(false); // Zustand, ob Rabatte angezeigt werden
-  const [showScan, setShowScan] = useState(false); // Zustand, ob Rabatte angezeigt werden
+  const [showDiscounts, setShowDiscounts] = useState(false); // Zustand für Rabatte
+  const [showScan, setShowScan] = useState(false); // Zustand für Artikel scannen
   const token = localStorage.getItem("token");
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
@@ -73,7 +73,6 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage('Produkt konnte nicht gescannt werden.');
     }
   };
-
 
   // Rabatt hinzufügen
   const addDiscount = async (discountTitle) => {
@@ -174,10 +173,10 @@ const Kasse = ({ onKassenModusChange }) => {
   }, []);
 
   const handleNumericKeypadClick = (number) => {
-    setQuantity(prev => prev === 0 ? number : prev * 10 + number); // Adds the number to the quantity
+    setQuantity(prev => prev === 0 ? number : prev * 10 + number); // Fügt die Zahl zur Menge hinzu
   };
 
-  const clearQuantity = () => setQuantity(0); // Clear the quantity field
+  const clearQuantity = () => setQuantity(0); // Löscht die Menge
 
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
@@ -201,29 +200,34 @@ const Kasse = ({ onKassenModusChange }) => {
           {errorMessage && <p className="error">{errorMessage}</p>}
           {successMessage && <p className="success">{successMessage}</p>}
 
-          <div className="scan-product-section">
+          {/* Links: Buttons für Artikel scannen und Rabatte */}
+          <div className="left-buttons">
             <button onClick={() => setShowScan(!showScan)} className="toggle-discounts">
               {showScan ? 'Eingabefeld ausblenden' : 'Artikel scannen'}
             </button>
 
-            {showScan && (
-              <div className="scan-input">
-                <input
-                  type="text"
-                  value={articleNumber}
-                  onChange={(e) => setArticleNumber(e.target.value)}
-                  placeholder="Artikelnummer eingeben"
-                  className="article-input"
-                />
-                <button onClick={scanProduct} className="scan-button">
-                  <i className="fas fa-barcode"></i> Scannen
-                </button>
-              </div>
-            )}
+            <button onClick={toggleDiscounts} className="toggle-discounts">
+              {showDiscounts ? 'Rabatte ausblenden' : 'Rabatte anzeigen'}
+            </button>
           </div>
 
+          {/* Artikel scannen Eingabefeld */}
+          {showScan && (
+            <div className="scan-input">
+              <input
+                type="text"
+                value={articleNumber}
+                onChange={(e) => setArticleNumber(e.target.value)}
+                placeholder="Artikelnummer eingeben"
+                className="article-input"
+              />
+              <button onClick={scanProduct} className="scan-button">
+                <i className="fas fa-barcode"></i> Scannen
+              </button>
+            </div>
+          )}
 
-
+          {/* Gescannte Produkte anzeigen */}
           <div className="scanned-products">
             <h2>Gescannte Produkte</h2>
             {scannedProducts.length === 0 ? (
@@ -259,26 +263,20 @@ const Kasse = ({ onKassenModusChange }) => {
             )}
           </div>
 
-
-          {/* Rabatte */}
-          <div className="available-discounts">
-            <button onClick={toggleDiscounts} className="toggle-discounts">
-              {showDiscounts ? 'Rabatte' : 'Rabatt'}
+          {/* Rabatte anzeigen */}
+          {showDiscounts && availableDiscounts.map((discount) => (
+            <button
+              key={discount.title}
+              onClick={() => addDiscount(discount.title)}
+              className="discount-button"
+            >
+              {discount.title}
             </button>
-            {showDiscounts && availableDiscounts.map((discount) => (
-              <button
-                key={discount.title}
-                onClick={() => addDiscount(discount.title)}
-                className="discount-button"
-              >
-                {discount.title}
-              </button>
-            ))}
-          </div>
+          ))}
         </>
       )}
 
-      {/* Numeric Keypad for Quantity */}
+      {/* Numerisches Eingabefeld für Menge */}
       <div className="numeric-keypad">
         <div className="keypad">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (

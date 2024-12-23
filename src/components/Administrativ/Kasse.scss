@@ -4,14 +4,45 @@
   padding: 20px;
   background-color: #f5f5f5;
   border-radius: 8px;
-  max-width: 800px;
   margin: 0 auto;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Sicherstellen, dass der Container in Bezug auf die Buttons relativ bleibt */
 }
 
 /* Kassenmodus active */
 .kasse-container.kasse-mode {
   background-color: #ffffff;
+}
+
+/* Buttons außerhalb des Containers, außerhalb des Viewports */
+.scan-buttons {
+  position: fixed;
+  top: 50%;
+  left: -70px; /* Positionierung außerhalb des Containers und des Viewports */
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000; /* Damit die Buttons immer sichtbar sind */
+}
+
+.scan-button {
+  padding: 10px;
+  font-size: 18px;
+  background-color: #3498db;
+  color: white;
+  width: 50px; /* Größe anpassen */
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2980b9;
+  }
 }
 
 /* Kassenmodus Prompt */
@@ -59,38 +90,60 @@ button:hover {
 /* Produkt Scannen */
 .scan-product-section {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
 
-  .scan-input {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.toggle-discounts {
+  padding: 10px;
+  font-size: 18px;
+  background-color: #3498db;
+  color: white;
+  border: none;
 
-    input {
-      padding: 10px;
-      font-size: 16px;
-      width: 100%;
-      max-width: 300px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+  cursor: pointer;
+  width: 50px; /* Größe anpassen */
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-    input:focus {
-      border-color: #3498db;
-      outline: none;
-    }
+.toggle-discounts:hover {
+  background-color: #2980b9;
+}
 
-    .scan-button {
-      padding: 10px 20px;
-      background-color: #3498db;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+.scan-input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 
-      &:hover {
-        background-color: #2980b9;
-      }
+  input {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  input:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+
+  .scan-button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #2980b9;
     }
   }
 }
@@ -157,17 +210,19 @@ button:hover {
   text-align: center;
 
   .toggle-discounts {
-    padding: 10px 20px;
+    padding: 10px;
     font-size: 16px;
     margin-bottom: 10px;
     background-color: #f39c12;
     color: white;
     border: none;
-    border-radius: 5px;
-
-    &:hover {
-      background-color: #e67e22;
-    }
+    border-radius: 50%; /* quadratisch gemacht */
+    cursor: pointer;
+    width: 50px; /* Größe anpassen */
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .discount-button {
