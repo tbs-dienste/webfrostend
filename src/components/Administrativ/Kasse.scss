@@ -57,88 +57,132 @@ button:hover {
 }
 
 /* Produkt Scannen */
-.scan-product {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.scan-product-section {
   margin-bottom: 20px;
-}
 
-.scan-product input {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 300px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
+  .scan-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 
-.scan-product button {
-  margin-top: 10px;
-  background-color: #3498db;
-  font-size: 18px;
-}
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
 
-.scan-product button:hover {
-  background-color: #2980b9;
+    input:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    .scan-button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #2980b9;
+      }
+    }
+  }
 }
 
 /* Gescannte Produkte */
 .scanned-products {
   margin-bottom: 20px;
-}
 
-.scanned-products table {
-  width: 100%;
-  border-collapse: collapse;
-}
+  .product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 
-.scanned-products th, .scanned-products td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
+  .product-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: background-color 0.3s;
+    cursor: pointer;
 
-.scanned-products tr:hover {
-  background-color: #f1f1f1;
-}
+    &:hover {
+      background-color: #f9f9f9;
+    }
 
-.scanned-products .selected {
-  background-color: #e0f7fa;
+    &.selected {
+      border-color: #3498db;
+      background-color: #eaf6ff;
+    }
+
+    .product-details {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+
+      .product-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .product-price {
+        color: #555;
+      }
+    }
+
+    .product-discounts {
+      .discount {
+        color: red;
+        font-weight: bold;
+      }
+
+      .no-discount {
+        color: #999;
+        font-style: italic;
+      }
+    }
+  }
 }
 
 /* Rabatte */
 .available-discounts {
   margin-bottom: 20px;
   text-align: center;
-}
 
-.toggle-discounts {
-  padding: 10px 20px;
-  font-size: 16px;
-  margin-bottom: 10px;
-  background-color: #f39c12;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
+  .toggle-discounts {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    border-radius: 5px;
 
-.toggle-discounts:hover {
-  background-color: #e67e22;
-}
+    &:hover {
+      background-color: #e67e22;
+    }
+  }
 
-.discount-button {
-  padding: 8px 15px;
-  margin: 5px;
-  font-size: 16px;
-  background-color: #8e44ad;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
+  .discount-button {
+    padding: 8px 15px;
+    margin: 5px;
+    font-size: 16px;
+    background-color: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 5px;
 
-.discount-button:hover {
-  background-color: #9b59b6;
+    &:hover {
+      background-color: #9b59b6;
+    }
+  }
 }
 
 /* Numeric Keypad */
@@ -149,42 +193,42 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    grid-gap: 10px;
+
+    button {
+      padding: 15px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #f0f0f0;
+
+      &:hover {
+        background-color: #ddd;
+      }
+    }
+  }
+
+  .clear-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #e74c3c;
+    }
+  }
 }
 
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 50px);
-  grid-gap: 10px;
-}
-
-.keypad button {
-  padding: 15px;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: #f0f0f0;
-}
-
-.keypad button:hover {
-  background-color: #ddd;
-}
-
-.clear-btn {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.clear-btn:hover {
-  background-color: #e74c3c;
-}
-
-/* Kassenmodus Styling */
+/* Allgemeines Styling */
 .kasse-container h1 {
   font-size: 28px;
   text-align: center;
@@ -197,20 +241,3 @@ button:hover {
 .kasse-container .available-discounts {
   margin-bottom: 20px;
 }
-
-/* Style for the article number input field */
-.article-input {
-  padding: 10px;
-  font-size: 16px;
-  width: 100%;
-  max-width: 250px; /* Limit the width */
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  margin-bottom: 15px;
-}
-
-.article-input:focus {
-  border-color: #3498db;
-  outline: none;
-}
-

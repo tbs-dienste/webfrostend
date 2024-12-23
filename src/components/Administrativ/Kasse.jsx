@@ -13,6 +13,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const [articleNumber, setArticleNumber] = useState(''); // Add this line to define articleNumber state
   const [kasseMode, setKasseMode] = useState(false);
   const [showDiscounts, setShowDiscounts] = useState(false); // Zustand, ob Rabatte angezeigt werden
+  const [showScan, setShowScan] = useState(false); // Zustand, ob Rabatte angezeigt werden
   const token = localStorage.getItem("token");
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
@@ -45,33 +46,33 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-// Produkt scannen
-const scanProduct = async () => {
-  if (!articleNumber || !quantity) {
-    setErrorMessage('Bitte geben Sie eine Artikelnummer und eine Menge ein.');
-    return;
-  }
+  // Produkt scannen
+  const scanProduct = async () => {
+    if (!articleNumber || !quantity) {
+      setErrorMessage('Bitte geben Sie eine Artikelnummer und eine Menge ein.');
+      return;
+    }
 
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/scan-product`,
-      { article_number: articleNumber, quantity },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/scan-product`,
+        { article_number: articleNumber, quantity },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setSuccessMessage('Produkt erfolgreich gescannt.');
-    fetchScannedProducts(); // Gescannte Produkte Liste aktualisieren
-    setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
-    setQuantity(1); // Menge zurücksetzen
-  } catch (error) {
-    console.error('Fehler beim Scannen des Produkts:', error);
-    setErrorMessage('Produkt konnte nicht gescannt werden.');
-  }
-};
+      setSuccessMessage('Produkt erfolgreich gescannt.');
+      fetchScannedProducts(); // Gescannte Produkte Liste aktualisieren
+      setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
+      setQuantity(1); // Menge zurücksetzen
+    } catch (error) {
+      console.error('Fehler beim Scannen des Produkts:', error);
+      setErrorMessage('Produkt konnte nicht gescannt werden.');
+    }
+  };
 
 
   // Rabatt hinzufügen
@@ -200,61 +201,64 @@ const scanProduct = async () => {
           {errorMessage && <p className="error">{errorMessage}</p>}
           {successMessage && <p className="success">{successMessage}</p>}
 
-          <div className="scan-product">
-            <h2>Produkt scannen</h2>
-
-            {/* Input field for article number */}
-            <input
-              type="text"
-              value={articleNumber}
-              onChange={(e) => setArticleNumber(e.target.value)}
-              placeholder="Artikelnummer eingeben"
-              className="article-input" // Apply styles for the article number input field
-            />
-
-            {/* Scan button */}
-            <button onClick={scanProduct}>
-              <i className="fas fa-barcode"></i> Scannen
+          <div className="scan-product-section">
+            <button onClick={() => setShowScan(!showScan)} className="toggle-discounts">
+              {showScan ? 'Eingabefeld ausblenden' : 'Artikel scannen'}
             </button>
+
+            {showScan && (
+              <div className="scan-input">
+                <input
+                  type="text"
+                  value={articleNumber}
+                  onChange={(e) => setArticleNumber(e.target.value)}
+                  placeholder="Artikelnummer eingeben"
+                  className="article-input"
+                />
+                <button onClick={scanProduct} className="scan-button">
+                  <i className="fas fa-barcode"></i> Scannen
+                </button>
+              </div>
+            )}
           </div>
 
 
-          {/* Gescannte Produkte */}
+
           <div className="scanned-products">
             <h2>Gescannte Produkte</h2>
             {scannedProducts.length === 0 ? (
               <p>Keine Produkte gescannt.</p>
             ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Artikelnummer</th>
-                    <th>Name</th>
-                    <th>Preis (€)</th>
-                    <th>Rabatte</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {scannedProducts.map((product) => (
-                    <tr
-                      key={product.article_number}
-                      onClick={() => setSelectedProduct(product)} // Produkt auswählen
-                      className={selectedProduct?.article_number === product.article_number ? 'selected' : ''}
-                    >
-                      <td>{product.article_number}</td>
-                      <td>{product.article_short_text}</td>
-                      <td>{typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'}</td>
-                      <td>
-                        {product.discounts?.length
-                          ? product.discounts.map((discount) => discount.title).join(', ')
-                          : 'Keine'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="product-list">
+                {scannedProducts.map((product) => (
+                  <div
+                    key={product.article_number}
+                    className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
+                    onClick={() => setSelectedProduct(product)} // Produkt auswählen
+                  >
+                    <div className="product-details">
+                      <span className="product-name">{product.article_short_text}</span>
+                      <span className="product-price">
+                        {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
+                      </span>
+                    </div>
+                    <div className="product-discounts">
+                      {product.discounts?.length > 0 ? (
+                        product.discounts.map((discount, index) => (
+                          <span key={index} className="discount">
+                            {discount.title}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="no-discount">Kein Rabatt</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
+
 
           {/* Rabatte */}
           <div className="available-discounts">
