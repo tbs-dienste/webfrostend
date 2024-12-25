@@ -17,6 +17,9 @@ const Kasse = ({ onKassenModusChange }) => {
   const [dailyCloseCompleted, setDailyCloseCompleted] = useState(false);
   const [loading, setLoading] = useState(false); // Zustand für Ladeanimation
   const token = localStorage.getItem("token");
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
+  const [loadingProgress, setLoadingProgress] = useState(0); // Progress der Ladeanimation
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
@@ -53,6 +56,32 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
+  const handleDailyClose = () => {
+    setShowPopup(true);
+    setPopupText('Tagesabschluss wird generiert...');
+    setLoadingProgress(0); // Startwert des Ladefortschritts
+    setDailyCloseCompleted(false);
+
+    // Simuliere Ladeprozess für 15 Sekunden
+    let progress = 0;
+    const interval = setInterval(() => {
+      if (progress >= 100) {
+        clearInterval(interval);
+        setPopupText('Tagesabschluss abgeschlossen.');
+        setDailyCloseCompleted(true);
+      } else {
+        progress += 100 / 15; // Ladefortschritt in 15 Sekunden
+        setLoadingProgress(progress);
+      }
+    }, 1000); // Alle 1 Sekunde den Fortschritt erhöhen
+};
+
+
+
+  const cancelPopup = () => {
+    setShowPopup(false); // Pop-up schließen
+  };
+
 
   // Produkt scannen
   const scanProduct = async () => {
@@ -134,10 +163,7 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowDiscounts(!showDiscounts);
   };
 
-  const completeDailyClose = () => {
-    setDailyCloseCompleted(true);
-    alert("Tagesabschluss abgeschlossen.");
-  };
+
 
   // Numerische Tastatur für Menge
   const handleNumericKeypadClick = (number) => {
@@ -163,12 +189,30 @@ const Kasse = ({ onKassenModusChange }) => {
 
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
-      {/* Ladebalken */}
-      {loading && (
-        <div className="loading-bar">
-          <div className="loading-progress"></div>
+
+
+      {/* Tagesabschluss Pop-up */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2>{popupText}</h2>
+            {loadingProgress < 100 && (
+              <div className="loading-bar">
+                <div className="loading-progress" style={{ width: `${loadingProgress}%` }}></div>
+              </div>
+            )}
+            {!loading && dailyCloseCompleted && (
+              <div className="success-message">
+                <h3>Tagesabschluss abgeschlossen.</h3>
+              </div>
+            )}
+            <button onClick={cancelPopup} className="btn-cancel">Abbrechen</button>
+          </div>
         </div>
       )}
+
+
+
 
       {!kasseMode ? (
         <div className="kasse-prompt">
@@ -184,83 +228,84 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
       ) : (
         <>
-        
+          <h1>Kasse</h1>
 
           {/* Fehlermeldungen */}
           {errorMessage && <p className="error">{errorMessage}</p>}
           {successMessage && <p className="success">{successMessage}</p>}
 
-          {/* Links: Buttons für Artikel scannen und Rabatte */}
-          <div className="left-buttons">
-            <button onClick={completeDailyClose}>Tagesabschluss</button>
-            <button onClick={toggleScanInput}>Artikel scannen</button>
-            <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
-            <button>Kassierer wechseln</button>
-            <button>Kunden suchen</button>
-            <button>Schublade öffnen</button>
-            <button>Kundenkarte</button>
-            <button>GS-Karte</button>
-            <button>GS-Karte</button>
-            <button>GS-Karte</button>
-            <button>Artikel suchen</button>
-            <button>Einstellungen</button>
-          </div>
-
-
-          {/* Artikel scannen Eingabefeld */}
-          {showScan && (
-            <div className="scan-input">
-              <input
-                type="text"
-                value={articleNumber}
-                onChange={(e) => setArticleNumber(e.target.value)}
-                placeholder="Artikelnummer eingeben"
-                className="article-input"
-              />
-              <button onClick={scanProduct} className="scan-button">
-                <i className="fas fa-barcode"></i> Scannen
-              </button>
+          {/* Dreispaltiges Layout */}
+          <div className="kasse-layout">
+            {/* Links: Buttons für Artikel scannen und Rabatte */}
+            <div className="left-buttons">
+              <button onClick={handleDailyClose}>Tagesabschluss</button>
+              <button onClick={toggleScanInput}>Artikel scannen</button>
+              <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
+              <button>Kassierer wechseln</button>
+              <button>Kunden suchen</button>
+              <button>Schublade öffnen</button>
+              <button>Kundenkarte</button>
+              <button>GS-Karte</button>
+              <button>GS-Karte</button>
+              <button>GS-Karte</button>
+              <button>Artikel suchen</button>
+              <button>Einstellungen</button>
             </div>
-          )}
 
-          {/* Gescannte Produkte anzeigen */}
-          <div className="scanned-products">
-    
-            {scannedProducts.length === 0 ? (
-              <p>Keine Produkte gescannt.</p>
-            ) : (
-              <div className="product-list">
-                {scannedProducts.map((product) => (
-                  <div
-                    key={product.article_number}
-                    className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
-                    onClick={() => setSelectedProduct(product)} // Produkt auswählen
-                  >
-                    <div className="product-details">
-                      <span className="product-name">{product.article_number}</span>
-                      <span className="product-name">{product.article_short_text}</span>
-                      <span className="product-price">
-                        {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
-                      </span>
-                      <span className="total-price">
-                        {calculateTotalPrice(product.price, quantity).toFixed(2)} €
-                      </span>
+            {/* Mitte: Gescannte Produkte */}
+            <div className="scanned-products">
+              <h2>Gescannte Produkte</h2>
+              {scannedProducts.length === 0 ? (
+                <p>Keine Produkte gescannt.</p>
+              ) : (
+                <div className="product-list">
+                  {scannedProducts.map((product) => (
+                    <div
+                      key={product.article_number}
+                      className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
+                      onClick={() => setSelectedProduct(product)} // Produkt auswählen
+                    >
+                      <div className="product-details">
+                        <span className="product-name">{product.article_number}</span>
+                        <span className="product-name">{product.article_short_text}</span>
+                        <span className="product-price">
+                          {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
+                        </span>
+                        <span className="total-price">
+                          {calculateTotalPrice(product.price, quantity).toFixed(2)} €
+                        </span>
+                      </div>
+                      <div className="product-discounts">
+                        {product.discounts?.length > 0 ? (
+                          product.discounts.map((discount, index) => (
+                            <span key={index} className="discount">
+                              {discount.title}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="no-discount">Kein Rabatt</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="product-discounts">
-                      {product.discounts?.length > 0 ? (
-                        product.discounts.map((discount, index) => (
-                          <span key={index} className="discount">
-                            {discount.title}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="no-discount">Kein Rabatt</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Rechts: Numerische Eingabe */}
+            <div className="numeric-input">
+              {/* Numerisches Eingabefeld für Menge */}
+              <div className="numeric-keypad">
+                <div className="keypad">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (
+                    <button key={number} onClick={() => handleNumericKeypadClick(number)}>
+                      {number}
+                    </button>
+                  ))}
+                </div>
+                <button className="clear-btn" onClick={clearQuantity}>Clear</button>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Rabatte anzeigen */}
@@ -276,17 +321,21 @@ const Kasse = ({ onKassenModusChange }) => {
         </>
       )}
 
-      {/* Numerisches Eingabefeld für Menge */}
-      <div className="numeric-keypad">
-        <div className="keypad">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (
-            <button key={number} onClick={() => handleNumericKeypadClick(number)}>
-              {number}
-            </button>
-          ))}
+      {/* Artikel scannen Eingabefeld */}
+      {showScan && (
+        <div className="scan-input">
+          <input
+            type="text"
+            value={articleNumber}
+            onChange={(e) => setArticleNumber(e.target.value)}
+            placeholder="Artikelnummer eingeben"
+            className="article-input"
+          />
+          <button onClick={scanProduct} className="scan-button">
+            <i className="fas fa-barcode"></i> Scannen
+          </button>
         </div>
-        <button className="clear-btn" onClick={clearQuantity}>Clear</button>
-      </div>
+      )}
     </div>
   );
 };
