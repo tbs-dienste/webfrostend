@@ -184,7 +184,7 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
       ) : (
         <>
-          <h1>Kasse</h1>
+        
 
           {/* Fehlermeldungen */}
           {errorMessage && <p className="error">{errorMessage}</p>}
@@ -194,7 +194,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <div className="left-buttons">
             <button onClick={completeDailyClose}>Tagesabschluss</button>
             <button onClick={toggleScanInput}>Artikel scannen</button>
-            <button>Rabatte anzeigen</button>
+            <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
             <button>Kassierer wechseln</button>
             <button>Kunden suchen</button>
             <button>Schublade öffnen</button>
@@ -225,7 +225,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
           {/* Gescannte Produkte anzeigen */}
           <div className="scanned-products">
-            <h2>Gescannte Produkte</h2>
+    
             {scannedProducts.length === 0 ? (
               <p>Keine Produkte gescannt.</p>
             ) : (
