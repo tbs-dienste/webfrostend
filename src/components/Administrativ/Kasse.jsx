@@ -74,7 +74,7 @@ const Kasse = ({ onKassenModusChange }) => {
         setLoadingProgress(progress);
       }
     }, 1000); // Alle 1 Sekunde den Fortschritt erhöhen
-};
+  };
 
 
 
@@ -228,7 +228,6 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
       ) : (
         <>
-          <h1>Kasse</h1>
 
           {/* Fehlermeldungen */}
           {errorMessage && <p className="error">{errorMessage}</p>}
@@ -254,7 +253,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
             {/* Mitte: Gescannte Produkte */}
             <div className="scanned-products">
-              <h2>Gescannte Produkte</h2>
+    
               {scannedProducts.length === 0 ? (
                 <p>Keine Produkte gescannt.</p>
               ) : (
@@ -292,52 +291,69 @@ const Kasse = ({ onKassenModusChange }) => {
               )}
             </div>
 
-            {/* Rechts: Numerische Eingabe */}
-            <div className="numeric-input">
-              {/* Numerisches Eingabefeld für Menge */}
-              <div className="numeric-keypad">
-                <div className="keypad">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (
-                    <button key={number} onClick={() => handleNumericKeypadClick(number)}>
-                      {number}
-                    </button>
-                  ))}
-                </div>
-                <button className="clear-btn" onClick={clearQuantity}>Clear</button>
+            <div className="numeric-keypad-container">
+              <input
+                type="number"
+                className="quantity-display"
+                value={quantity}
+                readOnly
+              />
+              <div className="keypad">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+                  <button
+                    key={number}
+                    onClick={() => handleNumericKeypadClick(number)}
+                    className="keypad-btn"
+                  >
+                    {number}
+                  </button>
+                ))}
+                <button className="keypad-btn" onClick={clearQuantity}>
+                  C
+                </button>
+                <button
+                  className="keypad-btn"
+                  onClick={() => handleNumericKeypadClick(0)}
+                >
+                  0
+                </button>
+                <button className="keypad-btn" onClick={() => setQuantity(quantity + 1)}>
+                  +
+                </button>
               </div>
             </div>
-          </div>
+            </div>
 
-          {/* Rabatte anzeigen */}
-          {showDiscounts && availableDiscounts.map((discount) => (
-            <button
-              key={discount.title}
-              onClick={() => addDiscount(discount.title)}
-              className="discount-button"
-            >
-              {discount.title}
-            </button>
-          ))}
-        </>
+            {/* Rabatte anzeigen */}
+            {showDiscounts && availableDiscounts.map((discount) => (
+              <button
+                key={discount.title}
+                onClick={() => addDiscount(discount.title)}
+                className="discount-button"
+              >
+                {discount.title}
+              </button>
+            ))}
+          </>
       )}
 
-      {/* Artikel scannen Eingabefeld */}
-      {showScan && (
-        <div className="scan-input">
-          <input
-            type="text"
-            value={articleNumber}
-            onChange={(e) => setArticleNumber(e.target.value)}
-            placeholder="Artikelnummer eingeben"
-            className="article-input"
-          />
-          <button onClick={scanProduct} className="scan-button">
-            <i className="fas fa-barcode"></i> Scannen
-          </button>
+          {/* Artikel scannen Eingabefeld */}
+          {showScan && (
+            <div className="scan-input">
+              <input
+                type="text"
+                value={articleNumber}
+                onChange={(e) => setArticleNumber(e.target.value)}
+                placeholder="Artikelnummer eingeben"
+                className="article-input"
+              />
+              <button onClick={scanProduct} className="scan-button">
+                <i className="fas fa-barcode"></i> Scannen
+              </button>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+      );
 };
 
-export default Kasse;
+      export default Kasse;
