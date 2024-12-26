@@ -111,21 +111,37 @@ button:active {
   gap: 20px;
   margin-top: 20px;
 }
-
-.left-buttons, .scanned-products, .numeric-input {
-  border-radius: $border-radius;
-  box-shadow: $shadow;
+.left-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // 3 Spalten wie ein Nummernfeld
+  gap: 10px;
   padding: 20px;
   background-color: $secondary-color;
-  animation: fadeIn 0.5s ease-in-out;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+
+  button {
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
 }
 
-.left-buttons {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
 .scanned-products {
   flex: 2;
