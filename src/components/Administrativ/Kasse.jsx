@@ -20,6 +20,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupText, setPopupText] = useState('');
   const [loadingProgress, setLoadingProgress] = useState(0); // Progress der Ladeanimation
+  const [totalPrice, setTotalPrice] = useState(0); // Gesamtpreis
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
@@ -80,6 +81,11 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const cancelPopup = () => {
     setShowPopup(false); // Pop-up schließen
+  };
+  // Produkte löschen
+  const clearScannedProducts = () => {
+    setScannedProducts([]);
+    setTotalPrice(0);
   };
 
 
@@ -172,15 +178,24 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const clearQuantity = () => setQuantity(0); // Löscht die Menge
 
-  // Berechnet den Gesamtpreis
-  const calculateTotalPrice = (price, quantity) => {
-    return price * quantity;
-  };
 
   // Toggelt die Anzeige des Scan-Input-Feldes
   const toggleScanInput = () => {
     setShowScan(prev => !prev);
   };
+
+
+  // Funktion: Gesamtpreis berechnen
+  const calculateTotalPrice = () => {
+    const total = scannedProducts.reduce((sum, product) => {
+      return sum + product.price * product.quantity;
+    }, 0);
+    setTotalPrice(total);
+  };
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [scannedProducts]);
 
   useEffect(() => {
     fetchScannedProducts();
@@ -253,7 +268,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
             {/* Mitte: Gescannte Produkte */}
             <div className="scanned-products">
-    
+
               {scannedProducts.length === 0 ? (
                 <p>Keine Produkte gescannt.</p>
               ) : (
@@ -271,7 +286,7 @@ const Kasse = ({ onKassenModusChange }) => {
                           {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
                         </span>
                         <span className="total-price">
-                          {calculateTotalPrice(product.price, quantity).toFixed(2)} €
+                          {(product.price * product.quantity).toFixed(2)} €
                         </span>
                       </div>
                       <div className="product-discounts">
@@ -287,7 +302,15 @@ const Kasse = ({ onKassenModusChange }) => {
                       </div>
                     </div>
                   ))}
+
+
+                  <div className="payment-section">
+                    <h3>Gesamtkosten: {totalPrice.toFixed(2)} €</h3>
+                    <button className="btn-pay">Bezahlen</button>
+                  </div>
                 </div>
+
+
               )}
             </div>
 
@@ -322,38 +345,56 @@ const Kasse = ({ onKassenModusChange }) => {
                 </button>
               </div>
             </div>
+            {/* Buttons: Bestätigen und Löschen */}
+            <div className="action-buttons">
+              <button
+                onClick={scanProduct}
+                className="btn-confirm"
+              >
+                Bestätigen
+              </button>
+              <button
+                onClick={clearScannedProducts}
+                className="btn-delete"
+              >
+                Löschen
+              </button>
             </div>
 
-            {/* Rabatte anzeigen */}
-            {showDiscounts && availableDiscounts.map((discount) => (
-              <button
-                key={discount.title}
-                onClick={() => addDiscount(discount.title)}
-                className="discount-button"
-              >
-                {discount.title}
-              </button>
-            ))}
-          </>
+          </div>
+
+
+
+          {/* Rabatte anzeigen */}
+          {showDiscounts && availableDiscounts.map((discount) => (
+            <button
+              key={discount.title}
+              onClick={() => addDiscount(discount.title)}
+              className="discount-button"
+            >
+              {discount.title}
+            </button>
+          ))}
+        </>
       )}
 
-          {/* Artikel scannen Eingabefeld */}
-          {showScan && (
-            <div className="scan-input">
-              <input
-                type="text"
-                value={articleNumber}
-                onChange={(e) => setArticleNumber(e.target.value)}
-                placeholder="Artikelnummer eingeben"
-                className="article-input"
-              />
-              <button onClick={scanProduct} className="scan-button">
-                <i className="fas fa-barcode"></i> Scannen
-              </button>
-            </div>
-          )}
+      {/* Artikel scannen Eingabefeld */}
+      {showScan && (
+        <div className="scan-input">
+          <input
+            type="text"
+            value={articleNumber}
+            onChange={(e) => setArticleNumber(e.target.value)}
+            placeholder="Artikelnummer eingeben"
+            className="article-input"
+          />
+          <button onClick={scanProduct} className="scan-button">
+            <i className="fas fa-barcode"></i> Scannen
+          </button>
         </div>
-      );
+      )}
+    </div>
+  );
 };
 
-      export default Kasse;
+export default Kasse;
