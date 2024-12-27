@@ -72,6 +72,7 @@ import Statistik from './components/Administrativ/Statistik';
 import Profile from './components/Mitarbeiter/Profile';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
 import Kasse from './components/Administrativ/Kasse';
+import Kassenlogin from './components/Administrativ/Kassenlogin';
 
 const App = () => {
   
@@ -158,6 +159,8 @@ const App = () => {
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
+          <Route path="/kassenlogin" element={<Kassenlogin />} />
+
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
           <Route path="/agb" element={<AGB />} />
