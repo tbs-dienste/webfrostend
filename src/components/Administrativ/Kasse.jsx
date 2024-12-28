@@ -91,8 +91,8 @@ const Kasse = ({ onKassenModusChange }) => {
 
   // Produkt scannen
   const scanProduct = async () => {
-    if (!articleNumber || !quantity) {
-      setErrorMessage('Bitte geben Sie eine Artikelnummer und eine Menge ein.');
+    if (!articleNumber) {
+      setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
       return;
     }
 
@@ -100,7 +100,7 @@ const Kasse = ({ onKassenModusChange }) => {
     try {
       const response = await axios.post(
         `${API_BASE_URL}/scan-product`,
-        { article_number: articleNumber, quantity },
+        { article_number: articleNumber, quantity: 1 }, // Immer Menge 1
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,7 +111,6 @@ const Kasse = ({ onKassenModusChange }) => {
       setSuccessMessage('Produkt erfolgreich gescannt.');
       fetchScannedProducts(); // Gescannte Produkte Liste aktualisieren
       setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
-      setQuantity(1); // Menge zurücksetzen
     } catch (error) {
       console.error('Fehler beim Scannen des Produkts:', error);
       setErrorMessage('Produkt konnte nicht gescannt werden.');
@@ -185,17 +184,37 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
-  // Funktion: Gesamtpreis berechnen
   const calculateTotalPrice = () => {
-    const total = scannedProducts.reduce((sum, product) => {
-      return sum + product.price * product.quantity;
-    }, 0);
-    setTotalPrice(total);
+    let total = 0;
+    let totalDiscount = 0; // Für die Gesamtberechnung der Rabatte
+
+    scannedProducts.forEach((product) => {
+      const price = parseFloat(product.price);
+      const quantity = parseInt(product.quantity, 10);
+
+      if (!isNaN(price) && !isNaN(quantity)) {
+        // Berechne Rabatt
+        const discountAmount = product.discounts?.reduce((sum, discount) => {
+          return sum + parseFloat(discount.amount);
+        }, 0) || 0;
+
+        const productTotal = price * quantity;
+        total += productTotal;
+        totalDiscount += discountAmount;
+
+        // Abgezogenem Rabatt den Preis nach dem Rabatt berechnen
+        product.finalPrice = productTotal - discountAmount; 
+      }
+    });
+
+    setTotalPrice(total - totalDiscount); // Gesamtpreis nach Rabatt
   };
 
+
   useEffect(() => {
-    calculateTotalPrice();
+    calculateTotalPrice(); // Gesamtpreis neu berechnen, wenn gescannte Produkte sich ändern
   }, [scannedProducts]);
+
 
   useEffect(() => {
     fetchScannedProducts();
@@ -277,23 +296,26 @@ const Kasse = ({ onKassenModusChange }) => {
                     <div
                       key={product.article_number}
                       className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
-                      onClick={() => setSelectedProduct(product)} // Produkt auswählen
+                      onClick={() => setSelectedProduct(product)}
                     >
                       <div className="product-details">
-                        <span className="product-name">{product.article_number}</span>
                         <span className="product-name">{product.article_short_text}</span>
+                        <span className="product-quantity">
+                          {product.quantity} x
+                        </span>
                         <span className="product-price">
-                          {typeof product.price === 'number' ? product.price.toFixed(2) : '0.00'} €
+                          {parseFloat(product.price).toFixed(2)} €
                         </span>
                         <span className="total-price">
-                          {(product.price * product.quantity).toFixed(2)} €
+                          {product.finalPrice ? product.finalPrice.toFixed(2) : (parseFloat(product.price) * product.quantity).toFixed(2)} €
                         </span>
                       </div>
+
                       <div className="product-discounts">
                         {product.discounts?.length > 0 ? (
                           product.discounts.map((discount, index) => (
                             <span key={index} className="discount">
-                              {discount.title}
+                              {discount.title} ({discount.amount} €)
                             </span>
                           ))
                         ) : (
@@ -303,9 +325,8 @@ const Kasse = ({ onKassenModusChange }) => {
                     </div>
                   ))}
 
-
                   <div className="payment-section">
-                    <h3>Gesamtkosten: {totalPrice.toFixed(2)} €</h3>
+                    <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} €</h3>
                     <button className="btn-pay">Bezahlen</button>
                   </div>
                 </div>
@@ -345,10 +366,24 @@ const Kasse = ({ onKassenModusChange }) => {
                 </button>
               </div>
             </div>
-            {/* Buttons: Bestätigen und Löschen */}
             <div className="action-buttons">
               <button
-                onClick={scanProduct}
+                onClick={() => {
+                  if (selectedProduct) {
+                    // Aktualisiere die Menge des ausgewählten Produkts
+                    const updatedProducts = scannedProducts.map((product) =>
+                      product.article_number === selectedProduct.article_number
+                        ? { ...product, quantity }
+                        : product
+                    );
+                    setScannedProducts(updatedProducts);
+                    setSelectedProduct(null); // Auswahl zurücksetzen
+                    setQuantity(1); // Zurücksetzen der Menge
+                    setSuccessMessage('Menge erfolgreich aktualisiert.');
+                  } else {
+                    setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
+                  }
+                }}
                 className="btn-confirm"
               >
                 Bestätigen
@@ -360,6 +395,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 Löschen
               </button>
             </div>
+
 
           </div>
 
