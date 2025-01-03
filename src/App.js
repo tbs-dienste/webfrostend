@@ -73,17 +73,21 @@ import Profile from './components/Mitarbeiter/Profile';
 import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
 import Kasse from './components/Administrativ/Kasse';
 import Kassenlogin from './components/Administrativ/Kassenlogin';
+import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 
 const App = () => {
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [timer, setTimer] = useState(null); 
+  const [kasseMode, setKasseMode] = useState(false);
 
   const [isKassenModus, setIsKassenModus] = useState(false);
 
   const toggleKassenModus = (status) => {
     setIsKassenModus(status);
   };
+
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // Hole den Token aus localStorage
@@ -160,6 +164,7 @@ const App = () => {
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/kassenlogin" element={<Kassenlogin />} />
+          <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
 
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}

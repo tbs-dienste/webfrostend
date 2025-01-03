@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Kasse.scss'; // SCSS für Styling und Icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importiere FontAwesome
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
 
 const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -19,6 +21,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const token = localStorage.getItem("token");
   const [showPopup, setShowPopup] = useState(false);
   const [popupText, setPopupText] = useState('');
+  const [showCustomerCardButtons, setShowCustomerCardButtons] = useState(false); // Zustand für die Anzeige der Buttons
   const [loadingProgress, setLoadingProgress] = useState(0); // Progress der Ladeanimation
   const [totalPrice, setTotalPrice] = useState(0); // Gesamtpreis
 
@@ -86,6 +89,10 @@ const Kasse = ({ onKassenModusChange }) => {
   const clearScannedProducts = () => {
     setScannedProducts([]);
     setTotalPrice(0);
+  };
+  const handleSignOut = () => {
+    window.location = "/kassenuebersicht";
+    // Weiterleitung zur Login-Seite oder zum gewünschten Ort
   };
 
 
@@ -168,7 +175,10 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowDiscounts(!showDiscounts);
   };
 
-
+  // Funktion für das Klicken auf die Kundenkarte
+  const handleCustomerCardClick = () => {
+    setShowCustomerCardButtons(!showCustomerCardButtons); // Toggle für die Buttons
+  };
 
   // Numerische Tastatur für Menge
   const handleNumericKeypadClick = (number) => {
@@ -203,7 +213,7 @@ const Kasse = ({ onKassenModusChange }) => {
         totalDiscount += discountAmount;
 
         // Abgezogenem Rabatt den Preis nach dem Rabatt berechnen
-        product.finalPrice = productTotal - discountAmount; 
+        product.finalPrice = productTotal - discountAmount;
       }
     });
 
@@ -277,10 +287,11 @@ const Kasse = ({ onKassenModusChange }) => {
               <button>Kassierer wechseln</button>
               <button>Kunden suchen</button>
               <button>Schublade öffnen</button>
-              <button>Kundenkarte</button>
+              <button onClick={handleCustomerCardClick}>Kundenkarte</button>
               <button>GS-Karte</button>
-              <button>GS-Karte</button>
-              <button>GS-Karte</button>
+              <button onClick={handleSignOut} className="sign-out-button">
+                <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
+              </button>
               <button>Artikel suchen</button>
               <button>Einstellungen</button>
             </div>
@@ -334,7 +345,13 @@ const Kasse = ({ onKassenModusChange }) => {
 
               )}
             </div>
-
+            {/* Kundenkarte Buttons */}
+            {showCustomerCardButtons && (
+              <div className="customer-card-buttons">
+                <button  className="discount-btn">50 CHF</button>
+                <button className="discount-btn">30 CHF</button>
+              </div>
+            )}
             <div className="numeric-keypad-container">
               <input
                 type="number"
