@@ -16,7 +16,7 @@ const KassenUebersicht = () => {
       </div>
       <div className="kassen-übersicht__links">
         <Link to="/kasse" className="link">Verkauf</Link>
-        <Link to="/einnahmen-ausgaben" className="link">Einnahmen Ausgaben</Link>
+        <Link to="/einnahmeausgabe" className="link">Einnahmen Ausgaben</Link>
         <Link to="/prov-abschluss" className="link">Prov. Abschluss</Link>
         <Link to="/tagesuebersicht" className="link">Tagesübersicht</Link>
       </div>

@@ -74,6 +74,7 @@ import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
 import Kasse from './components/Administrativ/Kasse';
 import Kassenlogin from './components/Administrativ/Kassenlogin';
 import KassenUebersicht from './components/Administrativ/KassenUebersicht';
+import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
 
 const App = () => {
   
@@ -165,6 +166,7 @@ const App = () => {
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
           <Route path="/kassenlogin" element={<Kassenlogin />} />
           <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
+          <Route path="/einnahmeausgabe" element={<IncomeExpenseForm />} />
 
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
