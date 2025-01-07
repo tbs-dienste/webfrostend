@@ -7,6 +7,8 @@ const IncomeExpenseForm = () => {
   const [reason, setReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
+  const [activeMode, setActiveMode] = useState(null); // Zustand für den aktiven Button
+
   const [mode, setMode] = useState(""); // "income" oder "expense"
 
   const handleNumberClick = (value) => {
@@ -15,6 +17,18 @@ const IncomeExpenseForm = () => {
 
   const handleBackspace = () => {
     setAmount((prev) => prev.slice(0, -1));
+  };
+  const handleModeChange = (mode) => {
+    setMode(mode);
+    setActiveMode(mode);
+  };
+  
+
+  const toggleSign = () => {
+    setAmount((prev) => {
+      if (!prev) return "-";
+      return prev.startsWith("-") ? prev.slice(1) : `-${prev}`;
+    });
   };
 
   const handleConfirm = () => {
@@ -74,7 +88,6 @@ const IncomeExpenseForm = () => {
                 <option value="stockeinlage">Stockeinlage</option>
                 <option value="gebuehrtoilette">Gebühr Toilette</option>
                 <option value="umtriebsentschaedigung">Umtriebsentschädigung</option>
-
               </>
             )}
             {mode === "expense" && (
@@ -85,7 +98,6 @@ const IncomeExpenseForm = () => {
               </>
             )}
           </select>
-         
         </div>
         <div className="form-group">
           <label>Währung</label>
@@ -103,12 +115,16 @@ const IncomeExpenseForm = () => {
       {showKeypad && (
         <div className="keypad-section">
           <div className="number-pad">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "+/-"].map((key) => (
               <button
-                key={num}
-                onClick={() => handleNumberClick(num.toString())}
+                key={key}
+                onClick={
+                  key === "." ? () => handleNumberClick(".") :
+                  key === "+/-" ? toggleSign :
+                  () => handleNumberClick(key.toString())
+                }
               >
-                {num}
+                {key}
               </button>
             ))}
             <button onClick={handleBackspace}>⌫</button>
@@ -120,20 +136,36 @@ const IncomeExpenseForm = () => {
         </div>
       )}
 
-  
-        <div className="bottom-buttons">
-          <button disabled>X</button>
-          <button onClick={() => setMode("income")}>Einnahmen</button>
-          <button onClick={() => setMode("expense")}>Ausgaben</button>
-          <button disabled>X</button>
-          <button>Heute</button>
-          <button>Alle</button>
-          <button>Drucken</button>
-          <button>Storno</button>
-          <button onClick={handleSubmit}>Übernehmen</button>
-          <button onClick={handleReset}>Exit</button>
-        </div>
- 
+<div className="bottom-buttons">
+  <button disabled>X</button>
+  <button
+    className={activeMode === "income" ? "active-button" : ""}
+    onClick={() => handleModeChange("income")}
+    disabled={activeMode === "expense"}
+  >
+    Einnahmen
+  </button>
+  <button
+    className={activeMode === "expense" ? "active-button" : ""}
+    onClick={() => handleModeChange("expense")}
+    disabled={activeMode === "income"}
+  >
+    Ausgaben
+  </button>
+  <button disabled>X</button>
+  <button disabled={!!activeMode}>Heute</button>
+  <button disabled={!!activeMode}>Alle</button>
+  <button disabled={!!activeMode}>Drucken</button>
+  <button disabled={!!activeMode}>Storno</button>
+  <button onClick={handleSubmit} disabled={!!activeMode && !amount}>
+    Übernehmen
+  </button>
+  <button onClick={handleReset} disabled={!!activeMode}>
+    Exit
+  </button>
+</div>
+
+
     </div>
   );
 };

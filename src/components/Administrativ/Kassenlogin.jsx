@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios"; // Axios importieren
 import "./Kassenlogin.scss"; // Verweis auf die SCSS-Datei
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Importiere FontAwesome
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons"; // Importiere das 'Sign-Out' Icon
 
 const Kassenlogin = () => {
   const [username, setUsername] = useState(""); // Zustand für den Benutzernamen
@@ -24,7 +26,6 @@ const Kassenlogin = () => {
   };
 
   const handleLogin = () => {
-    // Wenn der Benutzername korrekt eingegeben ist, wechsle zu PIN-Eingabe
     if (!isPinRequired) {
       if (username) {
         localStorage.setItem("username", username); // Benutzernamen im LocalStorage speichern
@@ -33,7 +34,6 @@ const Kassenlogin = () => {
         alert("Bitte Benutzernamen eingeben");
       }
     } else {
-      // Beide Felder (Username und PIN) senden, wenn der PIN eingegeben wurde
       if (pin) {
         const storedUsername = localStorage.getItem("username");
         const loginData = {
@@ -41,7 +41,6 @@ const Kassenlogin = () => {
           pin: pin,
         };
 
-        // POST-Request mit Axios zum Überprüfen der Login-Daten
         axios
           .post("https://example.com/api/login", loginData)
           .then((response) => {
@@ -95,7 +94,7 @@ const Kassenlogin = () => {
                 0
               </button>
               <button className="keypad-btn" onClick={handleLogin}>
-                Weiter
+                <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
           </>
@@ -128,7 +127,7 @@ const Kassenlogin = () => {
                 0
               </button>
               <button className="keypad-btn" onClick={handleLogin}>
-                Login
+                <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
           </>
