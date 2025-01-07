@@ -8,8 +8,7 @@ const IncomeExpenseForm = () => {
   const [otherReason, setOtherReason] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
   const [activeMode, setActiveMode] = useState(null); // Zustand für den aktiven Button
-
-  const [mode, setMode] = useState(""); // "income" oder "expense"
+  const [entries, setEntries] = useState([]); // Zustand für die Tabelle
 
   const handleNumberClick = (value) => {
     setAmount((prev) => prev + value);
@@ -18,11 +17,10 @@ const IncomeExpenseForm = () => {
   const handleBackspace = () => {
     setAmount((prev) => prev.slice(0, -1));
   };
+
   const handleModeChange = (mode) => {
-    setMode(mode);
     setActiveMode(mode);
   };
-  
 
   const toggleSign = () => {
     setAmount((prev) => {
@@ -43,7 +41,7 @@ const IncomeExpenseForm = () => {
     setAmount("");
     setReason("");
     setOtherReason("");
-    setMode("");
+    setActiveMode(null);
     setShowKeypad(true); // Nummernfeld anzeigen
   };
 
@@ -54,15 +52,21 @@ const IncomeExpenseForm = () => {
     }
 
     const finalReason = reason === "sonstiges" ? otherReason : reason;
-    const type = mode === "income" ? "Einnahme" : "Ausgabe";
+    const newEntry = {
+      reason: finalReason,
+      currency,
+      amount: parseFloat(amount).toFixed(2), // Betrag in FW
+      exchangeRate: 1, // Beispiel: Kurs 1 für CHF (später anpassbar)
+      date: new Date().toLocaleDateString(),
+    };
 
-    alert(`Typ: ${type}\nBetrag: ${amount} ${currency}\nGrund: ${finalReason}`);
+    setEntries((prevEntries) => [...prevEntries, newEntry]); // Neuer Eintrag in die Tabelle
     handleReset(); // Formular zurücksetzen
   };
 
   return (
     <div className="income-expense-container">
-      <div className="top-section">
+      <div className="top-section horizontal-layout">
         <div className="form-group">
           <label>Betrag</label>
           <input
@@ -81,7 +85,7 @@ const IncomeExpenseForm = () => {
             disabled={showKeypad}
           >
             <option value="">Wähle einen Grund</option>
-            {mode === "income" && (
+            {activeMode === "income" && (
               <>
                 <option value="eroeffnungsdifferenz">Eröffnungsdifferenz</option>
                 <option value="abschlussdifferenz">Abschlussdifferenz</option>
@@ -90,7 +94,7 @@ const IncomeExpenseForm = () => {
                 <option value="umtriebsentschaedigung">Umtriebsentschädigung</option>
               </>
             )}
-            {mode === "expense" && (
+            {activeMode === "expense" && (
               <>
                 <option value="bueromaterial">Büromaterial 8.1%</option>
                 <option value="mwstruckestattung">MWST-Rückerst. 0%</option>
@@ -112,6 +116,29 @@ const IncomeExpenseForm = () => {
         </div>
       </div>
 
+      <table className="entry-table">
+        <thead>
+          <tr>
+            <th>Grund</th>
+            <th>Währung</th>
+            <th>Kurs</th>
+            <th>Betrag in FW</th>
+            <th>Datum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map((entry, index) => (
+            <tr key={index}>
+              <td>{entry.reason}</td>
+              <td>{entry.currency}</td>
+              <td>{entry.exchangeRate.toFixed(2)}</td>
+              <td>{entry.amount}</td>
+              <td>{entry.date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
       {showKeypad && (
         <div className="keypad-section">
           <div className="number-pad">
@@ -119,9 +146,11 @@ const IncomeExpenseForm = () => {
               <button
                 key={key}
                 onClick={
-                  key === "." ? () => handleNumberClick(".") :
-                  key === "+/-" ? toggleSign :
-                  () => handleNumberClick(key.toString())
+                  key === "."
+                    ? () => handleNumberClick(".")
+                    : key === "+/-"
+                    ? toggleSign
+                    : () => handleNumberClick(key.toString())
                 }
               >
                 {key}
@@ -136,36 +165,18 @@ const IncomeExpenseForm = () => {
         </div>
       )}
 
-<div className="bottom-buttons">
-  <button disabled>X</button>
-  <button
-    className={activeMode === "income" ? "active-button" : ""}
-    onClick={() => handleModeChange("income")}
-    disabled={activeMode === "expense"}
-  >
-    Einnahmen
-  </button>
-  <button
-    className={activeMode === "expense" ? "active-button" : ""}
-    onClick={() => handleModeChange("expense")}
-    disabled={activeMode === "income"}
-  >
-    Ausgaben
-  </button>
-  <button disabled>X</button>
-  <button disabled={!!activeMode}>Heute</button>
-  <button disabled={!!activeMode}>Alle</button>
-  <button disabled={!!activeMode}>Drucken</button>
-  <button disabled={!!activeMode}>Storno</button>
-  <button onClick={handleSubmit} disabled={!!activeMode && !amount}>
-    Übernehmen
-  </button>
-  <button onClick={handleReset} disabled={!!activeMode}>
-    Exit
-  </button>
-</div>
-
-
+      <div className="bottom-buttons">
+        <button onClick={() => handleModeChange("income")} disabled={activeMode === "income"}>
+          Einnahmen
+        </button>
+        <button onClick={() => handleModeChange("expense")} disabled={activeMode === "expense"}>
+          Ausgaben
+        </button>
+        <button onClick={handleSubmit} disabled={!amount || !reason}>
+          Übernehmen
+        </button>
+        <button onClick={handleReset}>Exit</button>
+      </div>
     </div>
   );
 };
