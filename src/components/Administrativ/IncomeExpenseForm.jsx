@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./IncomeExpenseForm.scss";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PrintTemplate from "./PrintTemplate"; // Dein PDF-Template
 
 const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [amount, setAmount] = useState("");
@@ -92,7 +94,17 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
 
   const handlePrint = () => {
     if (selectedRow !== null) {
-      alert(`Drucken: ${JSON.stringify(entries[selectedRow], null, 2)}`);
+      const entry = entries[selectedRow];
+      return (
+        <PDFDownloadLink
+          document={<PrintTemplate entry={entry} />}
+          fileName="entry.pdf"
+        >
+          {({ loading }) =>
+            loading ? "Generiere PDF..." : "Drucken"
+          }
+        </PDFDownloadLink>
+      );
     }
   };
 
@@ -230,7 +242,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           Alle
         </button>
         <button onClick={handlePrint} disabled={selectedRow === null}>
-          Drucken
+          {handlePrint()}
         </button>
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Storno
