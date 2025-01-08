@@ -7,8 +7,9 @@ const IncomeExpenseForm = () => {
   const [reason, setReason] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
-  const [activeMode, setActiveMode] = useState(null); // Zustand für den aktiven Button
-  const [entries, setEntries] = useState([]); // Zustand für die Tabelle
+  const [activeMode, setActiveMode] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const handleNumberClick = (value) => {
     setAmount((prev) => prev + value);
@@ -34,7 +35,7 @@ const IncomeExpenseForm = () => {
       alert("Bitte einen Betrag eingeben!");
       return;
     }
-    setShowKeypad(false); // Nummernfeld ausblenden
+    setShowKeypad(false);
   };
 
   const handleReset = () => {
@@ -42,7 +43,7 @@ const IncomeExpenseForm = () => {
     setReason("");
     setOtherReason("");
     setActiveMode(null);
-    setShowKeypad(true); // Nummernfeld anzeigen
+    setShowKeypad(true);
   };
 
   const handleSubmit = () => {
@@ -55,13 +56,30 @@ const IncomeExpenseForm = () => {
     const newEntry = {
       reason: finalReason,
       currency,
-      amount: parseFloat(amount).toFixed(2), // Betrag in FW
-      exchangeRate: 1, // Beispiel: Kurs 1 für CHF (später anpassbar)
+      amount: parseFloat(amount).toFixed(2),
+      exchangeRate: 1,
       date: new Date().toLocaleDateString(),
     };
 
-    setEntries((prevEntries) => [...prevEntries, newEntry]); // Neuer Eintrag in die Tabelle
-    handleReset(); // Formular zurücksetzen
+    setEntries((prevEntries) => [...prevEntries, newEntry]);
+    handleReset();
+  };
+
+  const handleRowSelect = (index) => {
+    setSelectedRow(index === selectedRow ? null : index);
+  };
+
+  const handlePrint = () => {
+    if (selectedRow !== null) {
+      alert(`Drucken: ${JSON.stringify(entries[selectedRow], null, 2)}`);
+    }
+  };
+
+  const handleCancel = () => {
+    if (selectedRow !== null) {
+      setEntries((prevEntries) => prevEntries.filter((_, i) => i !== selectedRow));
+      setSelectedRow(null);
+    }
   };
 
   return (
@@ -128,7 +146,11 @@ const IncomeExpenseForm = () => {
         </thead>
         <tbody>
           {entries.map((entry, index) => (
-            <tr key={index}>
+            <tr
+              key={index}
+              onClick={() => handleRowSelect(index)}
+              className={selectedRow === index ? "selected" : ""}
+            >
               <td>{entry.reason}</td>
               <td>{entry.currency}</td>
               <td>{entry.exchangeRate.toFixed(2)}</td>
@@ -166,16 +188,37 @@ const IncomeExpenseForm = () => {
       )}
 
       <div className="bottom-buttons">
+        <button disabled>
+          X
+        </button>
         <button onClick={() => handleModeChange("income")} disabled={activeMode === "income"}>
           Einnahmen
         </button>
         <button onClick={() => handleModeChange("expense")} disabled={activeMode === "expense"}>
           Ausgaben
         </button>
+        <button disabled>
+          X
+        </button>
+        <button>
+          Heute
+        </button>
+        <button>
+          Alle
+        </button>
+        <button onClick={handlePrint} disabled={selectedRow === null}>
+          Drucken
+        </button>
+        <button onClick={handleCancel} disabled={selectedRow === null}>
+          Storno
+        </button>
         <button onClick={handleSubmit} disabled={!amount || !reason}>
           Übernehmen
         </button>
+        
         <button onClick={handleReset}>Exit</button>
+       
+       
       </div>
     </div>
   );
