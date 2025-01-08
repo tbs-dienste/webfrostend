@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Importiere Link von react-router-dom
 import './KassenUebersicht.scss';
 import blacklogo from './black.png'; // Bild importieren
 
-const KassenUebersicht = () => {
+const KassenUebersicht = ({ onKassenModusChange }) => {
+  // Setzt den Kassenmodus beim Laden der Seite auf true, wenn erforderlich
+  useEffect(() => {
+    onKassenModusChange(true);
+    // Cleanup: Kassenmodus zurücksetzen, wenn die Komponente verlassen wird
+    return () => {
+      onKassenModusChange(false);
+    };
+  }, [onKassenModusChange]);
+
   return (
     <div className="kassen-übersicht">
       <div className="kassen-übersicht__header">

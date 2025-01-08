@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./IncomeExpenseForm.scss";
 
-const IncomeExpenseForm = () => {
+const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("CHF");
   const [reason, setReason] = useState("");
@@ -10,6 +10,15 @@ const IncomeExpenseForm = () => {
   const [activeMode, setActiveMode] = useState(null);
   const [entries, setEntries] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+
+  useEffect(() => {
+    // Kassenmodus aktivieren, wenn die Seite geladen wird
+    onKassenModusChange(true);
+    // Cleanup: Kassenmodus deaktivieren, wenn die Komponente verlassen wird
+    return () => {
+      onKassenModusChange(false);
+    };
+  }, [onKassenModusChange]);
 
   const handleNumberClick = (value) => {
     setAmount((prev) => prev + value);
@@ -217,8 +226,6 @@ const IncomeExpenseForm = () => {
         </button>
         
         <button onClick={handleReset}>Exit</button>
-       
-       
       </div>
     </div>
   );

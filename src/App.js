@@ -80,7 +80,7 @@ const App = () => {
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [timer, setTimer] = useState(null); 
-  const [kasseMode, setKasseMode] = useState(false);
+
 
   const [isKassenModus, setIsKassenModus] = useState(false);
 
@@ -157,16 +157,19 @@ const App = () => {
           <Route path="/statistiken" element={<Statistik />} />
           <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
+
+
           <Route
             path="/kasse"
             element={<Kasse onKassenModusChange={toggleKassenModus} />}
           />
+          <Route path="/kassenlogin"   element={<Kassenlogin onKassenModusChange={toggleKassenModus}/>} />
+          <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
+          <Route path="/einnahmeausgabe" element={<IncomeExpenseForm onKassenModusChange={toggleKassenModus}/>} />
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
-          <Route path="/kassenlogin" element={<Kassenlogin />} />
-          <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
-          <Route path="/einnahmeausgabe" element={<IncomeExpenseForm />} />
+      
 
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}

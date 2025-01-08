@@ -4,7 +4,7 @@ import "./Kassenlogin.scss"; // Verweis auf die SCSS-Datei
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Importiere FontAwesome
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons"; // Importiere das 'Sign-Out' Icon
 
-const Kassenlogin = () => {
+const Kassenlogin = ({ onKassenModusChange }) => {
   const [username, setUsername] = useState(""); // Zustand für den Benutzernamen
   const [pin, setPin] = useState(""); // Zustand für die PIN
   const [isPinRequired, setIsPinRequired] = useState(false); // Flag, ob PIN erforderlich ist
