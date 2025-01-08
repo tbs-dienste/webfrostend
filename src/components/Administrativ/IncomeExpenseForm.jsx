@@ -10,6 +10,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [activeMode, setActiveMode] = useState(null);
   const [entries, setEntries] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [exchangeRate, setExchangeRate] = useState(1.1); // Kurs Euro -> CHF, hier ein Beispiel
 
   useEffect(() => {
     // Kassenmodus aktivieren, wenn die Seite geladen wird
@@ -62,11 +63,22 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     }
 
     const finalReason = reason === "sonstiges" ? otherReason : reason;
+
+    let finalAmount = parseFloat(amount).toFixed(2);
+    let finalAmountFW = finalAmount; // Fremdwährungsbetrag initialisieren
+
+    if (currency === "Euro") {
+      // Umrechnung von Euro zu CHF
+      finalAmount = (parseFloat(amount) * exchangeRate).toFixed(2);
+      finalAmountFW = amount; // Betrag bleibt in Euro
+    }
+
     const newEntry = {
       reason: finalReason,
       currency,
-      amount: parseFloat(amount).toFixed(2),
-      exchangeRate: 1,
+      amount: finalAmount,
+      amountInFW: finalAmountFW, // Fremdwährungsbetrag
+      exchangeRate: exchangeRate,
       date: new Date().toLocaleDateString(),
     };
 
@@ -148,8 +160,9 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           <tr>
             <th>Grund</th>
             <th>Währung</th>
+            <th>in Landwährung (CHF)</th>
             <th>Kurs</th>
-            <th>Betrag in FW</th>
+            <th>in Fremdwährung (Euro)</th>
             <th>Datum</th>
           </tr>
         </thead>
@@ -162,8 +175,9 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             >
               <td>{entry.reason}</td>
               <td>{entry.currency}</td>
-              <td>{entry.exchangeRate.toFixed(2)}</td>
               <td>{entry.amount}</td>
+              <td>{entry.exchangeRate.toFixed(2)}</td>
+              <td>{entry.amountInFW}</td>
               <td>{entry.date}</td>
             </tr>
           ))}
