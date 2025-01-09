@@ -62,10 +62,12 @@ const styles = StyleSheet.create({
 });
 
 const PrintTemplate = ({ entry }) => {
+  if (!entry) return <Text>Fehler: Keine Daten verfügbar</Text>;
+
   return (
     <Document>
       <Page style={styles.page}>
-        <Text style={styles.header}>Einnahmen / Ausgaben</Text>
+        <Text style={styles.header}>{entry.type}</Text>
 
         {/* Tabelle */}
         <View style={styles.table}>
@@ -81,8 +83,8 @@ const PrintTemplate = ({ entry }) => {
             <Text style={styles.tableCell}>{entry.reason || "-"}</Text>
             <Text style={styles.tableCell}>{entry.currency || "-"}</Text>
             <Text style={styles.tableCell}>{entry.amount || "-"}</Text>
-            <Text style={styles.tableCell}>{entry.exchangeRate ? entry.exchangeRate.toFixed(2) : "-"}</Text>
-            <Text style={styles.tableCell}>{entry.amountInFW || "-"}</Text>
+            <Text style={styles.tableCell}>{typeof entry.exchange_rate === 'number' ? entry.exchange_rate.toFixed(2) : "-"}</Text>
+            <Text style={styles.tableCell}>{entry.amount_in_fw || "-"}</Text>
             <Text style={styles.tableCell}>{entry.date || "-"}</Text>
           </View>
         </View>
@@ -96,5 +98,6 @@ const PrintTemplate = ({ entry }) => {
     </Document>
   );
 };
+
 
 export default PrintTemplate;

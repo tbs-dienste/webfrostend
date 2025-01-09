@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./IncomeExpenseForm.scss";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PrintTemplate from "./PrintTemplate"; // Dein PDF-Template
@@ -7,17 +8,28 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("CHF");
   const [reason, setReason] = useState("");
-  const [otherReason, setOtherReason] = useState("");
   const [showKeypad, setShowKeypad] = useState(true);
   const [activeMode, setActiveMode] = useState(null);
-  const [entries, setEntries] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [entries, setEntries] = useState({ einnahmen: [], ausgaben: [] }); // Korrekt initialisiert
   const [exchangeRate, setExchangeRate] = useState(1.1); // Kurs Euro -> CHF, hier ein Beispiel
 
   useEffect(() => {
-    // Kassenmodus aktivieren, wenn die Seite geladen wird
+    const token = localStorage.getItem('token');
+  axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  .then(response => {
+    setEntries({
+      einnahmen: response.data.einnahmen || [],
+      ausgaben: response.data.ausgaben || [],
+    });
+  })
+      .catch(error => {
+        console.error("Error fetching entries:", error);
+      });
+
     onKassenModusChange(true);
-    // Cleanup: Kassenmodus deaktivieren, wenn die Komponente verlassen wird
     return () => {
       onKassenModusChange(false);
     };
@@ -53,60 +65,75 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const handleReset = () => {
     setAmount("");
     setReason("");
-    setOtherReason("");
     setActiveMode(null);
     setShowKeypad(true);
   };
 
   const handleSubmit = () => {
-    if (!reason || (reason === "sonstiges" && !otherReason)) {
-      alert("Bitte einen Grund auswählen oder eingeben!");
+    if (!reason) {
+      alert("Bitte einen Grund auswählen!");
       return;
     }
 
-    const finalReason = reason === "sonstiges" ? otherReason : reason;
-
     let finalAmount = parseFloat(amount).toFixed(2);
-    let finalAmountFW = finalAmount; // Fremdwährungsbetrag initialisieren
+    let finalAmountFW = finalAmount;
 
     if (currency === "Euro") {
-      // Umrechnung von Euro zu CHF
       finalAmount = (parseFloat(amount) * exchangeRate).toFixed(2);
-      finalAmountFW = amount; // Betrag bleibt in Euro
+      finalAmountFW = amount;
     }
 
     const newEntry = {
-      reason: finalReason,
+      reason,
       currency,
       amount: finalAmount,
-      amountInFW: finalAmountFW, // Fremdwährungsbetrag
+      amountInFW: finalAmountFW,
       exchangeRate: exchangeRate,
       date: new Date().toLocaleDateString(),
+      type: activeMode === "income" ? "Einnahme" : "Ausgabe",  // Hinzufügen von Typ (Einnahme/Ausgabe)
     };
 
-    setEntries((prevEntries) => [...prevEntries, newEntry]);
-    handleReset();
+    // Bearer Token für die API-Post-Anfrage
+    const token = localStorage.getItem('token');
+
+    // Senden der Daten an die Backend-API
+    axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben', newEntry, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(response => {
+        setEntries((prevEntries) => [...prevEntries, response.data]);
+        handleReset();
+      })
+      .catch(error => {
+        console.error("Error submitting entry:", error);
+        alert("Fehler beim Übermitteln des Eintrags!");
+      });
   };
 
   const handleRowSelect = (index) => {
-    setSelectedRow(index === selectedRow ? null : index);
+    setSelectedRow(index === selectedRow ? null : index); // Toggle selection
   };
 
+
   const handlePrint = () => {
-    if (selectedRow !== null) {
-      const entry = entries[selectedRow];
+    if (selectedRow !== null && entries.einnahmen[selectedRow]) {
+      const entry = entries.einnahmen[selectedRow];
       return (
         <PDFDownloadLink
           document={<PrintTemplate entry={entry} />}
           fileName="entry.pdf"
         >
-          {({ loading }) =>
-            loading ? "Generiere PDF..." : "Drucken"
-          }
+          {({ loading }) => (loading ? "Generiere PDF..." : "Drucken")}
         </PDFDownloadLink>
       );
+    } else {
+      return <span>Drucken</span>;
     }
   };
+  
+
 
   const handleCancel = () => {
     if (selectedRow !== null) {
@@ -172,29 +199,63 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           <tr>
             <th>Grund</th>
             <th>Währung</th>
-            <th>in Landwährung (CHF)</th>
+            <th>in LW.</th>
             <th>Kurs</th>
-            <th>in Fremdwährung (Euro)</th>
+            <th>Fremdwährung</th>
             <th>Datum</th>
+            <th>Typ</th>
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry, index) => (
-            <tr
-              key={index}
-              onClick={() => handleRowSelect(index)}
-              className={selectedRow === index ? "selected" : ""}
-            >
-              <td>{entry.reason}</td>
-              <td>{entry.currency}</td>
-              <td>{entry.amount}</td>
-              <td>{entry.exchangeRate.toFixed(2)}</td>
-              <td>{entry.amountInFW}</td>
-              <td>{entry.date}</td>
+          {/* Einnahmen anzeigen */}
+          {entries.einnahmen.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="no-data">Keine Einnahmen vorhanden</td>
             </tr>
-          ))}
+          ) : (
+            entries.einnahmen.map((entry, index) => (
+              <tr
+                key={index}
+                onClick={() => handleRowSelect(index)} // Handle row selection
+                className={selectedRow === index ? "selected" : ""}
+              >
+                <td>{entry.reason}</td>
+                <td>{entry.currency}</td>
+                <td>{entry.amount}</td>
+                <td>{entry.exchange_rate}</td>
+                <td>{entry.amount_in_fw}</td>
+                <td>{entry.date}</td>
+                <td>{entry.type}</td>
+              </tr>
+            ))
+          )}
+
+          {/* Ausgaben anzeigen */}
+          {entries.ausgaben.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="no-data">Keine Ausgaben vorhanden</td>
+            </tr>
+          ) : (
+            entries.ausgaben.map((entry, index) => (
+              <tr
+                key={index}
+                onClick={() => handleRowSelect(index)} // Handle row selection
+                className={selectedRow === index ? "selected" : ""}
+              >
+                <td>{entry.reason}</td>
+                <td>{entry.currency}</td>
+                <td>{entry.amount}</td>
+                <td>{entry.exchange_rate}</td>
+                <td>{entry.amount_in_fw}</td>
+                <td>{entry.date}</td>
+                <td>{entry.type}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
+
+
 
       {showKeypad && (
         <div className="keypad-section">
@@ -206,8 +267,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                   key === "."
                     ? () => handleNumberClick(".")
                     : key === "+/-"
-                    ? toggleSign
-                    : () => handleNumberClick(key.toString())
+                      ? toggleSign
+                      : () => handleNumberClick(key.toString())
                 }
               >
                 {key}
@@ -241,16 +302,20 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         <button>
           Alle
         </button>
-        <button onClick={handlePrint} disabled={selectedRow === null}>
+        <button
+          onClick={handlePrint}
+          disabled={selectedRow === null} // Disable the button if no row is selected
+        >
           {handlePrint()}
         </button>
+
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Storno
         </button>
         <button onClick={handleSubmit} disabled={!amount || !reason}>
           Übernehmen
         </button>
-        
+
         <button onClick={handleReset}>Exit</button>
       </div>
     </div>

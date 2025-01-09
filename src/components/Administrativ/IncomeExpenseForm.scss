@@ -145,6 +145,10 @@
       }
     }
   }
+  .entry-table .selected {
+    background-color: #f0f8ff; /* Light blue color for selected row */
+  }
+  
 
   .bottom-buttons {
     display: grid;
