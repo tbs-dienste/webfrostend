@@ -152,7 +152,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             disabled={!showKeypad}
           />
         </div>
-        <div className="form-group">
+        <div className="form-group custom-dropdown dropdown-reason">
           <label>Grund</label>
           <select
             value={reason}
@@ -178,7 +178,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             )}
           </select>
         </div>
-        <div className="form-group">
+
+        <div className="form-group custom-dropdown dropdown-currency">
           <label>Währung</label>
           <select
             value={currency}
@@ -189,6 +190,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             <option value="Euro">Euro</option>
           </select>
         </div>
+
       </div>
 
       <table className="entry-table">

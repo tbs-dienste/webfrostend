@@ -10,7 +10,7 @@
 
   .top-section {
     display: flex;
-    flex-direction: row; // Horizontal für alle Bildschirme
+    flex-direction: row;
     align-items: center;
     gap: 1rem;
     width: 100%;
@@ -40,12 +40,29 @@
         font-size: 1rem;
         border: 1px solid #dfe3e8;
         border-radius: 6px;
+        background: #ffffff;
+        color: #333;
+        appearance: none;
+        position: relative;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23333' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
         transition: all 0.3s;
 
         &:focus {
           border-color: #3b82f6;
           outline: none;
           box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+        }
+      }
+
+      select {
+        cursor: pointer;
+
+        &:disabled {
+          background-color: #f9fafb;
+          border-color: #d1d5db;
+          cursor: not-allowed;
         }
       }
     }
@@ -80,6 +97,10 @@
     td {
       font-size: 0.95rem;
       color: #555;
+    }
+
+    .selected {
+      background-color: #f0f8ff;
     }
   }
 
@@ -151,44 +172,6 @@
       }
     }
   }
-
-  .bottom-buttons {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    max-width: 700px;
-
-    button {
-      flex: 1;
-      padding: 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background-color: #2563eb;
-      color: white;
-      transition: background-color 0.3s, transform 0.2s;
-
-      &:disabled {
-        background-color: #9ca3af;
-        cursor: not-allowed;
-      }
-
-      &:hover:not(:disabled) {
-        background-color: #1d4ed8;
-        transform: translateY(-2px);
-      }
-
-      &:active:not(:disabled) {
-        transform: translateY(0);
-      }
-    }
-  }
-  .entry-table .selected {
-    background-color: #f0f8ff; /* Light blue color for selected row */
-  }
-  
 
   .bottom-buttons {
     display: grid;
