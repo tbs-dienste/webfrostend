@@ -1,5 +1,8 @@
 import React from "react";
-import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+
+// Logo Import
+import Logo from './black.png'; // Hier den Pfad zu deinem Logo angeben
 
 // Stil für das PDF-Dokument
 const styles = StyleSheet.create({
@@ -8,19 +11,30 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica", // Standard Schriftart verwenden
   },
   header: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
     textTransform: "uppercase",
+    color: "#333",
+    marginTop: 120, // Abstand vom Logo
+  },
+  logoContainer: {
+    position: "absolute",
+    top: 30,
+    left: 30,
+    width: 100, // Breite des Logos anpassen
+    height: 100, // Höhe des Logos anpassen
   },
   table: {
     display: "table",
-    width: "auto",
+    width: "100%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderColor: "#000",
+    borderColor: "#ccc",
+    borderRadius: 8,
     marginBottom: 30,
+    overflow: "hidden",
   },
   tableRow: {
     flexDirection: "row",
@@ -28,15 +42,22 @@ const styles = StyleSheet.create({
   tableCell: {
     borderStyle: "solid",
     borderWidth: 1,
-    borderColor: "#000",
-    padding: 5,
-    fontSize: 10,
+    borderColor: "#ccc",
+    padding: 12,
+    fontSize: 12,
     flex: 1,
     textAlign: "center",
+    color: "#333",
   },
   tableHeader: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "#f4f4f4",
     fontWeight: "bold",
+    textTransform: "uppercase",
+    color: "#555",
+  },
+  tableCellText: {
+    fontSize: 10,
+    color: "#666",
   },
   signatureSection: {
     marginTop: 50,
@@ -53,6 +74,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     marginTop: 5,
+    color: "#333",
   },
   signatureLabel: {
     textAlign: "center",
@@ -67,6 +89,11 @@ const PrintTemplate = ({ entry }) => {
   return (
     <Document>
       <Page style={styles.page}>
+        {/* Logo oben links */}
+        <View style={styles.logoContainer}>
+          <Image src={Logo} style={{ width: "100%", height: "100%" }} />
+        </View>
+
         <Text style={styles.header}>{entry.type}</Text>
 
         {/* Tabelle */}
@@ -98,6 +125,5 @@ const PrintTemplate = ({ entry }) => {
     </Document>
   );
 };
-
 
 export default PrintTemplate;

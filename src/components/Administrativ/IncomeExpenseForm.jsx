@@ -16,15 +16,15 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-  axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben', {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  .then(response => {
-    setEntries({
-      einnahmen: response.data.einnahmen || [],
-      ausgaben: response.data.ausgaben || [],
-    });
-  })
+    axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(response => {
+        setEntries({
+          einnahmen: response.data.einnahmen || [],
+          ausgaben: response.data.ausgaben || [],
+        });
+      })
       .catch(error => {
         console.error("Error fetching entries:", error);
       });
@@ -39,9 +39,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     setAmount((prev) => prev + value);
   };
 
-  const handleBackspace = () => {
-    setAmount((prev) => prev.slice(0, -1));
-  };
 
   const handleModeChange = (mode) => {
     setActiveMode(mode);
@@ -132,7 +129,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       return <span>Drucken</span>;
     }
   };
-  
+
 
 
   const handleCancel = () => {
@@ -274,7 +271,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 {key}
               </button>
             ))}
-            <button onClick={handleBackspace}>⌫</button>
           </div>
           <div className="action-buttons">
             <button onClick={handleReset}>Löschen</button>
@@ -282,6 +278,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           </div>
         </div>
       )}
+
 
       <div className="bottom-buttons">
         <button disabled>
