@@ -75,6 +75,7 @@ import Kasse from './components/Administrativ/Kasse';
 import Kassenlogin from './components/Administrativ/Kassenlogin';
 import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
+import Receipts from './components/Administrativ/Reciepts';
 
 const App = () => {
   
@@ -157,6 +158,7 @@ const App = () => {
           <Route path="/statistiken" element={<Statistik />} />
           <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
+          <Route path="/receipts" element={<Receipts />} />
 
 
           <Route

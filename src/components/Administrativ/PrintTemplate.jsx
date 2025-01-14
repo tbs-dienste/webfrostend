@@ -101,9 +101,9 @@ const PrintTemplate = ({ entry }) => {
           <View style={[styles.tableRow, styles.tableHeader]}>
             <Text style={styles.tableCell}>Grund</Text>
             <Text style={styles.tableCell}>Währung</Text>
-            <Text style={styles.tableCell}>In Landwährung (CHF)</Text>
+            <Text style={styles.tableCell}>in LW. (CHF)</Text>
             <Text style={styles.tableCell}>Kurs</Text>
-            <Text style={styles.tableCell}>In Fremdwährung (Euro)</Text>
+            <Text style={styles.tableCell}>in FW. (Euro)</Text>
             <Text style={styles.tableCell}>Datum</Text>
           </View>
           <View style={styles.tableRow}>

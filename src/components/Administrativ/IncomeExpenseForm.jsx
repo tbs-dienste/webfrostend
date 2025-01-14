@@ -132,12 +132,54 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
 
 
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     if (selectedRow !== null) {
-      setEntries((prevEntries) => prevEntries.filter((_, i) => i !== selectedRow));
-      setSelectedRow(null);
+      const selectedEntry =
+        entries.einnahmen[selectedRow] || entries.ausgaben[selectedRow];
+
+      if (selectedEntry) {
+        if (window.confirm("Bist du sicher, dass du diesen Service löschen möchtest?")) {
+          try {
+            // Token aus localStorage abrufen
+            const token = localStorage.getItem('token');
+
+            // Axios DELETE-Request mit Token im Header
+            await axios.delete(
+              `https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben/${selectedEntry._id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            // Den Eintrag aus der State entfernen
+            setEntries((prevEntries) => {
+              const updatedEinnahmen = prevEntries.einnahmen.filter(
+                (entry, index) => index !== selectedRow
+              );
+              const updatedAusgaben = prevEntries.ausgaben.filter(
+                (entry, index) => index !== selectedRow
+              );
+
+              return {
+                einnahmen: updatedEinnahmen,
+                ausgaben: updatedAusgaben,
+              };
+            });
+
+            // Auswahl zurücksetzen
+            setSelectedRow(null);
+          } catch (error) {
+            console.error("Fehler beim Löschen des Service:", error);
+          }
+        }
+      }
     }
   };
+
+
+
 
   return (
     <div className="income-expense-container">
@@ -311,6 +353,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Storno
         </button>
+
         <button onClick={handleSubmit} disabled={!amount || !reason}>
           Übernehmen
         </button>
