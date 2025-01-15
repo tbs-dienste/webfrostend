@@ -34,7 +34,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const fetchScannedProducts = async () => {
     setLoading(true); // Ladeanimation starten
     try {
-      const response = await axios.get(`${API_BASE_URL}/scanned-products`, {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,12 +99,11 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
-    const handleDailyOverview = () => {
-        navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
-    };
+  const handleDailyOverview = () => {
+    navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
+  };
 
 
-  // Produkt scannen
   const scanProduct = async () => {
     if (!articleNumber) {
       setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
@@ -114,7 +113,7 @@ const Kasse = ({ onKassenModusChange }) => {
     setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/scan-product`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan`,
         { article_number: articleNumber, quantity: 1 }, // Immer Menge 1
         {
           headers: {
@@ -133,6 +132,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
+
 
   // Rabatt hinzufügen
   const addDiscount = async (discountTitle) => {
@@ -194,6 +194,20 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const clearQuantity = () => setQuantity(0); // Löscht die Menge
+
+  // Funktion zum Ändern der Menge für ein Produkt
+  const handleQuantityChange = (product, action) => {
+    const updatedProducts = scannedProducts.map((item) => {
+      if (item.article_number === product.article_number) {
+        let newQuantity = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
+        newQuantity = newQuantity < 1 ? 1 : newQuantity; // Sicherstellen, dass die Menge nicht unter 1 geht
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    setScannedProducts(updatedProducts);
+    calculateTotalPrice(); // Gesamtpreis neu berechnen
+  };
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -305,9 +319,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button>Einstellungen</button>
             </div>
 
-            {/* Mitte: Gescannte Produkte */}
             <div className="scanned-products">
-
               {scannedProducts.length === 0 ? (
                 <p>Keine Produkte gescannt.</p>
               ) : (
@@ -320,9 +332,19 @@ const Kasse = ({ onKassenModusChange }) => {
                     >
                       <div className="product-details">
                         <span className="product-name">{product.article_short_text}</span>
-                        <span className="product-quantity">
-                          {product.quantity} x
-                        </span>
+                        <div className="quantity-controls">
+                          <button
+                            className="quantity-btn"
+                            onClick={() => handleQuantityChange(product, 'decrease')}
+                          >-</button>
+                          <span className="product-quantity">
+                            {product.quantity} x
+                          </span>
+                          <button
+                            className="quantity-btn"
+                            onClick={() => handleQuantityChange(product, 'increase')}
+                          >+</button>
+                        </div>
                         <span className="product-price">
                           {parseFloat(product.price).toFixed(2)} CHF
                         </span>
@@ -350,14 +372,14 @@ const Kasse = ({ onKassenModusChange }) => {
                     <button className="btn-pay">Bezahlen</button>
                   </div>
                 </div>
-
-
               )}
             </div>
+
+
             {/* Kundenkarte Buttons */}
             {showCustomerCardButtons && (
               <div className="customer-card-buttons">
-                <button  className="discount-btn">50 CHF</button>
+                <button className="discount-btn">50 CHF</button>
                 <button className="discount-btn">30 CHF</button>
               </div>
             )}
