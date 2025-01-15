@@ -42,10 +42,11 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    overflow: hidden;
 
     ul {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: wrap; // Erlaubt das Umwickeln von Elementen
       gap: 20px;
       list-style-type: none;
       padding: 0;
@@ -92,7 +93,7 @@
     }
   }
 
-  // Mobile View
+  // Mobile View (Burger Menu)
   @media (max-width: 768px) {
     .menu-icon {
       display: block;
@@ -124,6 +125,22 @@
           margin: 10px 0;
         }
       }
+    }
+
+    .nav-items {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      flex-wrap: nowrap; // Verhindert das Umwickeln der Elemente auf mobilen Geräten
+    }
+  }
+
+  // Tablet- und Desktop-Ansicht
+  @media (min-width: 769px) {
+    .nav-items {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 20px;
     }
   }
 }

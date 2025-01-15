@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'; // Importiere Link von react-router-dom
 const Preisinformationen = ({ isAdmin }) => {
   const [backendPakete, setBackendPakete] = useState([]);
   const [datenbankPakete, setDatenbankPakete] = useState([]);
+  const [dienstleistungen, setDienstleistungen] = useState([]);
 
   useEffect(() => {
     const fetchBackendPakete = async () => {
@@ -34,7 +35,18 @@ const Preisinformationen = ({ isAdmin }) => {
         console.error('Fehler beim Abrufen der Datenbank-Pakete:', error);
       }
     };
+    const fetchDienstleistungen = async () => {
+      try {
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung'); // API-Endpunkt für Dienstleistungen
+        if (response.data) {
+          setDienstleistungen(response.data.data);
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Dienstleistungen:', error);
+      }
+    };
 
+    fetchDienstleistungen();
     fetchBackendPakete();
     fetchDatenbankPakete();
   }, []);
@@ -47,7 +59,7 @@ const Preisinformationen = ({ isAdmin }) => {
   return (
     <div className="preisinformationen">
       <h1>Preisinformationen</h1>
-      <p>Unsere Dienstleistungen werden nach einem individuell mit den Kunden vereinbarten Stundensatz berechnet. Die Kosten für Backend-Entwicklung und Datenbank sind ebenfalls aufgeführt.</p>
+      <p>Unsere Dienstleistungen werden zu festen Stundenpreisen angeboten. Die Preise für jede Dienstleistung können Sie in der untenstehenden Tabelle einsehen. Zusätzlich bieten wir Datenbank-Pakete an, die von unseren Anbietern zur Verfügung gestellt werden. Diese Pakete umfassen Backend-Entwicklung und Datenbanklösungen. Die jeweiligen Preise für diese Pakete sind ebenfalls in der Tabelle aufgeführt und spiegeln die Vereinbarungen mit unseren Partnern wider.</p>
 
       <div className="legend">
         <h2>Legende</h2>
@@ -66,27 +78,27 @@ const Preisinformationen = ({ isAdmin }) => {
 
       <div className="tables">
         <div className="table-container">
-          <h2>Stundensatz</h2>
+          <h2>Dienstleistungen & Preise</h2>
           <table>
             <thead>
               <tr>
                 <th>Leistung</th>
-                <th>Preis pro Stunde</th>
+              
+                <th>Preis</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Entwicklung</td>
-                <td>Individuell</td>
-              </tr>
-              <tr>
-                <td>Design</td>
-                <td>Individuell</td>
-              </tr>
-              <tr>
-                <td>Beratung</td>
-                <td>Individuell</td>
-              </tr>
+              {dienstleistungen.length > 0 ? (
+                dienstleistungen.map((dienstleistung) => (
+                  <tr key={dienstleistung.id}>
+                    <td>{dienstleistung.title}</td>
+                   
+                    <td>{formatPreis(dienstleistung.preis)} CHF</td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="3">Keine Dienstleistungen verfügbar</td></tr>
+              )}
             </tbody>
           </table>
         </div>
