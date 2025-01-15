@@ -3,6 +3,7 @@ import axios from 'axios';
 import './Kasse.scss'; // SCSS für Styling und Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importiere FontAwesome
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
+import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 
 const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -24,6 +25,8 @@ const Kasse = ({ onKassenModusChange }) => {
   const [showCustomerCardButtons, setShowCustomerCardButtons] = useState(false); // Zustand für die Anzeige der Buttons
   const [loadingProgress, setLoadingProgress] = useState(0); // Progress der Ladeanimation
   const [totalPrice, setTotalPrice] = useState(0); // Gesamtpreis
+  const navigate = useNavigate(); // Initialisiere useNavigate
+
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
@@ -94,6 +97,11 @@ const Kasse = ({ onKassenModusChange }) => {
     window.location = "/kassenuebersicht";
     // Weiterleitung zur Login-Seite oder zum gewünschten Ort
   };
+
+
+    const handleDailyOverview = () => {
+        navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
+    };
 
 
   // Produkt scannen
@@ -289,6 +297,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button>Schublade öffnen</button>
               <button onClick={handleCustomerCardClick}>Kundenkarte</button>
               <button>GS-Karte</button>
+              <button onClick={handleDailyOverview}>Tagesübersicht</button>
               <button onClick={handleSignOut} className="sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
               </button>
@@ -315,10 +324,10 @@ const Kasse = ({ onKassenModusChange }) => {
                           {product.quantity} x
                         </span>
                         <span className="product-price">
-                          {parseFloat(product.price).toFixed(2)} €
+                          {parseFloat(product.price).toFixed(2)} CHF
                         </span>
                         <span className="total-price">
-                          {product.finalPrice ? product.finalPrice.toFixed(2) : (parseFloat(product.price) * product.quantity).toFixed(2)} €
+                          {product.finalPrice ? product.finalPrice.toFixed(2) : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
                         </span>
                       </div>
 
@@ -326,7 +335,7 @@ const Kasse = ({ onKassenModusChange }) => {
                         {product.discounts?.length > 0 ? (
                           product.discounts.map((discount, index) => (
                             <span key={index} className="discount">
-                              {discount.title} ({discount.amount} €)
+                              {discount.title} ({discount.amount} CHF)
                             </span>
                           ))
                         ) : (
@@ -337,7 +346,7 @@ const Kasse = ({ onKassenModusChange }) => {
                   ))}
 
                   <div className="payment-section">
-                    <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} €</h3>
+                    <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
                     <button className="btn-pay">Bezahlen</button>
                   </div>
                 </div>

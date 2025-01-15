@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PDFViewer, Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import { jwtDecode } from 'jwt-decode'; // jwt-decode importieren
+import {jwtDecode} from "jwt-decode"; // jwt-decode importieren
 
 // Logo importieren
 import Logo from "./black.png"; // Pfad zu deinem Logo
+import "./Reciepts.scss"; // SCSS-Datei importieren
 
 // PDF-Stile definieren
 const styles = StyleSheet.create({
@@ -108,8 +109,8 @@ const ReceiptPDF = ({ receipt, employeeName }) => (
         {receipt.products.map((product, index) => (
           <View style={styles.productRow} key={index}>
             <Text>{product.article_short_text}</Text>
-            <Text>{product.quantity} x {product.price} €</Text>
-            <Text>{(product.quantity * product.price).toFixed(2)} €</Text>
+            <Text>{product.quantity} x {product.price} CHF</Text>
+            <Text>{(product.quantity * product.price).toFixed(2)} CHF</Text>
           </View>
         ))}
       </View>
@@ -118,16 +119,16 @@ const ReceiptPDF = ({ receipt, employeeName }) => (
       <View style={styles.section}>
         <View style={styles.totalRow}>
           <Text>Gesamtbetrag:</Text>
-          <Text>{receipt.total_amount} €</Text>
+          <Text>{receipt.total_amount} CHF</Text>
         </View>
         <View style={styles.totalRow}>
           <Text>Gezahlt:</Text>
-          <Text>{receipt.payment_amount} €</Text>
+          <Text>{receipt.payment_amount} CHF</Text>
         </View>
         {receipt.payment_method === "Bar" && (
           <View style={styles.totalRow}>
             <Text>Rückgeld:</Text>
-            <Text>{(receipt.payment_amount - receipt.total_amount).toFixed(2)} €</Text>
+            <Text>{(receipt.payment_amount - receipt.total_amount).toFixed(2)} CHF</Text>
           </View>
         )}
       </View>
@@ -185,27 +186,20 @@ const Receipts = () => {
     setSelectedReceipt(receipt);
   };
 
-  if (loading) return <p>Lade Daten...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="loading-message">Lade Daten...</p>;
+  if (error) return <p className="error-message">{error}</p>;
 
   return (
-    <div>
+    <div className="receipts-container">
       <h1>Quittungen</h1>
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          marginBottom: "20px",
-          border: "1px solid #ddd",
-        }}
-      >
+      <table className="receipts-table">
         <thead>
-          <tr style={{ backgroundColor: "#f5f5f5" }}>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Transaktions-ID</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Mitarbeiter-ID</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Zahlungsmethode</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Gezahlt (€)</th>
-            <th style={{ padding: "8px", border: "1px solid #ddd" }}>Gesamtbetrag (€)</th>
+          <tr>
+            <th>Transaktions-ID</th>
+            <th>Mitarbeiter-ID</th>
+            <th>Zahlungsmethode</th>
+            <th>Gezahlt (CHF)</th>
+            <th>Gesamtbetrag (CHF)</th>
           </tr>
         </thead>
         <tbody>
@@ -213,29 +207,29 @@ const Receipts = () => {
             <tr
               key={receipt.transaction_id}
               onClick={() => handleRowClick(receipt)}
-              style={{
-                backgroundColor:
-                  selectedReceipt?.transaction_id === receipt.transaction_id ? "#e6f7ff" : "white",
-                cursor: "pointer",
-              }}
+              className={
+                selectedReceipt?.transaction_id === receipt.transaction_id
+                  ? "selected"
+                  : ""
+              }
             >
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{receipt.transaction_id}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{receipt.mitarbeiterId}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{receipt.payment_method}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{receipt.payment_amount}</td>
-              <td style={{ padding: "8px", border: "1px solid #ddd" }}>{receipt.total_amount}</td>
+              <td>{receipt.transaction_id}</td>
+              <td>{receipt.mitarbeiterId}</td>
+              <td>{receipt.payment_method}</td>
+              <td>{receipt.payment_amount}</td>
+              <td>{receipt.total_amount}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {selectedReceipt && (
-        <PDFViewer width="100%" height="600">
+      {selectedReceipt ? (
+        <PDFViewer className="pdf-viewer">
           <ReceiptPDF receipt={selectedReceipt} employeeName={employeeName} />
         </PDFViewer>
+      ) : (
+        <p className="no-selection-message">Bitte wählen Sie eine Quittung aus.</p>
       )}
-
-      {!selectedReceipt && <p>Bitte wählen Sie eine Quittung aus.</p>}
     </div>
   );
 };
