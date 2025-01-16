@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Importiere Link von react-router-dom
+import { Link } from 'react-router-dom';
 import './KassenUebersicht.scss';
 import blacklogo from './black.png'; // Bild importieren
+import { FaDoorOpen } from 'react-icons/fa'; // Icon von react-icons importieren
 
 const KassenUebersicht = ({ onKassenModusChange }) => {
   // Setzt den Kassenmodus beim Laden der Seite auf true, wenn erforderlich
@@ -22,7 +23,6 @@ const KassenUebersicht = ({ onKassenModusChange }) => {
           className="kassen-übersicht__image"
         />
         <div className="kassen-übersicht__text-wrapper">
-         
           <div className="kassen-übersicht__text">Kassensystem</div>
         </div>
       </div>
@@ -31,6 +31,9 @@ const KassenUebersicht = ({ onKassenModusChange }) => {
         <Link to="/einnahmeausgabe" className="link">Einnahmen Ausgaben</Link>
         <Link to="/prov-abschluss" className="link">Prov. Abschluss</Link>
         <Link to="/receipts" className="link">Tagesübersicht</Link>
+        <Link to="/kassenlogin" className="link">
+          <FaDoorOpen className="exit-icon" /> 
+        </Link>
       </div>
     </div>
   );

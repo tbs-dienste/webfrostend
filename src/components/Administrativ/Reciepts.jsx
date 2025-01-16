@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PDFViewer, Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import {jwtDecode} from "jwt-decode"; // jwt-decode importieren
+import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 
 // Logo importieren
 import Logo from "./black.png"; // Pfad zu deinem Logo
@@ -75,6 +75,19 @@ const styles = StyleSheet.create({
   },
 });
 
+// Funktion für das aktuelle Datum und Uhrzeit
+const getFormattedDateTime = () => {
+  const now = new Date();
+  return now.toLocaleString("de-DE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+};
+
 // PDF-Komponente
 const ReceiptPDF = ({ receipt, employeeName }) => (
   <Document>
@@ -82,8 +95,8 @@ const ReceiptPDF = ({ receipt, employeeName }) => (
       {/* Header mit Logo und Titel */}
       <View style={styles.header}>
         <Image src={Logo} style={styles.logo} />
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Quittung</Text>
-        <Text style={{ fontSize: 10 }}>Datum: {receipt.date || "-"}</Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold" }}>Quittung</Text>
+        <Text style={{ fontSize: 13 }}> {getFormattedDateTime()}</Text>
       </View>
 
       {/* Transaktionsinformationen */}
