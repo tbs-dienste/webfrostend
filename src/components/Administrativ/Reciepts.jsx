@@ -161,6 +161,7 @@ const Receipts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [employeeName, setEmployeeName] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -171,33 +172,35 @@ const Receipts = () => {
   }, []);
 
   useEffect(() => {
-    const fetchReceipts = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "https://tbsdigitalsolutionsbackend.onrender.com/api/payment/receipts",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setReceipts(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Fehler beim Abrufen der Quittungen:", err);
-        setError("Fehler beim Laden der Daten.");
-        setLoading(false);
-      }
-    };
+  const fetchReceipts = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/payment/receipts?date=${selectedDate}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setReceipts(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Fehler beim Abrufen der Quittungen:", err);
+      setError("Fehler beim Laden der Daten.");
+      setLoading(false);
+    }
+  };
 
-    fetchReceipts();
-  }, []);
+  fetchReceipts();
+}, [selectedDate]); // Fetch neu auslösen, wenn sich das Datum ändert
 
   const handleRowClick = (receipt) => {
     setSelectedReceipt(receipt);
   };
+  
+  const handleDateChange = (event) => {
+  setSelectedDate(event.target.value);
+};
 
   if (loading) return <p className="loading-message">Lade Daten...</p>;
   if (error) return <p className="error-message">{error}</p>;
@@ -235,6 +238,16 @@ const Receipts = () => {
           ))}
         </tbody>
       </table>
+      
+      <div className="date-filter-container">
+  <label htmlFor="datePicker">Datum auswählen:</label>
+  <input
+    type="date"
+    id="datePicker"
+    value={selectedDate}
+    onChange={handleDateChange}
+  />
+</div>
 
       {selectedReceipt ? (
         <PDFViewer className="pdf-viewer">
