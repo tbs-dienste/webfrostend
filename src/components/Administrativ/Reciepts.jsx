@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PDFViewer, Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
+import Calendar from 'react-calendar'; // Kalender importieren
+import 'react-calendar/dist/Calendar.css'; // Kalender CSS importieren
 
 // Logo importieren
 import Logo from "./black.png"; // Pfad zu deinem Logo
@@ -171,36 +173,44 @@ const Receipts = () => {
     }
   }, []);
 
+  // Quittungen abrufen, wenn sich das Datum ändert
   useEffect(() => {
-  const fetchReceipts = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/payment/receipts?date=${selectedDate}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setReceipts(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Fehler beim Abrufen der Quittungen:", err);
-      setError("Fehler beim Laden der Daten.");
-      setLoading(false);
-    }
-  };
+    const fetchReceipts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  fetchReceipts();
-}, [selectedDate]); // Fetch neu auslösen, wenn sich das Datum ändert
+        const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const response = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/payment/receipts?date=${selectedDate}`,
+          { headers }
+        );
+
+        setReceipts(response.data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        if (error.response && error.response.status === 404) {
+          setReceipts([]);
+          setError("Keine Quittungen für dieses Datum gefunden.");
+        } else {
+          setError("Fehler beim Abrufen der Quittungen.");
+        }
+      }
+    };
+
+    fetchReceipts();
+  }, [selectedDate]);
 
   const handleRowClick = (receipt) => {
     setSelectedReceipt(receipt);
   };
-  
+
   const handleDateChange = (event) => {
-  setSelectedDate(event.target.value);
-};
+    setSelectedDate(event.target.value);
+  };
 
   if (loading) return <p className="loading-message">Lade Daten...</p>;
   if (error) return <p className="error-message">{error}</p>;
@@ -216,45 +226,49 @@ const Receipts = () => {
             <th>Zahlungsmethode</th>
             <th>Gezahlt (CHF)</th>
             <th>Gesamtbetrag (CHF)</th>
+            <th>Datum</th>
           </tr>
         </thead>
         <tbody>
-          {receipts.map((receipt) => (
-            <tr
-              key={receipt.transaction_id}
-              onClick={() => handleRowClick(receipt)}
-              className={
-                selectedReceipt?.transaction_id === receipt.transaction_id
-                  ? "selected"
-                  : ""
-              }
-            >
-              <td>{receipt.transaction_id}</td>
-              <td>{receipt.mitarbeiterId}</td>
-              <td>{receipt.payment_method}</td>
-              <td>{receipt.payment_amount}</td>
-              <td>{receipt.total_amount}</td>
+          {receipts.length > 0 ? (
+            receipts.map((receipt) => (
+              <tr key={receipt.transaction_id} onClick={() => setSelectedReceipt(receipt)}>
+                <td>{receipt.transaction_id}</td>
+                <td>{receipt.mitarbeiterId}</td>
+                <td>{receipt.payment_method}</td>
+                <td>{receipt.payment_amount}</td>
+                <td>{receipt.total_amount}</td>
+                <td>{new Date(receipt.created_at).toLocaleDateString("de-DE")}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" style={{ color: "red", fontWeight: "bold", textAlign: "center" }}>
+                {error || "Keine Quittungen für das ausgewählte Datum."}
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-      
-      <div className="date-filter-container">
-  <label htmlFor="datePicker">Datum auswählen:</label>
-  <input
-    type="date"
-    id="datePicker"
-    value={selectedDate}
-    onChange={handleDateChange}
-  />
-</div>
 
-      {selectedReceipt ? (
-        <PDFViewer className="pdf-viewer">
-          <ReceiptPDF receipt={selectedReceipt} employeeName={employeeName} />
-        </PDFViewer>
-      ) : (
-        <p className="no-selection-message">Bitte wählen Sie eine Quittung aus.</p>
+      {/* Datums-Auswahl */}
+      <div className="date-filter-container">
+        <label htmlFor="datePicker">Datum auswählen:</label>
+        <input type="date" value={selectedDate} onChange={handleDateChange} />
+      </div>
+
+      {/* Kalender */}
+      <div className="calendar-container">
+        <Calendar onChange={setSelectedDate} value={new Date(selectedDate)} />
+      </div>
+
+      {/* Quittungsansicht */}
+      {selectedReceipt && (
+        <div className="pdf-viewer">
+          <PDFViewer width="100%" height={600}>
+            <ReceiptPDF receipt={selectedReceipt} employeeName={employeeName} />
+          </PDFViewer>
+        </div>
       )}
     </div>
   );

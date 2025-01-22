@@ -25,6 +25,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const [showCustomerCardButtons, setShowCustomerCardButtons] = useState(false); // Zustand für die Anzeige der Buttons
   const [loadingProgress, setLoadingProgress] = useState(0); // Progress der Ladeanimation
   const [totalPrice, setTotalPrice] = useState(0); // Gesamtpreis
+  const [scanInput, setScanInput] = useState('');
   const navigate = useNavigate(); // Initialisiere useNavigate
 
 
@@ -34,7 +35,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const fetchScannedProducts = async () => {
     setLoading(true); // Ladeanimation starten
     try {
-      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned`, {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -122,8 +123,30 @@ const Kasse = ({ onKassenModusChange }) => {
         }
       );
 
+      const scannedProduct = response.data.data; // Das gescannte Produkt
+
+      // Überprüfen, ob das Produkt bereits gescannt wurde
+      const existingProduct = scannedProducts.find(
+        (product) => product.article_number === scannedProduct.article_number
+      );
+
+      if (existingProduct) {
+        // Wenn das Produkt bereits vorhanden ist, Menge um 1 erhöhen
+        const updatedProducts = scannedProducts.map((product) =>
+          product.article_number === existingProduct.article_number
+            ? { ...product, quantity: product.quantity + 1 }
+            : product
+        );
+        setScannedProducts(updatedProducts);
+      } else {
+        // Wenn das Produkt noch nicht vorhanden ist, füge es mit Menge 1 hinzu
+        setScannedProducts((prev) => [
+          ...prev,
+          { ...scannedProduct, quantity: 1 },
+        ]);
+      }
+
       setSuccessMessage('Produkt erfolgreich gescannt.');
-      fetchScannedProducts(); // Gescannte Produkte Liste aktualisieren
       setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
     } catch (error) {
       console.error('Fehler beim Scannen des Produkts:', error);
@@ -132,6 +155,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
+
 
 
   // Rabatt hinzufügen
@@ -177,6 +201,10 @@ const Kasse = ({ onKassenModusChange }) => {
   const cancelKasseMode = () => {
     setKasseMode(false);
     onKassenModusChange(false);
+  };
+
+  const handleScan = (event) => {
+    setScanInput(event.target.value);
   };
 
   const toggleDiscounts = () => {
@@ -336,20 +364,26 @@ const Kasse = ({ onKassenModusChange }) => {
                           <button
                             className="quantity-btn"
                             onClick={() => handleQuantityChange(product, 'decrease')}
-                          >-</button>
+                          >
+                            -
+                          </button>
                           <span className="product-quantity">
                             {product.quantity} x
                           </span>
                           <button
                             className="quantity-btn"
                             onClick={() => handleQuantityChange(product, 'increase')}
-                          >+</button>
+                          >
+                            +
+                          </button>
                         </div>
                         <span className="product-price">
                           {parseFloat(product.price).toFixed(2)} CHF
                         </span>
                         <span className="total-price">
-                          {product.finalPrice ? product.finalPrice.toFixed(2) : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                          {product.finalPrice
+                            ? product.finalPrice.toFixed(2)
+                            : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
                         </span>
                       </div>
 
@@ -374,6 +408,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 </div>
               )}
             </div>
+
 
 
             {/* Kundenkarte Buttons */}
@@ -462,21 +497,22 @@ const Kasse = ({ onKassenModusChange }) => {
         </>
       )}
 
-      {/* Artikel scannen Eingabefeld */}
+      {/* Gemeinsames Eingabefeld für Artikel- und Bonnummer */}
       {showScan && (
         <div className="scan-input">
           <input
             type="text"
-            value={articleNumber}
-            onChange={(e) => setArticleNumber(e.target.value)}
+            value={scanInput}
+            onChange={handleScan}
             placeholder="Artikelnummer eingeben"
-            className="article-input"
           />
-          <button onClick={scanProduct} className="scan-button">
+
+          <button onClick={handleScan} className="scan-button">
             <i className="fas fa-barcode"></i> Scannen
           </button>
         </div>
       )}
+
     </div>
   );
 };
