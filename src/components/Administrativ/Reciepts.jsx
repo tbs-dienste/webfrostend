@@ -77,28 +77,15 @@ const styles = StyleSheet.create({
   },
 });
 
-// Funktion für das aktuelle Datum und Uhrzeit
-const getFormattedDateTime = () => {
-  const now = new Date();
-  return now.toLocaleString("de-DE", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-};
-
 // PDF-Komponente
-const ReceiptPDF = ({ receipt, employeeName }) => (
+const ReceiptPDF = ({ receipt, employeeName, printDate }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header mit Logo und Titel */}
       <View style={styles.header}>
         <Image src={Logo} style={styles.logo} />
         <Text style={{ fontSize: 25, fontWeight: "bold" }}>Quittung</Text>
-        <Text style={{ fontSize: 13 }}> {getFormattedDateTime()}</Text>
+        <Text style={{ fontSize: 13 }}>{printDate}</Text>
       </View>
 
       {/* Transaktionsinformationen */}
@@ -164,6 +151,19 @@ const Receipts = () => {
   const [error, setError] = useState(null);
   const [employeeName, setEmployeeName] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [printDate, setPrintDate] = useState(null);
+
+  const handleRowClick = (receipt) => {
+    setSelectedReceipt(receipt);
+    setPrintDate(new Date().toLocaleString("de-DE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }));
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -204,16 +204,11 @@ const Receipts = () => {
     fetchReceipts();
   }, [selectedDate]);
 
-  const handleRowClick = (receipt) => {
-    setSelectedReceipt(receipt);
-  };
-
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
 
   if (loading) return <p className="loading-message">Lade Daten...</p>;
-  if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="receipts-container">
@@ -232,7 +227,7 @@ const Receipts = () => {
         <tbody>
           {receipts.length > 0 ? (
             receipts.map((receipt) => (
-              <tr key={receipt.transaction_id} onClick={() => setSelectedReceipt(receipt)}>
+              <tr key={receipt.transaction_id} onClick={() => handleRowClick(receipt)}>
                 <td>{receipt.transaction_id}</td>
                 <td>{receipt.mitarbeiterId}</td>
                 <td>{receipt.payment_method}</td>
@@ -243,30 +238,24 @@ const Receipts = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="6" style={{ color: "red", fontWeight: "bold", textAlign: "center" }}>
-                {error || "Keine Quittungen für das ausgewählte Datum."}
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                Keine Quittungen für dieses Datum gefunden.
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* Datums-Auswahl */}
-      <div className="date-filter-container">
-        <label htmlFor="datePicker">Datum auswählen:</label>
-        <input type="date" value={selectedDate} onChange={handleDateChange} />
-      </div>
 
       {/* Kalender */}
       <div className="calendar-container">
         <Calendar onChange={setSelectedDate} value={new Date(selectedDate)} />
       </div>
 
-      {/* Quittungsansicht */}
       {selectedReceipt && (
         <div className="pdf-viewer">
           <PDFViewer width="100%" height={600}>
-            <ReceiptPDF receipt={selectedReceipt} employeeName={employeeName} />
+            <ReceiptPDF receipt={selectedReceipt} employeeName={employeeName} printDate={printDate} />
           </PDFViewer>
         </div>
       )}

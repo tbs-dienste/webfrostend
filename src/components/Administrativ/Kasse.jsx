@@ -99,7 +99,18 @@ const Kasse = ({ onKassenModusChange }) => {
     // Weiterleitung zur Login-Seite oder zum gewünschten Ort
   };
 
+  const addStornoCost = () => {
+    const stornoProduct = {
+      article_number: '260163219953', // Artikelnummer für das Storno-Produkt
+      quantity: 1,  // Menge für das Storno
+    };
+    // Das Storno-Produkt wird zu den gescannten Produkten hinzugefügt
+    setScannedProducts((prev) => [...prev, stornoProduct]);
+    setSuccessMessage('Storno-Kosten hinzugefügt.');
+  };
+  
 
+ 
   const handleDailyOverview = () => {
     navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
   };
@@ -110,7 +121,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
       return;
     }
-
+  
     setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.post(
@@ -122,14 +133,14 @@ const Kasse = ({ onKassenModusChange }) => {
           },
         }
       );
-
+  
       const scannedProduct = response.data.data; // Das gescannte Produkt
-
+  
       // Überprüfen, ob das Produkt bereits gescannt wurde
       const existingProduct = scannedProducts.find(
         (product) => product.article_number === scannedProduct.article_number
       );
-
+  
       if (existingProduct) {
         // Wenn das Produkt bereits vorhanden ist, Menge um 1 erhöhen
         const updatedProducts = scannedProducts.map((product) =>
@@ -145,7 +156,7 @@ const Kasse = ({ onKassenModusChange }) => {
           { ...scannedProduct, quantity: 1 },
         ]);
       }
-
+  
       setSuccessMessage('Produkt erfolgreich gescannt.');
       setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
     } catch (error) {
@@ -155,6 +166,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
+  
 
 
 
@@ -340,6 +352,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button onClick={handleCustomerCardClick}>Kundenkarte</button>
               <button>GS-Karte</button>
               <button onClick={handleDailyOverview}>Tagesübersicht</button>
+              <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
               <button onClick={handleSignOut} className="sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
               </button>
