@@ -163,7 +163,7 @@ const App = () => {
 
           <Route
             path="/kasse"
-            element={<Kasse onKassenModusChange={toggleKassenModus} />}
+            element={<Kassenlogin onKassenModusChange={toggleKassenModus} />}
           />
           <Route path="/kassenlogin"   element={<Kassenlogin onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />

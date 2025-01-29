@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Kasse.scss'; // SCSS für Styling und Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importiere FontAwesome
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
+import { faSignOutAlt, faPrint } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 
 const Kasse = ({ onKassenModusChange }) => {
@@ -223,6 +223,10 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowDiscounts(!showDiscounts);
   };
 
+  const toggleLastReciepts = () => {
+    alert("Quittung letzte")
+  };
+
   // Funktion für das Klicken auf die Kundenkarte
   const handleCustomerCardClick = () => {
     setShowCustomerCardButtons(!showCustomerCardButtons); // Toggle für die Buttons
@@ -253,6 +257,11 @@ const Kasse = ({ onKassenModusChange }) => {
   // Toggelt die Anzeige des Scan-Input-Feldes
   const toggleScanInput = () => {
     setShowScan(prev => !prev);
+  };
+
+  // Toggelt die Anzeige des Scan-Input-Feldes
+  const toggleBonCancel = () => {
+    alert('Abbruch')
   };
 
 
@@ -320,20 +329,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-      {!kasseMode ? (
-        <div className="kasse-prompt">
-          <h2>Willst du den Kassenmodus starten?</h2>
-          <div className="buttons">
-            <button onClick={startKasseMode} className="btn-yes">
-              <i className="fas fa-check"></i> Ja
-            </button>
-            <button onClick={cancelKasseMode} className="btn-no">
-              <i className="fas fa-times"></i> Nein
-            </button>
-          </div>
-        </div>
-      ) : (
-        <>
+    
 
           {/* Fehlermeldungen */}
           {errorMessage && <p className="error">{errorMessage}</p>}
@@ -346,11 +342,16 @@ const Kasse = ({ onKassenModusChange }) => {
               <button onClick={handleDailyClose}>Tagesabschluss</button>
               <button onClick={toggleScanInput}>Artikel scannen</button>
               <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
+              <button onClick={toggleBonCancel}>Bon Abbruch</button>
               <button>Kassierer wechseln</button>
               <button>Kunden suchen</button>
+              <button onClick={toggleLastReciepts} className="sign-out-button">
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
               <button>Schublade öffnen</button>
               <button onClick={handleCustomerCardClick}>Kundenkarte</button>
               <button>GS-Karte</button>
+              <button>Bon Parkieren</button>
               <button onClick={handleDailyOverview}>Tagesübersicht</button>
               <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
               <button onClick={handleSignOut} className="sign-out-button">
@@ -507,8 +508,8 @@ const Kasse = ({ onKassenModusChange }) => {
               {discount.title}
             </button>
           ))}
-        </>
-      )}
+    
+   
 
       {/* Gemeinsames Eingabefeld für Artikel- und Bonnummer */}
       {showScan && (
