@@ -5,12 +5,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const Kassenlogin = ({ onKassenModusChange }) => {
-  const [username, setUsername] = useState("");
   const [pin, setPin] = useState("");
-  const [isPinRequired, setIsPinRequired] = useState(false);
   const [kasseMode, setKasseMode] = useState(false);
 
   useEffect(() => {
+    // Token aus dem localStorage löschen, wenn Login angezeigt wird
+    localStorage.removeItem("token");
+
     const token = localStorage.getItem("token");
     if (token) {
       setKasseMode(true);
@@ -19,55 +20,37 @@ const Kassenlogin = ({ onKassenModusChange }) => {
   }, [onKassenModusChange]);
 
   const handleNumericKeypadClick = (number) => {
-    if (isPinRequired) {
-      setPin((prevPin) => prevPin + number);
-    } else {
-      setUsername((prevUsername) => prevUsername + number);
-    }
+    setPin((prevPin) => prevPin + number);
   };
 
   const clearInput = () => {
-    if (isPinRequired) {
-      setPin("");
-    } else {
-      setUsername("");
-    }
+    setPin("");
   };
 
   const handleLogin = () => {
-    if (!isPinRequired) {
-      if (username) {
-        localStorage.setItem("username", username);
-        setIsPinRequired(true);
-      } else {
-        alert("Bitte Benutzernamen eingeben");
-      }
+    if (pin) {
+      // Sende die PIN an den Server, um den Mitarbeiter zu ermitteln
+      axios
+        .post("https://tbsdigitalsolutionsbackend.onrender.com/api/kassenlogin/login", { pin })
+        .then((response) => {
+          if (response.data.success) {
+            // Nur das Token speichern
+            localStorage.setItem("token", response.data.token);
+            setKasseMode(true);
+            onKassenModusChange(true);
+            alert("Login erfolgreich!");
+            // Vollbildmodus aktivieren
+            document.documentElement.requestFullscreen();
+          } else {
+            alert("PIN ist falsch.");
+          }
+        })
+        .catch((error) => {
+          console.error("Fehler bei der Anmeldung:", error);
+          alert("Es gab einen Fehler. Versuchen Sie es später erneut.");
+        });
     } else {
-      if (pin) {
-        const storedUsername = localStorage.getItem("username");
-        const loginData = { username: storedUsername, pin: pin };
-
-        axios
-          .post("https://example.com/api/login", loginData)
-          .then((response) => {
-            if (response.data.success) {
-              localStorage.setItem("token", response.data.token);
-              setKasseMode(true);
-              onKassenModusChange(true);
-              alert("Login erfolgreich!");
-              // Vollbildmodus aktivieren
-              document.documentElement.requestFullscreen();
-            } else {
-              alert("Benutzername oder PIN ist falsch.");
-            }
-          })
-          .catch((error) => {
-            console.error("Fehler bei der Anmeldung:", error);
-            alert("Es gab einen Fehler. Versuchen Sie es später erneut.");
-          });
-      } else {
-        alert("Bitte PIN eingeben");
-      }
+      alert("Bitte PIN eingeben");
     }
   };
 
@@ -88,59 +71,29 @@ const Kassenlogin = ({ onKassenModusChange }) => {
       <div className="login-container">
         <div className="login-box">
           <h2>Login</h2>
-          {!isPinRequired ? (
-            <>
-              <input
-                type="text"
-                className="input-display"
-                value={username}
-                readOnly
-                placeholder="Benutzername eingeben"
-              />
-              <div className="keypad">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => handleNumericKeypadClick(number)}
-                    className="keypad-btn"
-                  >
-                    {number}
-                  </button>
-                ))}
-                <button className="keypad-btn" onClick={clearInput}>C</button>
-                <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>0</button>
-                <button className="keypad-btn" onClick={handleLogin}>
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <input
-                type="password"
-                className="input-display"
-                value={pin}
-                readOnly
-                placeholder="PIN eingeben"
-              />
-              <div className="keypad">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => handleNumericKeypadClick(number)}
-                    className="keypad-btn"
-                  >
-                    {number}
-                  </button>
-                ))}
-                <button className="keypad-btn" onClick={clearInput}>C</button>
-                <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>0</button>
-                <button className="keypad-btn" onClick={handleLogin}>
-                  <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-              </div>
-            </>
-          )}
+          <input
+            type="password"
+            className="input-display"
+            value={pin}
+            readOnly
+            placeholder="PIN eingeben"
+          />
+          <div className="keypad">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+              <button
+                key={number}
+                onClick={() => handleNumericKeypadClick(number)}
+                className="keypad-btn"
+              >
+                {number}
+              </button>
+            ))}
+            <button className="keypad-btn" onClick={clearInput}>C</button>
+            <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>0</button>
+            <button className="keypad-btn" onClick={handleLogin}>
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          </div>
         </div>
       </div>
     )
