@@ -4,6 +4,7 @@ import './Kasse.scss'; // SCSS für Styling und Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importiere FontAwesome
 import { faSignOutAlt, faPrint } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
+import LastReceiptViewer from './LatestReciepts';
 
 const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -27,6 +28,16 @@ const Kasse = ({ onKassenModusChange }) => {
   const [totalPrice, setTotalPrice] = useState(0); // Gesamtpreis
   const [scanInput, setScanInput] = useState('');
   const navigate = useNavigate(); // Initialisiere useNavigate
+  const [lastReceipt, setLastReceipt] = useState(null);
+  const [showReceiptPopup, setShowReceiptPopup] = useState(false);
+  const [showLastReceipt, setShowLastReceipt] = useState(false); // Zustand, um die Quittung anzuzeigen
+
+  const toggleLastReciepts = async () => {
+    await fetchLastReceipt(); // Holt die letzte Quittung
+    setShowLastReceipt(true); // Stellt sicher, dass sie angezeigt wird
+  };
+  
+
 
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
@@ -108,9 +119,9 @@ const Kasse = ({ onKassenModusChange }) => {
     setScannedProducts((prev) => [...prev, stornoProduct]);
     setSuccessMessage('Storno-Kosten hinzugefügt.');
   };
-  
 
- 
+
+
   const handleDailyOverview = () => {
     navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
   };
@@ -121,7 +132,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
       return;
     }
-  
+
     setLoading(true); // Ladeanimation starten
     try {
       const response = await axios.post(
@@ -133,14 +144,14 @@ const Kasse = ({ onKassenModusChange }) => {
           },
         }
       );
-  
+
       const scannedProduct = response.data.data; // Das gescannte Produkt
-  
+
       // Überprüfen, ob das Produkt bereits gescannt wurde
       const existingProduct = scannedProducts.find(
         (product) => product.article_number === scannedProduct.article_number
       );
-  
+
       if (existingProduct) {
         // Wenn das Produkt bereits vorhanden ist, Menge um 1 erhöhen
         const updatedProducts = scannedProducts.map((product) =>
@@ -156,7 +167,7 @@ const Kasse = ({ onKassenModusChange }) => {
           { ...scannedProduct, quantity: 1 },
         ]);
       }
-  
+
       setSuccessMessage('Produkt erfolgreich gescannt.');
       setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
     } catch (error) {
@@ -166,7 +177,24 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
-  
+
+  const fetchLastReceipt = async () => {
+    try {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/payment/latest-receipt`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setLastReceipt(response.data);
+      setShowReceiptPopup(true); // Quittung anzeigen
+    } catch (error) {
+      console.error("Fehler beim Abrufen der letzten Quittung:", error);
+    }
+  };
+
+
+ 
+
 
 
 
@@ -223,9 +251,7 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowDiscounts(!showDiscounts);
   };
 
-  const toggleLastReciepts = () => {
-    alert("Quittung letzte")
-  };
+
 
   // Funktion für das Klicken auf die Kundenkarte
   const handleCustomerCardClick = () => {
@@ -326,190 +352,208 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
       )}
 
+      {showReceiptPopup && lastReceipt && (
+        <div className="receipt-popup">
+          <div className="receipt-content">
+            <h2>Letzte Quittung</h2>
+            <pre>{JSON.stringify(lastReceipt, null, 2)}</pre>
+            <button onClick={() => setShowReceiptPopup(false)}>Schließen</button>
+          </div>
+        </div>
+      )}
 
 
 
-    
 
-          {/* Fehlermeldungen */}
-          {errorMessage && <p className="error">{errorMessage}</p>}
-          {successMessage && <p className="success">{successMessage}</p>}
 
-          {/* Dreispaltiges Layout */}
-          <div className="kasse-layout">
-            {/* Links: Buttons für Artikel scannen und Rabatte */}
-            <div className="left-buttons">
-              <button onClick={handleDailyClose}>Tagesabschluss</button>
-              <button onClick={toggleScanInput}>Artikel scannen</button>
-              <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
-              <button onClick={toggleBonCancel}>Bon Abbruch</button>
-              <button>Kassierer wechseln</button>
-              <button>Kunden suchen</button>
-              <button onClick={toggleLastReciepts} className="sign-out-button">
-                <FontAwesomeIcon icon={faPrint} />
-              </button>
-              <button>Schublade öffnen</button>
-              <button onClick={handleCustomerCardClick}>Kundenkarte</button>
-              <button>GS-Karte</button>
-              <button>Bon Parkieren</button>
-              <button onClick={handleDailyOverview}>Tagesübersicht</button>
-              <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
-              <button onClick={handleSignOut} className="sign-out-button">
-                <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
-              </button>
-              <button>Artikel suchen</button>
-              <button>Einstellungen</button>
-            </div>
 
-            <div className="scanned-products">
-              {scannedProducts.length === 0 ? (
-                <p>Keine Produkte gescannt.</p>
-              ) : (
-                <div className="product-list">
-                  {scannedProducts.map((product) => (
-                    <div
-                      key={product.article_number}
-                      className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
-                      onClick={() => setSelectedProduct(product)}
-                    >
-                      <div className="product-details">
-                        <span className="product-name">{product.article_short_text}</span>
-                        <div className="quantity-controls">
-                          <button
-                            className="quantity-btn"
-                            onClick={() => handleQuantityChange(product, 'decrease')}
-                          >
-                            -
-                          </button>
-                          <span className="product-quantity">
-                            {product.quantity} x
-                          </span>
-                          <button
-                            className="quantity-btn"
-                            onClick={() => handleQuantityChange(product, 'increase')}
-                          >
-                            +
-                          </button>
-                        </div>
-                        <span className="product-price">
-                          {parseFloat(product.price).toFixed(2)} CHF
-                        </span>
-                        <span className="total-price">
-                          {product.finalPrice
-                            ? product.finalPrice.toFixed(2)
-                            : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
-                        </span>
-                      </div>
 
-                      <div className="product-discounts">
-                        {product.discounts?.length > 0 ? (
-                          product.discounts.map((discount, index) => (
-                            <span key={index} className="discount">
-                              {discount.title} ({discount.amount} CHF)
-                            </span>
-                          ))
-                        ) : (
-                          <span className="no-discount">Kein Rabatt</span>
-                        )}
-                      </div>
+      {/* Fehlermeldungen */}
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
+
+      {/* Dreispaltiges Layout */}
+      <div className="kasse-layout">
+        {/* Links: Buttons für Artikel scannen und Rabatte */}
+        <div className="left-buttons">
+          <button onClick={handleDailyClose}>Tagesabschluss</button>
+          <button onClick={toggleScanInput}>Artikel scannen</button>
+          <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
+          <button onClick={toggleBonCancel}>Bon Abbruch</button>
+          <button>Kassierer wechseln</button>
+          <button>Kunden suchen</button>
+          <button onClick={toggleLastReciepts} className="sign-out-button">
+            <FontAwesomeIcon icon={faPrint} />
+          </button>
+          <button>Schublade öffnen</button>
+          <button onClick={handleCustomerCardClick}>Kundenkarte</button>
+          <button>GS-Karte</button>
+          <button>Bon Parkieren</button>
+          <button onClick={handleDailyOverview}>Tagesübersicht</button>
+          <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
+          <button onClick={handleSignOut} className="sign-out-button">
+            <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
+          </button>
+          <button>Artikel suchen</button>
+          <button>Einstellungen</button>
+        </div>
+
+        <div className="scanned-products">
+          {scannedProducts.length === 0 ? (
+            <p>Keine Produkte gescannt.</p>
+          ) : (
+            <div className="product-list">
+              {scannedProducts.map((product) => (
+                <div
+                  key={product.article_number}
+                  className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
+                  onClick={() => setSelectedProduct(product)}
+                >
+                  <div className="product-details">
+                    <span className="product-name">{product.article_short_text}</span>
+                    <div className="quantity-controls">
+                      <button
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(product, 'decrease')}
+                      >
+                        -
+                      </button>
+                      <span className="product-quantity">
+                        {product.quantity} x
+                      </span>
+                      <button
+                        className="quantity-btn"
+                        onClick={() => handleQuantityChange(product, 'increase')}
+                      >
+                        +
+                      </button>
                     </div>
-                  ))}
+                    <span className="product-price">
+                      {parseFloat(product.price).toFixed(2)} CHF
+                    </span>
+                    <span className="total-price">
+                      {product.finalPrice
+                        ? product.finalPrice.toFixed(2)
+                        : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                    </span>
+                  </div>
 
-                  <div className="payment-section">
-                    <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
-                    <button className="btn-pay">Bezahlen</button>
+                  <div className="product-discounts">
+                    {product.discounts?.length > 0 ? (
+                      product.discounts.map((discount, index) => (
+                        <span key={index} className="discount">
+                          {discount.title} ({discount.amount} CHF)
+                        </span>
+                      ))
+                    ) : (
+                      <span className="no-discount">Kein Rabatt</span>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
+              ))}
 
-
-
-            {/* Kundenkarte Buttons */}
-            {showCustomerCardButtons && (
-              <div className="customer-card-buttons">
-                <button className="discount-btn">50 CHF</button>
-                <button className="discount-btn">30 CHF</button>
-              </div>
-            )}
-            <div className="numeric-keypad-container">
-              <input
-                type="number"
-                className="quantity-display"
-                value={quantity}
-                readOnly
-              />
-              <div className="keypad">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-                  <button
-                    key={number}
-                    onClick={() => handleNumericKeypadClick(number)}
-                    className="keypad-btn"
-                  >
-                    {number}
-                  </button>
-                ))}
-                <button className="keypad-btn" onClick={clearQuantity}>
-                  C
-                </button>
-                <button
-                  className="keypad-btn"
-                  onClick={() => handleNumericKeypadClick(0)}
-                >
-                  0
-                </button>
-                <button className="keypad-btn" onClick={() => setQuantity(quantity + 1)}>
-                  +
-                </button>
+              <div className="payment-section">
+                <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
+                <button className="btn-pay">Bezahlen</button>
               </div>
             </div>
-            <div className="action-buttons">
-              <button
-                onClick={() => {
-                  if (selectedProduct) {
-                    // Aktualisiere die Menge des ausgewählten Produkts
-                    const updatedProducts = scannedProducts.map((product) =>
-                      product.article_number === selectedProduct.article_number
-                        ? { ...product, quantity }
-                        : product
-                    );
-                    setScannedProducts(updatedProducts);
-                    setSelectedProduct(null); // Auswahl zurücksetzen
-                    setQuantity(1); // Zurücksetzen der Menge
-                    setSuccessMessage('Menge erfolgreich aktualisiert.');
-                  } else {
-                    setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
-                  }
-                }}
-                className="btn-confirm"
-              >
-                Bestätigen
-              </button>
-              <button
-                onClick={clearScannedProducts}
-                className="btn-delete"
-              >
-                Löschen
-              </button>
-            </div>
+          )}
+        </div>
 
 
+      {/* Bedingte Anzeige der Quittung */}
+      {showLastReceipt && (
+        <div className="last-receipt-popup">
+          <LastReceiptViewer /> {/* Quittung wird hier angezeigt */}
+          <button onClick={toggleLastReciepts}>Schließen</button>
+        </div>
+      )}
+
+        {/* Kundenkarte Buttons */}
+        {showCustomerCardButtons && (
+          <div className="customer-card-buttons">
+            <button className="discount-btn">50 CHF</button>
+            <button className="discount-btn">30 CHF</button>
           </div>
-
-
-
-          {/* Rabatte anzeigen */}
-          {showDiscounts && availableDiscounts.map((discount) => (
-            <button
-              key={discount.title}
-              onClick={() => addDiscount(discount.title)}
-              className="discount-button"
-            >
-              {discount.title}
+        )}
+        <div className="numeric-keypad-container">
+          <input
+            type="number"
+            className="quantity-display"
+            value={quantity}
+            readOnly
+          />
+          <div className="keypad">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+              <button
+                key={number}
+                onClick={() => handleNumericKeypadClick(number)}
+                className="keypad-btn"
+              >
+                {number}
+              </button>
+            ))}
+            <button className="keypad-btn" onClick={clearQuantity}>
+              C
             </button>
-          ))}
-    
-   
+            <button
+              className="keypad-btn"
+              onClick={() => handleNumericKeypadClick(0)}
+            >
+              0
+            </button>
+            <button className="keypad-btn" onClick={() => setQuantity(quantity + 1)}>
+              +
+            </button>
+          </div>
+        </div>
+        <div className="action-buttons">
+          <button
+            onClick={() => {
+              if (selectedProduct) {
+                // Aktualisiere die Menge des ausgewählten Produkts
+                const updatedProducts = scannedProducts.map((product) =>
+                  product.article_number === selectedProduct.article_number
+                    ? { ...product, quantity }
+                    : product
+                );
+                setScannedProducts(updatedProducts);
+                setSelectedProduct(null); // Auswahl zurücksetzen
+                setQuantity(1); // Zurücksetzen der Menge
+                setSuccessMessage('Menge erfolgreich aktualisiert.');
+              } else {
+                setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
+              }
+            }}
+            className="btn-confirm"
+          >
+            Bestätigen
+          </button>
+          <button
+            onClick={clearScannedProducts}
+            className="btn-delete"
+          >
+            Löschen
+          </button>
+        </div>
+
+
+      </div>
+
+
+
+      {/* Rabatte anzeigen */}
+      {showDiscounts && availableDiscounts.map((discount) => (
+        <button
+          key={discount.title}
+          onClick={() => addDiscount(discount.title)}
+          className="discount-button"
+        >
+          {discount.title}
+        </button>
+      ))}
+
+
 
       {/* Gemeinsames Eingabefeld für Artikel- und Bonnummer */}
       {showScan && (
