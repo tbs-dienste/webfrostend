@@ -76,6 +76,7 @@ import Kassenlogin from './components/Administrativ/Kassenlogin';
 import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
 import Receipts from './components/Administrativ/Reciepts';
+import LastReceiptViewer from './components/Administrativ/LatestReciepts';
 
 const App = () => {
   
@@ -158,6 +159,8 @@ const App = () => {
           <Route path="/statistiken" element={<Statistik />} />
           <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
+          <Route path="/last" element={<LastReceiptViewer />} />
+
           <Route path="/receipts" element={<Receipts />} />
 
 

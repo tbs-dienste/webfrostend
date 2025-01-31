@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Importiere 
 import { faSignOutAlt, faPrint } from '@fortawesome/free-solid-svg-icons'; // Importiere das 'Sign-Out' Icon
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 import LastReceiptViewer from './LatestReciepts';
+import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 
 const Kasse = ({ onKassenModusChange }) => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -32,11 +33,22 @@ const Kasse = ({ onKassenModusChange }) => {
   const [showReceiptPopup, setShowReceiptPopup] = useState(false);
   const [showLastReceipt, setShowLastReceipt] = useState(false); // Zustand, um die Quittung anzuzeigen
 
+  const [salespersonName, setSalespersonName] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setSalespersonName(`${decoded.vorname || "Unbekannt"} ${decoded.nachname || ""}`.trim());
+    }
+  }, []);
+
+
   const toggleLastReciepts = async () => {
     await fetchLastReceipt(); // Holt die letzte Quittung
     setShowLastReceipt(true); // Stellt sicher, dass sie angezeigt wird
   };
-  
+
 
 
 
@@ -180,20 +192,27 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const fetchLastReceipt = async () => {
     try {
-      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/payment/latest-receipt`, {
+      const token = localStorage.getItem("token"); // Token aus localStorage holen
+      if (!token) {
+        console.error("Kein Token vorhanden!");
+        return;
+      }
+
+      const response = await axios.get(`${API_BASE_URL}/latest-receipt`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Token im Header mitgeben
         },
       });
+
       setLastReceipt(response.data);
-      setShowReceiptPopup(true); // Quittung anzeigen
     } catch (error) {
       console.error("Fehler beim Abrufen der letzten Quittung:", error);
     }
   };
 
 
- 
+
+
 
 
 
@@ -352,15 +371,16 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
       )}
 
-      {showReceiptPopup && lastReceipt && (
-        <div className="receipt-popup">
-          <div className="receipt-content">
-            <h2>Letzte Quittung</h2>
-            <pre>{JSON.stringify(lastReceipt, null, 2)}</pre>
-            <button onClick={() => setShowReceiptPopup(false)}>Schließen</button>
+      {showLastReceipt && lastReceipt && (
+        <div className="popup-overlay">
+          <div className="last-receipt-popup">
+            <LastReceiptViewer /> {/* Quittung wird hier als PDF angezeigt */}
+            <button onClick={() => setShowLastReceipt(false)}>Schließen</button>
           </div>
         </div>
       )}
+
+
 
 
 
@@ -399,6 +419,10 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
         <div className="scanned-products">
+        <div className="kasse-header">
+          <h4>Verkäufer {salespersonName}</h4>
+        </div>
+
           {scannedProducts.length === 0 ? (
             <p>Keine Produkte gescannt.</p>
           ) : (
@@ -461,13 +485,13 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
 
-      {/* Bedingte Anzeige der Quittung */}
-      {showLastReceipt && (
-        <div className="last-receipt-popup">
-          <LastReceiptViewer /> {/* Quittung wird hier angezeigt */}
-          <button onClick={toggleLastReciepts}>Schließen</button>
-        </div>
-      )}
+        {/* Bedingte Anzeige der Quittung */}
+        {showLastReceipt && (
+          <div className="last-receipt-popup">
+            <LastReceiptViewer /> {/* Quittung wird hier angezeigt */}
+            <button onClick={toggleLastReciepts}>Schließen</button>
+          </div>
+        )}
 
         {/* Kundenkarte Buttons */}
         {showCustomerCardButtons && (

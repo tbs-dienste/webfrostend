@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { PDFViewer, Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import { PDFViewer, Document, Page, Text, View, StyleSheet, Image, pdf } from "@react-pdf/renderer";
 import axios from "axios";
 import Logo from "./black.png"; // Pfad zum Logo
 
@@ -20,12 +20,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 80,
     height: 80,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
   },
   section: {
     marginBottom: 20,
@@ -61,37 +55,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: "center",
     color: "#666",
-  },
-  scrollButtonsContainer: {
-    width: "100px",
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    right: "10px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    height: "200px", // Set height to 100% of the screen's visible height
-  },
-  scrollButton: {
-    backgroundColor: "#4CAF50",
-    color: "white",
-    padding: "10px",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "18px",
-    borderRadius: "5px",
-    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-  },
-  printButton: {
-    marginTop: "20px",
-    padding: "10px 20px",
-    backgroundColor: "#007BFF",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-    borderRadius: "5px",
-    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
   },
 });
 
@@ -156,55 +119,50 @@ const ReceiptPDF = ({ receipt }) => (
 const LastReceiptViewer = () => {
   const [lastReceipt, setLastReceipt] = useState(null);
   const pdfContainerRef = useRef(null);
-  const token = localStorage.getItem("token");
-  const API_BASE_URL = "https://tbsdigitalsolutionsbackend.onrender.com/api/kasse";
+  const API_BASE_URL = "https://tbsdigitalsolutionsbackend.onrender.com/api/payment";
 
   useEffect(() => {
     const fetchLastReceipt = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/last-receipt`, {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Kein Token vorhanden!");
+          return;
+        }
+  
+        const response = await axios.get(`${API_BASE_URL}/latest-receipt`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+  
         setLastReceipt(response.data);
       } catch (error) {
         console.error("Fehler beim Abrufen der letzten Quittung:", error);
       }
     };
-
+  
     fetchLastReceipt();
-  }, [token, API_BASE_URL]);
+  }, []);
+  
 
-  const printPDF = () => {
-    const printWindow = window.open("", "_blank");
-    printWindow.document.write('<html><body><div id="print-pdf"></div></body></html>');
-    printWindow.document.close();
-
-    const pdfContainer = printWindow.document.getElementById("print-pdf");
-    pdfContainer.appendChild(document.getElementById("pdf-container").contentWindow.document.body);
-
-    printWindow.print();
-  };
-
-  const handleScrollUp = () => {
-    if (pdfContainerRef.current) {
-      pdfContainerRef.current.scrollBy(0, -100); // Scroll 100px nach oben
-    }
-  };
-
-  const handleScrollDown = () => {
-    if (pdfContainerRef.current) {
-      pdfContainerRef.current.scrollBy(0, 100); // Scroll 100px nach unten
-    }
+  const printPDF = async () => {
+    if (!lastReceipt) return;
+    const blob = await pdf(<ReceiptPDF receipt={lastReceipt} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Quittung.pdf";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!lastReceipt) {
-    return <Text>Lade letzte Quittung...</Text>;
+    return <p>Lade letzte Quittung...</p>;
   }
 
   return (
-    <div className="receipt-viewer-container" style={{ position: "relative" }}>
+    <div style={{ position: "relative" }}>
       <div
         id="pdf-container"
         ref={pdfContainerRef}
@@ -219,14 +177,21 @@ const LastReceiptViewer = () => {
         </PDFViewer>
       </div>
 
-      <div className="scroll-buttons" style={styles.scrollButtonsContainer}>
-        <button style={styles.scrollButton} onClick={handleScrollUp}>↑</button>
-        <button style={styles.scrollButton} onClick={handleScrollDown}>↓</button>
-      </div>
-
-      <div className="print-button-container">
-        <button style={styles.printButton} onClick={printPDF}>Drucken</button>
-      </div>
+      <button
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#007BFF",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+          borderRadius: "5px",
+          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        }}
+        onClick={printPDF}
+      >
+        Drucken
+      </button>
     </div>
   );
 };

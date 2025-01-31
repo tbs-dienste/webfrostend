@@ -101,13 +101,7 @@ function Navbar() {
                   text="Kasse"
                   icon={faCashRegister}
                   currentPath={currentPath}
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    toggleBurgerMenu();
-                    setTimeout(() => {
-                      window.location.replace("/kasse");
-                    }, 100);
-                  }}
+                  
                 />
                 <NavItem to="/gutscheinscanner" text="Gutscheinescanner" icon={faBarcode} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
