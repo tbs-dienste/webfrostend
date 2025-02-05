@@ -12,8 +12,8 @@ const ÜberUns = () => {
   ];
 
   const sponsoren = [
-    { name: "Swisscom AG", betrag: 5000, rang: "Gold", währung: "CHF" },
-    { name: "Digitec Galaxus AG", betrag: 3500, rang: "Platin", währung: "CHF" },
+    { name: "Swisscom AG", betrag: 5000, rang: "Platin", währung: "CHF" },
+    { name: "Digitec Galaxus AG", betrag: 3500, rang: "Gold", währung: "CHF" },
     { name: "PostFinance", betrag: 2000, rang: "Silber", währung: "CHF" },
   ];
 
