@@ -3,18 +3,18 @@ import "./ÜberUns.scss";
 
 const ÜberUns = () => {
   const spender = [
-    { name: "Max Mustermann", betrag: 1000, rang: "Platin", währung: "CHF" },
-    { name: "Lisa Beispiel", betrag: 750, rang: "Platin", währung: "CHF" },
-    { name: "Erik Code", betrag: 500, rang: "Gold", währung: "CHF" },
-    { name: "Susi Support", betrag: 250, rang: "Gold", währung: "CHF" },
-    { name: "Tom Tester", betrag: 100, rang: "Silber", währung: "CHF" },
-    { name: "Anna Analyse", betrag: 50, rang: "Bronze", währung: "CHF" },
+    { name: "Johannes Meier", betrag: 1200, rang: "Platin", währung: "CHF" },
+    { name: "Sophia Keller", betrag: 800, rang: "Platin", währung: "CHF" },
+    { name: "Markus Schmid", betrag: 600, rang: "Gold", währung: "CHF" },
+    { name: "Clara Huber", betrag: 300, rang: "Gold", währung: "CHF" },
+    { name: "Daniel Weber", betrag: 150, rang: "Silber", währung: "CHF" },
+    { name: "Lena Fischer", betrag: 75, rang: "Bronze", währung: "CHF" },
   ];
 
   const sponsoren = [
-    { name: "Tech Corp", betrag: 5000, rang: "Gold", währung: "CHF" },
-    { name: "Web Solutions GmbH", betrag: 3000, rang: "Platin", währung: "CHF" },
-    { name: "Dev Innovations", betrag: 1500, rang: "Silber", währung: "CHF" },
+    { name: "Swisscom AG", betrag: 5000, rang: "Gold", währung: "CHF" },
+    { name: "Digitec Galaxus AG", betrag: 3500, rang: "Platin", währung: "CHF" },
+    { name: "PostFinance", betrag: 2000, rang: "Silber", währung: "CHF" },
   ];
 
   const farben = {
@@ -28,19 +28,26 @@ const ÜberUns = () => {
     <div className="über-uns">
       <h1>Wer wir sind</h1>
       <p>
-        <strong>TBS Solutions</strong> ist ein innovatives Startup für IT- und Softwarelösungen. 
-        Unser Ziel ist es, Unternehmen und Privatpersonen mit moderner Technologie zu unterstützen.
+        <strong>TBS Solutions</strong> ist ein Startup, das verschiedene Dienstleistungen anbietet.  
+        Unser Ziel ist es, Unternehmen und Privatpersonen in technischen und digitalen Bereichen zu unterstützen.
       </p>
 
-      <h2>Unsere Vision</h2>
+      <h2>Wie alles begann</h2>
       <p>
-        Technologie ist die Zukunft – und wir möchten aktiv mitgestalten. Ob individuelle Softwareentwicklung, IT-Support oder digitale Automatisierungslösungen – 
-        wir bieten smarte Lösungen für moderne Herausforderungen.
+        Im Februar 2023 wurde ich von einer Kollegin gefragt, ob ich eine Diashow erstellen kann.  
+        Das brachte mich auf die Idee, mehrere Dienstleistungen anzubieten.  
+        Ich begann, die Website zu entwickeln – alles im Selbststudium.  
+        Heute ist daraus ein komplettes System entstanden, inklusive eines Kassensystems.
+      </p>
+      <p>
+        Ich arbeite derzeit allein und habe keine vollständige Ausbildung. Alles, was hier steht,  
+        wurde von mir selbst aufgebaut – von der ersten Idee bis zum aktuellen System.
       </p>
 
       <h2>Unterstütze uns!</h2>
       <p>
-        Als junges Startup freuen wir uns über jede Unterstützung. Falls du unsere Mission gut findest, kannst du uns mit einer Spende helfen.
+        Als junges Startup freuen wir uns über jede Unterstützung. Falls du unsere Mission gut findest,  
+        kannst du uns mit einer Spende helfen.
       </p>
 
       <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className="spenden-button">
