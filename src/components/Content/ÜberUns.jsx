@@ -1,7 +1,7 @@
 import React from "react";
-import "./ÜberUns.scss"; // Importiere das SCSS-Stylesheet
+import "./ÜberUnsContent.scss"; // Importiere das SCSS-Stylesheet
 
-const ÜberUns = () => {
+const ÜberUnsContent = () => {
   // Beispielhafte Top-Spender-Liste (kann später aus einer API geladen werden)
   const spender = [
     { name: "Max Mustermann", betrag: 500, rang: "Platin" },
