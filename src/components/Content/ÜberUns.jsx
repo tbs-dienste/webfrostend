@@ -12,6 +12,14 @@ const ÜberUns = () => {
     { name: "Anna Analyse", betrag: 50, rang: "Bronze", währung: "CHF" },
   ];
 
+  // Spender nach Rang gruppieren
+  const gruppierteSpender = {
+    Platin: spender.filter((s) => s.rang === "Platin"),
+    Gold: spender.filter((s) => s.rang === "Gold"),
+    Silber: spender.filter((s) => s.rang === "Silber"),
+    Bronze: spender.filter((s) => s.rang === "Bronze"),
+  };
+
   return (
     <div className="über-uns">
       <h1>Wer wir sind</h1>
@@ -42,11 +50,15 @@ const ÜberUns = () => {
 
       <h2>Unsere Top-Spender</h2>
       <div className="spender-container">
-        {spender.map((s, index) => (
-          <div key={index} className={`spender spender-${s.rang.toLowerCase()}`}>
-            <span className="spender-name">{s.name}</span>
-            <span className="spender-betrag">{s.betrag} {s.währung}</span>
-            <span className="spender-rang">{s.rang}</span>
+        {Object.entries(gruppierteSpender).map(([rang, spenderListe]) => (
+          <div key={rang} className={`spender-rang spender-${rang.toLowerCase()}`}>
+            <h3>{rang}</h3>
+            {spenderListe.map((s, index) => (
+              <div key={index} className="spender">
+                <span className="spender-name">{s.name}</span>
+                <span className="spender-betrag">{s.betrag} {s.währung}</span>
+              </div>
+            ))}
           </div>
         ))}
       </div>
