@@ -2,13 +2,14 @@ import React from "react";
 import "./ÜberUns.scss"; // Importiere das SCSS-Stylesheet
 
 const ÜberUns = () => {
-  // Beispielhafte Top-Spender-Liste (kann später aus einer API geladen werden)
+  // Beispielhafte Top-Spender-Liste (später dynamisch über API erweiterbar)
   const spender = [
-    { name: "Max Mustermann", betrag: 500, rang: "Platin" },
-    { name: "Lisa Beispiel", betrag: 250, rang: "Gold" },
-    { name: "Erik Code", betrag: 100, rang: "Silber" },
-    { name: "Susi Support", betrag: 50, rang: "Bronze" },
-    { name: "Lenen. Amen.", betrag: "???", rang: "Geheim" }
+    { name: "Max Mustermann", betrag: 1000, rang: "Platin", währung: "CHF" },
+    { name: "Lisa Beispiel", betrag: 750, rang: "Platin", währung: "CHF" },
+    { name: "Erik Code", betrag: 500, rang: "Gold", währung: "CHF" },
+    { name: "Susi Support", betrag: 250, rang: "Gold", währung: "CHF" },
+    { name: "Tom Tester", betrag: 100, rang: "Silber", währung: "CHF" },
+    { name: "Anna Analyse", betrag: 50, rang: "Bronze", währung: "CHF" },
   ];
 
   return (
@@ -40,14 +41,15 @@ const ÜberUns = () => {
       </a>
 
       <h2>Unsere Top-Spender</h2>
-      <ul className="spender-liste">
+      <div className="spender-container">
         {spender.map((s, index) => (
-          <li key={index} className={`spender spender-${s.rang.toLowerCase()}`}>
-            <span className="spender-name">{s.name}</span> – <span className="spender-betrag">{s.betrag}€</span> 
-            <span className="spender-rang">({s.rang})</span>
-          </li>
+          <div key={index} className={`spender spender-${s.rang.toLowerCase()}`}>
+            <span className="spender-name">{s.name}</span>
+            <span className="spender-betrag">{s.betrag} {s.währung}</span>
+            <span className="spender-rang">{s.rang}</span>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
