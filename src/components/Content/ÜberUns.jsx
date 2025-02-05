@@ -11,6 +11,12 @@ const ÜberUns = () => {
     { name: "Anna Analyse", betrag: 50, rang: "Bronze", währung: "CHF" },
   ];
 
+  const sponsoren = [
+    { name: "Tech Corp", betrag: 5000, rang: "Gold", währung: "CHF" },
+    { name: "Web Solutions GmbH", betrag: 3000, rang: "Platin", währung: "CHF" },
+    { name: "Dev Innovations", betrag: 1500, rang: "Silber", währung: "CHF" },
+  ];
+
   const farben = {
     Platin: "platin",
     Gold: "gold",
@@ -44,6 +50,19 @@ const ÜberUns = () => {
       <h2>Unsere Top-Spender</h2>
       <div className="spender-grid">
         {spender.map((s, index) => (
+          <div key={index} className={`spender-card ${farben[s.rang]}`}>
+            <div className="spender-header">{s.rang}</div>
+            <div className="spender-body">
+              <span className="spender-name">{s.name}</span>
+              <span className="spender-betrag">{s.betrag} {s.währung}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <h2>Unsere Sponsoren</h2>
+      <div className="spender-grid">
+        {sponsoren.map((s, index) => (
           <div key={index} className={`spender-card ${farben[s.rang]}`}>
             <div className="spender-header">{s.rang}</div>
             <div className="spender-body">
