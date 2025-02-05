@@ -44,15 +44,37 @@ const ÜberUns = () => {
         wurde von mir selbst aufgebaut – von der ersten Idee bis zum aktuellen System.
       </p>
 
-      <h2>Unterstütze uns!</h2>
+      <h2>Unsere Philosophie</h2>
       <p>
-        Als junges Startup freuen wir uns über jede Unterstützung. Falls du unsere Mission gut findest,  
-        kannst du uns mit einer Spende helfen.
+        Wir glauben an Innovation, Nachhaltigkeit und die Kraft der Technologie. Unser Ziel ist es, Lösungen zu schaffen, die nicht nur technisch fortschrittlich sind, sondern auch einen positiven Einfluss auf die Gesellschaft und die Umwelt haben.
       </p>
 
-      <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer" className="spenden-button">
-        Jetzt spenden ❤️
-      </a>
+      <h2>Unsere Mission</h2>
+      <p>
+        Unsere Mission ist es, kleinen und mittelständischen Unternehmen sowie Privatpersonen durch maßgeschneiderte Softwarelösungen und IT-Services zu helfen, ihre Ziele effizienter zu erreichen. Wir streben danach, technologische Barrieren abzubauen und eine benutzerfreundliche, zugängliche Lösung für alle anzubieten.
+      </p>
+
+      <h2>Warum TBS Solutions?</h2>
+      <p>
+        TBS Solutions steht für mehr als nur Technologie. Es geht uns darum, mit unseren Kunden auf Augenhöhe zu kommunizieren und maßgeschneiderte Lösungen zu entwickeln, die wirklich ihren Bedürfnissen entsprechen. Wir verstehen uns als Partner – nicht nur als Dienstleister.
+      </p>
+
+      <h2>Unsere Werte im Detail</h2>
+      <p>
+        - **Innovation:** Wir entwickeln Lösungen, die den technologischen Fortschritt fördern.  
+        - **Zuverlässigkeit:** Auf uns kann man sich verlassen, sowohl in der Qualität unserer Produkte als auch in der Kommunikation mit unseren Kunden.  
+        - **Engagement:** Wir setzen uns voll und ganz für die Bedürfnisse unserer Kunden ein, um ihre Visionen zu verwirklichen.
+      </p>
+
+      <h2>Partnerschaften und Kooperationen</h2>
+      <p>
+        Wir sind stolz darauf, mit verschiedenen Unternehmen zusammenzuarbeiten, die unsere Werte teilen. Unsere Partnerschaften ermöglichen es uns, ein noch besseres Serviceangebot bereitzustellen und die bestmöglichen Lösungen für unsere Kunden zu entwickeln.
+      </p>
+
+      <h2>Ein Blick in die Zukunft</h2>
+      <p>
+        TBS Solutions befindet sich noch am Anfang einer aufregenden Reise. In der Zukunft planen wir, unser Portfolio zu erweitern, innovative Produkte zu entwickeln und ein starkes Netzwerk von Partnern und Kunden aufzubauen, das unsere Werte teilt.
+      </p>
 
       <h2>Unsere Top-Spender</h2>
       <div className="spender-grid">
@@ -79,6 +101,20 @@ const ÜberUns = () => {
           </div>
         ))}
       </div>
+
+      <h2>Feedback unserer Kunden</h2>
+      <p>
+        "TBS Solutions hat uns mit einer maßgeschneiderten Softwarelösung unterstützt, die unsere Prozesse erheblich vereinfacht hat. Die Zusammenarbeit war professionell und transparent." - <em>Kundenzitat</em>
+      </p>
+      <p>
+        "Die Unterstützung von TBS Solutions war unersetzlich. Die individuelle Beratung und die schnelle Reaktionszeit haben uns beeindruckt." - <em>Kundenzitat</em>
+      </p>
+
+      <h2>Werde ein Partner!</h2>
+      <p>
+        Wir suchen auch Influencer, Streamer oder andere Content-Creator, die unsere Vision teilen und uns bei der Verbreitung unserer Nachricht unterstützen möchten!  
+        Wenn du Interesse hast, uns zu unterstützen und Werbung zu machen, melde dich bitte per E-Mail an <strong>info@tbsolutions.ch</strong>.
+      </p>
     </div>
   );
 };
