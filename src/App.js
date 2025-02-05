@@ -77,7 +77,7 @@ import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
 import Receipts from './components/Administrativ/Reciepts';
 import LastReceiptViewer from './components/Administrativ/LatestReciepts';
-import ÜberUns from '.components/Content/ÜberUns';
+import ÜberUns from './components/Content/ÜberUns';
 
 const App = () => {
   
