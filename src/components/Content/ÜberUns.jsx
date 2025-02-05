@@ -53,12 +53,14 @@ const ÜberUns = () => {
         {Object.entries(gruppierteSpender).map(([rang, spenderListe]) => (
           <div key={rang} className={`spender-rang spender-${rang.toLowerCase()}`}>
             <h3>{rang}</h3>
-            {spenderListe.map((s, index) => (
-              <div key={index} className="spender">
-                <span className="spender-name">{s.name}</span>
-                <span className="spender-betrag">{s.betrag} {s.währung}</span>
-              </div>
-            ))}
+            <div className="spender-list">
+              {spenderListe.map((s, index) => (
+                <div key={index} className="spender">
+                  <span className="spender-name">{s.name}</span>
+                  <span className="spender-betrag">{s.betrag} {s.währung}</span>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
