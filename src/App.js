@@ -77,6 +77,7 @@ import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
 import Receipts from './components/Administrativ/Reciepts';
 import LastReceiptViewer from './components/Administrativ/LatestReciepts';
+import ÜberUns from '.components/Content/ÜberUns';
 
 const App = () => {
   
@@ -175,7 +176,7 @@ const App = () => {
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
       
-
+          <Route path="/ueber-uns" element={<ÜberUns />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
           <Route path="/agb" element={<AGB />} />
