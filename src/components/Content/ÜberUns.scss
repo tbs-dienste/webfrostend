@@ -1,8 +1,8 @@
-// Farben für die Ränge
-$platin: linear-gradient(45deg, #e5e4e2, #b3b3b3);
-$gold: linear-gradient(45deg, #ffd700, #ffcc00);
-$silber: linear-gradient(45deg, #c0c0c0, #a9a9a9);
-$bronze: linear-gradient(45deg, #cd7f32, #b87333);
+// Weichere Farben für die Ränge
+$platin: linear-gradient(45deg, #dcdcdc, #bfbfbf);
+$gold: linear-gradient(45deg, #e6c200, #d4af37);
+$silber: linear-gradient(45deg, #b0b0b0, #9c9c9c);
+$bronze: linear-gradient(45deg, #b1743e, #a05a2c);
 
 // Allgemeines Styling
 .über-uns {
@@ -33,7 +33,7 @@ $bronze: linear-gradient(45deg, #cd7f32, #b87333);
 
   .spenden-button {
     display: inline-block;
-    background: #ff5722;
+    background: #ff7043;
     color: #fff;
     padding: 15px 25px;
     font-size: 1.2em;
@@ -59,7 +59,7 @@ $bronze: linear-gradient(45deg, #cd7f32, #b87333);
   .spender-rang {
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
     text-align: center;
 
     h3 {
@@ -68,7 +68,7 @@ $bronze: linear-gradient(45deg, #cd7f32, #b87333);
       text-transform: uppercase;
       padding: 10px;
       border-radius: 5px;
-      color: white;
+      color: #333;
     }
 
     .spender-list {
@@ -90,11 +90,11 @@ $bronze: linear-gradient(45deg, #cd7f32, #b87333);
     justify-content: space-between;
     align-items: center;
     max-width: 400px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease-in-out;
 
     &:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
 
     .spender-name {
@@ -106,24 +106,24 @@ $bronze: linear-gradient(45deg, #cd7f32, #b87333);
     }
   }
 
-  // Farben für die Spendenkategorien
+  // Weichere Farben für die Spendenkategorien
   .spender-platin {
     background: $platin;
-    h3 { background: $platin; }
+    h3 { background: rgba(255, 255, 255, 0.2); }
   }
 
   .spender-gold {
     background: $gold;
-    h3 { background: $gold; }
+    h3 { background: rgba(255, 255, 255, 0.2); }
   }
 
   .spender-silber {
     background: $silber;
-    h3 { background: $silber; }
+    h3 { background: rgba(255, 255, 255, 0.2); }
   }
 
   .spender-bronze {
     background: $bronze;
-    h3 { background: $bronze; }
+    h3 { background: rgba(255, 255, 255, 0.2); }
   }
 }
