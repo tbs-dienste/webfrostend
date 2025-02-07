@@ -15,7 +15,7 @@ const AlleGutscheine = () => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setGutscheine(response.data.data);
+                setGutscheine(response.data);
             } catch (error) {
                 console.error('Fehler beim Abrufen der Gutscheine:', error);
                 alert('Es gab ein Problem beim Abrufen der Gutscheine. Bitte versuchen Sie es später erneut.');
@@ -25,42 +25,41 @@ const AlleGutscheine = () => {
         fetchGutscheine();
     }, []);
 
-    const handleToggle = async (id, isActive) => {
+    const handleToggle = async (gutscheincode, currentStatus) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}/activate`, 
-                { gutscheinaktiviert: !isActive }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+            const newStatus = currentStatus === 'aktiv' ? 'deaktiviert' : 'aktiv';
+
+            await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/activate', 
+                { gutscheincode, guthaben: 0 },  // Guthaben bleibt unverändert
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
-            const updatedGutscheine = gutscheine.map(gutschein => {
-                if (gutschein.id === id) {
-                    return { ...gutschein, gutscheinaktiviert: !isActive };
-                }
-                return gutschein;
-            });
-            setGutscheine(updatedGutscheine);
+            );
+
+            setGutscheine(gutscheine.map(gutschein =>
+                gutschein.gutscheincode === gutscheincode
+                    ? { ...gutschein, status: newStatus }
+                    : gutschein
+            ));
         } catch (error) {
             console.error('Fehler beim Umschalten des Gutscheins:', error);
             alert('Es gab ein Problem beim Umschalten des Gutscheins. Bitte versuchen Sie es später erneut.');
         }
     };
 
-    // Funktion zum Löschen eines Gutscheins
-    const handleLoeschen = async (id) => {
+    const handleLoeschen = async (gutscheincode) => {
         try {
             const token = localStorage.getItem('token');
-            // Anfrage zum Löschen des Gutscheins
-            await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${id}`, {
+            await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/${gutscheincode}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
 
-            // Entfernen des Gutscheins aus dem Zustand, nachdem er gelöscht wurde
-            const updatedGutscheine = gutscheine.filter(gutschein => gutschein.id !== id);
-            setGutscheine(updatedGutscheine);
+            setGutscheine(gutscheine.filter(gutschein => gutschein.gutscheincode !== gutscheincode));
         } catch (error) {
             console.error('Fehler beim Löschen des Gutscheins:', error);
             alert('Es gab ein Problem beim Löschen des Gutscheins. Bitte versuchen Sie es später erneut.');
@@ -75,7 +74,7 @@ const AlleGutscheine = () => {
             </button>
             <ul>
                 {gutscheine.map(gutschein => (
-                    <li key={gutschein.id}>
+                    <li key={gutschein.gutscheincode}>
                         <div>
                             <strong>Gutschein Code:</strong> {gutschein.gutscheincode}
                         </div>
@@ -86,13 +85,15 @@ const AlleGutscheine = () => {
                             <label className="switch">
                                 <input
                                     type="checkbox"
-                                    checked={gutschein.gutscheinaktiviert}
-                                    onChange={() => handleToggle(gutschein.id, gutschein.gutscheinaktiviert)}
+                                    checked={gutschein.status === 'aktiv'}
+                                    onChange={() => handleToggle(gutschein.gutscheincode, gutschein.status)}
                                 />
                                 <span className="slider round"></span>
                             </label>
                         </div>
-                        <button onClick={() => handleLoeschen(gutschein.id)}><FaTrashAlt /> Löschen</button>
+                        <button onClick={() => handleLoeschen(gutschein.gutscheincode)}>
+                            <FaTrashAlt /> Löschen
+                        </button>
                     </li>
                 ))}
             </ul>
