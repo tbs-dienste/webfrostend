@@ -3,28 +3,27 @@ import axios from 'axios';
 import './GutscheinErstellung.scss';
 
 const GutscheinErstellung = () => {
+  const [anzahl, setAnzahl] = useState(1);
   const [guthaben, setGuthaben] = useState('');
-  const [gutscheinrabatt, setGutscheinrabatt] = useState('');
   const [gutscheincode, setGutscheincode] = useState('');
+  const [generierteCodes, setGenerierteCodes] = useState([]);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
-  const handleCreateGutschein = async () => {
+  const handleCreateGutscheine = async () => {
     try {
-      const rabattInDezimal = gutscheinrabatt ? parseFloat(gutscheinrabatt) / 100 : 0;
-      const gutschein = { guthaben, gutscheinrabatt: rabattInDezimal };
-
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine',
-        gutschein,
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/generate',
+        { anzahl, guthaben },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setMessage(`Gutschein erfolgreich erstellt: ${response.data.data.gutscheincode}`);
+      setMessage(`Gutscheine erfolgreich erstellt.`);
       setMessageType('success');
+      setGenerierteCodes(response.data.data);
+      setAnzahl(1);
       setGuthaben('');
-      setGutscheinrabatt('');
     } catch (error) {
       console.error('Fehler beim Erstellen:', error);
       setMessage('Erstellung fehlgeschlagen.');
@@ -60,13 +59,25 @@ const GutscheinErstellung = () => {
 
   return (
     <div className="gutschein-erstellung">
-      <h2>Gutschein erstellen / aktivieren</h2>
+      <h2>Gutscheine erstellen / aktivieren</h2>
 
       {message && <div className={`message ${messageType}`}>{message}</div>}
 
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="form-group">
-          <label htmlFor="guthaben">Guthaben (€)</label>
+          <label htmlFor="anzahl">Anzahl Gutscheine</label>
+          <input
+            type="number"
+            id="anzahl"
+            value={anzahl}
+            onChange={(e) => setAnzahl(e.target.value)}
+            min="1"
+            placeholder="Anzahl der Gutscheine"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="guthaben">Guthaben pro Gutschein (€)</label>
           <input
             type="number"
             id="guthaben"
@@ -76,18 +87,20 @@ const GutscheinErstellung = () => {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="gutscheinrabatt">Rabatt (%)</label>
-          <input
-            type="number"
-            id="gutscheinrabatt"
-            value={gutscheinrabatt}
-            onChange={(e) => setGutscheinrabatt(e.target.value)}
-            placeholder="Rabatt in % eingeben"
-          />
-        </div>
+        <button type="button" onClick={handleCreateGutscheine}>
+          Gutscheine erstellen
+        </button>
 
-        <button type="button" onClick={handleCreateGutschein}>Gutschein erstellen</button>
+        {generierteCodes.length > 0 && (
+          <div className="gutscheine-liste">
+            <h3>Generierte Gutscheincodes:</h3>
+            <ul>
+              {generierteCodes.map((gutschein, index) => (
+                <li key={index}>{gutschein.gutscheincode} - {gutschein.guthaben}€</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <hr />
 
@@ -102,7 +115,9 @@ const GutscheinErstellung = () => {
           />
         </div>
 
-        <button type="button" onClick={handleActivateGutschein}>Gutschein aktivieren</button>
+        <button type="button" onClick={handleActivateGutschein}>
+          Gutschein aktivieren
+        </button>
       </form>
     </div>
   );
