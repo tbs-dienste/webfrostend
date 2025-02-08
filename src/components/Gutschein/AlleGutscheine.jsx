@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AlleGutscheine.scss';
+import { FaPlus } from 'react-icons/fa';
 
 const AlleGutscheine = () => {
     const [gutscheine, setGutscheine] = useState([]);
@@ -27,6 +28,12 @@ const AlleGutscheine = () => {
     return (
         <div className="alle-gutscheine">
             <h2>Alle verfügbaren Gutscheincodes</h2>
+
+            {/* + Button zum Erstellen eines neuen Gutscheins */}
+            <button className="add-btn" onClick={() => window.location.href = '/gutschein'}>
+                <FaPlus /> Neuer Gutschein
+            </button>
+
             <ul>
                 {gutscheine.map(gutschein => (
                     <li key={gutschein.gutscheincode}>
