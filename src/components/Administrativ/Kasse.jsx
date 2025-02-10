@@ -16,7 +16,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [articleNumber, setArticleNumber] = useState(''); // Artikelnummer
-  const [kasseMode, setKasseMode] = useState(false);
+  const [kasseMode, setKasseMode] = useState(true);
   const [showDiscounts, setShowDiscounts] = useState(false); // Zustand für Rabatte
   const [showScan, setShowScan] = useState(false); // Zustand für Artikel scannen
   const [dailyCloseCompleted, setDailyCloseCompleted] = useState(false);
@@ -32,6 +32,8 @@ const Kasse = ({ onKassenModusChange }) => {
   const [lastReceipt, setLastReceipt] = useState(null);
   const [showReceiptPopup, setShowReceiptPopup] = useState(false);
   const [showLastReceipt, setShowLastReceipt] = useState(false); // Zustand, um die Quittung anzuzeigen
+  const [kundeNummer, setKundeNummer] = useState(generateRandomNumber());
+
 
   const [salespersonName, setSalespersonName] = useState('');
 
@@ -42,6 +44,17 @@ const Kasse = ({ onKassenModusChange }) => {
       setSalespersonName(`${decoded.vorname || "Unbekannt"} ${decoded.nachname || ""}`.trim());
     }
   }, []);
+
+  useEffect(() => {
+    // Überprüfen, ob der Token vorhanden ist
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Falls der Token vorhanden ist, wird der Kassenmodus automatisch aktiviert
+      setKasseMode(true); // Kassenmodus aktivieren
+      onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
+    }
+  }, []);
+  
 
 
   const toggleLastReciepts = async () => {
@@ -117,10 +130,7 @@ const Kasse = ({ onKassenModusChange }) => {
     setScannedProducts([]);
     setTotalPrice(0);
   };
-  const handleSignOut = () => {
-    window.location = "/kassenuebersicht";
-    // Weiterleitung zur Login-Seite oder zum gewünschten Ort
-  };
+  
 
   const addStornoCost = () => {
     const stornoProduct = {
@@ -138,6 +148,24 @@ const Kasse = ({ onKassenModusChange }) => {
     navigate('/receipts'); // Leitet zu /tagesuebersicht weiter
   };
 
+  const handleSignOut = () => {
+    // Token aus dem localStorage entfernen
+    localStorage.removeItem("token");
+  
+    // Weiterleitung zur Login-Seite
+    navigate("/kassenlogin");
+  };
+
+  const handleGSKarteSaldo = () => {
+   
+  
+    // Weiterleitung zur Login-Seite
+    navigate("/gs-karte");
+  };
+  
+  
+  
+  
 
   const scanProduct = async () => {
     if (!articleNumber) {
@@ -251,26 +279,25 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  // Kassenmodus starten/beenden
-  const startKasseMode = () => {
-    setKasseMode(true);
-    onKassenModusChange(true); // Übermittelt den Modusstatus an App.js
-  };
-
-  const cancelKasseMode = () => {
-    setKasseMode(false);
-    onKassenModusChange(false);
-  };
+  
 
   const handleScan = (event) => {
     setScanInput(event.target.value);
+    setKundeNummer(generateRandomNumber()); // Neue Nummer setzen
+
   };
 
   const toggleDiscounts = () => {
     setShowDiscounts(!showDiscounts);
   };
-
-
+  const handleCashierSwitch = () => {
+    // Token aus dem localStorage entfernen
+    localStorage.removeItem("token");
+  
+    // Navigieren zur gewünschten Seite, z.B. zum Login
+    navigate("/kassenlogin");
+  };
+  
 
   // Funktion für das Klicken auf die Kundenkarte
   const handleCustomerCardClick = () => {
@@ -347,6 +374,11 @@ const Kasse = ({ onKassenModusChange }) => {
     fetchDiscounts();
   }, []);
 
+  function generateRandomNumber() {
+    return Math.floor(100000000 + Math.random() * 900000000); // 9-stellige Nummer
+  }
+
+
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
 
@@ -416,11 +448,16 @@ const Kasse = ({ onKassenModusChange }) => {
           </button>
           <button>Artikel suchen</button>
           <button>Einstellungen</button>
+          <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
+          <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
+
+          
         </div>
 
         <div className="scanned-products">
         <div className="kasse-header">
           <h4>Verkäufer {salespersonName}</h4>
+          <h4>Kunde {kundeNummer}</h4>
         </div>
 
           {scannedProducts.length === 0 ? (

@@ -78,6 +78,7 @@ import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
 import Receipts from './components/Administrativ/Reciepts';
 import LastReceiptViewer from './components/Administrativ/LatestReciepts';
 import ÜberUns from './components/Content/ÜberUns';
+import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
 
 const App = () => {
   
@@ -163,6 +164,7 @@ const App = () => {
           <Route path="/last" element={<LastReceiptViewer />} />
 
           <Route path="/receipts" element={<Receipts />} />
+          <Route path="/gs-karte" element={<GSKarteAbfrage />} />
 
 
           <Route

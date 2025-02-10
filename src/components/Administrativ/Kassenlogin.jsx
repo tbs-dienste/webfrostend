@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Kassenlogin.scss";
@@ -22,7 +22,7 @@ const Kassenlogin = ({ onKassenModusChange }) => {
       alert("Bitte PIN eingeben.");
       return;
     }
-    
+
     try {
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/kassenlogin/login",
@@ -33,8 +33,9 @@ const Kassenlogin = ({ onKassenModusChange }) => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         onKassenModusChange(true);
-        document.documentElement.requestFullscreen();
-        navigate("/kasse");
+
+        navigate("/kassenlogin");
+
         setTimeout(() => window.location.reload(), 100);
       } else {
         alert("PIN ist falsch oder keine Berechtigung.");
@@ -44,7 +45,17 @@ const Kassenlogin = ({ onKassenModusChange }) => {
       alert("Fehler beim Login. Versuchen Sie es später erneut.");
     }
   };
-  
+
+  useEffect(() => {
+    // Überprüfen, ob der Token vorhanden ist
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Falls der Token vorhanden ist, wird der Kassenmodus automatisch aktiviert
+      onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
+      navigate("/kasse");
+    }
+  }, [onKassenModusChange, navigate]);
+
   return (
     <div className="login-container">
       <div className="login-box">

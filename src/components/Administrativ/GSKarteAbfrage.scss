@@ -1,0 +1,37 @@
+.gskarte-abfrage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+    background-color: #f3f4f6;
+  
+    .logo-container {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: black;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .content {
+      margin-top: 5rem;
+      text-align: left;
+      width: 100%;
+      max-width: 400px;
+    }
+  
+    .button-bar {
+      position: absolute;
+      bottom: 1rem;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+  }
+  

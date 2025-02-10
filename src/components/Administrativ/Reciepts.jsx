@@ -77,71 +77,100 @@ const styles = StyleSheet.create({
   },
 });
 
-// PDF-Komponente
-const ReceiptPDF = ({ receipt, employeeName, printDate }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      {/* Header mit Logo und Titel */}
-      <View style={styles.header}>
-        <Image src={Logo} style={styles.logo} />
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>Quittung</Text>
-        <Text style={{ fontSize: 13 }}>{printDate}</Text>
-      </View>
+const ReceiptPDF = ({ receipt, employeeName }) => {
+  const printDate = new Date().toLocaleString("de-DE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
-      {/* Transaktionsinformationen */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Transaktionsdetails</Text>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Transaktions-ID:</Text>
-          <Text>{receipt.transaction_id}</Text>
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* Header mit Logo und Titel */}
+        <View style={styles.header}>
+          <Image src={Logo} style={styles.logo} />
+          <Text style={{ fontSize: 25, fontWeight: "bold" }}>Quittung</Text>
+          <Text style={{ fontSize: 13 }}>{printDate}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Mitarbeiter-ID:</Text>
-          <Text>{receipt.mitarbeiterId}</Text>
+          {/* Datum extrahieren */}
+          <Text>{new Date(printDate).toLocaleDateString("de-DE")}</Text>
+          
+          {/* Zufällig generierte Bon-Nummer */}
+          <Text style={{ fontSize: 13 }}>Bon</Text>
+          <Text style={{ fontSize: 13 }}>{Math.floor(Math.random() * 1000000)}</Text>
         </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Zahlungsmethode:</Text>
-          <Text>{receipt.payment_method}</Text>
-        </View>
-      </View>
 
-      {/* Produktliste */}
-      <View style={styles.productSection}>
-        <Text style={styles.sectionTitle}>Produkte</Text>
-        {receipt.products.map((product, index) => (
-          <View style={styles.productRow} key={index}>
-            <Text>{product.article_short_text}</Text>
-            <Text>{product.quantity} x {product.price} CHF</Text>
-            <Text>{(product.quantity * product.price).toFixed(2)} CHF</Text>
+        <View style={styles.detailRow}>
+          {/* Uhrzeit extrahieren */}
+          <Text>{new Date(printDate).toLocaleTimeString("de-DE")}</Text>
+          {/* Zufällig generierte Kassen-ID */}
+          <Text style={{ fontSize: 13 }}>Kasse</Text>
+          <Text style={{ fontSize: 13 }}>205242</Text>
+        </View>
+
+        {/* Produktliste */}
+        <View style={styles.productSection}>
+          <Text style={styles.sectionTitle}>Produkte</Text>
+          {receipt.products.map((product, index) => (
+            <View style={styles.productRow} key={index}>
+              <Text>{product.article_short_text}</Text>
+              <Text>{product.quantity} x {product.price} CHF</Text>
+              <Text>{(product.quantity * product.price).toFixed(2)} CHF</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Trennlinie */}
+        <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee', marginTop: 10 }} />
+
+        {/* Gesamtbetrag und Rückgeld */}
+        <View style={styles.section}>
+          <View style={styles.totalRow}>
+            <Text>Total:</Text>
+            <Text>{receipt.total_amount} CHF</Text>
           </View>
-        ))}
-      </View>
+          <View style={styles.totalRow}>
+            <Text>Bargeld:</Text>
+            <Text>{receipt.payment_amount} CHF</Text>
+          </View>
 
-      {/* Gesamtbetrag und Rückgeld */}
-      <View style={styles.section}>
-        <View style={styles.totalRow}>
-          <Text>Gesamtbetrag:</Text>
-          <Text>{receipt.total_amount} CHF</Text>
-        </View>
-        <View style={styles.totalRow}>
-          <Text>Gezahlt:</Text>
-          <Text>{receipt.payment_amount} CHF</Text>
-        </View>
-        {receipt.payment_method === "Bar" && (
           <View style={styles.totalRow}>
             <Text>Rückgeld:</Text>
             <Text>{(receipt.payment_amount - receipt.total_amount).toFixed(2)} CHF</Text>
           </View>
-        )}
-      </View>
+        </View>
 
-      {/* Footer */}
-      <Text style={styles.footer}>
-        Es bediente Sie: {employeeName}.
-      </Text>
-    </Page>
-  </Document>
-);
+        {/* Trennlinie */}
+        <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee', marginTop: 10 }} />
+
+        {/* MwSt. und weitere Details */}
+        <View style={styles.section}>
+          <Text>* = Nicht rabattberechtigt</Text>
+          <Text>MWST inkl.</Text>
+          <View style={styles.totalRow}>
+            <Text>8.1 % v.</Text>
+            <Text>{receipt.total_amount} = CHF</Text>
+            <Text>{receipt.mwst} CHF</Text>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <Text style={styles.footer}>
+          Vielen Dank für Ihren Einkauf!
+        </Text>
+        <Text style={styles.footer}>
+          Es bediente Sie: {employeeName}.
+        </Text>
+      </Page>
+    </Document>
+  );
+};
+
 
 // Hauptkomponente
 const Receipts = () => {
@@ -151,18 +180,23 @@ const Receipts = () => {
   const [error, setError] = useState(null);
   const [employeeName, setEmployeeName] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
-  const [printDate, setPrintDate] = useState(null);
+  const [printDate, setPrintDate] = useState(null); // printDate initialisiert
 
   const handleRowClick = (receipt) => {
     setSelectedReceipt(receipt);
-    setPrintDate(new Date().toLocaleString("de-DE", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    }));
+
+    // Setze das Datum und die Uhrzeit nur einmal, wenn eine Quittung ausgewählt wird
+    if (!printDate) {
+      const currentDate = new Date();
+      setPrintDate(currentDate.toLocaleString("de-DE", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }));
+    }
   };
 
   useEffect(() => {
@@ -246,7 +280,6 @@ const Receipts = () => {
         </tbody>
       </table>
 
-
       {/* Kalender */}
       <div className="calendar-container">
         <Calendar onChange={setSelectedDate} value={new Date(selectedDate)} />
@@ -262,5 +295,6 @@ const Receipts = () => {
     </div>
   );
 };
+
 
 export default Receipts;
