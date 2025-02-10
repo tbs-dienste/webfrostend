@@ -149,11 +149,8 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const handleSignOut = () => {
-    // Token aus dem localStorage entfernen
-    localStorage.removeItem("token");
-  
-    // Weiterleitung zur Login-Seite
-    navigate("/kassenlogin");
+   
+    navigate("/kassenuebersicht");
   };
 
   const handleGSKarteSaldo = () => {
@@ -444,7 +441,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={handleDailyOverview}>Tagesübersicht</button>
           <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
           <button onClick={handleSignOut} className="sign-out-button">
-            <FontAwesomeIcon icon={faSignOutAlt} /> Sign Out
+            <FontAwesomeIcon icon={faSignOutAlt} /> 
           </button>
           <button>Artikel suchen</button>
           <button>Einstellungen</button>

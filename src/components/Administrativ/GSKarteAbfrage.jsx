@@ -9,25 +9,25 @@ const GSKarteAbfrage = () => {
     <div className="gskarte-abfrage">
       {/* Logo in schwarzer Box oben rechts */}
       <div className="logo-container">
-        <img src={logo} alt="TBS Solutions Logo" className="h-16" />
+        <img src={logo} alt="TBS Solutions Logo" className="logo" />
       </div>
       
       {/* Inhalte zentriert */}
       <div className="content">
-        <h1 className="text-xl font-bold">Konto Stand abfragen</h1>
-        <p className="mt-4">Bitte scannen Sie eine Karte</p>
-        <p className="mt-2 italic">Veuillez scanner une carte</p>
-        <p className="mt-2 italic">Si prega di scansionare una carta</p>
+        <h1 className="title">💳 Konto Stand abfragen</h1>
+        <p className="subtitle">Bitte scannen Sie eine Karte</p>
+        <p className="subtitle">Veuillez scanner une carte</p>
+        <p className="subtitle">Si prega di scansionare una carta</p>
       </div>
       
       {/* Link-Leiste */}
       <div className="button-bar">
-        <Link to="#" className="btn">Home</Link>
+        <Link to="#" className="btn">🏠 Home</Link>
         {[...Array(8)].map((_, index) => (
-          <span key={index} className="btn disabled">Disabled</span>
+          <span key={index} className="btn disabled" style={{ padding: '0 60px' }}>X</span>
         ))}
-        <Link to="/kasse" className="btn btn-danger flex items-center">
-          <FaSignOutAlt className="mr-2" /> Exit
+        <Link to="/kasse" className="btn btn-danger">
+          <FaSignOutAlt className="icon" /> Exit
         </Link>
       </div>
     </div>
