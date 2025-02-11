@@ -79,6 +79,7 @@ import Receipts from './components/Administrativ/Reciepts';
 import LastReceiptViewer from './components/Administrativ/LatestReciepts';
 import ÜberUns from './components/Content/ÜberUns';
 import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
+import ProductBarcodes from './components/Administrativ/ProductBarcodes';
 
 const App = () => {
   
@@ -165,6 +166,7 @@ const App = () => {
 
           <Route path="/receipts" element={<Receipts />} />
           <Route path="/gs-karte" element={<GSKarteAbfrage />} />
+          <Route path="/barcode" element={<ProductBarcodes />} />
 
 
           <Route
