@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
   container: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center" },
   card: { width: "45%", margin: 10, padding: 10, border: "1px solid black", borderRadius: 5, textAlign: "center" },
   productText: { fontSize: 14, marginBottom: 5, fontWeight: "bold" },
-  barcodeImage: { width: 150, height: 50, alignSelf: "center" },
+  barcodeImage: { width: 200, height: 100, alignSelf: "center" }, // Vergrößert den Barcode
+  barcodeText: { fontSize: 14, marginTop: 5 }, // Text unter dem Barcode
 });
 
 // Barcode-PDF-Komponente
@@ -23,7 +24,6 @@ const BarcodePDF = ({ products }) => (
           <View key={product.article_number} style={styles.card}>
             <Text style={styles.productText}>{product.article_short_text}</Text>
             <Image src={product.barcodeImage} style={styles.barcodeImage} />
-         
           </View>
         ))}
       </View>
@@ -53,7 +53,7 @@ const ProductBarcodes = () => {
         // Barcodes generieren und in Base64 konvertieren
         const updatedProducts = fetchedProducts.map(product => {
           const canvas = document.createElement("canvas");
-          JsBarcode(canvas, product.article_number, { format: "CODE128" });
+          JsBarcode(canvas, product.article_number, { format: "CODE128", width: 3, height: 100, text: product.article_number });
           return { ...product, barcodeImage: canvas.toDataURL("image/png") };
         });
 
