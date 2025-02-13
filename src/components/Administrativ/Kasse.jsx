@@ -477,6 +477,16 @@ const Kasse = ({ onKassenModusChange }) => {
           <button>Einstellungen</button>
           <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
           <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+          <button></button>
+
+          <button></button>
+          <button></button>
+          <button></button>
 
 
         </div>
