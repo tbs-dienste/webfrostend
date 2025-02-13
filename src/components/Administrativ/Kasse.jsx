@@ -8,6 +8,8 @@ import LastReceiptViewer from './LatestReciepts';
 import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 
 const Kasse = ({ onKassenModusChange }) => {
+  const [isPaying, setIsPaying] = useState(false);
+
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
@@ -54,13 +56,33 @@ const Kasse = ({ onKassenModusChange }) => {
       onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
     }
   }, []);
-  
+
 
 
   const toggleLastReciepts = async () => {
     await fetchLastReceipt(); // Holt die letzte Quittung
     setShowLastReceipt(true); // Stellt sicher, dass sie angezeigt wird
   };
+
+  const handlePayClick = () => {
+    setIsPaying(true);
+    setQuantity(totalPrice); // Standardmäßig auf Total setzen
+  };
+
+  const handlePaymentComplete = () => {
+    const change = quantity - totalPrice;
+
+    if (change < 0) {
+      setErrorMessage('Nicht genug Geld gegeben!');
+      return;
+    }
+
+    setSuccessMessage(`Bezahlung erfolgreich! Rückgeld: ${change.toFixed(2)} €`);
+    setScannedProducts([]); // Liste leeren nach erfolgreicher Bezahlung
+    setTotalPrice(0);       // Gesamtpreis zurücksetzen
+    setIsPaying(false);     // Bezahlvorgang beenden
+  };
+
 
 
 
@@ -130,7 +152,7 @@ const Kasse = ({ onKassenModusChange }) => {
     setScannedProducts([]);
     setTotalPrice(0);
   };
-  
+
 
   const addStornoCost = () => {
     const stornoProduct = {
@@ -149,20 +171,20 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const handleSignOut = () => {
-   
+
     navigate("/kassenuebersicht");
   };
 
   const handleGSKarteSaldo = () => {
-   
-  
+
+
     // Weiterleitung zur Login-Seite
     navigate("/gs-karte");
   };
-  
-  
-  
-  
+
+
+
+
 
   const scanProduct = async () => {
     if (!articleNumber) {
@@ -235,6 +257,16 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
+  const handleDotClick = () => {
+    setQuantity(prev => {
+      // Prüfen, ob bereits ein Punkt vorhanden ist
+      if (prev.toString().includes('.')) {
+        return prev;
+      }
+      return `${prev}.`;
+    });
+  };
+
 
 
 
@@ -276,7 +308,7 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  
+
 
   const handleScan = (event) => {
     setScanInput(event.target.value);
@@ -290,11 +322,11 @@ const Kasse = ({ onKassenModusChange }) => {
   const handleCashierSwitch = () => {
     // Token aus dem localStorage entfernen
     localStorage.removeItem("token");
-  
+
     // Navigieren zur gewünschten Seite, z.B. zum Login
     navigate("/kassenlogin");
   };
-  
+
 
   // Funktion für das Klicken auf die Kundenkarte
   const handleCustomerCardClick = () => {
@@ -309,18 +341,16 @@ const Kasse = ({ onKassenModusChange }) => {
   const clearQuantity = () => setQuantity(0); // Löscht die Menge
 
   // Funktion zum Ändern der Menge für ein Produkt
-  const handleQuantityChange = (product, action) => {
-    const updatedProducts = scannedProducts.map((item) => {
-      if (item.article_number === product.article_number) {
-        let newQuantity = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
-        newQuantity = newQuantity < 1 ? 1 : newQuantity; // Sicherstellen, dass die Menge nicht unter 1 geht
-        return { ...item, quantity: newQuantity };
-      }
-      return item;
-    });
-    setScannedProducts(updatedProducts);
-    calculateTotalPrice(); // Gesamtpreis neu berechnen
+  const handleQuantityChange = (e) => {
+    const inputValue = e.target.value;
+    const numericValue = parseFloat(inputValue);
+
+    // Wenn ein gültiger Betrag eingegeben wurde, setze ihn, sonst bleibe beim Total
+    if (!isNaN(numericValue) && numericValue >= 0) {
+      setQuantity(numericValue);
+    }
   };
+
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -441,30 +471,29 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={handleDailyOverview}>Tagesübersicht</button>
           <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
           <button onClick={handleSignOut} className="sign-out-button">
-            <FontAwesomeIcon icon={faSignOutAlt} /> 
+            <FontAwesomeIcon icon={faSignOutAlt} />
           </button>
           <button>Artikel suchen</button>
           <button>Einstellungen</button>
           <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
           <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
 
-          
+
         </div>
 
         <div className="scanned-products">
-          <div className='number-container'>
-          <input
-            type="number"
-            className="quantity-display"
-            value={quantity}
-            readOnly
-          />
+          <div className='numeber'>
+            <input
+              type="number"
+              className="quantity-display"
+              value={quantity}
+              readOnly
+            />
           </div>
-        
-        <div className="kasse-header">
-          <h4>Verkäufer {salespersonName}</h4>
-          <h4>Kunde {kundeNummer}</h4>
-        </div>
+          <div className="kasse-header">
+            <h4>Verkäufer {salespersonName}</h4>
+            <h4>Kunde {kundeNummer}</h4>
+          </div>
 
           {scannedProducts.length === 0 ? (
             <p>Keine Produkte gescannt.</p>
@@ -544,7 +573,15 @@ const Kasse = ({ onKassenModusChange }) => {
           </div>
         )}
         <div className="numeric-keypad-container">
-        
+          <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>CHF</button>
+            <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
+            <button style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
+              EFT
+            </button>
+          </div>
+
+
           <div className="keypad">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
               <button
@@ -555,9 +592,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 {number}
               </button>
             ))}
-            <button className="keypad-btn" onClick={clearQuantity}>
-              C
-            </button>
+            <button onClick={handleDotClick}>.</button>
             <button
               className="keypad-btn"
               onClick={() => handleNumericKeypadClick(0)}
@@ -568,36 +603,43 @@ const Kasse = ({ onKassenModusChange }) => {
               +
             </button>
           </div>
+
+          <div className="action-buttons">
+            <button
+              onClick={() => {
+                if (selectedProduct) {
+                  const updatedProducts = scannedProducts.map((product) =>
+                    product.article_number === selectedProduct.article_number
+                      ? { ...product, quantity }
+                      : product
+                  );
+                  setScannedProducts(updatedProducts);
+                  setSelectedProduct(null);
+                  setQuantity(1);
+                  setSuccessMessage('Menge erfolgreich aktualisiert.');
+                } else {
+                  setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
+                }
+              }}
+              className="btn-confirm"
+            >
+              Bestätigen
+            </button>
+            <button onClick={clearScannedProducts} className="btn-delete">
+              Löschen
+            </button>
+            <button className="btn-200">200</button>
+            <button className="btn-other">Bezahlen</button>
+            <button className="btn-50">50</button>
+            <button className="btn-100">100</button>
+            <button className="btn-10">10</button>
+            <button className="btn-20">20</button>
+            <button className="btn-2">2</button>
+            <button className="btn-5">5</button>
+          </div>
         </div>
-        <div className="action-buttons">
-          <button
-            onClick={() => {
-              if (selectedProduct) {
-                // Aktualisiere die Menge des ausgewählten Produkts
-                const updatedProducts = scannedProducts.map((product) =>
-                  product.article_number === selectedProduct.article_number
-                    ? { ...product, quantity }
-                    : product
-                );
-                setScannedProducts(updatedProducts);
-                setSelectedProduct(null); // Auswahl zurücksetzen
-                setQuantity(1); // Zurücksetzen der Menge
-                setSuccessMessage('Menge erfolgreich aktualisiert.');
-              } else {
-                setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
-              }
-            }}
-            className="btn-confirm"
-          >
-            Bestätigen
-          </button>
-          <button
-            onClick={clearScannedProducts}
-            className="btn-delete"
-          >
-            Löschen
-          </button>
-        </div>
+
+
 
 
       </div>

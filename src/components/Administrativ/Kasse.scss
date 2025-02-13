@@ -340,3 +340,33 @@ button {
     }
   }
 }
+
+.currency-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.btn-currency {
+  width: 32%;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.btn-eft {
+  background-color: #4CAF50; /* Hellgrün */
+  color: white;
+  border: none;
+}
+
+.keypad-btn {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.action-buttons button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+}
+
