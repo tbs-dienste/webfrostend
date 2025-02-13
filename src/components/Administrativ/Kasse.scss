@@ -257,36 +257,58 @@ button {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-
-    .quantity-display {
-      width: 100px;
-      padding: 10px;
-      font-size: 1.5rem;
-      text-align: center;
-      border: 2px solid $primary-color;
-      border-radius: $border-radius;
-      background: $secondary-color;
-    }
-
+  
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-
-      .keypad-btn {
+    }
+  
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 300px;
+  
+      button {
         padding: 15px;
-        font-size: 1.5rem;
+        font-size: 1rem;
         background-color: $primary-color;
         color: white;
         border: none;
         border-radius: $border-radius;
-
+        cursor: pointer;
+        transition: all 0.3s ease;
+  
         &:hover {
           background-color: darken($primary-color, 10%);
+        }
+  
+        &.btn-confirm {
+          background-color: $accent-color;
+          font-weight: bold;
+        }
+  
+        &.btn-delete {
+          background-color: $danger-color;
+          font-weight: bold;
+        }
+  
+        &.btn-200 {
+          background-color: $primary-color;
+        }
+  
+        &.btn-other {
+          background-color: $secondary-color;
+          color: $primary-color;
+          border: 1px solid $primary-color;
         }
       }
     }
   }
+  
+  
 }
 
 // Scan-Input

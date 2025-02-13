@@ -452,6 +452,15 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
         <div className="scanned-products">
+          <div className='number-container'>
+          <input
+            type="number"
+            className="quantity-display"
+            value={quantity}
+            readOnly
+          />
+          </div>
+        
         <div className="kasse-header">
           <h4>Verkäufer {salespersonName}</h4>
           <h4>Kunde {kundeNummer}</h4>
@@ -535,12 +544,7 @@ const Kasse = ({ onKassenModusChange }) => {
           </div>
         )}
         <div className="numeric-keypad-container">
-          <input
-            type="number"
-            className="quantity-display"
-            value={quantity}
-            readOnly
-          />
+        
           <div className="keypad">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
               <button
