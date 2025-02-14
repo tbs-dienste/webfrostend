@@ -19,25 +19,9 @@ $shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
-// Überschriften
-h1, h2 {
-  color: $primary-color;
-  text-align: center;
-}
-
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
-
-h2 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
 // Buttons
 button {
-  padding: 0;  // Entfernt unnötige Padding
+  padding: 0;
   font-size: 1rem;
   color: white;
   background-color: $primary-color;
@@ -48,8 +32,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;  // Breite der Buttons
-  height: 100px; // Höhe der Buttons (quadratisch)
+  width: 100px;
+  height: 100px;
 
   &:hover {
     background-color: darken($primary-color, 10%);
@@ -69,7 +53,7 @@ button {
   }
 
   &.btn-cancel {
-    margin-top: 20px;
+    margin-top: 10px;
     background-color: $danger-color;
   }
 
@@ -84,7 +68,7 @@ button {
   }
 
   &.btn-pay {
-    margin-top: 20px;
+    margin-top: 10px;
     background-color: $accent-color;
     font-size: 1.2rem;
   }
@@ -94,7 +78,8 @@ button {
 .kasse-layout {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 15px;
+  align-items: flex-start;
 
   .left-buttons {
     display: grid;
@@ -104,9 +89,10 @@ button {
     padding: 15px;
     border-radius: $border-radius;
     box-shadow: $shadow;
+    align-self: flex-start; // Buttons oben ausrichten
 
     button {
-      height: 100px;  // Macht die Buttons quadratisch
+      height: 100px;
       width: 100px;
       font-size: 1rem;
       background-color: $primary-color;
@@ -122,70 +108,11 @@ button {
     flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     background: white;
     padding: 15px;
     border-radius: $border-radius;
     box-shadow: $shadow;
-
-    .product-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .product-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 15px;
-      background-color: $light-gray;
-      border-radius: $border-radius;
-      transition: all 0.3s ease;
-      cursor: pointer;
-
-      &:hover {
-        background-color: $secondary-color;
-      }
-
-      &.selected {
-        background-color: $accent-color;
-        color: white;
-      }
-
-      .product-details {
-        flex: 2;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        span {
-          margin-right: 10px;
-        }
-
-        .total-price {
-          font-weight: bold;
-        }
-      }
-
-      .product-discounts {
-        flex: 1;
-        display: flex;
-        justify-content: flex-end;
-
-        .discount {
-          background-color: $primary-color;
-          color: white;
-          border-radius: $border-radius;
-          padding: 5px 10px;
-          font-size: 0.9rem;
-          margin-left: 10px;
-        }
-
-        .no-discount {
-          color: $danger-color;
-        }
-      }
-    }
   }
 
   .numeric-keypad-container {
@@ -193,56 +120,21 @@ button {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-  
+
+    align-self: flex-start; // Buttons oben ausrichten
+
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
-  
+
     .action-buttons {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       width: 100%;
       max-width: 300px;
-  
-      button {
-        height: 100px;  // Quadratisch
-        width: 100px;
-        padding: 0;
-        font-size: 1rem;
-        background-color: $primary-color;
-        color: white;
-        border: none;
-        border-radius: $border-radius;
-        cursor: pointer;
-        transition: all 0.3s ease;
-  
-        &:hover {
-          background-color: darken($primary-color, 10%);
-        }
-  
-        &.btn-confirm {
-          background-color: $accent-color;
-          font-weight: bold;
-        }
-  
-        &.btn-delete {
-          background-color: $danger-color;
-          font-weight: bold;
-        }
-  
-        &.btn-200 {
-          background-color: $primary-color;
-        }
-  
-        &.btn-other {
-          background-color: $secondary-color;
-          color: $primary-color;
-          border: 1px solid $primary-color;
-        }
-      }
     }
   }
 }
@@ -252,45 +144,23 @@ button {
   display: flex;
   gap: 10px;
   align-items: center;
-
-  .article-input {
-    flex: 1;
-    padding: 10px;
-    font-size: 1rem;
-    border: 2px solid $primary-color;
-    border-radius: $border-radius;
-
-    &:focus {
-      border-color: $accent-color;
-    }
-  }
-
-  .scan-button {
-    padding: 10px 15px;
-    background-color: $primary-color;
-    color: white;
-    border-radius: $border-radius;
-
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-  }
 }
 
+// Currency Buttons
 .currency-buttons {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
 }
 
 .btn-currency {
-  width: 32%;
+  width: 100px;
   padding: 10px;
   font-size: 14px;
 }
 
 .btn-eft {
-  background-color: #4CAF50; /* Hellgrün */
+  background-color: #4CAF50;
   color: white;
   border: none;
 }
@@ -298,10 +168,10 @@ button {
 .keypad-btn {
   padding: 10px;
   font-size: 16px;
+  width: 100px;
 }
 
 .action-buttons button {
-  margin: 5px;
   padding: 10px;
   font-size: 14px;
 }

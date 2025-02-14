@@ -488,6 +488,10 @@ const Kasse = ({ onKassenModusChange }) => {
           <button></button>
           <button></button>
 
+          <button></button>
+          <button></button>
+          <button></button>
+
 
         </div>
 
@@ -518,21 +522,11 @@ const Kasse = ({ onKassenModusChange }) => {
                   <div className="product-details">
                     <span className="product-name">{product.article_short_text}</span>
                     <div className="quantity-controls">
-                      <button
-                        className="quantity-btn"
-                        onClick={() => handleQuantityChange(product, 'decrease')}
-                      >
-                        -
-                      </button>
+                      
                       <span className="product-quantity">
                         {product.quantity} x
                       </span>
-                      <button
-                        className="quantity-btn"
-                        onClick={() => handleQuantityChange(product, 'increase')}
-                      >
-                        +
-                      </button>
+                      
                     </div>
                     <span className="product-price">
                       {parseFloat(product.price).toFixed(2)} CHF
@@ -560,7 +554,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <div className="payment-section">
                 <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
-                <button className="btn-pay">Bezahlen</button>
+                
               </div>
             </div>
           )}
@@ -584,7 +578,7 @@ const Kasse = ({ onKassenModusChange }) => {
         )}
         <div className="numeric-keypad-container">
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>CHF</button>
+            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
