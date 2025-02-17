@@ -1,24 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios'; 
-import './ServiceDetail.scss';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
+import './ServiceDetail.scss'; // Importiere das SCSS-Design
 
 const ServiceDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [service, setService] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const checkAdmin = () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decoded = jwtDecode(token);
+        if (decoded.userType === 'admin') {
+          setIsAdmin(true);
+        }
+      }
+    };
+
     const fetchService = async () => {
       try {
-        const token = localStorage.getItem('token'); // Token holen
+        const token = localStorage.getItem('token');
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}` // Token in den Header einfügen
+            Authorization: `Bearer ${token}`
           }
         });
         setService(response.data.data);
@@ -31,6 +44,7 @@ const ServiceDetail = () => {
       }
     };
 
+    checkAdmin();
     fetchService();
   }, [id]);
 
@@ -44,16 +58,15 @@ const ServiceDetail = () => {
       setError('Bitte fülle alle Felder aus.');
       return;
     }
-    
+
     try {
-      const token = localStorage.getItem('token'); // Token holen
+      const token = localStorage.getItem('token');
       const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, editedData, {
         headers: {
-          Authorization: `Bearer ${token}` // Token in den Header einfügen
+          Authorization: `Bearer ${token}`
         }
       });
       setService(response.data.data);
-      window.location.href = "/dienstleistungen";
       setIsEditing(false);
       setSuccessMessage('Dienstleistung erfolgreich aktualisiert!');
     } catch (error) {
@@ -62,9 +75,27 @@ const ServiceDetail = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("Möchtest du diese Dienstleistung wirklich löschen?")) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        alert("Dienstleistung erfolgreich gelöscht.");
+        navigate('/dienstleistungen');
+      } catch (error) {
+        console.error('Fehler beim Löschen der Dienstleistung:', error.response || error.message);
+        setError('Fehler beim Löschen der Dienstleistung. Bitte versuche es später noch einmal.');
+      }
+    }
+  };
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
-    setError(null); 
+    setError(null);
   };
 
   if (loading) {
@@ -74,7 +105,6 @@ const ServiceDetail = () => {
   if (error) {
     return <div className="error-message">{error}</div>;
   }
-
 
   return (
     <div className="service-detail-container">
@@ -115,17 +145,24 @@ const ServiceDetail = () => {
               type="text"
               name="img"
               value={editedData.img || ''}
-              onChange={handleInputChange} // Allow URL input for image
+              onChange={handleInputChange}
             />
           </label>
-          <button onClick={handleSave} className="save-button">Speichern</button>
-          <button onClick={handleEditToggle} className="cancel-button">Abbrechen</button>
+          <div className="button-group">
+            <button onClick={handleSave} className="save-button">Speichern</button>
+            <button onClick={handleEditToggle} className="cancel-button">Abbrechen</button>
+          </div>
         </div>
       ) : (
         <div>
           <p>{service.description}</p>
-          <p>Preis: {service.preis} CHF</p>
-          <button onClick={handleEditToggle} className="edit-button">Bearbeiten</button>
+          <p className="price">Preis: {service.preis} CHF / Stunde</p>
+          {isAdmin && (
+            <div className="button-group">
+              <button onClick={handleEditToggle} className="edit-button">Bearbeiten</button>
+              <button onClick={handleDelete} className="delete-button">Löschen</button>
+            </div>
+          )}
         </div>
       )}
       <Link to="/dienstleistungen" className="back-btn">&#8592; Zurück zu Dienstleistungen</Link>
