@@ -59,9 +59,9 @@ const Kassenlogin = ({ onKassenModusChange }) => {
   }, [onKassenModusChange, navigate]);
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Login</h2>
+    <div className="kasse-login-container">
+      <div className="kasse-login-box">
+      
         <input
           type="password"
           className="input-display"
