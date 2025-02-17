@@ -78,28 +78,42 @@
 .prev, .next {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 0;  /* Entfernt Padding */
   cursor: pointer;
   z-index: 10;
-  border-radius: 50%;
+  border-radius: 50%;  /* Runde Form */
+  width: 60px;  /* Kreisgröße */
+  height: 60px;  /* Gleiche Höhe für den Kreis */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s;
 }
 
 .prev:hover, .next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.8);  /* Verdunkelt beim Hover */
 }
 
 .prev {
-  left: 15px;
+  left: 20px;  /* Position des linken Buttons */
 }
 
 .next {
-  right: 15px;
+  right: 20px;  /* Position des rechten Buttons */
 }
+
+.prev:before, .next:before {
+  content: '';  /* Entfernt Textinhalt */
+  font-size: 2rem;  /* Pfeilgröße */
+  font-weight: bold;
+}
+
+
+
 
 .dots {
   text-align: center;
@@ -165,7 +179,7 @@
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s;
 }
 
 .button:hover {
