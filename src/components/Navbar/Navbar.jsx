@@ -60,6 +60,14 @@ function Navbar() {
     window.location.reload();
   };
 
+  const handleKassenLogout = () => {
+    localStorage.removeItem('token');
+    setUserType('');
+    setIsLoggedIn(false);
+    navigate('/kassenlogin');
+    window.location.reload();
+  };
+
   const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
 
   useEffect(() => {
@@ -93,7 +101,7 @@ function Navbar() {
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            
+
 
             {isLoggedIn && userType === 'admin' && (
               <>
@@ -104,8 +112,12 @@ function Navbar() {
                   text="Kasse"
                   icon={faCashRegister}
                   currentPath={currentPath}
-                  
+                  onClick={() => {
+                    handleKassenLogout();
+                    toggleBurgerMenu();
+                  }}
                 />
+
                 <NavItem to="/gutscheinscanner" text="Gutscheinescanner" icon={faBarcode} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />

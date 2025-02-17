@@ -48,6 +48,8 @@ const Kassenlogin = ({ onKassenModusChange }) => {
 
   useEffect(() => {
     // Überprüfen, ob der Token vorhanden ist
+    onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
+
     const token = localStorage.getItem("token");
     if (token) {
       // Falls der Token vorhanden ist, wird der Kassenmodus automatisch aktiviert
