@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Home.scss';
 import Loading from '../Loading/Loading';
-
+import eroeffnung from './eroeffnungrabatt.png';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -31,11 +31,11 @@ const Home = () => {
   if (error) return <div className="error-message">{error}</div>;
 
   const prevSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide === 0 ? slides.length - 1 : prevSlide - 1));
+    setCurrentSlide((prevSlide) => (prevSlide === 0 ? slides.length * 2 - 1 : prevSlide - 1));
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % (slides.length * 2)); // Zweifache Anzahl der Slides
   };
 
   const setSlide = (index) => {
@@ -44,27 +44,42 @@ const Home = () => {
 
   return (
     <div className="home-container">
-   
       <div className="slide-container">
-        <div className="slides" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-          {slides.map((slide) => (
-            <div key={slide.id} className="slide">
-              <img src={slide.img} alt={slide.title} className="slide-image" />
-              <div className="slide-content">
-                <h2>{slide.title}</h2>
-                <p className="slide-description">
-                  {slide.description.length > 100 ? `${slide.description.substring(0, 100)}...` : slide.description}
-                </p>
-                <Link to={`/service/${slide.id}`} className="btn-more">Mehr erfahren</Link>
+        <div className="slides" style={{ transform: `translateX(-${currentSlide * 100}%)`, transition: 'transform 0.5s ease' }}>
+          {/* Abwechselndes Bild (erstes Bild: eroeffnung.png) */}
+          {Array.from({ length: slides.length * 2 }).map((_, index) => {
+            const isEroffnung = index % 2 === 0; // Bestimmt, ob es das Eröffnungsbild oder ein Dienstleistungsbild ist
+            const slideIndex = Math.floor(index / 2); // Bestimmt den Index der Dienstleistung, wenn es sich um ein Dienstleistungsbild handelt
+
+            return (
+              <div key={index} className="slide">
+                {isEroffnung ? (
+                  <img src={eroeffnung} alt="Eröffnung" className="slide-image" />
+                ) : (
+                  <img src={slides[slideIndex].img} alt={slides[slideIndex].title} className="slide-image" />
+                )}
+                {!isEroffnung && (
+                  <div className="slide-content">
+                    <h2>{slides[slideIndex].title}</h2>
+                    <p className="slide-description">
+                      {slides[slideIndex].description.length > 100
+                        ? `${slides[slideIndex].description.substring(0, 100)}...`
+                        : slides[slideIndex].description}
+                    </p>
+                    <Link to={`/service/${slides[slideIndex].id}`} className="btn-more">Mehr erfahren</Link>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
         <button className="prev" onClick={prevSlide}>&#10094;</button>
         <button className="next" onClick={nextSlide}>&#10095;</button>
       </div>
+
       <div className="dots">
-        {slides.map((_, index) => (
+        {Array.from({ length: slides.length * 2 }).map((_, index) => (
           <span
             key={index}
             className={`dot ${currentSlide === index ? 'active' : ''}`}
@@ -72,6 +87,7 @@ const Home = () => {
           ></span>
         ))}
       </div>
+
       <div className="text-container">
         <div className="title">
           <h1>Erleben Sie unsere exklusiven Dienstleistungen</h1>

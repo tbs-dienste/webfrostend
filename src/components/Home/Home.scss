@@ -15,7 +15,7 @@
   margin-bottom: 3rem;
   border-radius: 20px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  height: 700px; /* Höhe verringert für ein schmaleres Bild */
+  height: 500px; /* Höhe des Containers auf 500px gesetzt */
 }
 
 .slides {
@@ -78,7 +78,6 @@
 .prev, .next {
   position: absolute;
   top: 50%;
-
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   border: none;
@@ -111,9 +110,6 @@
   font-size: 2rem;  /* Pfeilgröße */
   font-weight: bold;
 }
-
-
-
 
 .dots {
   text-align: center;
@@ -194,7 +190,12 @@
   margin-top: 2rem;
 }
 
+/* Mobile View Adjustments */
 @media (max-width: 768px) {
+  .slide-container {
+    height: 400px; /* Containerhöhe für mobile Ansicht verringert */
+  }
+
   .slide-content h2 {
     font-size: 1.8rem;
   }
@@ -210,9 +211,30 @@
   .text {
     font-size: 1.1rem;
   }
+
+  .prev, .next {
+    width: 50px; /* Kleinere Pfeile für mobile Ansicht */
+    height: 50px;
+  }
+
+  .prev:before, .next:before {
+    font-size: 1.5rem; /* Kleinere Pfeile */
+  }
+
+  .text-container {
+    padding: 2rem; /* Weniger Abstand auf mobilen Geräten */
+  }
+
+  .button {
+    padding: 0.8rem 2.5rem;
+  }
 }
 
 @media (max-width: 576px) {
+  .slide-container {
+    height: 300px; /* Containerhöhe für sehr kleine Bildschirme */
+  }
+
   .slide-content h2 {
     font-size: 1.5rem;
   }
@@ -227,5 +249,23 @@
 
   .text {
     font-size: 1rem;
+  }
+
+  .button {
+    font-size: 1rem;
+    padding: 0.8rem 2rem;
+  }
+
+  .prev, .next {
+    width: 40px; /* Noch kleinere Pfeile */
+    height: 40px;
+  }
+
+  .prev:before, .next:before {
+    font-size: 1.3rem;
+  }
+
+  .text-container {
+    padding: 1.5rem; /* Noch weniger Abstand */
   }
 }
