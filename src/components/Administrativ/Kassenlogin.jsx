@@ -71,13 +71,13 @@ const Kassenlogin = ({ onKassenModusChange }) => {
         />
         <div className="keypad">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-            <button key={number} onClick={() => handleNumericKeypadClick(number)} className="keypad-btn">
+            <button key={number} onClick={() => handleNumericKeypadClick(number)} className="keypad-button">
               {number}
             </button>
           ))}
-          <button className="keypad-btn" onClick={clearInput}>C</button>
-          <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>0</button>
-          <button className="keypad-btn" onClick={handleLogin}>
+          <button className="keypad-button" onClick={clearInput}>C</button>
+          <button className="keypad-button" onClick={() => handleNumericKeypadClick(0)}>0</button>
+          <button className="keypad-button" onClick={handleLogin}>
             <FontAwesomeIcon icon={faArrowRight} />
           </button>
         </div>

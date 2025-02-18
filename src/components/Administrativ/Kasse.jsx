@@ -256,16 +256,27 @@ const Kasse = ({ onKassenModusChange }) => {
       console.error("Fehler beim Abrufen der letzten Quittung:", error);
     }
   };
-
+  const handleQuantityChange = (e) => {
+    const inputValue = e.target.value;
+  
+    // Überprüfen, ob der Wert eine gültige Zahl ist, die einen Punkt und bis zu zwei Dezimalstellen enthält
+    if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
+      setQuantity(inputValue);
+    }
+  };
+  
+  
   const handleDotClick = () => {
     setQuantity(prev => {
-      // Prüfen, ob bereits ein Punkt vorhanden ist
+      // Wenn der Punkt bereits vorhanden ist, wird er nicht mehr hinzugefügt
       if (prev.toString().includes('.')) {
         return prev;
       }
+      // Falls kein Punkt vorhanden ist, wird der Punkt am Ende angehängt
       return `${prev}.`;
     });
   };
+  
 
 
 
@@ -339,17 +350,6 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const clearQuantity = () => setQuantity(0); // Löscht die Menge
-
-  // Funktion zum Ändern der Menge für ein Produkt
-  const handleQuantityChange = (e) => {
-    const inputValue = e.target.value;
-    const numericValue = parseFloat(inputValue);
-
-    // Wenn ein gültiger Betrag eingegeben wurde, setze ihn, sonst bleibe beim Total
-    if (!isNaN(numericValue) && numericValue >= 0) {
-      setQuantity(numericValue);
-    }
-  };
 
 
 
@@ -496,15 +496,18 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
         <div className="scanned-products">
-          <div className='numeber'>
+          Menge: 
+          <div className='number'>
             <input
-              type="number"
+              type="text"
               className="quantity-display"
               value={quantity}
               readOnly
+              onChange={handleQuantityChange}  // Setzt den neuen Wert
             />
           </div>
           <div className="kasse-header">
+          <h1>Quittung</h1>
             <h4>Verkäufer {salespersonName}</h4>
             <h4>Kunde {kundeNummer}</h4>
           </div>
