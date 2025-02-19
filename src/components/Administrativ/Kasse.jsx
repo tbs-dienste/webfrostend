@@ -9,7 +9,7 @@ import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 
 const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
-
+  const [betrag, setBetrag] = useState(0); // Definiere betrag und setBetrag
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
@@ -39,6 +39,15 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const [salespersonName, setSalespersonName] = useState('');
 
+
+
+  useEffect(() => {
+    if (scannedProducts.length > 0) {
+      calculateTotalPrice(); // Gesamtpreis neu berechnen, wenn Produkte hinzugefügt oder entfernt werden
+    }
+  }, [scannedProducts]);
+
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -66,21 +75,19 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const handlePayClick = () => {
     setIsPaying(true);
-    setQuantity(totalPrice); // Standardmäßig auf Total setzen
-  };
 
-  const handlePaymentComplete = () => {
-    const change = quantity - totalPrice;
+    // Berechnung des Gesamtbetrags basierend auf den gescannten Produkten
+    let totalAmount = 0;
+    scannedProducts.forEach(product => {
+      const price = parseFloat(product.price);
+      const productQuantity = parseInt(product.quantity, 10);
+      if (!isNaN(price) && !isNaN(productQuantity)) {
+        totalAmount += price * productQuantity; // Gesamtbetrag berechnen
+      }
+    });
 
-    if (change < 0) {
-      setErrorMessage('Nicht genug Geld gegeben!');
-      return;
-    }
-
-    setSuccessMessage(`Bezahlung erfolgreich! Rückgeld: ${change.toFixed(2)} €`);
-    setScannedProducts([]); // Liste leeren nach erfolgreicher Bezahlung
-    setTotalPrice(0);       // Gesamtpreis zurücksetzen
-    setIsPaying(false);     // Bezahlvorgang beenden
+    setBetrag(totalAmount.toFixed(2)); // Gesamtbetrag anzeigen
+    setQuantity(scannedProducts.reduce((total, product) => total + product.quantity, 0)); // Gesamtmenge setzen
   };
 
 
@@ -258,14 +265,14 @@ const Kasse = ({ onKassenModusChange }) => {
   };
   const handleQuantityChange = (e) => {
     const inputValue = e.target.value;
-  
+
     // Überprüfen, ob der Wert eine gültige Zahl ist, die einen Punkt und bis zu zwei Dezimalstellen enthält
     if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
       setQuantity(inputValue);
     }
   };
-  
-  
+
+
   const handleDotClick = () => {
     setQuantity(prev => {
       // Wenn der Punkt bereits vorhanden ist, wird er nicht mehr hinzugefügt
@@ -276,7 +283,7 @@ const Kasse = ({ onKassenModusChange }) => {
       return `${prev}.`;
     });
   };
-  
+
 
 
 
@@ -344,13 +351,28 @@ const Kasse = ({ onKassenModusChange }) => {
     setShowCustomerCardButtons(!showCustomerCardButtons); // Toggle für die Buttons
   };
 
-  // Numerische Tastatur für Menge
-  const handleNumericKeypadClick = (number) => {
-    setQuantity(prev => prev === 0 ? number : prev * 10 + number);
+
+  const handleNumericKeypadClick = (number, isForAmount = false) => {
+    if (isForAmount) {
+      // Wenn es für den Betrag ist, aktualisiere den Betrag
+      setBetrag((prev) => prev === 0 ? number : prev * 10 + number);
+    } else {
+      // Wenn es für die Menge ist, aktualisiere die Menge
+      setQuantity((prev) => prev === 0 ? number : prev * 10 + number);
+    }
   };
+  
 
-  const clearQuantity = () => setQuantity(0); // Löscht die Menge
+  // Für die Betragseingabe
+  const handleBetragChange = (e) => {
+    const inputValue = e.target.value;
 
+    // Überprüfen, ob der Wert eine gültige Zahl ist, die einen Punkt und bis zu zwei Dezimalstellen enthält
+    if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
+      // Setze den Betrag als Zahl (und nicht als Text)
+      setBetrag(parseFloat(inputValue) || 0);
+    }
+  };
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -404,6 +426,8 @@ const Kasse = ({ onKassenModusChange }) => {
   function generateRandomNumber() {
     return Math.floor(100000000 + Math.random() * 900000000); // 9-stellige Nummer
   }
+
+
 
 
   return (
@@ -496,18 +520,35 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
         <div className="scanned-products">
-          Menge: 
-          <div className='number'>
-            <input
-              type="text"
-              className="quantity-display"
-              value={quantity}
-              readOnly
-              onChange={handleQuantityChange}  // Setzt den neuen Wert
-            />
+          <div>
+            {isPaying ? (
+              <>
+                <label>Betrag eingeben:</label>
+                <input
+                  type="text"
+                  className="amount-input"
+                  value={betrag}
+                  onChange={handleBetragChange}  // Damit der Betrag geändert werden kann
+                />
+              </>
+            ) : (
+              <>
+                <label>Menge:</label>
+                <div className="number">
+                  <input
+                    type="text"
+                    className="quantity-display"
+                    value={quantity}
+                    readOnly
+                  />
+                </div>
+              </>
+            )}
+
           </div>
+
           <div className="kasse-header">
-          <h1>Quittung</h1>
+            <h1>Quittung</h1>
             <h4>Verkäufer {salespersonName}</h4>
             <h4>Kunde {kundeNummer}</h4>
           </div>
@@ -525,11 +566,11 @@ const Kasse = ({ onKassenModusChange }) => {
                   <div className="product-details">
                     <span className="product-name">{product.article_short_text}</span>
                     <div className="quantity-controls">
-                      
+
                       <span className="product-quantity">
                         {product.quantity} x
                       </span>
-                      
+
                     </div>
                     <span className="product-price">
                       {parseFloat(product.price).toFixed(2)} CHF
@@ -557,7 +598,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <div className="payment-section">
                 <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
-                
+
               </div>
             </div>
           )}
@@ -636,7 +677,7 @@ const Kasse = ({ onKassenModusChange }) => {
               Löschen
             </button>
             <button className="btn-200">200</button>
-            <button className="btn-other">Bezahlen</button>
+            <button className="btn-other" onClick={handlePayClick}>Bezahlen</button>
             <button className="btn-50">50</button>
             <button className="btn-100">100</button>
             <button className="btn-10">10</button>
