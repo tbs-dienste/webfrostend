@@ -483,7 +483,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={toggleScanInput}>Artikel scannen</button>
           <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
           <button onClick={toggleBonCancel}>Bon Abbruch</button>
-          <button>Kassierer wechseln</button>
+          <button></button>
           <button>Kunden suchen</button>
           <button onClick={toggleLastReciepts} className="sign-out-button">
             <FontAwesomeIcon icon={faPrint} />

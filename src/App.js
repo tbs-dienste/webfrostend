@@ -80,6 +80,7 @@ import LastReceiptViewer from './components/Administrativ/LatestReciepts';
 import ÜberUns from './components/Content/ÜberUns';
 import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
 import ProductBarcodes from './components/Administrativ/ProductBarcodes';
+import DownloadZusammenfassung from './components/Administrativ/DownloadZusammenfassung';
 
 const App = () => {
   
@@ -185,6 +186,7 @@ const App = () => {
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}
           <Route path="/agb" element={<AGB />} />
           <Route path="/rechnungform" element={<RechnungForm />} />
+          <Route path="/download/:kundenId" element={<DownloadZusammenfassung />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
           <Route path="/aufgaben/:kundenId" element={<AufgabenList />} />

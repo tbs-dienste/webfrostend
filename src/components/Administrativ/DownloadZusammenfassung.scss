@@ -1,0 +1,183 @@
+$primary-color: #2d3e50;
+$secondary-color: #4f8a8b;
+$accent-color: #f1a94d;
+$text-color: #333;
+$background-color: #fff;
+$border-color: #ccc;
+
+.download-summary {
+  padding: 20px;
+  background-color: $background-color;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .invoice-header {
+    font-size: 24px;
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .services-list {
+    margin-bottom: 30px;
+
+    .services-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: $secondary-color;
+      margin-bottom: 15px;
+    }
+
+    .service-item {
+      margin-bottom: 25px;
+
+      .service-name {
+        font-size: 16px;
+        font-weight: bold;
+        color: $primary-color;
+      }
+
+      .service-price,
+      .service-time {
+        font-size: 14px;
+        color: $text-color;
+      }
+
+      .service-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+
+        .table-header-cell {
+          background-color: $accent-color;
+          color: #fff;
+          padding: 8px;
+          text-align: center;
+        }
+
+        .table-cell {
+          padding: 8px;
+          text-align: center;
+          border: 1px solid $border-color;
+        }
+
+        .employee-row {
+          &:nth-child(even) {
+            background-color: #f9f9f9;
+          }
+        }
+      }
+    }
+  }
+
+  .summary-container {
+    margin-top: 20px;
+    padding: 20px;
+    border-top: 2px solid $border-color;
+
+    .summary-header {
+      font-size: 18px;
+      font-weight: bold;
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+
+    .summary-text {
+      font-size: 14px;
+      color: $text-color;
+    }
+  }
+
+  .pdf-download {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16px;
+
+    a {
+      background-color: $accent-color;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: darken($accent-color, 10%);
+      }
+    }
+  }
+}
+
+.customer-details {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $border-color;
+
+  .customer-title {
+    font-size: 18px;
+    color: $primary-color;
+    font-weight: bold;
+  }
+
+  .customer-name,
+  .customer-id {
+    font-size: 14px;
+    color: $text-color;
+  }
+}
+
+.service-section {
+  margin-bottom: 20px;
+
+  .service-title {
+    font-size: 16px;
+    color: $primary-color;
+    font-weight: bold;
+  }
+
+  .service-price,
+  .service-time {
+    font-size: 14px;
+    color: $text-color;
+  }
+
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+
+    .table-header {
+      background-color: $accent-color;
+      color: white;
+
+      .table-cell {
+        padding: 8px;
+        text-align: center;
+      }
+    }
+
+    .employee-row {
+      &:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .table-cell {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid $border-color;
+      }
+    }
+  }
+}
+
+.summary-section {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 2px solid $border-color;
+
+  .summary-text {
+    font-size: 14px;
+    color: $text-color;
+  }
+}

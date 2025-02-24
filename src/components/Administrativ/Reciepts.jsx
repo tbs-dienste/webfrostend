@@ -86,6 +86,8 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
     minute: "2-digit",
     second: "2-digit",
   });
+  const totalAmount = parseFloat(receipt.total_amount) || 0;  // Umwandlung in Zahl, falls der Wert kein gültiger Zahl-String ist
+
 
   return (
     <Document>
@@ -99,7 +101,7 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
         <View style={styles.detailRow}>
           {/* Datum extrahieren */}
           <Text>{new Date(printDate).toLocaleDateString("de-DE")}</Text>
-          
+
           {/* Zufällig generierte Bon-Nummer */}
           <Text style={{ fontSize: 13 }}>Bon</Text>
           <Text style={{ fontSize: 13 }}>{Math.floor(Math.random() * 1000000)}</Text>
@@ -116,7 +118,7 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
         {/* Produktliste */}
         <View style={styles.productSection}>
           <Text style={styles.sectionTitle}>Produkte</Text>
-          {receipt.products.map((product, index) => (
+          {receipt.products && Array.isArray(receipt.products) && receipt.products.map((product, index) => (
             <View style={styles.productRow} key={index}>
               <Text>{product.article_short_text}</Text>
               <Text>{product.quantity} x {product.price} CHF</Text>
@@ -132,21 +134,47 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
         <View style={styles.section}>
           <View style={styles.totalRow}>
             <Text>Total:</Text>
-            <Text>{receipt.total_amount} CHF</Text>
-          </View>
-          <View style={styles.totalRow}>
-            <Text>Bargeld:</Text>
-            <Text>{receipt.payment_amount} CHF</Text>
+            <Text>{totalAmount.toFixed(2)} CHF</Text>
           </View>
 
-          <View style={styles.totalRow}>
-            <Text>Rückgeld:</Text>
-            <Text>{(receipt.payment_amount - receipt.total_amount).toFixed(2)} CHF</Text>
-          </View>
         </View>
 
         {/* Trennlinie */}
         <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee', marginTop: 10 }} />
+
+        {receipt.method === "Bar" && (
+          <View>
+            <View style={styles.totalRow}>
+              <Text>Bargeld:</Text>
+              <Text>{parseFloat(receipt.payment_amount)?.toFixed(2)} CHF</Text>
+            </View>
+
+            <View style={styles.totalRow}>
+              <Text>Rückgeld:</Text>
+              <Text>{((parseFloat(receipt.payment_amount) || 0) - totalAmount).toFixed(2)} CHF</Text>
+            </View>
+          </View>
+        )}
+
+
+        {/* Kartenzahlung */}
+        {receipt.method === "Karte" && receipt.eft_data && (
+          <View style={styles.section}>
+            <Text> *** EFT-Beleg ***</Text>
+            <Text> {receipt.eft_data.cardType || "Unbekannt"}</Text>
+            <Text>contactless</Text>
+            <Text> {receipt.eft_data.cardType || "Unbekannt"}</Text>
+            <Text>Trm-Id: {receipt.eft_data.terminal_id || "N/A"}</Text>
+            <Text>Akt-Id: {receipt.eft_data.akt_id || "N/A"}</Text>
+            <Text>AID: {receipt.eft_data.aid || "N/A"}</Text>
+            <Text>Trx. Seq-Cnt: {receipt.eft_data.trx_ref_no || "N/A"}</Text>
+
+            <Text>Trx. Ref-No: {receipt.eft_data.trx_seq_cnt || "N/A"}</Text>
+            <Text>Auth. Code: {receipt.eft_data.auth_code || "N/A"}</Text>
+            <Text>Emv_ATC: {receipt.eft_data.emv_atc || "N/A"}</Text>
+            <Text>{receipt.eft_data.mixed_code || "N/A"}</Text>
+          </View>
+        )}
 
         {/* MwSt. und weitere Details */}
         <View style={styles.section}>
@@ -154,8 +182,8 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
           <Text>MWST inkl.</Text>
           <View style={styles.totalRow}>
             <Text>8.1 % v.</Text>
-            <Text>{receipt.total_amount} = CHF</Text>
-            <Text>{receipt.mwst} CHF</Text>
+            <Text>{receipt.total_amount?.toFixed(2)} = CHF</Text>
+            <Text>{receipt.mwst?.toFixed(2)} CHF</Text>
           </View>
         </View>
 
@@ -168,6 +196,7 @@ const ReceiptPDF = ({ receipt, employeeName }) => {
         </Text>
       </Page>
     </Document>
+
   );
 };
 
