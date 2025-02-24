@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, Image } from "@react-pdf/renderer";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import './DownloadZusammenfassung.scss';
+import Logo from './black.png'; // Hier den Pfad zu deinem Logo angeben
 
 const styles = StyleSheet.create({
     page: { padding: 30, fontFamily: 'Helvetica', fontSize: 12 },
@@ -20,10 +21,27 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRightWidth: 0,  // Entfernt die vertikale Trennung
     },
+    header: {
+        flexDirection: 'row',  // Logo und Titel in einer Zeile
+        alignItems: 'center',  // Vertikale Zentrierung der Elemente
+        width: '100%',  // Stellt sicher, dass der Header die gesamte Breite des Dokuments einnimmt
+        marginBottom: 20,  // Abstand unter dem Header
+    },
+    logo: {
+        width: 100,  // Breite des Logos
+        height: 100, // Höhe des Logos
+        marginRight: 10,  // Abstand zwischen Logo und Text
+        objectFit: 'contain', // Damit das Logo gut skaliert wird
+    },
+    title: {
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
     summary: { marginTop: 20, fontSize: 14, fontWeight: "bold" },
     bold: { fontWeight: "bold" },
 });
 
+// PDFDocument-Komponente anpassen
 const PDFDocument = ({ data }) => {
     if (!data || !data.kunde) return null;
     const { kunde } = data;
@@ -31,6 +49,11 @@ const PDFDocument = ({ data }) => {
     return (
         <Document>
             <Page size="A4" style={styles.page} className="invoice-page">
+                <View style={styles.header}>
+                    <Image src={Logo} style={styles.logo} />
+                    <Text style={styles.title}>Übersicht</Text>
+                </View>
+                {/* Der Rest des Inhalts bleibt unverändert */}
                 <View style={styles.section} className="customer-details">
                     <Text className="customer-title">Kunde</Text>
                     <Text className="customer-name">Vorname: {kunde.vorname}</Text>
@@ -39,15 +62,12 @@ const PDFDocument = ({ data }) => {
                 </View>
 
                 {kunde.dienstleistungen.map((dienstleistung) => {
-                    // Umwandlung der Werte in Zahlen
                     const gesamtArbeitszeit = Number(dienstleistung.gesamtArbeitszeit) || 0;
                     const gesamtBetrag = Number(dienstleistung.gesamtBetrag) || 0;
 
                     return (
                         <View style={styles.section} key={dienstleistung.dienstleistung_id} className="service-section">
                             <Text className="service-title">{dienstleistung.dienstleistung_name}</Text>
-                         
-
                             <View style={styles.table} className="employee-table">
                                 <View style={styles.tableRow} className="table-header">
                                     <Text style={styles.tableCell} className="table-cell">Mitarbeiter</Text>
@@ -76,8 +96,7 @@ const PDFDocument = ({ data }) => {
                     );
                 })}
             </Page>
-
-            {/* Neue Seite für die Zusammenfassung */}
+            {/* Zusammenfassungsseite */}
             <Page size="A4" style={styles.page} className="summary-page">
                 <View style={styles.summary} className="summary-section">
                     <Text className="summary-text">Zusammenfassung:</Text>
@@ -105,6 +124,8 @@ const PDFDocument = ({ data }) => {
         </Document>
     );
 };
+
+
 
 const DownloadZusammenfassung = ({ kundenId }) => {
     const [data, setData] = useState(null);
