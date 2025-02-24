@@ -98,8 +98,20 @@ const PDFDocument = ({ data }) => {
             </Page>
             {/* Zusammenfassungsseite */}
             <Page size="A4" style={styles.page} className="summary-page">
+                <View style={styles.header}>
+                    <Image src={Logo} style={styles.logo} />
+                    <Text style={styles.title}>Zusammenfassung</Text> {/* Ändere den Titel hier */}
+                </View>
+
+                {/* Der Rest des Inhalts bleibt unverändert */}
+                <View style={styles.section} className="customer-details">
+                    <Text className="customer-title">Kunde</Text>
+                    <Text className="customer-name">Vorname: {kunde.vorname}</Text>
+                    <Text className="customer-name">Name: {kunde.nachname}</Text>
+                    <Text className="customer-id">Kundennummer: {kunde.kundennummer}</Text>
+                </View>
+
                 <View style={styles.summary} className="summary-section">
-                    <Text className="summary-text">Zusammenfassung:</Text>
                     <View style={styles.table}>
                         <View style={styles.tableRow}>
                             <Text style={styles.tableCell}>Dienstleistung</Text>
