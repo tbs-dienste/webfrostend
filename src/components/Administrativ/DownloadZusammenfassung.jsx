@@ -46,8 +46,7 @@ const PDFDocument = ({ data }) => {
                     return (
                         <View style={styles.section} key={dienstleistung.dienstleistung_id} className="service-section">
                             <Text className="service-title">{dienstleistung.dienstleistung_name}</Text>
-                            <Text className="service-price">Preis pro Einheit: {gesamtBetrag.toFixed(2)} CHF</Text>
-                            <Text className="service-time">Gesamtarbeitszeit: {gesamtArbeitszeit.toFixed(2)} Stunden</Text>
+                         
 
                             <View style={styles.table} className="employee-table">
                                 <View style={styles.tableRow} className="table-header">
