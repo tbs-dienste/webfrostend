@@ -118,11 +118,9 @@ function Navbar() {
                   }}
                 />
 
-                <NavItem to="/gutscheinscanner" text="Gutscheinescanner" icon={faBarcode} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/statistiken" text="Statistik" icon={faBarChart} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/gutscheinbestellung" text="Gutscheinbestellung" currentPath={currentPath} onClick={toggleBurgerMenu} />
               </>
             )}
 

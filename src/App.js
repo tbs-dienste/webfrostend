@@ -55,7 +55,6 @@ import RechnungForm from './components/Rechnung/RechnungForm';
 import FaqEditComponent from './components/FAQ/FaqEditComponent';
 import ResetPassword from './components/Mitarbeiter/ResetPassword';
 import ArbeitszeitErfassen from './components/Mitarbeiter/ArbeitszeitErfassen';
-import TotalWorktimePerMitarbeiterForCustomer from './components/Mitarbeiter/TotalWorktimePerMitarbeiter';
 import ArbeitszeitDetails from './components/Mitarbeiter/ArbeitszeitDetails';
 import RechnungDetail from './components/Rechnung/RechnungDetails';
 import RechnungDetails from './components/Rechnung/RechnungDetails';
@@ -239,7 +238,6 @@ const App = () => {
               <Route path="/mitarbeiter" element={<Mitarbeiter />} />
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
               <Route path="/mitarbeiter/:id/reset-password" element={<ResetPassword />} />
-              <Route path="/:id/gesamtarbeitszeit" element={<TotalWorktimePerMitarbeiterForCustomer />} /> {/* Neue Route */}
               <Route path="/arbeitszeiten/:id" element={<ArbeitszeitDetails />} />
 
             <Route path="/login" element={<Login />} />

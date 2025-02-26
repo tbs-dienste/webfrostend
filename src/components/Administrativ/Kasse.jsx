@@ -9,12 +9,16 @@ import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 
 const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
   const [betrag, setBetrag] = useState(0); // Definiere betrag und setBetrag
   const [scannedProducts, setScannedProducts] = useState([]);
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null); // Ausgewähltes Produkt
   const [quantity, setQuantity] = useState(1); // Menge für das Produkt
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [isChangingQuantity, setIsChangingQuantity] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [articleNumber, setArticleNumber] = useState(''); // Artikelnummer
@@ -361,7 +365,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setQuantity((prev) => prev === 0 ? number : prev * 10 + number);
     }
   };
-  
+
 
   // Für die Betragseingabe
   const handleBetragChange = (e) => {
@@ -373,6 +377,64 @@ const Kasse = ({ onKassenModusChange }) => {
       setBetrag(parseFloat(inputValue) || 0);
     }
   };
+
+
+  const handleConfirm = async () => {
+    if (!selectedProduct) {
+      if (!articleNumber) {
+        setIsConfirmed(true); // Artikelnummer-Eingabefeld anzeigen
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        // Anfrage an die API mit Axios
+        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/${articleNumber}`);
+
+        if (response.status === 200 && response.data) {
+          setScannedProducts((prev) => [...prev, response.data]); // Produkt zur Liste hinzufügen
+          setSelectedProduct(response.data);
+          setArticleNumber(""); // Eingabefeld leeren
+          setIsConfirmed(false);
+        } else {
+          alert("Artikel nicht gefunden!"); // Falls Artikel nicht existiert
+        }
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Artikels:", error);
+        alert("Fehler beim Abrufen des Artikels!");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Falls ein Produkt bereits ausgewählt wurde, aktualisiere nur die Menge
+    const updatedProducts = scannedProducts.map((product) =>
+      product.article_number === selectedProduct.article_number
+        ? { ...product, quantity }
+        : product
+    );
+
+    setScannedProducts(updatedProducts);
+    setSelectedProduct(null);
+    setQuantity(1);
+    setSuccessMessage("Menge erfolgreich aktualisiert.");
+    setErrorMessage("");
+  };
+
+
+
+
+  const handleArtikelScan = (event) => {
+    if (event.key === "Enter") {
+      const artikelnummer = event.target.value;
+      scanProduct(artikelnummer);  // Annahme: scanProduct ist bereits definiert
+      setIsConfirmed(false); // Nach dem Scannen wieder zurücksetzen
+      event.target.value = ""; // Eingabefeld leeren
+    }
+  };
+
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -505,8 +567,8 @@ const Kasse = ({ onKassenModusChange }) => {
           <button></button>
           <button></button>
           <button></button>
-          <button></button>
-          <button></button>
+          <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+          <button>Pos. löschen</button>
 
           <button></button>
           <button></button>
@@ -528,24 +590,39 @@ const Kasse = ({ onKassenModusChange }) => {
                   type="text"
                   className="amount-input"
                   value={betrag}
-                  onChange={handleBetragChange}  // Damit der Betrag geändert werden kann
+                  onChange={handleBetragChange}
                 />
               </>
             ) : (
               <>
-                <label>Menge:</label>
-                <div className="number">
-                  <input
-                    type="text"
-                    className="quantity-display"
-                    value={quantity}
-                    readOnly
-                  />
-                </div>
+                {isConfirmed ? (
+                  <>
+                    <label>Artikelnummer eingeben:</label>
+                    <input
+                      type="text"
+                      className="article-number-input"
+                      autoFocus
+                      onKeyDown={handleArtikelScan} // Automatisches Scannen nach Eingabe
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label>Menge:</label>
+                    <div className="number">
+                      <input
+                        type="text"
+                        className="quantity-display"
+                        value={quantity}
+                        readOnly
+                      />
+                    </div>
+
+                  </>
+                )}
               </>
             )}
-
           </div>
+
 
           <div className="kasse-header">
             <h1>Quittung</h1>
@@ -564,7 +641,10 @@ const Kasse = ({ onKassenModusChange }) => {
                   onClick={() => setSelectedProduct(product)}
                 >
                   <div className="product-details">
-                    <span className="product-name">{product.article_short_text}</span>
+                  <span className="product-name">{product.article_number}</span>
+
+                    <span className="product-article_number">{product.article_short_text}</span>
+
                     <div className="quantity-controls">
 
                       <span className="product-quantity">
@@ -653,26 +733,10 @@ const Kasse = ({ onKassenModusChange }) => {
           </div>
 
           <div className="action-buttons">
-            <button
-              onClick={() => {
-                if (selectedProduct) {
-                  const updatedProducts = scannedProducts.map((product) =>
-                    product.article_number === selectedProduct.article_number
-                      ? { ...product, quantity }
-                      : product
-                  );
-                  setScannedProducts(updatedProducts);
-                  setSelectedProduct(null);
-                  setQuantity(1);
-                  setSuccessMessage('Menge erfolgreich aktualisiert.');
-                } else {
-                  setErrorMessage('Bitte ein Produkt auswählen, um die Menge zu ändern.');
-                }
-              }}
-              className="btn-confirm"
-            >
+            <button onClick={handleConfirm} className="btn-confirm">
               Bestätigen
             </button>
+
             <button onClick={clearScannedProducts} className="btn-delete">
               Löschen
             </button>
