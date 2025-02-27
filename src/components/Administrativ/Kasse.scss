@@ -147,6 +147,44 @@ button,
   }
 }
 
+.product-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin: 5px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.product-item:hover {
+  border-color: #007bff;
+  background-color: #e9f5ff;
+}
+
+.product-item.selected {
+  border-color: #28a745;
+  background-color: #d4edda;
+}
+
+.product-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-name {
+  font-weight: bold;
+}
+
+.product-price {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+
 // Currency Buttons
 .currency-buttons {
   display: flex;

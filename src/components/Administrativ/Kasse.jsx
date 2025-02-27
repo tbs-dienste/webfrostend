@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   const [betrag, setBetrag] = useState(0); // Definiere betrag und setBetrag
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -435,6 +436,13 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
+  const toggleSelectProduct = (articleNumber) => {
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(articleNumber)
+        ? prevSelected.filter((num) => num !== articleNumber)
+        : [...prevSelected, articleNumber]
+    );
+  };
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -568,8 +576,10 @@ const Kasse = ({ onKassenModusChange }) => {
           <button></button>
           <button></button>
           <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
-          <button>Pos. löschen</button>
-
+          {/* Button ist nur klickbar, wenn ein Produkt markiert ist */}
+          <button onClick={toggleSelectProduct} disabled={selectedProducts.length === 0}>
+            Pos. löschen
+          </button>
           <button></button>
           <button></button>
           <button></button>
@@ -641,7 +651,7 @@ const Kasse = ({ onKassenModusChange }) => {
                   onClick={() => setSelectedProduct(product)}
                 >
                   <div className="product-details">
-                  <span className="product-name">{product.article_number}</span>
+                    <span className="product-name">{product.article_number}</span>
 
                     <span className="product-article_number">{product.article_short_text}</span>
 
