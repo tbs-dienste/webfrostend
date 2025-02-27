@@ -444,6 +444,42 @@ const Kasse = ({ onKassenModusChange }) => {
     );
   };
 
+  const deleteSelectedProducts = async () => {
+    if (selectedProducts.length === 0) return; // Keine Auswahl, nichts zu tun
+  
+    const token = localStorage.getItem("token"); // Token aus dem localStorage holen
+  
+    if (!token) {
+      console.error("Kein Token gefunden!");
+      setErrorMessage("Nicht authentifiziert.");
+      return;
+    }
+  
+    try {
+      const response = await axios.delete(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/delete-scanned",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer Token im Header hinzufügen
+          },
+          data: { selectedProducts }, // Daten im Body als "data"
+        }
+      );
+  
+      // Falls erfolgreich, entferne die gelöschten Produkte aus dem State
+      setScannedProducts((prevProducts) =>
+        prevProducts.filter((product) => !selectedProducts.includes(product.article_number))
+      );
+  
+      setSelectedProducts([]); // Zurücksetzen der Auswahl
+      setSuccessMessage(response.data.message); // Erfolgsmeldung anzeigen
+    } catch (error) {
+      console.error("Fehler beim Löschen der Produkte:", error);
+      setErrorMessage(error.response?.data?.error || "Fehler beim Löschen.");
+    }
+  };
+  
+
 
   // Toggelt die Anzeige des Scan-Input-Feldes
   const toggleScanInput = () => {
@@ -576,10 +612,13 @@ const Kasse = ({ onKassenModusChange }) => {
           <button></button>
           <button></button>
           <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
-          {/* Button ist nur klickbar, wenn ein Produkt markiert ist */}
-          <button onClick={toggleSelectProduct} disabled={selectedProducts.length === 0}>
+          <button
+            onClick={() => deleteSelectedProducts()} // Ruft die Funktion zum Löschen auf
+            disabled={selectedProducts.length === 0} // Button ist deaktiviert, wenn keine Produkte ausgewählt sind
+          >
             Pos. löschen
           </button>
+
           <button></button>
           <button></button>
           <button></button>
@@ -647,9 +686,10 @@ const Kasse = ({ onKassenModusChange }) => {
               {scannedProducts.map((product) => (
                 <div
                   key={product.article_number}
-                  className={`product-item ${selectedProduct?.article_number === product.article_number ? 'selected' : ''}`}
-                  onClick={() => setSelectedProduct(product)}
+                  className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`} // Markierung der ausgewählten Produkte
+                  onClick={() => toggleSelectProduct(product.article_number)}  // Toggle Funktion aufrufen
                 >
+
                   <div className="product-details">
                     <span className="product-name">{product.article_number}</span>
 
