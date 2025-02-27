@@ -21,7 +21,7 @@ const BarcodePDF = ({ products }) => (
       <Text style={styles.title}>Produkt-Barcodes</Text>
       <View style={styles.container}>
         {products.map((product) => (
-          <View key={product.article_number} style={styles.card}>
+          <View key={product.barcode} style={styles.card}>
             <Text style={styles.productText}>{product.article_short_text}</Text>
             <Image src={product.barcodeImage} style={styles.barcodeImage} />
           </View>
@@ -53,7 +53,7 @@ const ProductBarcodes = () => {
         // Barcodes generieren und in Base64 konvertieren
         const updatedProducts = fetchedProducts.map(product => {
           const canvas = document.createElement("canvas");
-          JsBarcode(canvas, product.article_number, { format: "CODE128", width: 3, height: 100, text: product.article_number });
+          JsBarcode(canvas, product.barcode, { format: "CODE128", width: 3, height: 100, text: product.barcode });
           return { ...product, barcodeImage: canvas.toDataURL("image/png") };
         });
 
@@ -71,9 +71,9 @@ const ProductBarcodes = () => {
 
       <div className="flex flex-wrap justify-center gap-6">
         {products.map((product) => (
-          <div key={product.article_number} className="p-4 border rounded-lg shadow-lg text-center w-64">
+          <div key={product.barcode} className="p-4 border rounded-lg shadow-lg text-center w-64">
             <h3 className="mb-2 font-semibold text-lg">{product.article_short_text}</h3>
-            <img src={product.barcodeImage} alt={`Barcode ${product.article_number}`} className="mx-auto" />
+            <img src={product.barcodeImage} alt={`Barcode ${product.barcode}`} className="mx-auto" />
           </div>
         ))}
       </div>
