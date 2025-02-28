@@ -198,56 +198,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-  const scanProduct = async () => {
-    if (!articleNumber) {
-      setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
-      return;
-    }
 
-    setLoading(true); // Ladeanimation starten
-    try {
-      const response = await axios.post(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan`,
-        { article_number: articleNumber, quantity: 1 }, // Immer Menge 1
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const scannedProduct = response.data.data; // Das gescannte Produkt
-
-      // Überprüfen, ob das Produkt bereits gescannt wurde
-      const existingProduct = scannedProducts.find(
-        (product) => product.article_number === scannedProduct.article_number
-      );
-
-      if (existingProduct) {
-        // Wenn das Produkt bereits vorhanden ist, Menge um 1 erhöhen
-        const updatedProducts = scannedProducts.map((product) =>
-          product.article_number === existingProduct.article_number
-            ? { ...product, quantity: product.quantity + 1 }
-            : product
-        );
-        setScannedProducts(updatedProducts);
-      } else {
-        // Wenn das Produkt noch nicht vorhanden ist, füge es mit Menge 1 hinzu
-        setScannedProducts((prev) => [
-          ...prev,
-          { ...scannedProduct, quantity: 1 },
-        ]);
-      }
-
-      setSuccessMessage('Produkt erfolgreich gescannt.');
-      setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
-    } catch (error) {
-      console.error('Fehler beim Scannen des Produkts:', error);
-      setErrorMessage('Produkt konnte nicht gescannt werden.');
-    } finally {
-      setLoading(false); // Ladeanimation stoppen
-    }
-  };
 
   const fetchLastReceipt = async () => {
     try {
@@ -446,15 +397,15 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const deleteSelectedProducts = async () => {
     if (selectedProducts.length === 0) return; // Keine Auswahl, nichts zu tun
-  
+
     const token = localStorage.getItem("token"); // Token aus dem localStorage holen
-  
+
     if (!token) {
       console.error("Kein Token gefunden!");
       setErrorMessage("Nicht authentifiziert.");
       return;
     }
-  
+
     try {
       const response = await axios.delete(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/delete-scanned",
@@ -465,12 +416,12 @@ const Kasse = ({ onKassenModusChange }) => {
           data: { selectedProducts }, // Daten im Body als "data"
         }
       );
-  
+
       // Falls erfolgreich, entferne die gelöschten Produkte aus dem State
       setScannedProducts((prevProducts) =>
         prevProducts.filter((product) => !selectedProducts.includes(product.article_number))
       );
-  
+
       setSelectedProducts([]); // Zurücksetzen der Auswahl
       setSuccessMessage(response.data.message); // Erfolgsmeldung anzeigen
     } catch (error) {
@@ -478,17 +429,90 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage(error.response?.data?.error || "Fehler beim Löschen.");
     }
   };
-  
+
+  const toggleBonAbbruch = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.error("Kein Token gefunden. Aktion abgebrochen.");
+        return;
+    }
+
+    try {
+        const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/cancel", {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        console.log("Transaktion abgebrochen:", response.data.message);
+
+        // Nach dem Abbruch sofort die gescannten Produkte neu abrufen
+        await fetchScannedProducts();
+        
+    } catch (error) {
+        console.error("Fehler beim Abbrechen der Transaktion:", error.response?.data || error.message);
+    }
+};
+
+
+  const scanProduct = async () => {
+    if (!articleNumber) {
+      setErrorMessage('Bitte geben Sie eine Artikelnummer ein.');
+      return;
+    }
+
+    setLoading(true); // Ladeanimation starten
+    try {
+      const response = await axios.post(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan`,
+        { article_number: articleNumber, quantity: 1 }, // Immer Menge 1
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const scannedProduct = response.data.data; // Das gescannte Produkt
+
+      // Überprüfen, ob das Produkt bereits gescannt wurde
+      const existingProduct = scannedProducts.find(
+        (product) => product.article_number === scannedProduct.article_number
+      );
+
+      if (existingProduct) {
+        // Wenn das Produkt bereits vorhanden ist, Menge um 1 erhöhen
+        const updatedProducts = scannedProducts.map((product) =>
+          product.article_number === existingProduct.article_number
+            ? { ...product, quantity: product.quantity + 1 }
+            : product
+        );
+        setScannedProducts(updatedProducts);
+      } else {
+        // Wenn das Produkt noch nicht vorhanden ist, füge es mit Menge 1 hinzu
+        setScannedProducts((prev) => [
+          ...prev,
+          { ...scannedProduct, quantity: 1 },
+        ]);
+      }
+
+      setSuccessMessage('Produkt erfolgreich gescannt.');
+      setArticleNumber(''); // Eingabefeld für Artikelnummer zurücksetzen
+    } catch (error) {
+      console.error('Fehler beim Scannen des Produkts:', error);
+      setErrorMessage('Produkt konnte nicht gescannt werden.');
+    } finally {
+      setLoading(false); // Ladeanimation stoppen
+    }
+  };
+
+
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
   const toggleScanInput = () => {
     setShowScan(prev => !prev);
-  };
-
-  // Toggelt die Anzeige des Scan-Input-Feldes
-  const toggleBonCancel = () => {
-    alert('Abbruch')
   };
 
 
@@ -588,7 +612,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={handleDailyClose}>Tagesabschluss</button>
           <button onClick={toggleScanInput}>Artikel scannen</button>
           <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
-          <button onClick={toggleBonCancel}>Bon Abbruch</button>
+          <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
           <button></button>
           <button>Kunden suchen</button>
           <button onClick={toggleLastReciepts} className="sign-out-button">
