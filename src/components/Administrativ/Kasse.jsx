@@ -613,7 +613,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={toggleScanInput}>Artikel scannen</button>
           <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
           <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
-          <button></button>
+          <button>Menge ändern</button>
           <button>Kunden suchen</button>
           <button onClick={toggleLastReciepts} className="sign-out-button">
             <FontAwesomeIcon icon={faPrint} />
@@ -631,7 +631,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button>Einstellungen</button>
           <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
           <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-          <button></button>
+          <button>Preis ändern</button>
           <button></button>
           <button></button>
           <button></button>
