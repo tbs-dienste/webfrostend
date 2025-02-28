@@ -434,26 +434,89 @@ const Kasse = ({ onKassenModusChange }) => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-        console.error("Kein Token gefunden. Aktion abgebrochen.");
-        return;
+      console.error("Kein Token gefunden. Aktion abgebrochen.");
+      return;
     }
 
     try {
-        const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/cancel", {}, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+      const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/cancel", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-        console.log("Transaktion abgebrochen:", response.data.message);
+      console.log("Transaktion abgebrochen:", response.data.message);
 
-        // Nach dem Abbruch sofort die gescannten Produkte neu abrufen
-        await fetchScannedProducts();
-        
+      // Nach dem Abbruch sofort die gescannten Produkte neu abrufen
+      await fetchScannedProducts();
+
     } catch (error) {
-        console.error("Fehler beim Abbrechen der Transaktion:", error.response?.data || error.message);
+      console.error("Fehler beim Abbrechen der Transaktion:", error.response?.data || error.message);
     }
-};
+  };
+
+  const updateQuantity = async (articleNumber, quantity) => {
+    if (!articleNumber || quantity === undefined) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Kein Token gefunden!");
+      setErrorMessage("Nicht authentifiziert.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
+        { article_number: articleNumber, quantity },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Erfolg, jetzt State aktualisieren
+      setScannedProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.article_number === articleNumber ? { ...product, quantity } : product
+        )
+      );
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren der Menge:", error);
+      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern der Menge.");
+    }
+  };
+
+  const updatePrice = async (articleNumber, price) => {
+    if (!articleNumber || price === undefined) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Kein Token gefunden!");
+      setErrorMessage("Nicht authentifiziert.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
+        { article_number: articleNumber, price },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Erfolg, jetzt State aktualisieren
+      setScannedProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.article_number === articleNumber ? { ...product, price } : product
+        )
+      );
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Preises:", error);
+      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
+    }
+  };
+
 
 
   const scanProduct = async () => {
@@ -613,7 +676,8 @@ const Kasse = ({ onKassenModusChange }) => {
           <button onClick={toggleScanInput}>Artikel scannen</button>
           <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
           <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
-          <button>Menge ändern</button>
+          <button onClick={() => updateQuantity(selectedArticleNumber, newQuantity)}>Menge ändern</button>
+
           <button>Kunden suchen</button>
           <button onClick={toggleLastReciepts} className="sign-out-button">
             <FontAwesomeIcon icon={faPrint} />
@@ -631,7 +695,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button>Einstellungen</button>
           <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
           <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-          <button>Preis ändern</button>
+          <button onClick={() => updatePrice(selectedArticleNumber, newPrice)}>Preis ändern</button>
           <button></button>
           <button></button>
           <button></button>
