@@ -80,6 +80,7 @@ import ÜberUns from './components/Content/ÜberUns';
 import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
 import ProductBarcodes from './components/Administrativ/ProductBarcodes';
 import DownloadZusammenfassung from './components/Administrativ/DownloadZusammenfassung';
+import GSKarteDetails from './components/Administrativ/GSKarteDetails';
 
 const App = () => {
   
@@ -239,7 +240,7 @@ const App = () => {
               <Route path="/mitarbeiteranzeigen/:id" element={<MitarbeiterAnzeigen />} />
               <Route path="/mitarbeiter/:id/reset-password" element={<ResetPassword />} />
               <Route path="/arbeitszeiten/:id" element={<ArbeitszeitDetails />} />
-
+              <Route path="/gskarte-details" element={<GSKarteDetails />} /> {/* Neue Route für GSKarteDetails */}
             <Route path="/login" element={<Login />} />
      
         </Routes>

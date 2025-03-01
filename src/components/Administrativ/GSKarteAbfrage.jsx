@@ -13,24 +13,42 @@ const GSKarteAbfrage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     if (!kartennummer) {
       setError("Bitte scannen oder geben Sie eine Kartennummer ein.");
       return;
     }
-
+  
+    if (kartennummer.length < 16) { // Beispiel für eine einfache Validierung der Kartennummer
+      setError("Die Kartennummer ist zu kurz. Bitte überprüfen Sie Ihre Eingabe.");
+      return;
+    }
+  
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      setError("Kein Token vorhanden. Bitte neu anmelden.");
+      return;
+    }
+  
     try {
-      // Axios GET-Anfrage mit der Kartennummer
       const response = await axios.get(
-        `https://deinserver.de/api/gutschein/${kartennummer}`
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/kartennummer/${kartennummer}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-
-      // Weiterleitung zur Detailseite mit Gutschein-Daten
+  
       navigate("/gskarte-details", { state: { gutschein: response.data } });
     } catch (error) {
-      setError("Gutschein nicht gefunden oder ungültig.");
+      setError(error.response?.data?.error || "Gutschein nicht gefunden oder ungültig.");
     }
   };
+  
+
+
 
   return (
     <div className="gskarte-abfrage">

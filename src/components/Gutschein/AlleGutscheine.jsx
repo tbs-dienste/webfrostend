@@ -38,7 +38,7 @@ const AlleGutscheine = () => {
                 {gutscheine.map(gutschein => (
                     <li key={gutschein.gutscheincode}>
                         <div>
-                            <strong>Gutscheincode:</strong> {gutschein.gutscheincode}
+                            <strong>Kartennummer:</strong> {gutschein.kartennummer}
                         </div>
                         <div>
                             <strong>Guthaben:</strong> {gutschein.guthaben} CHF
