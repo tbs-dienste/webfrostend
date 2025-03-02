@@ -58,7 +58,7 @@ const GSKarteDetails = () => {
 
   if (!gutschein) {
     return (
-      <div className="gskarte-details">
+      <div className="gskarte-details error-container">
         <h1>Fehler</h1>
         <p>Keine Gutschein-Daten gefunden.</p>
         <button onClick={() => navigate("/")}>🔙 Zurück</button>
@@ -79,7 +79,7 @@ const GSKarteDetails = () => {
       </div>
 
       <div className="scan-input">
-        <button onClick={handleToggleInput}>
+        <button onClick={handleToggleInput} className="toggle-btn">
           {isManualInput ? "🔄 Zurück zum Scannen" : "⌨️ Manuelle Eingabe"}
         </button>
         {isManualInput && (
@@ -88,16 +88,14 @@ const GSKarteDetails = () => {
             placeholder="Kartennummer eingeben..."
             value={kartennummer}
             onChange={(e) => setKartennummer(e.target.value)}
+            className="input-field"
           />
         )}
       </div>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error-message">{error}</p>}
 
       <div className="button-bar">
-        <Link to="/" className="btn">🏠 Home</Link>
-        {[...Array(8)].map((_, index) => (
-          <span key={index} className="btn disabled" style={{ padding: '0 60px' }}>X</span>
-        ))}
+        <Link to="/" className="btn home-btn">🏠 Home</Link>
         <Link to="/kasse" className="btn btn-danger">
           <FaSignOutAlt className="icon" /> Exit
         </Link>
