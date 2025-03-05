@@ -1,15 +1,16 @@
+// GSKarteDetails.scss
 .gskarte-details {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 500px;
   margin: 40px auto;
-  color: white;
+  color: #333;
   font-family: "Arial", sans-serif;
   text-align: center;
 
@@ -20,12 +21,11 @@
   }
 
   .details-container {
-    background: rgba(255, 255, 255, 0.15);
+    background: #f8f8f8;
     padding: 15px;
     border-radius: 10px;
     width: 100%;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
     p {
       font-size: 16px;
@@ -41,22 +41,22 @@
   .scan-input {
     margin-top: 15px;
 
-    button {
-      background: #ff5722;
+    .toggle-btn {
+      background: #007bff;
       color: white;
       border: none;
       padding: 10px 15px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
-      transition: background 0.3s ease-in-out;
+      transition: background 0.3s;
 
       &:hover {
-        background: #e64a19;
+        background: #0056b3;
       }
     }
 
-    input {
+    .input-field {
       margin-top: 10px;
       width: 100%;
       padding: 10px;
@@ -65,12 +65,6 @@
       border: 1px solid #ddd;
       outline: none;
     }
-  }
-
-  .error {
-    color: #ffcc00;
-    font-weight: bold;
-    margin-top: 10px;
   }
 
   .button-bar {
@@ -89,23 +83,23 @@
       border-radius: 8px;
       color: white;
       text-decoration: none;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.3s;
       flex: 1;
       font-weight: bold;
 
-      &.btn-home {
-        background: #4caf50;
+      &.home-btn {
+        background: #28a745;
 
         &:hover {
-          background: #43a047;
+          background: #218838;
         }
       }
 
-      &.btn-exit {
-        background: #f44336;
+      &.btn-danger {
+        background: #dc3545;
 
         &:hover {
-          background: #d32f2f;
+          background: #c82333;
         }
       }
     }

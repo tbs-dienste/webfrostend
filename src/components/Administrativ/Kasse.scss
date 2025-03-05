@@ -80,8 +80,8 @@ button,
 
   .left-buttons {
     display: grid;
-    grid-template-columns: repeat(3, $button-size);
-    gap: 15px;
+    grid-template-columns: repeat(4, $button-size);
+    gap: 5px;
     background-color: $secondary-color;
     padding: 20px;
     border-radius: $border-radius;
@@ -112,13 +112,13 @@ button,
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, $button-size);
-      gap: 10px;
+      gap: 5px;
     }
 
     .action-buttons {
       display: grid;
       grid-template-columns: repeat(2, $button-size);
-      gap: 10px;
+      gap: 5px;
       width: 100%;
       max-width: 300px;
     }
@@ -128,7 +128,7 @@ button,
 // Scan-Input
 .scan-input {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
 
   input {
@@ -189,7 +189,7 @@ button,
 .currency-buttons {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 5px;
 }
 
 .btn-currency {

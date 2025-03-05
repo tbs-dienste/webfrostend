@@ -73,7 +73,7 @@ const GSKarteDetails = () => {
       <div className="details-container">
         <p><strong>Kartennummer:</strong> {gutschein.kartennummer}</p>
         <p><strong>Kartentyp:</strong> {gutschein.kartentyp}</p>
-        <p><strong>Saldo:</strong> {parseFloat(gutschein.guthaben).toFixed(2)} €</p>
+        <p><strong>Saldo:</strong> CHF {parseFloat(gutschein.guthaben).toFixed(2)}</p>
         <p><strong>Status:</strong> {gutschein.status}</p>
         <p><strong>Gültig bis:</strong> {new Date(gutschein.gueltigBis).toLocaleDateString()}</p>
       </div>

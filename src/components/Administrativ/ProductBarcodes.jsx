@@ -73,6 +73,8 @@ const ProductBarcodes = () => {
         {products.map((product) => (
           <div key={product.barcode} className="p-4 border rounded-lg shadow-lg text-center w-64">
             <h3 className="mb-2 font-semibold text-lg">{product.article_short_text}</h3>
+            <h4 className="mb-2 font-semibold text-lg">{product.article_number}</h4>
+
             <img src={product.barcodeImage} alt={`Barcode ${product.barcode}`} className="mx-auto" />
           </div>
         ))}
