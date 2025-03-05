@@ -455,8 +455,8 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  
-  
+
+
 
   const updatePrice = async (articleNumber, price) => {
     if (!articleNumber || price === undefined) return;
@@ -851,15 +851,14 @@ const Kasse = ({ onKassenModusChange }) => {
             </button>
             <button className="btn-200">200</button>
             <button className="btn-other" onClick={handlePayClick}>Bezahlen</button>
-            <button className="btn-50">50</button>
-            <button className="btn-100">100</button>
-            <button className="btn-10">10</button>
-            <button className="btn-20">20</button>
+            <button style={{ backgroundColor: '#48A23F', color: 'white', padding: '8px 16px', borderRadius: '8px' }}>50</button>
+            <button style={{ backgroundColor: '#007AC2', color: 'white', padding: '8px 16px', borderRadius: '8px' }}>100</button>
+            <button style={{ backgroundColor: '#FFD700', color: 'white', padding: '8px 16px', borderRadius: '8px' }}>10</button>
+            <button style={{ backgroundColor: '#DC241F', color: 'black', padding: '8px 16px', borderRadius: '8px' }}>20</button>
             <button className="btn-2">2</button>
             <button className="btn-5">5</button>
           </div>
         </div>
-
 
 
 
