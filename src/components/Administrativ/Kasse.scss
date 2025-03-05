@@ -7,7 +7,7 @@ $light-gray: #e9ecef;
 $border-radius: 12px;
 $shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 $transition: 0.3s ease;
-$button-size: 80px; // Einheitliche Button-Größe
+$button-size: 90px; // Einheitliche Button-Größe
 
 // Container-Stil
 .kasse-container {
@@ -90,7 +90,7 @@ button,
   }
 
   .scanned-products {
-    flex: 2;
+    flex: 2; /* Verwendet Flex, um die Größe zu bestimmen */
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -100,6 +100,7 @@ button,
     box-shadow: $shadow;
     overflow-y: auto;
     max-height: 600px;
+    position: relative;
   }
 
   .numeric-keypad-container {
@@ -244,6 +245,37 @@ button,
     &:focus {
       box-shadow: none;
       border-color: transparent;
+    }
+  }
+}
+
+
+.total-products {
+  background: white;
+  padding: 15px;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  text-align: center;
+  width: 100%; /* Jetzt gleiche Breite wie scannen-products */
+  position: absolute; /* Positioniert die Box immer am unteren Rand */
+  bottom: 0;
+  left: 0;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    td {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #f8f9fa;
+    }
+
+    tr:last-child {
+      font-weight: bold;
     }
   }
 }

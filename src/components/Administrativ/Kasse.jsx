@@ -43,6 +43,8 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
   const [salespersonName, setSalespersonName] = useState('');
+  const anzahlTeile = scannedProducts.reduce((sum, product) => sum + product.quantity, 0);
+
 
 
 
@@ -724,13 +726,11 @@ const Kasse = ({ onKassenModusChange }) => {
                         readOnly
                       />
                     </div>
-
                   </>
                 )}
               </>
             )}
           </div>
-
 
           <div className="kasse-header">
             <h1>Quittung</h1>
@@ -745,21 +745,16 @@ const Kasse = ({ onKassenModusChange }) => {
               {scannedProducts.map((product) => (
                 <div
                   key={product.article_number}
-                  className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`} // Markierung der ausgewählten Produkte
-                  onClick={() => toggleSelectProduct(product.article_number)}  // Toggle Funktion aufrufen
+                  className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
+                  onClick={() => toggleSelectProduct(product.article_number)}
                 >
-
                   <div className="product-details">
                     <span className="product-name">{product.article_number}</span>
-
                     <span className="product-article_number">{product.article_short_text}</span>
-
                     <div className="quantity-controls">
-
                       <span className="product-quantity">
                         {product.quantity} x
                       </span>
-
                     </div>
                     <span className="product-price">
                       {parseFloat(product.price).toFixed(2)} CHF
@@ -785,13 +780,33 @@ const Kasse = ({ onKassenModusChange }) => {
                 </div>
               ))}
 
-              <div className="payment-section">
-                <h3>Gesamtkosten nach Rabatt: {totalPrice.toFixed(2)} CHF</h3>
-
-              </div>
+             
             </div>
           )}
         </div>
+
+        <div className="total-products">
+          <table>
+            <tbody>
+              <tr>
+                <td><strong>Subtotal</strong></td>
+                <td>CHF {totalPrice.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td colSpan="2">---------------------------------------------------</td>
+              </tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td>CHF {totalPrice.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td><strong>Anzahl Teile</strong></td>
+                <td>{scannedProducts.reduce((total, product) => total + product.quantity, 0)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
 
 
         {/* Bedingte Anzeige der Quittung */}
