@@ -19,6 +19,8 @@ const Kasse = ({ onKassenModusChange }) => {
   const [quantity, setQuantity] = useState(1); // Menge für das Produkt
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isChangingQuantity, setIsChangingQuantity] = useState(false);
+  const [price, setPrice] = useState("");
+  const [isChangingPrice, setIsChangingPrice] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -178,6 +180,9 @@ const Kasse = ({ onKassenModusChange }) => {
     setSuccessMessage('Storno-Kosten hinzugefügt.');
   };
 
+  const handlePriceChange = (e) => {
+    setPrice(e.target.value);
+  };
 
 
   const handleDailyOverview = () => {
@@ -310,15 +315,6 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
-  const handleNumericKeypadClick = (number, isForAmount = false) => {
-    if (isForAmount) {
-      // Wenn es für den Betrag ist, aktualisiere den Betrag
-      setBetrag((prev) => prev === 0 ? number : prev * 10 + number);
-    } else {
-      // Wenn es für die Menge ist, aktualisiere die Menge
-      setQuantity((prev) => prev === 0 ? number : prev * 10 + number);
-    }
-  };
 
 
   // Für die Betragseingabe
@@ -332,27 +328,42 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
+  const handleNumericKeypadClick = (number) => {
+    if (isPaying) {
+      setBetrag((prev) => prev === "" ? number.toString() : prev + number);
+    } else if (isConfirmed) {
+      setArticleNumber((prev) => prev === "" ? number.toString() : prev + number);
+    } else if (isChangingPrice) {
+      setPrice((prev) => prev === "" ? number.toString() : prev + number);
+    } else {
+      setQuantity((prev) => prev === 0 ? number : parseInt(prev.toString() + number));
+    }
+  };
 
   const handleConfirm = async () => {
+    if (isPaying) {
+      console.log(`Zahlung von ${betrag} bestätigt`);
+      setBetrag("");
+      return;
+    }
+
     if (!selectedProduct) {
       if (!articleNumber) {
-        setIsConfirmed(true); // Artikelnummer-Eingabefeld anzeigen
+        setIsConfirmed(true);
         return;
       }
 
       try {
         setLoading(true);
-
-        // Anfrage an die API mit Axios
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/${articleNumber}`);
 
         if (response.status === 200 && response.data) {
-          setScannedProducts((prev) => [...prev, response.data]); // Produkt zur Liste hinzufügen
+          setScannedProducts((prev) => [...prev, response.data]);
           setSelectedProduct(response.data);
-          setArticleNumber(""); // Eingabefeld leeren
+          setArticleNumber("");
           setIsConfirmed(false);
         } else {
-          alert("Artikel nicht gefunden!"); // Falls Artikel nicht existiert
+          alert("Artikel nicht gefunden!");
         }
       } catch (error) {
         console.error("Fehler beim Abrufen des Artikels:", error);
@@ -363,7 +374,6 @@ const Kasse = ({ onKassenModusChange }) => {
       return;
     }
 
-    // Falls ein Produkt bereits ausgewählt wurde, aktualisiere nur die Menge
     const updatedProducts = scannedProducts.map((product) =>
       product.article_number === selectedProduct.article_number
         ? { ...product, quantity }
@@ -376,6 +386,8 @@ const Kasse = ({ onKassenModusChange }) => {
     setSuccessMessage("Menge erfolgreich aktualisiert.");
     setErrorMessage("");
   };
+
+
 
 
 
@@ -668,7 +680,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <button>Einstellungen</button>
           <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
           <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-          <button>Preis ändern</button>
+          <button onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
           <button></button>
           <button></button>
           <button></button>
@@ -692,7 +704,7 @@ const Kasse = ({ onKassenModusChange }) => {
         </div>
 
         <div className="scanned-products">
-          <div>
+          <div className="input-container">
             {isPaying ? (
               <>
                 <label>Betrag eingeben:</label>
@@ -700,7 +712,7 @@ const Kasse = ({ onKassenModusChange }) => {
                   type="text"
                   className="amount-input"
                   value={betrag}
-                  onChange={handleBetragChange}
+                  readOnly
                 />
               </>
             ) : (
@@ -711,8 +723,18 @@ const Kasse = ({ onKassenModusChange }) => {
                     <input
                       type="text"
                       className="article-number-input"
-                      autoFocus
-                      onKeyDown={handleArtikelScan} // Automatisches Scannen nach Eingabe
+                      value={articleNumber}
+                      readOnly
+                    />
+                  </>
+                ) : isChangingPrice ? (
+                  <>
+                    <label>Preis ändern:</label>
+                    <input
+                      type="text"
+                      className="price-input"
+                      value={price}
+                      readOnly
                     />
                   </>
                 ) : (
@@ -731,6 +753,7 @@ const Kasse = ({ onKassenModusChange }) => {
               </>
             )}
           </div>
+
 
           <div className="kasse-header">
             <h1>Quittung</h1>
@@ -849,10 +872,7 @@ const Kasse = ({ onKassenModusChange }) => {
               </button>
             ))}
             <button onClick={handleDotClick}>.</button>
-            <button
-              className="keypad-btn"
-              onClick={() => handleNumericKeypadClick(0)}
-            >
+            <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>
               0
             </button>
             <button className="keypad-btn" onClick={() => setQuantity(quantity + 1)}>
@@ -878,6 +898,8 @@ const Kasse = ({ onKassenModusChange }) => {
             <button className="btn-5">5</button>
           </div>
         </div>
+
+
 
 
 

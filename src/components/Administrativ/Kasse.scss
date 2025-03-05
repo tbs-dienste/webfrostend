@@ -279,3 +279,51 @@ button,
     }
   }
 }
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  align-items: center;
+  margin-bottom: 10px;
+
+  label {
+    font-weight: bold;
+  }
+
+  input {
+    padding: 10px;
+    border-radius: $border-radius;
+    border: 1px solid $light-gray;
+    width: 100%;
+    text-align: center;
+  }
+
+  .number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: $border-radius;
+    border: 1px solid $light-gray;
+    box-shadow: $shadow;
+    width: 160px;
+    height: 50px;
+
+    .quantity-display {
+      font-size: 1.5rem;
+      color: $primary-color;
+      border: none;
+      background-color: transparent;
+      text-align: center;
+      width: 100%;
+      outline: none;
+      pointer-events: none;
+    }
+  }
+}
