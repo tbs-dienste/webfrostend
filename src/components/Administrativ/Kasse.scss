@@ -251,18 +251,18 @@ button,
 
 
 .total-products {
-  background: white;
+  background: rgb(242, 236, 174);
   padding: 15px;
   border-radius: $border-radius;
   box-shadow: $shadow;
   text-align: center;
-  width: 100%; /* Jetzt gleiche Breite wie scannen-products */
+  width: 60%; /* Jetzt gleiche Breite wie scannen-products */
   position: absolute; /* Positioniert die Box immer am unteren Rand */
   bottom: 0;
   left: 0;
 
   table {
-    width: 100%;
+    width: 60%;
     border-collapse: collapse;
 
     td {
@@ -271,7 +271,7 @@ button,
     }
 
     tr:nth-child(odd) {
-      background-color: #f8f9fa;
+      background-color: rgb(242, 236, 174);
     }
 
     tr:last-child {

@@ -753,7 +753,8 @@ const Kasse = ({ onKassenModusChange }) => {
                     <span className="product-article_number">{product.article_short_text}</span>
                     <div className="quantity-controls">
                       <span className="product-quantity">
-                        {product.quantity} x
+                        {Number(product.quantity).toFixed(2)} {/* Stellt sicher, dass es eine Zahl ist */}
+                        {' x'}
                       </span>
                     </div>
                     <span className="product-price">
@@ -780,28 +781,31 @@ const Kasse = ({ onKassenModusChange }) => {
                 </div>
               ))}
 
-             
+
+
+
             </div>
           )}
         </div>
-
         <div className="total-products">
           <table>
             <tbody>
               <tr>
                 <td><strong>Subtotal</strong></td>
-                <td>CHF {totalPrice.toFixed(2)}</td>
+                <td><strong>CHF</strong></td>
+                <td>{totalPrice.toFixed(2)}</td>
               </tr>
               <tr>
                 <td colSpan="2">---------------------------------------------------</td>
               </tr>
               <tr>
                 <td><strong>Total</strong></td>
-                <td>CHF {totalPrice.toFixed(2)}</td>
+                <td><strong>CHF</strong></td>
+                <td>{totalPrice.toFixed(2)}</td>
               </tr>
               <tr>
                 <td><strong>Anzahl Teile</strong></td>
-                <td>{scannedProducts.reduce((total, product) => total + product.quantity, 0)}</td>
+                <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
               </tr>
             </tbody>
           </table>
