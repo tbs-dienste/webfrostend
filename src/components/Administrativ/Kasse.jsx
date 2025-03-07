@@ -852,11 +852,11 @@ const Kasse = ({ onKassenModusChange }) => {
                       <div className="quantity-controls">
                         <span className="product-quantity">{Number(product.quantity).toFixed(2)} x</span>
                       </div>
-                      <span className="product-price">{parseFloat(product.price).toFixed(2)} CHF</span>
+                      <span className="product-price">{parseFloat(product.price).toFixed(2)} €</span>
                       <span className="total-price">
                         {product.finalPrice
                           ? product.finalPrice.toFixed(2)
-                          : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                          : (parseFloat(product.price) * product.quantity).toFixed(2)} €
                       </span>
                     </div>
 
@@ -864,7 +864,7 @@ const Kasse = ({ onKassenModusChange }) => {
                       {product.discounts?.length > 0 ? (
                         product.discounts.map((discount, index) => (
                           <span key={index} className="discount">
-                            {discount.title} ({discount.amount} CHF)
+                            {discount.title} ({discount.amount} €)
                           </span>
                         ))
                       ) : (
@@ -883,7 +883,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <tbody>
                 <tr>
                   <td><strong>Subtotal</strong></td>
-                  <td><strong>CHF</strong></td>
+                  <td><strong>€</strong></td>
                   <td>{totalPrice.toFixed(2)}</td>
                 </tr>
                 <tr>
@@ -891,7 +891,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 </tr>
                 <tr>
                   <td><strong>Total</strong></td>
-                  <td><strong>CHF</strong></td>
+                  <td><strong>€</strong></td>
                   <td>{totalPrice.toFixed(2)}</td>
                 </tr>
                 <tr>
@@ -917,13 +917,13 @@ const Kasse = ({ onKassenModusChange }) => {
         {/* Kundenkarte Buttons */}
         {showCustomerCardButtons && (
           <div className="customer-card-buttons">
-            <button className="discount-btn">50 CHF</button>
-            <button className="discount-btn">30 CHF</button>
+            <button className="discount-btn">50 €</button>
+            <button className="discount-btn">30 €</button>
           </div>
         )}
         <div className="numeric-keypad-container">
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
+            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>€</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
