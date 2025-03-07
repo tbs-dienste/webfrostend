@@ -347,20 +347,54 @@ const Kasse = ({ onKassenModusChange }) => {
       return;
     }
 
-    if (!selectedProduct) {
-      if (!articleNumber) {
-        setIsConfirmed(true);
-        return;
-      }
+    // Wenn kein Produkt ausgewählt wurde und der Preis leer ist, Artikelnummer-Feld anzeigen
+    if (!selectedProduct && (price === undefined || price === null || price === "")) {
+      setIsConfirmed(true);
+      return;
+    }
 
+    // Wenn ein Produkt ausgewählt wurde und ein Preis gesetzt ist, die Menge aktualisieren
+    if (selectedProduct && price !== undefined && price !== null && price !== "") {
+      try {
+        setLoading(true);
+
+        // Senden der Aktualisierung an das Backend
+        const response = await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/update-quantity', {
+          selectedProducts: [selectedProduct.article_number],  // Hier wird das ausgewählte Produkt verwendet
+          quantity: quantity
+        });
+
+        if (response.status === 200) {
+          const updatedProducts = scannedProducts.map((product) =>
+            product.article_number === selectedProduct.article_number
+              ? { ...product, quantity }
+              : product
+          );
+
+          setScannedProducts(updatedProducts);
+          setSelectedProduct(null);
+          setQuantity(1);
+          setSuccessMessage("Menge erfolgreich aktualisiert.");
+          setErrorMessage("");
+        } else {
+          setErrorMessage("Fehler beim Aktualisieren der Menge.");
+        }
+      } catch (error) {
+        console.error("Fehler beim Aktualisieren der Menge:", error);
+        setErrorMessage("Fehler beim Aktualisieren der Menge.");
+      } finally {
+        setLoading(false);
+      }
+    } else if (!selectedProduct && articleNumber) {
+      // Wenn kein Produkt ausgewählt ist, aber eine Artikelnummer eingegeben wurde, das Produkt abrufen
       try {
         setLoading(true);
         const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/${articleNumber}`);
 
         if (response.status === 200 && response.data) {
           setScannedProducts((prev) => [...prev, response.data]);
-          setSelectedProduct(response.data);
-          setArticleNumber("");
+          setSelectedProduct(response.data);  // Hier wird das Produkt gesetzt
+          setArticleNumber("");  // Artikelnummer zurücksetzen
           setIsConfirmed(false);
         } else {
           alert("Artikel nicht gefunden!");
@@ -371,20 +405,20 @@ const Kasse = ({ onKassenModusChange }) => {
       } finally {
         setLoading(false);
       }
-      return;
+    } else {
+      // Wenn weder ein Produkt noch eine Artikelnummer vorhanden sind, Fehlermeldung anzeigen
+      setErrorMessage("Bitte wählen Sie ein Produkt oder geben Sie eine Artikelnummer ein.");
     }
+  };
 
-    const updatedProducts = scannedProducts.map((product) =>
-      product.article_number === selectedProduct.article_number
-        ? { ...product, quantity }
-        : product
+
+
+  const toggleSelectProduct = (articleNumber) => {
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(articleNumber)
+        ? prevSelected.filter((num) => num !== articleNumber)
+        : [...prevSelected, articleNumber]
     );
-
-    setScannedProducts(updatedProducts);
-    setSelectedProduct(null);
-    setQuantity(1);
-    setSuccessMessage("Menge erfolgreich aktualisiert.");
-    setErrorMessage("");
   };
 
 
@@ -401,13 +435,6 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  const toggleSelectProduct = (articleNumber) => {
-    setSelectedProducts((prevSelected) =>
-      prevSelected.includes(articleNumber)
-        ? prevSelected.filter((num) => num !== articleNumber)
-        : [...prevSelected, articleNumber]
-    );
-  };
 
   const deleteSelectedProducts = async () => {
     if (selectedProducts.length === 0) return; // Keine Auswahl, nichts zu tun
@@ -658,181 +685,224 @@ const Kasse = ({ onKassenModusChange }) => {
       <div className="kasse-layout">
         {/* Links: Buttons für Artikel scannen und Rabatte */}
         <div className="left-buttons">
-          <button onClick={handleDailyClose}>Tagesabschluss</button>
-          <button onClick={toggleScanInput}>Artikel scannen</button>
-          <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
-          <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
+          {showDiscounts ? (
+            <div className="discount-buttons">
+              <button onClick={toggleDiscounts} className="back-button">
+                Zurück
+              </button>
+              {/* Buttons in zwei Boxen unterteilen */}
+              <div className="button-group">
+                {availableDiscounts.slice(0, 2).map((discount) => (
+                  <button
+                    key={discount.title}
+                    onClick={() => addDiscount(discount.title)}
+                    className="discount-button double-width"
+                  >
+                    {discount.title}
+                  </button>
+                ))}
+              </div>
+              <div className="button-group">
+                {availableDiscounts.slice(2, 4).map((discount) => (
+                  <button
+                    key={discount.title}
+                    onClick={() => addDiscount(discount.title)}
+                    className="discount-button double-width"
+                  >
+                    {discount.title}
+                  </button>
+                ))}
+              </div>
+              {availableDiscounts.slice(4).map((discount) => (
+                <button
+                  key={discount.title}
+                  onClick={() => addDiscount(discount.title)}
+                  className="discount-button"
+                >
+                  {discount.title}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <>
+              <button style={{ backgroundColor: '	#FDFF00', color: 'black' }}>Verkauf</button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button onClick={handleDailyClose}>Tagesabschluss</button>
+              <button onClick={toggleScanInput}>Artikel scannen</button>
+              <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
+              <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
-          <button>Kunden suchen</button>
-          <button onClick={toggleLastReciepts} className="sign-out-button">
-            <FontAwesomeIcon icon={faPrint} />
-          </button>
-          <button>Schublade öffnen</button>
-          <button onClick={handleCustomerCardClick}>Kundenkarte</button>
-          <button>GS-Karte</button>
-          <button>Bon Parkieren</button>
-          <button onClick={handleDailyOverview}>Tagesübersicht</button>
-          <button onClick={addStornoCost} className="btn-storno">Storno-Kosten hinzufügen</button>
-          <button onClick={handleSignOut} className="sign-out-button">
-            <FontAwesomeIcon icon={faSignOutAlt} />
-          </button>
-          <button>Artikel suchen</button>
-          <button>Einstellungen</button>
-          <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
-          <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-          <button onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
-          <button></button>
-          <button></button>
-          <button></button>
-          <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
-          <button
-            onClick={() => deleteSelectedProducts()} // Ruft die Funktion zum Löschen auf
-            disabled={selectedProducts.length === 0} // Button ist deaktiviert, wenn keine Produkte ausgewählt sind
-          >
-            Pos. löschen
-          </button>
+              {/* Kunden- und Transaktionsbuttons */}
+              <button>Kunden suchen</button>
+              
+         
+              <button onClick={handleCustomerCardClick}>Kundenkarte</button>
 
-          <button></button>
-          <button></button>
-          <button></button>
+              {/* Weitere Funktionen */}
+              <button>GS-Karte</button>
+              <button>Bon Parkieren</button>
+              <button onClick={addStornoCost} className="btn-storno">
+                Storno-Kosten hinzufügen
+              </button>
 
-          <button></button>
-          <button></button>
-          <button></button>
+             
+              <button>Artikel suchen</button>
+
+              
+              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0}>
+                Pos. löschen
+              </button>
+              {/* Unbenutzte Buttons */}
+              <button>Anzahlung</button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button></button>
+              <button onClick={toggleLastReciepts} className="sign-out-button">
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
+              <button>Einstellungen</button>
+              <button>Kunden Detail</button>
 
 
+              
+
+              <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
+              <button onClick={handleDailyOverview}>Tagesübersicht</button>
+              <button>Schublade öffnen</button>
+              <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+              <button onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
+
+              <button>Kundenkarte</button>
+              <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
+               {/* Abmelden und Wechseln */}
+               <button onClick={handleSignOut} className="sign-out-button">
+                <FontAwesomeIcon icon={faSignOutAlt} />
+              </button>
+
+
+              
+
+              
+
+            </>
+          )}
         </div>
 
-        <div className="scanned-products">
-          <div className="input-container">
-            {isPaying ? (
-              <>
-                <label>Betrag eingeben:</label>
-                <input
-                  type="text"
-                  className="amount-input"
-                  value={betrag}
-                  readOnly
-                />
-              </>
+
+
+        <div className="scanned-products-container">
+          <div className="scanned-products">
+            <div className="input-container">
+              {isPaying ? (
+                <>
+                  <label>Betrag eingeben:</label>
+                  <input type="text" className="amount-input" value={betrag} readOnly />
+                </>
+              ) : (
+                <>
+                  {isConfirmed ? (
+                    <>
+                      <label>Artikelnummer eingeben:</label>
+                      <input type="text" className="article-number-input" value={articleNumber} readOnly />
+                    </>
+                  ) : isChangingPrice ? (
+                    <>
+                      <label>Preis ändern:</label>
+                      <input type="text" className="price-input" value={price} readOnly />
+                    </>
+                  ) : (
+                    <>
+                      <label>Menge:</label>
+                      <div className="number">
+                        <input type="text" className="quantity-display" value={quantity} readOnly />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="kasse-header">
+              <h1>Quittung</h1>
+              <h4>Verkäufer {salespersonName}</h4>
+              <h4>Kunde {kundeNummer}</h4>
+            </div>
+
+            {scannedProducts.length === 0 ? (
+              <p>Keine Produkte gescannt.</p>
             ) : (
-              <>
-                {isConfirmed ? (
-                  <>
-                    <label>Artikelnummer eingeben:</label>
-                    <input
-                      type="text"
-                      className="article-number-input"
-                      value={articleNumber}
-                      readOnly
-                    />
-                  </>
-                ) : isChangingPrice ? (
-                  <>
-                    <label>Preis ändern:</label>
-                    <input
-                      type="text"
-                      className="price-input"
-                      value={price}
-                      readOnly
-                    />
-                  </>
-                ) : (
-                  <>
-                    <label>Menge:</label>
-                    <div className="number">
-                      <input
-                        type="text"
-                        className="quantity-display"
-                        value={quantity}
-                        readOnly
-                      />
+              <div className="product-list">
+                {scannedProducts.map((product) => (
+                  <div
+                    key={product.article_number}
+                    className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
+                    onClick={() => toggleSelectProduct(product.article_number)}
+                  >
+                    <div className="product-details">
+                      <span className="product-name">{product.article_number}</span>
+                      <span className="product-article_number">{product.article_short_text}</span>
+                      <div className="quantity-controls">
+                        <span className="product-quantity">{Number(product.quantity).toFixed(2)} x</span>
+                      </div>
+                      <span className="product-price">{parseFloat(product.price).toFixed(2)} CHF</span>
+                      <span className="total-price">
+                        {product.finalPrice
+                          ? product.finalPrice.toFixed(2)
+                          : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                      </span>
                     </div>
-                  </>
-                )}
-              </>
+
+                    <div className="product-discounts">
+                      {product.discounts?.length > 0 ? (
+                        product.discounts.map((discount, index) => (
+                          <span key={index} className="discount">
+                            {discount.title} ({discount.amount} CHF)
+                          </span>
+                        ))
+                      ) : (
+                        <span className="no-discount"></span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 
-
-          <div className="kasse-header">
-            <h1>Quittung</h1>
-            <h4>Verkäufer {salespersonName}</h4>
-            <h4>Kunde {kundeNummer}</h4>
+          {/* Total Products - Direkt unter Scanned Products */}
+          <div className="total-products">
+            <table>
+              <tbody>
+                <tr>
+                  <td><strong>Subtotal</strong></td>
+                  <td><strong>CHF</strong></td>
+                  <td>{totalPrice.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan="2">---------------------------------------------------</td>
+                </tr>
+                <tr>
+                  <td><strong>Total</strong></td>
+                  <td><strong>CHF</strong></td>
+                  <td>{totalPrice.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td><strong>Anzahl Teile</strong></td>
+                  <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-
-          {scannedProducts.length === 0 ? (
-            <p>Keine Produkte gescannt.</p>
-          ) : (
-            <div className="product-list">
-              {scannedProducts.map((product) => (
-                <div
-                  key={product.article_number}
-                  className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
-                  onClick={() => toggleSelectProduct(product.article_number)}
-                >
-                  <div className="product-details">
-                    <span className="product-name">{product.article_number}</span>
-                    <span className="product-article_number">{product.article_short_text}</span>
-                    <div className="quantity-controls">
-                      <span className="product-quantity">
-                        {Number(product.quantity).toFixed(2)} {/* Stellt sicher, dass es eine Zahl ist */}
-                        {' x'}
-                      </span>
-                    </div>
-                    <span className="product-price">
-                      {parseFloat(product.price).toFixed(2)} CHF
-                    </span>
-                    <span className="total-price">
-                      {product.finalPrice
-                        ? product.finalPrice.toFixed(2)
-                        : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
-                    </span>
-                  </div>
-
-                  <div className="product-discounts">
-                    {product.discounts?.length > 0 ? (
-                      product.discounts.map((discount, index) => (
-                        <span key={index} className="discount">
-                          {discount.title} ({discount.amount} CHF)
-                        </span>
-                      ))
-                    ) : (
-                      <span className="no-discount">Kein Rabatt</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-
-
-
-            </div>
-          )}
         </div>
-        <div className="total-products">
-          <table>
-            <tbody>
-              <tr>
-                <td><strong>Subtotal</strong></td>
-                <td><strong>CHF</strong></td>
-                <td>{totalPrice.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td colSpan="2">---------------------------------------------------</td>
-              </tr>
-              <tr>
-                <td><strong>Total</strong></td>
-                <td><strong>CHF</strong></td>
-                <td>{totalPrice.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td><strong>Anzahl Teile</strong></td>
-                <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
 
 
 
@@ -862,7 +932,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
           <div className="keypad">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+            {[9, 8, 7, 6, 5, 4, 3, 2, 1].map((number) => (
               <button
                 key={number}
                 onClick={() => handleNumericKeypadClick(number)}
@@ -907,16 +977,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-      {/* Rabatte anzeigen */}
-      {showDiscounts && availableDiscounts.map((discount) => (
-        <button
-          key={discount.title}
-          onClick={() => addDiscount(discount.title)}
-          className="discount-button"
-        >
-          {discount.title}
-        </button>
-      ))}
 
 
 
