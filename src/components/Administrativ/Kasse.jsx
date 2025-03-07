@@ -811,12 +811,12 @@ const Kasse = ({ onKassenModusChange }) => {
                   {isConfirmed ? (
                     <>
                       <label>Artikelnummer eingeben:</label>
-                      <input type="text" className="article-number-input" value={articleNumber} readOnly />
+                      <input type="text" className="quantity-display" value={articleNumber} readOnly />
                     </>
                   ) : isChangingPrice ? (
                     <>
                       <label>Preis ändern:</label>
-                      <input type="text" className="price-input" value={price} readOnly />
+                      <input type="text" className="quantity-display" value={price} readOnly />
                     </>
                   ) : (
                     <>
