@@ -78,17 +78,57 @@ button,
   gap: 20px;
   align-items: flex-start;
 
-  .left-buttons {
-    display: grid;
-    grid-template-columns: repeat(4, $button-size);
-    gap: 5px;
-    background-color: $secondary-color;
-    padding: 20px;
-    border-radius: $border-radius;
-    padding-bottom: 10px;
-    box-shadow: $shadow;
-    align-self: flex-start;
+ // Container-Stil für die Buttons
+.left-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 Spalten Layout */
+  gap: 5px; /* Abstand zwischen den Buttons */
+  padding: 20px;
+  background-color: $secondary-color;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  align-items: center;
+}
+
+// Stil für die Rabatt-Buttons
+.discount-buttons {
+  grid-template-columns: repeat(4, 1fr); /* 4 Spalten Layout für Rabatte */
+  gap: 5px;
+}
+
+.discount-button {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+  color: white;
+  background-color: $primary-color;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  transition: all $transition;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &.back-button {
+    background-color: $danger-color; /* Zurück-Button speziell */
+    color: white;
+    font-weight: bold;
+  }
+}
+
 
   .scanned-products-container {
     display: flex;
