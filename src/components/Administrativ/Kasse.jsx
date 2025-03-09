@@ -496,6 +496,34 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
+  const toggleBonParkieren = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("Kein Token gefunden. Aktion abgebrochen.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/park-bon", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      console.log("Bon erfolgreich geparkt:", response.data.message);
+
+      await fetchScannedProducts(); // falls du das nach dem Parkieren brauchst
+
+    } catch (error) {
+      console.error("Fehler beim Parken des Bons:", error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
 
 
@@ -736,21 +764,23 @@ const Kasse = ({ onKassenModusChange }) => {
 
               {/* Kunden- und Transaktionsbuttons */}
               <button>Kunden suchen</button>
-              
-         
+
+
               <button onClick={handleCustomerCardClick}>Kundenkarte</button>
 
               {/* Weitere Funktionen */}
               <button>GS-Karte</button>
-              <button>Bon Parkieren</button>
+              <button onClick={toggleBonParkieren} disabled={loading}>
+                {loading ? 'Parken läuft...' : 'Bon Parkieren'}
+              </button>
               <button onClick={addStornoCost} className="btn-storno">
                 Storno-Kosten hinzufügen
               </button>
 
-             
+
               <button>Artikel suchen</button>
 
-              
+
               <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0}>
                 Pos. löschen
               </button>
@@ -772,7 +802,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button>Kunden Detail</button>
 
 
-              
+
 
               <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
               <button onClick={handleDailyOverview}>Tagesübersicht</button>
@@ -782,15 +812,15 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <button>Kundenkarte</button>
               <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-               {/* Abmelden und Wechseln */}
-               <button onClick={handleSignOut} className="sign-out-button">
+              {/* Abmelden und Wechseln */}
+              <button onClick={handleSignOut} className="sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
 
 
-              
 
-              
+
+
 
             </>
           )}
@@ -852,11 +882,11 @@ const Kasse = ({ onKassenModusChange }) => {
                       <div className="quantity-controls">
                         <span className="product-quantity">{Number(product.quantity).toFixed(2)} x</span>
                       </div>
-                      <span className="product-price">{parseFloat(product.price).toFixed(2)} €</span>
+                      <span className="product-price">{parseFloat(product.price).toFixed(2)} CHF</span>
                       <span className="total-price">
                         {product.finalPrice
                           ? product.finalPrice.toFixed(2)
-                          : (parseFloat(product.price) * product.quantity).toFixed(2)} €
+                          : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
                       </span>
                     </div>
 
@@ -864,7 +894,7 @@ const Kasse = ({ onKassenModusChange }) => {
                       {product.discounts?.length > 0 ? (
                         product.discounts.map((discount, index) => (
                           <span key={index} className="discount">
-                            {discount.title} ({discount.amount} €)
+                            {discount.title} ({discount.amount} CHF)
                           </span>
                         ))
                       ) : (
@@ -883,7 +913,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <tbody>
                 <tr>
                   <td><strong>Subtotal</strong></td>
-                  <td><strong>€</strong></td>
+                  <td><strong>CHF</strong></td>
                   <td>{totalPrice.toFixed(2)}</td>
                 </tr>
                 <tr>
@@ -891,7 +921,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 </tr>
                 <tr>
                   <td><strong>Total</strong></td>
-                  <td><strong>€</strong></td>
+                  <td><strong>CHF</strong></td>
                   <td>{totalPrice.toFixed(2)}</td>
                 </tr>
                 <tr>
@@ -917,13 +947,13 @@ const Kasse = ({ onKassenModusChange }) => {
         {/* Kundenkarte Buttons */}
         {showCustomerCardButtons && (
           <div className="customer-card-buttons">
-            <button className="discount-btn">50 €</button>
-            <button className="discount-btn">30 €</button>
+            <button className="discount-btn">50 CHF</button>
+            <button className="discount-btn">30 CHF</button>
           </div>
         )}
         <div className="numeric-keypad-container">
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>€</button>
+            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
@@ -932,7 +962,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
           <div className="keypad">
-            {[9, 8, 7, 6, 5, 4, 3, 2, 1].map((number) => (
+            {[7, 8, 9, 4, 5, 6, 1, 2, 3].map((number) => (
               <button
                 key={number}
                 onClick={() => handleNumericKeypadClick(number)}
