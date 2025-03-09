@@ -1,0 +1,74 @@
+.payment-prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Abgedunkelter Hintergrund */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .payment-prompt-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px; /* Abgerundete Ecken */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stärkere Schatten für besseren 3D-Effekt */
+    text-align: center;
+    width: 500px; /* Breitere Box */
+    max-width: 80%; /* Box kann bis zu 80% des Viewports einnehmen */
+  }
+  
+  .payment-prompt-text {
+    font-size: 22px; /* Größere Schrift für den Titel */
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .payment-prompt-subtext {
+    font-size: 16px; /* Größere Schrift für Untertext */
+    margin-bottom: 15px;
+  }
+  
+  .payment-prompt-amount {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px 0;
+  }
+  
+  .payment-prompt-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; /* Zwischenraum zwischen den Buttons */
+  }
+  
+  .payment-prompt-button {
+    padding: 15px 30px; /* Größere Buttons */
+    font-size: 16px; /* Größere Schrift */
+    cursor: pointer;
+    border: none;
+    border-radius: 8px; /* Abgerundete Ecken für die Buttons */
+    width: 48%; /* Breite der Buttons erhöhen */
+  }
+  
+  .payment-prompt-button.cancel {
+    background-color: #f44336; /* Rote Farbe für "Abbrechen" */
+    color: white;
+  }
+  
+  .payment-prompt-button.continue {
+    background-color: #4caf50; /* Grüne Farbe für "Weiter" */
+    color: white;
+  }
+  
+  .payment-prompt-button:hover {
+    opacity: 0.9;
+  }
+  
+  .payment-prompt-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  

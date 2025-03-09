@@ -6,11 +6,13 @@ import { faSignOutAlt, faPrint } from '@fortawesome/free-solid-svg-icons'; // Im
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 import LastReceiptViewer from './LatestReciepts';
 import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
+import PaymentPrompt from './PaymentPrompt';
 
-const Kasse = ({ onKassenModusChange }) => {
+const Kasse = ({ onKassenModusChange}) => {
   const [isPaying, setIsPaying] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [showEFTPopup, setShowEFTPopup] = useState(false);
 
   const [betrag, setBetrag] = useState(0); // Definiere betrag und setBetrag
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -527,6 +529,15 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
+
+  const handleShowPopup = () => {
+    setShowEFTPopup(true);
+};
+
+
+const handleClosePopup = () => {
+    setShowEFTPopup(false);
+};
   const updatePrice = async (articleNumber, price) => {
     if (!articleNumber || price === undefined) return;
 
@@ -694,6 +705,16 @@ const Kasse = ({ onKassenModusChange }) => {
             <LastReceiptViewer /> {/* Quittung wird hier als PDF angezeigt */}
             <button onClick={() => setShowLastReceipt(false)}>Schließen</button>
           </div>
+        </div>
+      )}
+
+
+      {showEFTPopup && (
+        <div className="popup-overlay">
+          <div className="last-receipt-popup">
+            <PaymentPrompt /> {/* Die PaymentPrompt-Komponente wird hier angezeigt */}
+          </div>
+         
         </div>
       )}
 
@@ -955,7 +976,7 @@ const Kasse = ({ onKassenModusChange }) => {
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
             <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
-            <button style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
+            <button  onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
             </button>
           </div>
