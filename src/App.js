@@ -81,6 +81,7 @@ import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
 import ProductBarcodes from './components/Administrativ/ProductBarcodes';
 import DownloadZusammenfassung from './components/Administrativ/DownloadZusammenfassung';
 import GSKarteDetails from './components/Administrativ/GSKarteDetails';
+import ArtikelDetail from './components/Administrativ/ArtikelDetail';
 
 const App = () => {
   
@@ -180,7 +181,8 @@ const App = () => {
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
-      
+          <Route path="/artikel-detail/:articleNumber" element={<ArtikelDetail />} />
+
           <Route path="/ueber-uns" element={<ÜberUns />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
           <Route path="/aufgaben/erstellen/:kundenId/:dienstleistungId" element={<CreateAufgabe />} /> {/* Neue Route für CreateAufgabe */}

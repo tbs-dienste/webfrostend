@@ -8,7 +8,7 @@ import LastReceiptViewer from './LatestReciepts';
 import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 import PaymentPrompt from './PaymentPrompt';
 
-const Kasse = ({ onKassenModusChange}) => {
+const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -414,17 +414,12 @@ const Kasse = ({ onKassenModusChange}) => {
   };
 
 
-
   const toggleSelectProduct = (articleNumber) => {
     setSelectedProducts((prevSelected) =>
-      prevSelected.includes(articleNumber)
-        ? prevSelected.filter((num) => num !== articleNumber)
-        : [...prevSelected, articleNumber]
+      prevSelected.includes(articleNumber) ? [] : [articleNumber]
     );
   };
-
-
-
+  
 
 
 
@@ -532,12 +527,12 @@ const Kasse = ({ onKassenModusChange}) => {
 
   const handleShowPopup = () => {
     setShowEFTPopup(true);
-};
+  };
 
 
-const handleClosePopup = () => {
+  const handleClosePopup = () => {
     setShowEFTPopup(false);
-};
+  };
   const updatePrice = async (articleNumber, price) => {
     if (!articleNumber || price === undefined) return;
 
@@ -671,9 +666,14 @@ const handleClosePopup = () => {
   function generateRandomNumber() {
     return Math.floor(100000000 + Math.random() * 900000000); // 9-stellige Nummer
   }
-
-
-
+  const goToProductDetails = () => {
+    if (selectedProducts.length > 0) {
+      navigate(`/artikel-detail/${selectedProducts[0]}`); // Nutze den ersten ausgewählten Artikel
+    } else {
+      alert('Bitte wähle zuerst ein Produkt aus!');
+    }
+  };
+  
 
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
@@ -714,7 +714,7 @@ const handleClosePopup = () => {
           <div className="last-receipt-popup">
             <PaymentPrompt /> {/* Die PaymentPrompt-Komponente wird hier angezeigt */}
           </div>
-         
+
         </div>
       )}
 
@@ -812,7 +812,7 @@ const handleClosePopup = () => {
               <button></button>
               <button></button>
               <button></button>
-              <button></button>
+              <button onClick={goToProductDetails} >Artikel Detail</button>
               <button></button>
               <button></button>
               <button></button>
@@ -976,7 +976,7 @@ const handleClosePopup = () => {
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
             <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
-            <button  onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
+            <button onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
             </button>
           </div>
