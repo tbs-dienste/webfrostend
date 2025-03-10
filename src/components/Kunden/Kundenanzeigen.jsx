@@ -232,28 +232,33 @@ const KundenAnzeigen = () => {
             ))}
           </div>
 
-          {/* Display Bewertungen or Button for Link */}
-{selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
-  <div>
-    <h3>Bewertungen:</h3>
-    {selectedKunde.bewertungen.map((bewertung, index) => (
-      <div key={index} className="bewertung">
-        <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
-        <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
-        <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
-        <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
-        <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
-        <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
-        <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
-        <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
+        {/* Bewertungen oder Button für den Bewertungslink */}
+{selectedKunde.status === 'abgeschlossen' && (
+  <>
+    {selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
+      <div>
+        <h3>Bewertungen:</h3>
+        {selectedKunde.bewertungen.map((bewertung, index) => (
+          <div key={index} className="bewertung">
+            <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
+            <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
+            <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
+            <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
+            <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
+            <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
+            <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
+            <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-) : (
-  <button onClick={copyLinkToClipboard} className="copy-link-button">
-    <FaCopy /> Link zum Bewerten kopieren
-  </button>
+    ) : (
+      <button onClick={copyLinkToClipboard} className="copy-link-button">
+        <FaCopy /> Link zum Bewerten kopieren
+      </button>
+    )}
+  </>
 )}
+
 
 
           {/* Link Buttons */}

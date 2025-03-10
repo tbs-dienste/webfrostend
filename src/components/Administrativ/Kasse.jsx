@@ -342,76 +342,7 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  const handleConfirm = async () => {
-    if (isPaying) {
-      console.log(`Zahlung von ${betrag} bestätigt`);
-      setBetrag("");
-      return;
-    }
 
-    // Wenn kein Produkt ausgewählt wurde und der Preis leer ist, Artikelnummer-Feld anzeigen
-    if (!selectedProduct && (price === undefined || price === null || price === "")) {
-      setIsConfirmed(true);
-      return;
-    }
-
-    // Wenn ein Produkt ausgewählt wurde und ein Preis gesetzt ist, die Menge aktualisieren
-    if (selectedProduct && price !== undefined && price !== null && price !== "") {
-      try {
-        setLoading(true);
-
-        // Senden der Aktualisierung an das Backend
-        const response = await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/update-quantity', {
-          selectedProducts: [selectedProduct.article_number],  // Hier wird das ausgewählte Produkt verwendet
-          quantity: quantity
-        });
-
-        if (response.status === 200) {
-          const updatedProducts = scannedProducts.map((product) =>
-            product.article_number === selectedProduct.article_number
-              ? { ...product, quantity }
-              : product
-          );
-
-          setScannedProducts(updatedProducts);
-          setSelectedProduct(null);
-          setQuantity(1);
-          setSuccessMessage("Menge erfolgreich aktualisiert.");
-          setErrorMessage("");
-        } else {
-          setErrorMessage("Fehler beim Aktualisieren der Menge.");
-        }
-      } catch (error) {
-        console.error("Fehler beim Aktualisieren der Menge:", error);
-        setErrorMessage("Fehler beim Aktualisieren der Menge.");
-      } finally {
-        setLoading(false);
-      }
-    } else if (!selectedProduct && articleNumber) {
-      // Wenn kein Produkt ausgewählt ist, aber eine Artikelnummer eingegeben wurde, das Produkt abrufen
-      try {
-        setLoading(true);
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/${articleNumber}`);
-
-        if (response.status === 200 && response.data) {
-          setScannedProducts((prev) => [...prev, response.data]);
-          setSelectedProduct(response.data);  // Hier wird das Produkt gesetzt
-          setArticleNumber("");  // Artikelnummer zurücksetzen
-          setIsConfirmed(false);
-        } else {
-          alert("Artikel nicht gefunden!");
-        }
-      } catch (error) {
-        console.error("Fehler beim Abrufen des Artikels:", error);
-        alert("Fehler beim Abrufen des Artikels!");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      // Wenn weder ein Produkt noch eine Artikelnummer vorhanden sind, Fehlermeldung anzeigen
-      setErrorMessage("Bitte wählen Sie ein Produkt oder geben Sie eine Artikelnummer ein.");
-    }
-  };
 
 
   const toggleSelectProduct = (articleNumber) => {
@@ -419,7 +350,7 @@ const Kasse = ({ onKassenModusChange }) => {
       prevSelected.includes(articleNumber) ? [] : [articleNumber]
     );
   };
-  
+
 
 
 
@@ -618,6 +549,62 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
+  const handleConfirm = async () => {
+    if (isPaying) {
+      console.log(`Zahlung von ${betrag} bestätigt`);
+      setBetrag("");
+      return;
+    }
+  
+    // Wenn kein Produkt ausgewählt wurde und der Preis leer ist, Artikelnummer-Feld anzeigen
+    if (!selectedProduct && (price === undefined || price === null || price === "")) {
+      setIsConfirmed(true);
+      return;
+    }
+  
+    // Wenn ausgewählte Produkte vorhanden sind und ein Preis gesetzt ist, Preis für alle ausgewählten Produkte aktualisieren
+    if (selectedProducts.length > 0 && (price !== undefined && price !== null && price !== "")) {
+      try {
+        setLoading(true);
+  
+        // Erstelle eine Liste von Artikelnummern und Preisen
+        const updates = selectedProducts.map(product => ({
+          article_number: product.article_number,
+          price: price,
+        }));
+  
+        // Senden der Aktualisierung an das Backend
+        const response = await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price', {
+          selectedProducts: updates,
+        });
+  
+        if (response.status === 200) {
+          // Aktualisiere den Zustand mit den neuen Preisen für alle Produkte
+          const updatedProducts = scannedProducts.map((product) =>
+            selectedProducts.some(p => p.article_number === product.article_number)
+              ? { ...product, price }
+              : product
+          );
+  
+          setScannedProducts(updatedProducts);
+          setSelectedProducts([]); // Leere die Auswahl
+          setSuccessMessage("Preise erfolgreich für alle ausgewählten Produkte aktualisiert.");
+          setErrorMessage("");
+        } else {
+          setErrorMessage("Fehler beim Aktualisieren der Preise.");
+        }
+      } catch (error) {
+        console.error("Fehler beim Aktualisieren des Preises:", error);
+        setErrorMessage("Fehler beim Aktualisieren der Preise.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setErrorMessage("Bitte wählen Sie Produkte aus und setzen Sie einen Preis.");
+    }
+  };
+  
+
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
@@ -673,7 +660,7 @@ const Kasse = ({ onKassenModusChange }) => {
       alert('Bitte wähle zuerst ein Produkt aus!');
     }
   };
-  
+
 
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>

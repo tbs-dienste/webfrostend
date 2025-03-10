@@ -1,47 +1,70 @@
-$primary-color: #3498db;
-$secondary-color: #2ecc71;
-$accent-color: #e74c3c;
-$text-color: #333;
-$background-color: #f9f9f9;
-$border-radius: 8px;
-$box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-$transition-speed: 0.3s;
+// KundenAnzeigen.scss
+
+$primary-color: #4f46e5; // Indigo
+$primary-color-hover: #4338ca;
+$secondary-color: #f9fafb; // Light gray background
+$accent-color: #10b981; // Emerald
+$accent-color-hover: #059669;
+$text-color: #374151; // Slate
+$border-color: #e5e7eb; // Light border gray
+$error-color: #ef4444;
 
 .kunden-anzeigen-container {
-  max-width: 800px;
-  margin: 2rem auto;
+  max-width: 900px;
+  margin: 3rem auto;
   padding: 2rem;
-  background-color: $background-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  background-color: $secondary-color;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: $text-color;
+  font-family: 'Inter', sans-serif;
 
   h2 {
+    text-align: center;
     color: $primary-color;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+
+  h3 {
+    margin-top: 2rem;
+    color: $primary-color;
+    font-size: 1.5rem;
   }
 
   .loading {
     text-align: center;
-    font-size: 1.5rem;
-    color: $text-color;
+    font-size: 1.2rem;
+    color: $primary-color;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+
+    strong {
+      font-weight: 600;
+      color: $text-color;
+    }
   }
 
   .input-group {
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
 
     label {
-      display: block;
-      font-weight: bold;
       margin-bottom: 0.5rem;
+      font-weight: 600;
       color: $text-color;
     }
 
     input {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: $border-radius;
-      transition: border-color $transition-speed;
+      padding: 0.8rem 1rem;
+      border: 1px solid $border-color;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
 
       &:focus {
         border-color: $primary-color;
@@ -51,70 +74,149 @@ $transition-speed: 0.3s;
   }
 
   .button-group {
-    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
 
     button {
+      flex: 1;
+      padding: 0.75rem 1.5rem;
       background-color: $primary-color;
-      color: #fff;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
       border: none;
-      border-radius: $border-radius;
-      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
       cursor: pointer;
-      transition: background-color $transition-speed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: $primary-color-hover;
+        transform: translateY(-2px);
       }
 
-      &:not(:last-child) {
-        margin-right: 1rem;
+      &:nth-child(2) {
+        background-color: $error-color;
+
+        &:hover {
+          background-color: darken($error-color, 10%);
+        }
       }
     }
   }
 
-  .signature-image {
-    max-width: 200px;
-    margin: 1rem 0;
-    border-radius: $border-radius;
-    box-shadow: $box-shadow;
+  .status-buttons {
+    margin-top: 2rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      border: 1px solid $border-color;
+      background-color: white;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      color: $text-color;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: $accent-color;
+        color: white;
+        border-color: $accent-color;
+      }
+
+      &:hover {
+        background-color: $accent-color-hover;
+        color: white;
+        border-color: $accent-color-hover;
+      }
+    }
+  }
+
+  .bewertung {
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+
+    p {
+      margin: 0.3rem 0;
+    }
+
+    small {
+      color: #6b7280; // Gray-500
+      font-size: 0.85rem;
+    }
+  }
+
+  .copy-link-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: $accent-color;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: $accent-color-hover;
+      transform: translateY(-2px);
+    }
   }
 
   .link-button-container {
     margin-top: 1.5rem;
 
     .link-button {
-      display: inline-block;
-      background-color: $secondary-color;
-      color: #fff;
-      padding: 0.5rem 1rem;
-      border-radius: $border-radius;
+      display: block;
+      text-align: center;
+      padding: 0.75rem 1.5rem;
+      background-color: $primary-color;
+      color: white;
+      font-weight: 600;
       text-decoration: none;
-      transition: background-color $transition-speed;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
 
       &:hover {
-        background-color: darken($secondary-color, 10%);
+        background-color: $primary-color-hover;
+        transform: translateY(-2px);
       }
     }
   }
 
   .dienstleistungen-container {
+    background-color: white;
+    padding: 1.5rem;
     margin-top: 2rem;
-
-    h3 {
-      color: $accent-color;
-      margin-bottom: 1rem;
-    }
+    border: 1px solid $border-color;
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 
     .dienstleistungen-list {
-      list-style-type: none;
+      list-style: none;
       padding: 0;
+      margin: 0;
 
       .dienstleistung-item {
-        background-color: #e9ecef;
-        margin-bottom: 0.5rem;
-        padding: 0.5rem;
-        border-radius: $border-radius;
-        box-shadow: $box-shadow;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid $border-color;
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         p {
           margin: 0;
@@ -123,25 +225,51 @@ $transition-speed: 0.3s;
     }
   }
 
-  .rechnungsliste {
-    margin-top: 2rem;
-    list-style-type: none;
+  .rechnungen-list {
+    list-style: none;
     padding: 0;
+    margin: 0;
 
     .rechnung-item {
-      background-color: #f8f9fa;
-      margin-bottom: 0.5rem;
-      padding: 0.5rem;
-      border-radius: $border-radius;
-      box-shadow: $box-shadow;
+      background-color: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid $border-color;
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 
-      a {
-        text-decoration: none;
-        color: $text-color;
+      p {
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+  }
+}
 
-        &:hover {
-          text-decoration: underline;
-        }
+// Responsive für kleinere Bildschirme
+@media (max-width: 768px) {
+  .kunden-anzeigen-container {
+    padding: 1rem;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    .button-group {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .status-buttons {
+      display: flex;
+      flex-direction: column;
+
+      button {
+        width: 100%;
+        margin-bottom: 0.5rem;
       }
     }
   }
