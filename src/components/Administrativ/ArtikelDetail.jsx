@@ -3,25 +3,25 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ArtikelDetail.scss';
 
-const ArtikelDetail = () => {
-  const { article_number } = useParams();  // Abrufen der 'article_number' aus der URL
+const ArtikelDetail = ({ onKassenModusChange }) => {
+  const { article_number } = useParams();
   const [productDetails, setProductDetails] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const apiUrl = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';  // Dein API-Endpoint
+  const apiUrl = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
   const fetchProductDetail = async () => {
     setLoading(true);
     try {
-      console.log(`Fetching product with article number: ${article_number}`);  // Ausgabe der Artikelnummer
+      console.log(`Fetching product with article number: ${article_number}`);
       const response = await axios.get(`${apiUrl}/${article_number}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
-      console.log('API Response:', response.data);  // Ausgabe der gesamten API-Antwort
+      console.log('API Response:', response.data);
 
       if (response.data && response.data.data) {
         setProductDetails(response.data.data);
@@ -39,9 +39,18 @@ const ArtikelDetail = () => {
 
   useEffect(() => {
     if (article_number) {
-      fetchProductDetail();  // API-Abfrage nur, wenn 'article_number' vorhanden ist
+      fetchProductDetail();
     }
   }, [article_number]);
+
+  useEffect(() => {
+
+    onKassenModusChange(true);
+    return () => {
+      onKassenModusChange(false);
+    };
+  }, [onKassenModusChange]);
+
 
   const formatDate = (dateString) => {
     if (!dateString) return '—';
@@ -62,47 +71,118 @@ const ArtikelDetail = () => {
 
       {productDetails ? (
         <div className="produkt-item">
-          <div className="produkt-info">
-            <div className="left-column">
-              <span><strong>Artikel-Nr.</strong> <span className="box-value">{productDetails.article_number}</span></span>
-              <span><strong>Artikelbezeichnung</strong> <span className="box-value">{productDetails.article_short_text}</span></span>
-              <h2 className='detail'>Aktueller Preis <span className="box-value">{formatCurrency(productDetails.price)}</span></h2>
-
-              <span><strong>Preislisten Nr.</strong> <span className="box-value">{productDetails.preislisten_nr}</span></span>
-              <span><strong>Gültig ab</strong> <span className="box-value">{formatDate(productDetails.gueltig_ab)}</span></span>
-              <span><strong>Gültig bis</strong> <span className="box-value">{formatDate(productDetails.gueltig_bis)}</span></span>
+          <div className="product-details-container">
+            <div className="product-details-left">
+              <table className="product-details-table">
+                <tbody>
+                  <tr>
+                    <td><strong>Artikel-Nr.</strong></td>
+                    <td>{productDetails.article_number}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Artikelbezeichnung</strong></td>
+                    <td>{productDetails.article_short_text}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Aktueller Preis</strong></td>
+                    <td>{formatCurrency(productDetails.price)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preislisten Nr.</strong></td>
+                    <td>{productDetails.preislisten_nr}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Gültig ab</strong></td>
+                    <td>{formatDate(productDetails.gueltig_ab)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Gültig bis</strong></td>
+                    <td>{formatDate(productDetails.gueltig_bis)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>MWST-Satz</strong></td>
+                    <td>{parseFloat(productDetails.mwst_satz).toFixed(2)}%</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rabatt Pos / Bon</strong></td>
+                    <td>{formatBoolean(productDetails.rabatt_pos)} / {formatBoolean(productDetails.rabatt_bon)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preisbestätigung</strong></td>
+                    <td>{formatBoolean(productDetails.preisbestaetigung)}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-
-            <div className="right-column">
-              <span><strong>MWST-Satz</strong> <span className="box-value">{parseFloat(productDetails.mwst_satz).toFixed(2)}%</span></span>
-              <span><strong>Rabatt Pos / Bon</strong> <span className="box-value">{formatBoolean(productDetails.rabatt_pos)}</span> / <span className="box-value">{formatBoolean(productDetails.rabatt_bon)}</span></span>
-              <span><strong>Preisbestätigung</strong> <span className="box-value">{formatBoolean(productDetails.preisbestaetigung)}</span></span>
-
-              <span><strong>Barcode</strong> <span className="box-value">{productDetails.barcode}</span></span>
-              <span><strong>Beschreibung</strong> <span className="box-value">{productDetails.description}</span></span>
-            </div>
-          </div>
-
-          <div className="produkt-info">
-            <div className="left-column">
-              <span><strong>Aktueller Bestand</strong> <span className="box-value">{productDetails.current_stock}</span></span>
-              <span><strong>Minimaler Bestand</strong> <span className="box-value">{productDetails.min_stock}</span></span>
-              <span><strong>Maximaler Bestand</strong> <span className="box-value">{productDetails.max_stock}</span></span>
-            </div>
-
-            <div className="right-column">
-              <span><strong>Hersteller</strong> <span className="box-value">{productDetails.manufacturer}</span></span>
-              <span><strong>Kategorie</strong> <span className="box-value">{productDetails.category}</span></span>
-              <span><strong>Artikelgruppe</strong> <span className="box-value">{productDetails.artikelgruppe}</span></span>
-              <span><strong>Artikelgruppen-Nummer</strong> <span className="box-value">{productDetails.artikelgruppe_nummer}</span></span>
-              <span><strong>Hauptartikelgruppe</strong> <span className="box-value">{productDetails.hauptartikelgruppe}</span></span>
-              <span><strong>Hauptartikelnummer</strong> <span className="box-value">{productDetails.hauptartikelnummer}</span></span>
-              <span><strong>Produktgruppe</strong> <span className="box-value">{productDetails.produktgruppe}</span></span>
-              <span><strong>Produktgruppen-Nummer</strong> <span className="box-value">{productDetails.produktgruppe_nummer}</span></span>
-              <span><strong>Hauptaktivität</strong> <span className="box-value">{productDetails.hauptaktivitaet}</span></span>
-
-              <span><strong>Verpackt</strong> <span className="box-value">{formatBoolean(productDetails.verpackt)}</span></span>
-              <span><strong>Seriennummer</strong> <span className="box-value">{formatBoolean(productDetails.seriennummer)}</span></span>
+            <div className="product-details-right">
+              <table className="product-details-table">
+                <tbody>
+                  <tr>
+                    <td><strong>Barcode</strong></td>
+                    <td>{productDetails.barcode}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Beschreibung</strong></td>
+                    <td>{productDetails.description}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Aktueller Bestand</strong></td>
+                    <td>{productDetails.current_stock}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Minimaler Bestand</strong></td>
+                    <td>{productDetails.min_stock}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Maximaler Bestand</strong></td>
+                    <td>{productDetails.max_stock}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hersteller</strong></td>
+                    <td>{productDetails.manufacturer}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Kategorie</strong></td>
+                    <td>{productDetails.category}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Artikelgruppe</strong></td>
+                    <td>{productDetails.artikelgruppe}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Artikelgruppen-Nummer</strong></td>
+                    <td>{productDetails.artikelgruppe_nummer}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hauptartikelgruppe</strong></td>
+                    <td>{productDetails.hauptartikelgruppe}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hauptartikelnummer</strong></td>
+                    <td>{productDetails.hauptartikelnummer}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Produktgruppe</strong></td>
+                    <td>{productDetails.produktgruppe}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Produktgruppen-Nummer</strong></td>
+                    <td>{productDetails.produktgruppe_nummer}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Hauptaktivität</strong></td>
+                    <td>{productDetails.hauptaktivitaet}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Verpackt</strong></td>
+                    <td>{formatBoolean(productDetails.verpackt)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Seriennummer</strong></td>
+                    <td>{formatBoolean(productDetails.seriennummer)}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

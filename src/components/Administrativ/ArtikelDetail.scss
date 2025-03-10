@@ -1,70 +1,22 @@
-.artikel-anzeige {
-    font-family: 'Arial', sans-serif;
-    margin: 20px auto;
-    max-width: 1200px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    color: #333;
-  
-    .error {
-      color: #ff6b6b;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #ffe4e4;
-      border: 1px solid #ff4d4d;
-    }
-  
-    .produkt-item {
-      .produkt-info {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-  
-        .left-column,
-        .right-column {
-          flex: 1;
-          min-width: 280px;
-          margin-bottom: 20px;
-        }
-  
-        span {
-          font-size: 1rem;
-          color: #333;
-          display: block;
-          margin-bottom: 10px;
-        }
-  
-        .box-value {
-          display: inline-block;
-          padding: 5px 10px;
-          background-color: #f0f0f0;
-          border-radius: 5px;
-          font-weight: bold;
-          font-size: 1rem;
-          color: #333;
-        }
-  
-        // Neues Design für das <h2> (Aktueller Preis)
-        .detail {
-          font-size: 1.6rem;
-          font-weight: 600;
-          color: #007bff;
-          margin-bottom: 15px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-  
-          .box-value {
-            font-size: 1.4rem;
-            color: #000000; /* Grüner Preis */
-            background-color: transparent;
-            padding: 10px 15px;
-            border-radius: 5px;
-          }
-        }
-      }
-    }
-  }
-  
+.product-details-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-details-left, .product-details-right {
+  width: 48%;
+}
+
+.product-details-table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.product-details-table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.product-details-table td strong {
+  font-weight: bold;
+}
