@@ -181,7 +181,7 @@ const App = () => {
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
-          <Route path="/artikel-detail/:articleNumber" element={<ArtikelDetail />} />
+          <Route path="/artikel-detail/:article_number" element={<ArtikelDetail />} />
 
           <Route path="/ueber-uns" element={<ÜberUns />} />
           <Route path="/aufgaben/:aufgabenId/unteraufgabe/create" element={<CreateUnteraufgabe />} />
