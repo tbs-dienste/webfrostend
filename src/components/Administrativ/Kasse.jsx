@@ -326,24 +326,33 @@ const Kasse = ({ onKassenModusChange }) => {
       setArticleNumber((prev) => prev === "" ? number.toString() : prev + number);
     } else if (isChangingPrice) {
       setPrice((prev) => prev === "" ? number.toString() : prev + number);
-    } else {
-      setQuantity((prev) => prev === 0 ? number : parseInt(prev.toString() + number));
+    } else if (isChangingQuantity) {
+      // Wenn der Wert 0 ist, einfach die Zahl setzen, sonst anhängen
+      setQuantity((prev) => {
+        // Um sicherzustellen, dass bei der Eingabe von Dezimalzahlen auch richtig weitergearbeitet wird
+        const newValue = prev.toString() === "0" ? number.toString() : prev.toString() + number;
+        return newValue;
+      });
     }
   };
   
   const handleDotClick = () => {
-    // Wenn der aktuelle Wert bereits ein Komma enthält, nichts tun
+    // Wenn der aktuelle Wert bereits ein Punkt enthält, nichts tun
     if (isPaying) {
-      if (!betrag.includes('.')) {
-        setBetrag((prev) => prev + '.');
+      if (!betrag.includes(".")) {
+        setBetrag((prev) => prev + ".");
       }
     } else if (isConfirmed) {
-      if (!articleNumber.includes('.')) {
-        setArticleNumber((prev) => prev + '.');
+      if (!articleNumber.includes(".")) {
+        setArticleNumber((prev) => prev + ".");
       }
     } else if (isChangingPrice) {
-      if (!price.includes('.')) {
-        setPrice((prev) => prev + '.');
+      if (!price.includes(".")) {
+        setPrice((prev) => prev + ".");
+      }
+    } else if (isChangingQuantity) {
+      if (!quantity.includes(".")) {
+        setQuantity((prev) => prev + ".");
       }
     }
   };
@@ -493,6 +502,37 @@ const Kasse = ({ onKassenModusChange }) => {
       setScannedProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.article_number === articleNumber ? { ...product, price } : product
+        )
+      );
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Preises:", error);
+      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
+    }
+  };
+
+  const updateQuantity = async (articleNumber, quantity) => {
+    if (!articleNumber || quantity === undefined) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Kein Token gefunden!");
+      setErrorMessage("Nicht authentifiziert.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
+        { article_number: articleNumber, quantity },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Erfolg, jetzt State aktualisieren
+      setScannedProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.article_number === articleNumber ? { ...product, quantity } : product
         )
       );
     } catch (error) {
@@ -773,7 +813,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button></button>
               <button onClick={handleDailyClose}>Tagesabschluss</button>
               <button onClick={toggleScanInput}>Artikel scannen</button>
-              <button onClick={toggleDiscounts}>Rabatte anzeigen</button>
+              <button onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
               <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
               {/* Kunden- und Transaktionsbuttons */}
@@ -784,8 +824,8 @@ const Kasse = ({ onKassenModusChange }) => {
 
               {/* Weitere Funktionen */}
               <button>GS-Karte</button>
-              <button onClick={toggleBonParkieren} disabled={loading}>
-                {loading ? 'Parken läuft...' : 'Bon Parkieren'}
+              <button onClick={toggleBonParkieren} disabled={selectedProducts.length === 0}>
+                Bon Parkieren
               </button>
               <button onClick={addStornoCost} className="btn-storno">
                 Storno-Kosten hinzufügen
@@ -848,28 +888,48 @@ const Kasse = ({ onKassenModusChange }) => {
               {isPaying ? (
                 <>
                   <label>Betrag eingeben:</label>
-                  <input type="text" className="amount-input" value={betrag} readOnly />
+                  <input
+                    type="text"
+                    className="amount-input"
+                    value={betrag}
+                    onChange={(e) => setBetrag(e.target.value)}
+                  />
                 </>
               ) : (
                 <>
                   {isConfirmed ? (
                     <>
                       <label>Artikelnummer eingeben:</label>
-                      <input type="text" className="quantity-display" value={articleNumber} readOnly />
+                      <input
+                        type="text"
+                        className="quantity-display"
+                        value={articleNumber}
+                        onChange={(e) => setArticleNumber(e.target.value)}
+                      />
                     </>
                   ) : isChangingPrice ? (
                     <>
                       <label>Preis ändern:</label>
-                      <input type="text" className="quantity-display" value={price} readOnly />
+                      <input
+                        type="text"
+                        className="quantity-display"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                      />
                     </>
-                  ) : (
+                  ) : isChangingQuantity ? (
                     <>
                       <label>Menge:</label>
                       <div className="number">
-                        <input type="text" className="quantity-display" value={quantity} readOnly />
+                        <input
+                          type="text"
+                          className="quantity-display"
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                        />
                       </div>
                     </>
-                  )}
+                  ) : null}
                 </>
               )}
             </div>
