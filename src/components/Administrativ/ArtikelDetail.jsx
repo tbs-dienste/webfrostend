@@ -37,7 +37,7 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
     if (article_number) {
       fetchProductDetail();
     }
-  }, [article_number]);
+  }, [article_number]); // Hier wird die Produktanzeige bei Änderung der Artikelnummer neu geladen
 
   useEffect(() => {
     onKassenModusChange(true);

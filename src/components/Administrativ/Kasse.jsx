@@ -238,17 +238,6 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
-  const handleDotClick = () => {
-    setQuantity(prev => {
-      // Wenn der Punkt bereits vorhanden ist, wird er nicht mehr hinzugefügt
-      if (prev.toString().includes('.')) {
-        return prev;
-      }
-      // Falls kein Punkt vorhanden ist, wird der Punkt am Ende angehängt
-      return `${prev}.`;
-    });
-  };
-
 
 
 
@@ -341,7 +330,24 @@ const Kasse = ({ onKassenModusChange }) => {
       setQuantity((prev) => prev === 0 ? number : parseInt(prev.toString() + number));
     }
   };
-
+  
+  const handleDotClick = () => {
+    // Wenn der aktuelle Wert bereits ein Komma enthält, nichts tun
+    if (isPaying) {
+      if (!betrag.includes('.')) {
+        setBetrag((prev) => prev + '.');
+      }
+    } else if (isConfirmed) {
+      if (!articleNumber.includes('.')) {
+        setArticleNumber((prev) => prev + '.');
+      }
+    } else if (isChangingPrice) {
+      if (!price.includes('.')) {
+        setPrice((prev) => prev + '.');
+      }
+    }
+  };
+  
 
 
 
@@ -555,29 +561,29 @@ const Kasse = ({ onKassenModusChange }) => {
       setBetrag("");
       return;
     }
-  
+
     // Wenn kein Produkt ausgewählt wurde und der Preis leer ist, Artikelnummer-Feld anzeigen
     if (!selectedProduct && (price === undefined || price === null || price === "")) {
       setIsConfirmed(true);
       return;
     }
-  
+
     // Wenn ausgewählte Produkte vorhanden sind und ein Preis gesetzt ist, Preis für alle ausgewählten Produkte aktualisieren
     if (selectedProducts.length > 0 && (price !== undefined && price !== null && price !== "")) {
       try {
         setLoading(true);
-  
+
         // Erstelle eine Liste von Artikelnummern und Preisen
         const updates = selectedProducts.map(product => ({
           article_number: product.article_number,
           price: price,
         }));
-  
+
         // Senden der Aktualisierung an das Backend
         const response = await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price', {
           selectedProducts: updates,
         });
-  
+
         if (response.status === 200) {
           // Aktualisiere den Zustand mit den neuen Preisen für alle Produkte
           const updatedProducts = scannedProducts.map((product) =>
@@ -585,7 +591,7 @@ const Kasse = ({ onKassenModusChange }) => {
               ? { ...product, price }
               : product
           );
-  
+
           setScannedProducts(updatedProducts);
           setSelectedProducts([]); // Leere die Auswahl
           setSuccessMessage("Preise erfolgreich für alle ausgewählten Produkte aktualisiert.");
@@ -603,7 +609,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage("Bitte wählen Sie Produkte aus und setzen Sie einen Preis.");
     }
   };
-  
+
 
 
 
@@ -979,7 +985,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 {number}
               </button>
             ))}
-            <button onClick={handleDotClick}>.</button>
+            <button onClick={handleDotClick}>.</button> {/* Das Komma */}
             <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>
               0
             </button>
@@ -987,6 +993,7 @@ const Kasse = ({ onKassenModusChange }) => {
               +
             </button>
           </div>
+
 
           <div className="action-buttons">
             <button onClick={handleConfirm} className="btn-confirm">
