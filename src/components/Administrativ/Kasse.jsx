@@ -300,7 +300,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-  
+
 
 
 
@@ -540,137 +540,193 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const handleConfirm = async () => {
-    if (isPaying) {
-        if (betrag === "" || parseFloat(betrag) <= 0) {
-            setErrorMessage("Bitte geben Sie einen Betrag ein.");
-            return;
-        }
+    setErrorMessage(""); // Reset Fehler
+    setSuccessMessage(""); // Reset Erfolg
+    setIsConfirmed(false); // Bestätigungsstatus zurücksetzen
 
-        console.log(`Zahlung von ${betrag} bestätigt`);
-        setSuccessMessage(`Zahlung über ${betrag} CHF abgeschlossen.`);
-        setBetrag("");
-        return;
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setErrorMessage("Nicht authentifiziert.");
+      return;
     }
 
-    if (isChangingPrice) {
-        if (selectedProducts.length === 0) {
-            setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
-            return;
+    try {
+      setLoading(true);
+
+      // 💸 ZAHLUNGSMODUS
+      if (isPaying) {
+        if (!betrag || isNaN(parseFloat(betrag))) {
+          setErrorMessage("Bitte geben Sie einen gültigen Betrag ein.");
+          return;
         }
 
-        if (price === "" || isNaN(parseFloat(price))) {
-            setErrorMessage("Bitte geben Sie einen gültigen Preis ein.");
-            return;
-        }
+        const totalDue = scannedProducts.reduce(
+          (sum, product) => sum + product.price * product.quantity,
+          0
+        );
 
-        try {
-            setLoading(true);
+        const enteredAmount = parseFloat(betrag);
 
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setErrorMessage("Nicht authentifiziert.");
-                return;
-            }
+        if (enteredAmount >= totalDue) {
+          const change = enteredAmount - totalDue;
 
-            // Updates Array zusammenbauen
-            const updates = selectedProducts.map((article_number) => ({
-                article_number: article_number,
-                price: parseFloat(price)
-            }));
+          // Du kannst hier optional noch einen API-Call machen,
+          // um die Transaktion zu speichern, wenn du willst!
 
-            console.log("Schicke Updates:", updates);
-
-            const response = await axios.put(
-                "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
-                { selectedProducts: updates, price: parseFloat(price) },
-                { headers: { Authorization: `Bearer ${token}` } }
+          if (change > 0) {
+            setSuccessMessage(
+              `Zahlung über ${enteredAmount.toFixed(2)} CHF abgeschlossen. Rückgeld: ${change.toFixed(2)} CHF.`
             );
+          } else {
+            setSuccessMessage(`Zahlung über ${totalDue.toFixed(2)} CHF abgeschlossen.`);
+          }
 
-            if (response.status === 200) {
-                // UI Update
-                const updatedProducts = scannedProducts.map((product) =>
-                    selectedProducts.some((article_number) => article_number === product.article_number)
-                        ? { ...product, price: parseFloat(price) }
-                        : product
-                );
-
-                setScannedProducts(updatedProducts);
-                setSelectedProducts([]);
-                setPrice("");
-                setErrorMessage("");
-            } else {
-                setErrorMessage("Fehler beim Aktualisieren der Preise.");
-            }
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren der Preise:", error);
-            setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Preise.");
-        } finally {
-            setLoading(false);
+          // Reset danach
+          resetModes();
+          setScannedProducts([]); // 🧹 Produkte leeren nach Bezahlung
+          setBetrag(""); // Betrag zurücksetzen
+        } else {
+          setErrorMessage("Der Betrag ist nicht ausreichend.");
         }
-        return;
-    }
 
-    if (isChangingQuantity) {
-      if (selectedProducts.length === 0) {
+        return; // Exit hier, weil Zahlung fertig!
+      }
+
+      // 💰 PREIS ÄNDERN
+      if (isChangingPrice) {
+        if (!selectedProducts.length) {
           setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
           return;
-      }
+        }
 
-      if (quantity === "" || isNaN(parseFloat(quantity))) {
-          setErrorMessage("Bitte geben Sie einen gültigen Wert ein.");
+        if (!price || isNaN(parseFloat(price))) {
+          setErrorMessage("Bitte geben Sie einen gültigen Preis ein.");
           return;
-      }
+        }
 
-      try {
-          setLoading(true);
+        const updates = selectedProducts.map((article_number) => ({
+          article_number,
+          price: parseFloat(price)
+        }));
 
-          const token = localStorage.getItem("token");
-          if (!token) {
-              setErrorMessage("Nicht authentifiziert.");
-              return;
-          }
+        const response = await axios.put(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
+          { selectedProducts: updates },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-          // Updates Array zusammenbauen
-          const updates = selectedProducts.map((article_number) => ({
-              article_number: article_number,
-              quantity: parseFloat(quantity)
-          }));
-
-          console.log("Schicke Updates:", updates);
-
-          const response = await axios.put(
-              "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
-              { selectedProducts: updates, quantity: parseFloat(quantity) },
-              { headers: { Authorization: `Bearer ${token}` } }
+        if (response.status === 200) {
+          const updatedProducts = scannedProducts.map((product) =>
+            selectedProducts.includes(product.article_number)
+              ? { ...product, price: parseFloat(price) }
+              : product
           );
 
-          if (response.status === 200) {
-              // UI Update
-              const updatedProducts = scannedProducts.map((product) =>
-                  selectedProducts.some((article_number) => article_number === product.article_number)
-                      ? { ...product, quantity: parseFloat(quantity) }
-                      : product
-              );
+          setScannedProducts(updatedProducts);
+          setSuccessMessage("Preis erfolgreich aktualisiert.");
+          resetModes();
+          setPrice(""); // Preisfeld zurücksetzen
+        } else {
+          setErrorMessage("Fehler beim Aktualisieren der Preise.");
+        }
 
-              setScannedProducts(updatedProducts);
-              setSelectedProducts([]);
-              setQuantity("");
-              setErrorMessage("");
-          } else {
-              setErrorMessage("Fehler beim Aktualisieren der Quantity.");
-          }
-      } catch (error) {
-          console.error("Fehler beim Aktualisieren der Preise:", error);
-          setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Preise.");
-      } finally {
-          setLoading(false);
+        return;
       }
-      return;
-  }
 
-    // Falls kein anderer Modus:
-    setIsConfirmed(true);
-};
+      // 🔢 MENGE ÄNDERN
+      if (isChangingQuantity) {
+        if (!selectedProducts.length) {
+          setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
+          return;
+        }
+
+        if (!quantity || isNaN(parseFloat(quantity))) {
+          setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
+          return;
+        }
+
+        const updates = selectedProducts.map((article_number) => ({
+          article_number,
+          quantity: parseFloat(quantity)
+        }));
+
+        const response = await axios.put(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
+          { selectedProducts: updates },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.status === 200) {
+          const updatedProducts = scannedProducts.map((product) =>
+            selectedProducts.includes(product.article_number)
+              ? { ...product, quantity: parseFloat(quantity) }
+              : product
+          );
+
+          setScannedProducts(updatedProducts);
+          setSuccessMessage("Menge erfolgreich aktualisiert.");
+          resetModes();
+          setQuantity(""); // Menge zurücksetzen
+        } else {
+          setErrorMessage("Fehler beim Aktualisieren der Menge.");
+        }
+
+        return;
+      }
+
+      // ✅ ARTIKEL SCANNEN
+      if (!articleNumber) {
+        setErrorMessage("Bitte geben Sie eine Artikelnummer ein.");
+        return;
+      }
+
+      const response = await axios.post(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
+        {
+          article_number: articleNumber,
+          quantity: 1
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (response.status === 200 && response.data) {
+        setScannedProducts(response.data);
+        setSuccessMessage(`Artikel ${articleNumber} wurde erfolgreich gescannt.`);
+        setArticleNumber(""); // Eingabefeld leeren
+      } else {
+        setErrorMessage("Produkt nicht gefunden oder Scan fehlgeschlagen.");
+      }
+    } catch (error) {
+      console.error("Fehler:", error);
+      setErrorMessage(
+        error.response?.data?.error || "Ein unerwarteter Fehler ist aufgetreten."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const resetModes = () => {
+    setIsPaying(false);
+    setIsChangingPrice(false);
+    setIsChangingQuantity(false);
+    setIsConfirmed(false);
+
+    setBetrag("");
+    setPrice("");
+    setQuantity("");
+    setSelectedProducts([]);
+    setArticleNumber("");
+  };
+
+
+
+
+
 
 
 
@@ -909,7 +965,7 @@ const Kasse = ({ onKassenModusChange }) => {
         <div className="scanned-products-container">
           <div className="scanned-products">
             <div className="input-container">
-              {isPaying ? (
+              {isPaying && (
                 <>
                   <label>Betrag eingeben:</label>
                   <input
@@ -919,44 +975,45 @@ const Kasse = ({ onKassenModusChange }) => {
                     onChange={(e) => setBetrag(e.target.value)}
                   />
                 </>
-              ) : (
+              )}
+
+              {isChangingPrice && (
                 <>
-                  {isConfirmed ? (
-                    <>
-                      <label>Artikelnummer eingeben:</label>
-                      <input
-                        type="text"
-                        className="quantity-display"
-                        value={articleNumber}
-                        onChange={(e) => setArticleNumber(e.target.value)}
-                      />
-                    </>
-                  ) : isChangingPrice ? (
-                    <>
-                      <label>Preis ändern:</label>
-                      <input
-                        type="text"
-                        className="quantity-display"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                      />
-                    </>
-                  ) : isChangingQuantity ? (
-                    <>
-                      <label>Menge:</label>
-                      <div className="number">
-                        <input
-                          type="text"
-                          className="quantity-display"
-                          value={quantity}
-                          onChange={(e) => setQuantity(e.target.value)}
-                        />
-                      </div>
-                    </>
-                  ) : null}
+                  <label>Preis ändern:</label>
+                  <input
+                    type="text"
+                    className="quantity-display"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </>
+              )}
+
+              {isChangingQuantity && (
+                <>
+                  <label>Menge:</label>
+                  <input
+                    type="text"
+                    className="quantity-display"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                </>
+              )}
+
+              {!isPaying && !isChangingPrice && !isChangingQuantity && (
+                <>
+                  <label>Artikelnummer eingeben:</label>
+                  <input
+                    type="text"
+                    className="quantity-display"
+                    value={articleNumber}
+                    onChange={(e) => setArticleNumber(e.target.value)}
+                  />
                 </>
               )}
             </div>
+
 
             <div className="kasse-header">
               <h1>Quittung</h1>
