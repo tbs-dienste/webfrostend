@@ -732,26 +732,28 @@ const Kasse = ({ onKassenModusChange }) => {
     // Falls kein anderer Modus:
     setIsConfirmed(true);
   };
-
+  
   const toggleSelectProduct = (product) => {
+    // Überprüfen, ob die Artikelnummer im Produkt vorhanden ist
+    if (!product.article_number) {
+      console.error("Produkt hat keine Artikel-Nummer!");
+      return; // Falls keine Artikelnummer vorhanden ist, breche die Funktion ab
+    }
+  
     setSelectedProducts((prevSelected) => {
-      // Überprüfe, ob das Produkt schon in der Liste ist
+      // Überprüfen, ob das Produkt bereits in der Liste der ausgewählten Produkte ist
       const exists = prevSelected.some(p => p.article_number === product.article_number);
   
       if (exists) {
-        return prevSelected.filter(p => p.article_number !== product.article_number); // Entferne es, wenn es schon da ist
+        // Entferne das Produkt aus der Liste, wenn es bereits vorhanden ist
+        return prevSelected.filter(p => p.article_number !== product.article_number);
       } else {
-        // Wenn das Produkt noch nicht existiert, füge es hinzu
+        // Füge das Produkt hinzu, wenn es noch nicht in der Liste ist
         return [...prevSelected, product];
       }
     });
   };
   
-
-
-
-
-
 
 
   // Toggelt die Anzeige des Scan-Input-Feldes
