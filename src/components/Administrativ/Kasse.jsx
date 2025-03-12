@@ -228,14 +228,6 @@ const Kasse = ({ onKassenModusChange }) => {
       console.error("Fehler beim Abrufen der letzten Quittung:", error);
     }
   };
-  const handleQuantityChange = (e) => {
-    const inputValue = e.target.value;
-
-    // Überprüfen, ob der Wert eine gültige Zahl ist, die einen Punkt und bis zu zwei Dezimalstellen enthält
-    if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
-      setQuantity(inputValue);
-    }
-  };
 
 
 
@@ -308,17 +300,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-  // Für die Betragseingabe
-  const handleBetragChange = (e) => {
-    const inputValue = e.target.value;
-
-    // Überprüfen, ob der Wert eine gültige Zahl ist, die einen Punkt und bis zu zwei Dezimalstellen enthält
-    if (/^\d*\.?\d{0,2}$/.test(inputValue)) {
-      // Setze den Betrag als Zahl (und nicht als Text)
-      setBetrag(parseFloat(inputValue) || 0);
-    }
-  };
-
+  
 
 
 
@@ -439,36 +421,7 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
-  const updateQuantity = async (articleNumber, quantity) => {
-    if (!articleNumber || quantity === undefined) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Kein Token gefunden!");
-      setErrorMessage("Nicht authentifiziert.");
-      return;
-    }
-
-    try {
-      await axios.put(
-        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
-        { article_number: articleNumber, quantity },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      // Erfolg, jetzt State aktualisieren
-      setScannedProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.article_number === articleNumber ? { ...product, quantity } : product
-        )
-      );
-    } catch (error) {
-      console.error("Fehler beim Aktualisieren des Preises:", error);
-      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
-    }
-  };
 
   const handleNumericKeypadClick = (number) => {
     if (isPaying) {
@@ -505,37 +458,6 @@ const Kasse = ({ onKassenModusChange }) => {
       if (!quantity.includes(".")) {
         setQuantity((prev) => prev + ".");
       }
-    }
-  };
-
-  const updatePrice = async (articleNumber, price) => {
-    if (!articleNumber || price === undefined) return;
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Kein Token gefunden!");
-      setErrorMessage("Nicht authentifiziert.");
-      return;
-    }
-
-    try {
-      await axios.put(
-        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
-        { selectedProducts: [articleNumber], price },  // ← Array korrekt gesetzt!
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      // Erfolg -> UI updaten
-      setScannedProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.article_number === articleNumber ? { ...product, price } : product
-        )
-      );
-    } catch (error) {
-      console.error("Fehler beim Aktualisieren des Preises:", error);
-      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
     }
   };
 
@@ -675,7 +597,6 @@ const Kasse = ({ onKassenModusChange }) => {
                 setScannedProducts(updatedProducts);
                 setSelectedProducts([]);
                 setPrice("");
-                setSuccessMessage("Preise erfolgreich aktualisiert!");
                 setErrorMessage("");
             } else {
                 setErrorMessage("Fehler beim Aktualisieren der Preise.");
@@ -690,61 +611,62 @@ const Kasse = ({ onKassenModusChange }) => {
     }
 
     if (isChangingQuantity) {
-        if (selectedProducts.length === 0) {
-            setErrorMessage("Bitte wählen Sie ein Produkt zum Ändern der Menge aus.");
-            return;
-        }
+      if (selectedProducts.length === 0) {
+          setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
+          return;
+      }
 
-        if (quantity === "" || isNaN(parseFloat(quantity))) {
-            setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
-            return;
-        }
+      if (quantity === "" || isNaN(parseFloat(quantity))) {
+          setErrorMessage("Bitte geben Sie einen gültigen Wert ein.");
+          return;
+      }
 
-        try {
-            setLoading(true);
+      try {
+          setLoading(true);
 
-            const token = localStorage.getItem("token");
-            if (!token) {
-                setErrorMessage("Nicht authentifiziert.");
-                return;
-            }
+          const token = localStorage.getItem("token");
+          if (!token) {
+              setErrorMessage("Nicht authentifiziert.");
+              return;
+          }
 
-            const updates = selectedProducts.map((article_number) => ({
-                article_number: article_number,
-                quantity: parseFloat(quantity)
-            }));
+          // Updates Array zusammenbauen
+          const updates = selectedProducts.map((article_number) => ({
+              article_number: article_number,
+              quantity: parseFloat(quantity)
+          }));
 
-            console.log("Schicke Mengen-Updates:", updates);
+          console.log("Schicke Updates:", updates);
 
-            const response = await axios.put(
-                "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
-                { selectedProducts: updates, quantity: parseFloat(quantity) },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+          const response = await axios.put(
+              "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
+              { selectedProducts: updates, quantity: parseFloat(quantity) },
+              { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-            if (response.status === 200) {
-                const updatedProducts = scannedProducts.map((product) =>
-                    selectedProducts.some((article_number) => article_number === product.article_number)
-                        ? { ...product, quantity: parseFloat(quantity) }
-                        : product
-                );
+          if (response.status === 200) {
+              // UI Update
+              const updatedProducts = scannedProducts.map((product) =>
+                  selectedProducts.some((article_number) => article_number === product.article_number)
+                      ? { ...product, quantity: parseFloat(quantity) }
+                      : product
+              );
 
-                setScannedProducts(updatedProducts);
-                setSelectedProducts([]);
-                setQuantity("");
-                setSuccessMessage("Mengen erfolgreich aktualisiert!");
-                setErrorMessage("");
-            } else {
-                setErrorMessage("Fehler beim Aktualisieren der Mengen.");
-            }
-        } catch (error) {
-            console.error("Fehler beim Aktualisieren der Mengen:", error);
-            setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Mengen.");
-        } finally {
-            setLoading(false);
-        }
-        return;
-    }
+              setScannedProducts(updatedProducts);
+              setSelectedProducts([]);
+              setQuantity("");
+              setErrorMessage("");
+          } else {
+              setErrorMessage("Fehler beim Aktualisieren der Quantity.");
+          }
+      } catch (error) {
+          console.error("Fehler beim Aktualisieren der Preise:", error);
+          setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Preise.");
+      } finally {
+          setLoading(false);
+      }
+      return;
+  }
 
     // Falls kein anderer Modus:
     setIsConfirmed(true);
