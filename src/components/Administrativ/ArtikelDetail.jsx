@@ -110,14 +110,19 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
             <div className="info-column">
               <div className="info-row">
                 <div className="label">Artikelgruppe:</div>
+                <div className="box">{productDetails.artikelgruppe_nummer}</div>
                 <div className="box">{productDetails.artikelgruppe}</div>
               </div>
               <div className="info-row">
                 <div className="label">Hauptartikelgruppe:</div>
+                <div className="box">{productDetails.hauptartikelnummer}</div>
                 <div className="box">{productDetails.hauptartikelgruppe}</div>
               </div>
               <div className="info-row">
                 <div className="label">Produktgruppe:</div>
+               
+                <div className="box">{productDetails.produktgruppe_nummer}</div>
+
                 <div className="box">{productDetails.produktgruppe}</div>
               </div>
               <div className="info-row">
