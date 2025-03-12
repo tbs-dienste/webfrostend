@@ -319,52 +319,10 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   };
 
-  const handleNumericKeypadClick = (number) => {
-    if (isPaying) {
-      setBetrag((prev) => prev === "" ? number.toString() : prev + number);
-    } else if (isConfirmed) {
-      setArticleNumber((prev) => prev === "" ? number.toString() : prev + number);
-    } else if (isChangingPrice) {
-      setPrice((prev) => prev === "" ? number.toString() : prev + number);
-    } else if (isChangingQuantity) {
-      // Wenn der Wert 0 ist, einfach die Zahl setzen, sonst anhängen
-      setQuantity((prev) => {
-        // Um sicherzustellen, dass bei der Eingabe von Dezimalzahlen auch richtig weitergearbeitet wird
-        const newValue = prev.toString() === "0" ? number.toString() : prev.toString() + number;
-        return newValue;
-      });
-    }
-  };
-  
-  const handleDotClick = () => {
-    // Wenn der aktuelle Wert bereits ein Punkt enthält, nichts tun
-    if (isPaying) {
-      if (!betrag.includes(".")) {
-        setBetrag((prev) => prev + ".");
-      }
-    } else if (isConfirmed) {
-      if (!articleNumber.includes(".")) {
-        setArticleNumber((prev) => prev + ".");
-      }
-    } else if (isChangingPrice) {
-      if (!price.includes(".")) {
-        setPrice((prev) => prev + ".");
-      }
-    } else if (isChangingQuantity) {
-      if (!quantity.includes(".")) {
-        setQuantity((prev) => prev + ".");
-      }
-    }
-  };
-  
 
 
 
-  const toggleSelectProduct = (articleNumber) => {
-    setSelectedProducts((prevSelected) =>
-      prevSelected.includes(articleNumber) ? [] : [articleNumber]
-    );
-  };
+ 
 
 
 
@@ -479,36 +437,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const handleClosePopup = () => {
     setShowEFTPopup(false);
   };
-  const updatePrice = async (articleNumber, price) => {
-    if (!articleNumber || price === undefined) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Kein Token gefunden!");
-      setErrorMessage("Nicht authentifiziert.");
-      return;
-    }
-
-    try {
-      await axios.put(
-        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
-        { article_number: articleNumber, price },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      // Erfolg, jetzt State aktualisieren
-      setScannedProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.article_number === articleNumber ? { ...product, price } : product
-        )
-      );
-    } catch (error) {
-      console.error("Fehler beim Aktualisieren des Preises:", error);
-      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
-    }
-  };
 
   const updateQuantity = async (articleNumber, quantity) => {
     if (!articleNumber || quantity === undefined) return;
@@ -540,6 +469,77 @@ const Kasse = ({ onKassenModusChange }) => {
       setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
     }
   };
+
+  const handleNumericKeypadClick = (number) => {
+    if (isPaying) {
+      setBetrag((prev) => prev === "" ? number.toString() : prev + number);
+    } else if (isConfirmed) {
+      setArticleNumber((prev) => prev === "" ? number.toString() : prev + number);
+    } else if (isChangingPrice) {
+      setPrice((prev) => prev === "" ? number.toString() : prev + number);
+    } else if (isChangingQuantity) {
+      // Wenn der Wert 0 ist, einfach die Zahl setzen, sonst anhängen
+      setQuantity((prev) => {
+        // Um sicherzustellen, dass bei der Eingabe von Dezimalzahlen auch richtig weitergearbeitet wird
+        const newValue = prev.toString() === "0" ? number.toString() : prev.toString() + number;
+        return newValue;
+      });
+    }
+  };
+
+  const handleDotClick = () => {
+    // Wenn der aktuelle Wert bereits ein Punkt enthält, nichts tun
+    if (isPaying) {
+      if (!betrag.includes(".")) {
+        setBetrag((prev) => prev + ".");
+      }
+    } else if (isConfirmed) {
+      if (!articleNumber.includes(".")) {
+        setArticleNumber((prev) => prev + ".");
+      }
+    } else if (isChangingPrice) {
+      if (!price.includes(".")) {
+        setPrice((prev) => prev + ".");
+      }
+    } else if (isChangingQuantity) {
+      if (!quantity.includes(".")) {
+        setQuantity((prev) => prev + ".");
+      }
+    }
+  };
+
+  const updatePrice = async (articleNumber, price) => {
+    if (!articleNumber || price === undefined) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Kein Token gefunden!");
+      setErrorMessage("Nicht authentifiziert.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
+        { selectedProducts: [articleNumber], price },  // ← Array korrekt gesetzt!
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Erfolg -> UI updaten
+      setScannedProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.article_number === articleNumber ? { ...product, price } : product
+        )
+      );
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Preises:", error);
+      setErrorMessage(error.response?.data?.error || "Fehler beim Ändern des Preises.");
+    }
+  };
+
+
 
 
 
@@ -597,58 +597,159 @@ const Kasse = ({ onKassenModusChange }) => {
 
   const handleConfirm = async () => {
     if (isPaying) {
+      if (betrag === "" || parseFloat(betrag) <= 0) {
+        setErrorMessage("Bitte geben Sie einen Betrag ein.");
+        return;
+      }
+
       console.log(`Zahlung von ${betrag} bestätigt`);
+      // Hier kannst du deine Zahlungslogik einfügen
+      setSuccessMessage(`Zahlung über ${betrag} CHF abgeschlossen.`);
       setBetrag("");
       return;
     }
 
-    // Wenn kein Produkt ausgewählt wurde und der Preis leer ist, Artikelnummer-Feld anzeigen
-    if (!selectedProduct && (price === undefined || price === null || price === "")) {
-      setIsConfirmed(true);
-      return;
-    }
+    if (isChangingPrice) {
+      if (selectedProducts.length === 0) {
+        setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
+        return;
+      }
 
-    // Wenn ausgewählte Produkte vorhanden sind und ein Preis gesetzt ist, Preis für alle ausgewählten Produkte aktualisieren
-    if (selectedProducts.length > 0 && (price !== undefined && price !== null && price !== "")) {
+      if (price === "" || isNaN(parseFloat(price))) {
+        setErrorMessage("Bitte geben Sie einen gültigen Preis ein.");
+        return;
+      }
+
       try {
         setLoading(true);
 
-        // Erstelle eine Liste von Artikelnummern und Preisen
-        const updates = selectedProducts.map(product => ({
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setErrorMessage("Nicht authentifiziert.");
+          return;
+        }
+
+        // Updates Array zusammenbauen
+        const updates = selectedProducts.map((product) => ({
           article_number: product.article_number,
-          price: price,
+          price: parseFloat(price)
         }));
 
-        // Senden der Aktualisierung an das Backend
-        const response = await axios.put('https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price', {
-          selectedProducts: updates,
-        });
+        console.log("Schicke Updates:", updates);
+
+        const response = await axios.put(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
+          updates,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
         if (response.status === 200) {
-          // Aktualisiere den Zustand mit den neuen Preisen für alle Produkte
+          // UI Update
           const updatedProducts = scannedProducts.map((product) =>
-            selectedProducts.some(p => p.article_number === product.article_number)
-              ? { ...product, price }
+            selectedProducts.some((p) => p.article_number === product.article_number)
+              ? { ...product, price: parseFloat(price) }
               : product
           );
 
           setScannedProducts(updatedProducts);
-          setSelectedProducts([]); // Leere die Auswahl
-          setSuccessMessage("Preise erfolgreich für alle ausgewählten Produkte aktualisiert.");
+          setSelectedProducts([]);
+          setPrice("");
+          setSuccessMessage("Preise erfolgreich aktualisiert!");
           setErrorMessage("");
         } else {
           setErrorMessage("Fehler beim Aktualisieren der Preise.");
         }
+
       } catch (error) {
-        console.error("Fehler beim Aktualisieren des Preises:", error);
-        setErrorMessage("Fehler beim Aktualisieren der Preise.");
+        console.error("Fehler beim Aktualisieren der Preise:", error);
+        setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Preise.");
       } finally {
         setLoading(false);
       }
-    } else {
-      setErrorMessage("Bitte wählen Sie Produkte aus und setzen Sie einen Preis.");
+
+      return;
     }
+
+    if (isChangingQuantity) {
+      if (selectedProducts.length === 0) {
+        setErrorMessage("Bitte wählen Sie ein Produkt zum Ändern der Menge aus.");
+        return;
+      }
+
+      if (quantity === "" || isNaN(parseFloat(quantity))) {
+        setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setErrorMessage("Nicht authentifiziert.");
+          return;
+        }
+
+        const updates = selectedProducts.map((product) => ({
+          article_number: product.article_number,
+          quantity: parseFloat(quantity)
+        }));
+
+        console.log("Schicke Mengen-Updates:", updates);
+
+        const response = await axios.put(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
+          updates,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.status === 200) {
+          const updatedProducts = scannedProducts.map((product) =>
+            selectedProducts.some((p) => p.article_number === product.article_number)
+              ? { ...product, quantity: parseFloat(quantity) }
+              : product
+          );
+
+          setScannedProducts(updatedProducts);
+          setSelectedProducts([]);
+          setQuantity("");
+          setSuccessMessage("Mengen erfolgreich aktualisiert!");
+          setErrorMessage("");
+        } else {
+          setErrorMessage("Fehler beim Aktualisieren der Mengen.");
+        }
+
+      } catch (error) {
+        console.error("Fehler beim Aktualisieren der Mengen:", error);
+        setErrorMessage(error.response?.data?.error || "Fehler beim Aktualisieren der Mengen.");
+      } finally {
+        setLoading(false);
+      }
+
+      return;
+    }
+
+    // Falls kein anderer Modus:
+    setIsConfirmed(true);
   };
+
+  const toggleSelectProduct = (product) => {
+    setSelectedProducts((prevSelected) => {
+      // Überprüfe, ob das Produkt schon in der Liste ist
+      const exists = prevSelected.some(p => p.article_number === product.article_number);
+  
+      if (exists) {
+        return prevSelected.filter(p => p.article_number !== product.article_number); // Entferne es, wenn es schon da ist
+      } else {
+        // Wenn das Produkt noch nicht existiert, füge es hinzu
+        return [...prevSelected, product];
+      }
+    });
+  };
+  
+
+
+
 
 
 
@@ -1056,9 +1157,10 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
           <div className="action-buttons">
-            <button onClick={handleConfirm} className="btn-confirm">
-              Bestätigen
+            <button onClick={handleConfirm} className="btn-confirm" disabled={loading}>
+              {loading ? "Aktualisiere..." : "Bestätigen"}
             </button>
+
 
             <button onClick={clearScannedProducts} className="btn-delete">
               Löschen
