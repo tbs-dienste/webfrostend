@@ -14,14 +14,11 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
   const fetchProductDetail = async () => {
     setLoading(true);
     try {
-      console.log(`Fetching product with article number: ${article_number}`);
       const response = await axios.get(`${apiUrl}/${article_number}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
-      console.log('API Response:', response.data);
 
       if (response.data && response.data.data) {
         setProductDetails(response.data.data);
@@ -30,7 +27,6 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
         setError('Produkt nicht gefunden');
       }
     } catch (err) {
-      console.error('Fehler beim Abrufen des Produkts:', err);
       setError(err.response?.data?.error || 'Fehler beim Abrufen des Produkts');
     } finally {
       setLoading(false);
@@ -44,13 +40,9 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
   }, [article_number]);
 
   useEffect(() => {
-
     onKassenModusChange(true);
-    return () => {
-      onKassenModusChange(false);
-    };
+    return () => onKassenModusChange(false);
   }, [onKassenModusChange]);
-
 
   const formatDate = (dateString) => {
     if (!dateString) return '—';
@@ -58,132 +50,120 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
   };
 
   const formatBoolean = (value) => (value === 1 ? 'Ja' : 'Nein');
+  const formatCurrency = (value) =>
+    parseFloat(value).toLocaleString('de-CH', { style: 'currency', currency: 'CHF' });
 
   if (loading) return <div className="artikel-anzeige">Lade Daten...</div>;
 
-  const formatCurrency = (value) => {
-    return parseFloat(value).toLocaleString('de-CH', { style: 'currency', currency: 'CHF' });
-  };
-
   return (
     <div className="artikel-anzeige">
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error-box">{error}</div>}
 
       {productDetails ? (
-        <div className="produkt-item">
-          <div className="product-details-container">
-            <div className="product-details-left">
-              <table className="product-details-table">
-                <tbody>
-                  <tr>
-                    <td><strong>Artikel-Nr.</strong></td>
-                    <td>{productDetails.article_number}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Artikelbezeichnung</strong></td>
-                    <td>{productDetails.article_short_text}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Aktueller Preis</strong></td>
-                    <td>{formatCurrency(productDetails.price)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Preislisten Nr.</strong></td>
-                    <td>{productDetails.preislisten_nr}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Gültig ab</strong></td>
-                    <td>{formatDate(productDetails.gueltig_ab)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Gültig bis</strong></td>
-                    <td>{formatDate(productDetails.gueltig_bis)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>MWST-Satz</strong></td>
-                    <td>{parseFloat(productDetails.mwst_satz).toFixed(2)}%</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rabatt Pos / Bon</strong></td>
-                    <td>{formatBoolean(productDetails.rabatt_pos)} / {formatBoolean(productDetails.rabatt_bon)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Preisbestätigung</strong></td>
-                    <td>{formatBoolean(productDetails.preisbestaetigung)}</td>
-                  </tr>
-                </tbody>
-              </table>
+        <div className="artikel-detail-container">
+          {/* Kopfbereich */}
+          <div className="header-section">
+            <div>
+              <span className="label">Artikel-Nr.:</span> {productDetails.article_number}
             </div>
-            <div className="product-details-right">
-              <table className="product-details-table">
-                <tbody>
-                  <tr>
-                    <td><strong>Barcode</strong></td>
-                    <td>{productDetails.barcode}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Beschreibung</strong></td>
-                    <td>{productDetails.description}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Aktueller Bestand</strong></td>
-                    <td>{productDetails.current_stock}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Minimaler Bestand</strong></td>
-                    <td>{productDetails.min_stock}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Maximaler Bestand</strong></td>
-                    <td>{productDetails.max_stock}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Hersteller</strong></td>
-                    <td>{productDetails.manufacturer}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Kategorie</strong></td>
-                    <td>{productDetails.category}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Artikelgruppe</strong></td>
-                    <td>{productDetails.artikelgruppe}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Artikelgruppen-Nummer</strong></td>
-                    <td>{productDetails.artikelgruppe_nummer}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Hauptartikelgruppe</strong></td>
-                    <td>{productDetails.hauptartikelgruppe}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Hauptartikelnummer</strong></td>
-                    <td>{productDetails.hauptartikelnummer}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Produktgruppe</strong></td>
-                    <td>{productDetails.produktgruppe}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Produktgruppen-Nummer</strong></td>
-                    <td>{productDetails.produktgruppe_nummer}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Hauptaktivität</strong></td>
-                    <td>{productDetails.hauptaktivitaet}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Verpackt</strong></td>
-                    <td>{formatBoolean(productDetails.verpackt)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Seriennummer</strong></td>
-                    <td>{formatBoolean(productDetails.seriennummer)}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="artikel-name">{productDetails.article_short_text}</div>
+          </div>
+
+          {/* Preisbereich */}
+          <div className="preis-section">
+            <span>Aktueller Preis CHF</span>
+            <span className="preis-wert">{parseFloat(productDetails.price).toFixed(2)}</span>
+          </div>
+
+          {/* Info-Container */}
+          <div className="info-grid">
+            {/* Linke Seite */}
+            <div className="info-column">
+              <div className="info-row">
+                <span className="label">Preislisten Nr.:</span>
+                <div className="box">{productDetails.preislisten_nr}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Preis Eh.:</span>
+                <div className="box">1</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Preis:</span>
+                <div className="box">{parseFloat(productDetails.price).toFixed(2)}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Gültig ab:</span>
+                <div className="box">{formatDate(productDetails.gueltig_ab)}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Gültig bis:</span>
+                <div className="box">{formatDate(productDetails.gueltig_bis)}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">MWST-Satz:</span>
+                <div className="box">{parseFloat(productDetails.mwst_satz).toFixed(2)}%</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Rabatt Pos / Bon:</span>
+                <div className="box">{formatBoolean(productDetails.rabatt_pos)} / {formatBoolean(productDetails.rabatt_bon)}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Preisbestätigung:</span>
+                <div className="box">{formatBoolean(productDetails.preisbestaetigung)}</div>
+              </div>
             </div>
+
+            {/* Rechte Seite */}
+            <div className="info-column">
+              <div className="info-row">
+                <span className="label">Artikelgruppe:</span>
+                <div className="box">{productDetails.artikelgruppe}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Hauptartikelgruppe:</span>
+                <div className="box">{productDetails.hauptartikelgruppe}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Produktgruppe:</span>
+                <div className="box">{productDetails.produktgruppe}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Hauptaktivität:</span>
+                <div className="box">{productDetails.hauptaktivitaet}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Verpackt:</span>
+                <div className="box">{formatBoolean(productDetails.verpackt)}</div>
+              </div>
+              <div className="info-row">
+                <span className="label">Seriennummer:</span>
+                <div className="box">{formatBoolean(productDetails.seriennummer)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="footer-grid">
+            <div className="footer-box">
+              <span>Barcode</span>
+              <div>{productDetails.barcode}</div>
+            </div>
+            <div className="footer-box">
+              <span>Garantie</span>
+              <div>-</div>
+            </div>
+            <div className="footer-box">
+              <span>Staffelpreise</span>
+              <div>-</div>
+            </div>
+          </div>
+
+          <div className="button-bar">
+            <button>x</button>
+            <button>x</button>
+            <button>x</button>
+            <button>x</button>
+            <button className="btn-übernehmen">Übernehmen</button>
           </div>
         </div>
       ) : (

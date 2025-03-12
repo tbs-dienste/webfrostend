@@ -82,6 +82,7 @@ import ProductBarcodes from './components/Administrativ/ProductBarcodes';
 import DownloadZusammenfassung from './components/Administrativ/DownloadZusammenfassung';
 import GSKarteDetails from './components/Administrativ/GSKarteDetails';
 import ArtikelDetail from './components/Administrativ/ArtikelDetail';
+import VoucherBarcodes from './components/Administrativ/VouchersBarcodes';
 
 const App = () => {
   
@@ -169,6 +170,7 @@ const App = () => {
           <Route path="/receipts" element={<Receipts />} />
           <Route path="/gs-karte" element={<GSKarteAbfrage />} />
           <Route path="/barcode" element={<ProductBarcodes />} />
+          <Route path="/barcode-gutschein" element={<VoucherBarcodes />} />
 
 
           <Route
