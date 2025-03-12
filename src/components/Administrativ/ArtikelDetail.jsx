@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './ArtikelDetail.scss';
 
@@ -50,8 +50,6 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
   };
 
   const formatBoolean = (value) => (value === 1 ? 'Ja' : 'Nein');
-  const formatCurrency = (value) =>
-    parseFloat(value).toLocaleString('de-CH', { style: 'currency', currency: 'CHF' });
 
   if (loading) return <div className="artikel-anzeige">Lade Daten...</div>;
 
@@ -61,109 +59,101 @@ const ArtikelDetail = ({ onKassenModusChange }) => {
 
       {productDetails ? (
         <div className="artikel-detail-container">
-          {/* Kopfbereich */}
           <div className="header-section">
-            <div>
-              <span className="label">Artikel-Nr.:</span> {productDetails.article_number}
-            </div>
+            <div className="artikel-nr">{productDetails.article_number}</div>
             <div className="artikel-name">{productDetails.article_short_text}</div>
           </div>
 
-          {/* Preisbereich */}
           <div className="preis-section">
-            <span>Aktueller Preis CHF</span>
-            <span className="preis-wert">{parseFloat(productDetails.price).toFixed(2)}</span>
+            <div>Aktueller Preis CHF</div>
+            <div className="preis-wert">{parseFloat(productDetails.price).toFixed(2)}</div>
           </div>
 
-          {/* Info-Container */}
           <div className="info-grid">
-            {/* Linke Seite */}
             <div className="info-column">
               <div className="info-row">
-                <span className="label">Preislisten Nr.:</span>
+                <div className="label">Preislisten Nr.:</div>
                 <div className="box">{productDetails.preislisten_nr}</div>
               </div>
               <div className="info-row">
-                <span className="label">Preis Eh.:</span>
+                <div className="label">Preis Eh.:</div>
                 <div className="box">1</div>
               </div>
               <div className="info-row">
-                <span className="label">Preis:</span>
+                <div className="label">Preis:</div>
                 <div className="box">{parseFloat(productDetails.price).toFixed(2)}</div>
               </div>
               <div className="info-row">
-                <span className="label">Gültig ab:</span>
+                <div className="label">Gültig ab:</div>
                 <div className="box">{formatDate(productDetails.gueltig_ab)}</div>
               </div>
               <div className="info-row">
-                <span className="label">Gültig bis:</span>
+                <div className="label">Gültig bis:</div>
                 <div className="box">{formatDate(productDetails.gueltig_bis)}</div>
               </div>
               <div className="info-row">
-                <span className="label">MWST-Satz:</span>
+                <div className="label">MWST-Satz:</div>
                 <div className="box">{parseFloat(productDetails.mwst_satz).toFixed(2)}%</div>
               </div>
               <div className="info-row">
-                <span className="label">Rabatt Pos / Bon:</span>
-                <div className="box">{formatBoolean(productDetails.rabatt_pos)} / {formatBoolean(productDetails.rabatt_bon)}</div>
+                <div className="label">Rabatt Pos / Bon:</div>
+                <div className="box">
+                  {formatBoolean(productDetails.rabatt_pos)} / {formatBoolean(productDetails.rabatt_bon)}
+                </div>
               </div>
               <div className="info-row">
-                <span className="label">Preisbestätigung:</span>
+                <div className="label">Preisbestätigung:</div>
                 <div className="box">{formatBoolean(productDetails.preisbestaetigung)}</div>
               </div>
             </div>
 
-            {/* Rechte Seite */}
             <div className="info-column">
               <div className="info-row">
-                <span className="label">Artikelgruppe:</span>
+                <div className="label">Artikelgruppe:</div>
                 <div className="box">{productDetails.artikelgruppe}</div>
               </div>
               <div className="info-row">
-                <span className="label">Hauptartikelgruppe:</span>
+                <div className="label">Hauptartikelgruppe:</div>
                 <div className="box">{productDetails.hauptartikelgruppe}</div>
               </div>
               <div className="info-row">
-                <span className="label">Produktgruppe:</span>
+                <div className="label">Produktgruppe:</div>
                 <div className="box">{productDetails.produktgruppe}</div>
               </div>
               <div className="info-row">
-                <span className="label">Hauptaktivität:</span>
+                <div className="label">Hauptaktivität:</div>
                 <div className="box">{productDetails.hauptaktivitaet}</div>
               </div>
               <div className="info-row">
-                <span className="label">Verpackt:</span>
+                <div className="label">Verpackt:</div>
                 <div className="box">{formatBoolean(productDetails.verpackt)}</div>
               </div>
               <div className="info-row">
-                <span className="label">Seriennummer:</span>
+                <div className="label">Seriennummer:</div>
                 <div className="box">{formatBoolean(productDetails.seriennummer)}</div>
               </div>
             </div>
           </div>
 
-          {/* Footer */}
           <div className="footer-grid">
             <div className="footer-box">
-              <span>Barcode</span>
+              <div className="footer-label">Barcode</div>
               <div>{productDetails.barcode}</div>
             </div>
             <div className="footer-box">
-              <span>Garantie</span>
+              <div className="footer-label">Garantie</div>
               <div>-</div>
             </div>
             <div className="footer-box">
-              <span>Staffelpreise</span>
+              <div className="footer-label">Staffelpreise</div>
               <div>-</div>
             </div>
           </div>
 
           <div className="button-bar">
-            <button>x</button>
-            <button>x</button>
-            <button>x</button>
-            <button>x</button>
-            <button className="btn-übernehmen">Übernehmen</button>
+            <Link to="/kasse" className="btn btn-danger">
+              Exit
+            </Link>
           </div>
         </div>
       ) : (
