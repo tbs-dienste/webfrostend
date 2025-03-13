@@ -1025,40 +1025,71 @@ const Kasse = ({ onKassenModusChange }) => {
               <p>Keine Produkte gescannt.</p>
             ) : (
               <div className="product-list">
-                {scannedProducts.map((product) => (
-                  <div
-                    key={product.article_number}
-                    className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
-                    onClick={() => toggleSelectProduct(product.article_number)}
-                  >
-                    <div className="product-details">
-                      <span className="product-name">{product.article_number}</span>
-                      <span className="product-article_number">{product.article_short_text}</span>
-                      <div className="quantity-controls">
-                        <span className="product-quantity">{Number(product.quantity).toFixed(2)} x</span>
-                      </div>
-                      <span className="product-price">{parseFloat(product.price).toFixed(2)} CHF</span>
-                      <span className="total-price">
-                        {product.finalPrice
-                          ? product.finalPrice.toFixed(2)
-                          : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
-                      </span>
-                    </div>
+                {scannedProducts.length === 0 ? (
+                  <div className="empty">Noch keine Artikel gescannt.</div>
+                ) : (
+                  scannedProducts.map((product) => {
+                    const quantity = Number(product.quantity).toFixed(2);
+                    const showQuantity = parseFloat(quantity) > 1;
 
-                    <div className="product-discounts">
-                      {product.discounts?.length > 0 ? (
-                        product.discounts.map((discount, index) => (
-                          <span key={index} className="discount">
-                            {discount.title} ({discount.amount} CHF)
-                          </span>
-                        ))
-                      ) : (
-                        <span className="no-discount"></span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    return (
+                      <div
+                        key={product.article_number}
+                        className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
+                        onClick={() => toggleSelectProduct(product.article_number)}
+                      >
+                        <div className="product-details">
+
+                          {/* Artikelnummer separat */}
+                          <div className="product-article-number">
+                            {product.article_number}
+                          </div>
+
+                          {/* Artikelnamen separat */}
+                          <div className="product-name">
+                            {product.article_short_text}
+                          </div>
+
+                          <div className="product-info-row">
+
+                            {/* Menge x Preis anzeigen, wenn Menge > 1 */}
+                            {showQuantity ? (
+                              <span className="product-quantity-price">
+                                {quantity} x {parseFloat(product.price).toFixed(2)} CHF
+                              </span>
+                            ) : (
+                              <span className="product-price">
+                                {parseFloat(product.price).toFixed(2)} CHF
+                              </span>
+                            )}
+
+                            {/* Gesamtpreis */}
+                            <span className="total-price">
+                              {product.finalPrice
+                                ? product.finalPrice.toFixed(2)
+                                : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Rabatte separat */}
+                        {product.discounts?.length > 0 && (
+                          <div className="product-discounts">
+                            {product.discounts.map((discount, index) => (
+                              <span key={index} className="discount">
+                                {discount.title} ({discount.amount} CHF)
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
               </div>
+
+
+
             )}
           </div>
 
