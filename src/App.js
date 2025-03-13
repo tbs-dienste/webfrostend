@@ -74,7 +74,7 @@ import Kasse from './components/Administrativ/Kasse';
 import Kassenlogin from './components/Administrativ/Kassenlogin';
 import KassenUebersicht from './components/Administrativ/KassenUebersicht';
 import IncomeExpenseForm from './components/Administrativ/IncomeExpenseForm';
-import Receipts from './components/Administrativ/Reciepts';
+import Receipts from './components/Administrativ/Receipts';
 import LastReceiptViewer from './components/Administrativ/LatestReciepts';
 import ÜberUns from './components/Content/ÜberUns';
 import GSKarteAbfrage from './components/Administrativ/GSKarteAbfrage';
