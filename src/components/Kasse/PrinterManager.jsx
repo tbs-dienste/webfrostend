@@ -165,7 +165,7 @@ const PrinterManager = () => {
                     }}
                   />
                 </div>
-                <div className="ink-percentage">{level}</div>
+                <div className="ink-percentage">{level}%</div>
               </div>
             ))
           ) : (
