@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './PrinterManager.scss';
+import Sidebar from './Sidebar';
 
-const PrinterManager = () => {
+const PrinterManager = ({ onKassenModusChange }) => {
   const [printers, setPrinters] = useState([]);
   const [selectedPrinter, setSelectedPrinter] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -12,6 +13,11 @@ const PrinterManager = () => {
   useEffect(() => {
     fetchPrinters();
   }, []);
+
+  useEffect(() => {
+    onKassenModusChange(true);
+    return () => onKassenModusChange(false);
+  }, [onKassenModusChange]);
 
   const fetchInkLevels = useCallback(async () => {
     if (!selectedPrinter) return;
@@ -122,64 +128,71 @@ const PrinterManager = () => {
   };
 
   return (
-    <div className="printer-manager-container">
-      <h2>Druckerverwaltung</h2>
+    <div className='printer-manager-wrapper'>
 
-      <div className="printer-selection">
-        <label htmlFor="printer-select">Drucker auswählen:</label>
-        <select
-          id="printer-select"
-          value={selectedPrinter || ''}
-          onChange={(e) => handleSetPrinter(e.target.value)}
-          disabled={loading}
-        >
-          {printers.map((printer, index) => (
-            <option key={index} value={printer}>
-              {printer.name}
-            </option>
-          ))}
-        </select>
-      </div>
 
-      <div className="status-window">
-        <div className="status-header">
-          <div className="epson-logo">EPSON</div>
-          <div className="printer-model">{selectedPrinter || 'Kein Drucker ausgewählt'}</div>
+      <Sidebar />
+      <div className="printer-manager-container">
+
+
+        <h2>Druckerverwaltung</h2>
+
+        <div className="printer-selection">
+          <label htmlFor="printer-select">Drucker auswählen:</label>
+          <select
+            id="printer-select"
+            value={selectedPrinter || ''}
+            onChange={(e) => handleSetPrinter(e.target.value)}
+            disabled={loading}
+          >
+            {printers.map((printer, index) => (
+              <option key={index} value={printer}>
+                {printer.name}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="status-title">Tintenfüllstände</div>
+        <div className="status-window">
+          <div className="status-header">
+            <div className="epson-logo">EPSON</div>
+            <div className="printer-model">{selectedPrinter || 'Kein Drucker ausgewählt'}</div>
+          </div>
 
-        <div className="ink-levels-container">
-          {inkLoading ? (
-            <div className="loading">Lade...</div>
-          ) : inkLevels ? (
-            Object.entries(inkLevels).map(([color, level], index) => (
-              <div className="ink-cartridge" key={index}>
-                <div className="ink-label">{color.toUpperCase()}</div>
-                <div className="ink-bar">
-                  <div
-                    className="ink-fill"
-                    style={{
-                      height: `${level}`,
-                      backgroundColor: getInkColor(color),
-                    }}
-                  />
+          <div className="status-title">Tintenfüllstände</div>
+
+          <div className="ink-levels-container">
+            {inkLoading ? (
+              <div className="loading">Lade...</div>
+            ) : inkLevels ? (
+              Object.entries(inkLevels).map(([color, level], index) => (
+                <div className="ink-cartridge" key={index}>
+                  <div className="ink-label">{color.toUpperCase()}</div>
+                  <div className="ink-bar">
+                    <div
+                      className="ink-fill"
+                      style={{
+                        height: `${level}`,
+                        backgroundColor: getInkColor(color),
+                      }}
+                    />
+                  </div>
+                  <div className="ink-percentage">{level}</div>
                 </div>
-                <div className="ink-percentage">{level}%</div>
-              </div>
-            ))
-          ) : (
-            <div className="no-ink-data">Keine Daten verfügbar</div>
-          )}
-        </div>
+              ))
+            ) : (
+              <div className="no-ink-data">Keine Daten verfügbar</div>
+            )}
+          </div>
 
-        <div className="status-footer">
-          <button onClick={fetchPrinters} disabled={loading}>
-            Aktualisieren
-          </button>
-          <button onClick={handleTestPrint} disabled={!selectedPrinter || loading}>
-            Testdruck
-          </button>
+          <div className="status-footer">
+            <button onClick={fetchPrinters} disabled={loading}>
+              Aktualisieren
+            </button>
+            <button onClick={handleTestPrint} disabled={!selectedPrinter || loading}>
+              Testdruck
+            </button>
+          </div>
         </div>
       </div>
     </div>

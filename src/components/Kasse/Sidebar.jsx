@@ -1,43 +1,34 @@
-import React, { useState } from 'react';
-import './Sidecar.scss';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import React from 'react';
+import './Sidebar.scss';
+import { FaPrint, FaChartBar, FaUsers, FaFileAlt, FaTachometerAlt } from 'react-icons/fa';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const menuItems = [
+    { path: '/dashboard', icon: <FaTachometerAlt />, label: 'Dashboard' },
+    { path: '/drucker', icon: <FaPrint />, label: 'Drucker' },
+    { path: '/transaktionen', icon: <FaFileAlt />, label: 'Transaktionen' },
+    { path: '/berichte', icon: <FaChartBar />, label: 'Berichte' },
+    { path: '/benutzereinstellungen', icon: <FaUsers />, label: 'Benutzereinstellungen' },
+  ];
 
   return (
-    <div className={`sidecar-container ${isOpen ? 'open' : ''}`}>
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <button className="close-btn" onClick={toggleSidebar}>
-          <FaTimes />
-        </button>
-        <div className="sidebar-content">
-          <h3>Menü</h3>
+    <div className="sidebar-container">
+      <div className="sidebar always-open">
+        <nav className="sidebar-content">
           <ul>
-            <li>Dashboard</li>
-            <li>Drucker</li>
-            <li>Transaktionen</li>
-            <li>Berichte</li>
-            <li>Benutzereinstellungen</li>
+            {menuItems.map((item, index) => (
+              <li key={index} className={location.pathname === item.path ? 'active' : ''}>
+                <Link to={item.path}>
+                  <span className="icon">{item.icon}</span>
+                  <span className="label">{item.label}</span>
+                </Link>
+              </li>
+            ))}
           </ul>
-        </div>
-      </div>
-
-      {/* Overlay */}
-      <div className={`overlay ${isOpen ? 'open' : ''}`} onClick={toggleSidebar}></div>
-
-      {/* Hauptinhalt */}
-      <div className="main-content">
-        <button className="open-btn" onClick={toggleSidebar}>
-          <FaBars />
-        </button>
-        <div className="content-area">
-          <h1>Willkommen zum Dashboard</h1>
-          <p>Hier kannst du deine wichtigsten Informationen und Einstellungen verwalten.</p>
-        </div>
+        </nav>
       </div>
     </div>
   );
