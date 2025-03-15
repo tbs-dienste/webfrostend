@@ -4,50 +4,52 @@ import './AlleGutscheine.scss';
 import { FaPlus } from 'react-icons/fa';
 
 const AlleGutscheine = () => {
-    const [gutscheine, setGutscheine] = useState([]);
+  const [gutscheine, setGutscheine] = useState([]);
 
-    useEffect(() => {
-        const fetchGutscheine = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setGutscheine(response.data);
-            } catch (error) {
-                console.error('Fehler beim Abrufen der Gutscheine:', error);
-                alert('Es gab ein Problem beim Abrufen der Gutscheine. Bitte versuchen Sie es später erneut.');
-            }
-        };
+  useEffect(() => {
+    const fetchGutscheine = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setGutscheine(response.data);
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Gutscheine:', error);
+        alert('Es gab ein Problem beim Abrufen der Gutscheine. Bitte versuchen Sie es später erneut.');
+      }
+    };
 
-        fetchGutscheine();
-    }, []);
+    fetchGutscheine();
+  }, []);
 
-    return (
-        <div className="alle-gutscheine">
-            <h2>Alle verfügbaren Gutscheincodes</h2>
+  return (
+    <div className="gutscheine-container">
+      <div className="header">
+        <h1>Gutscheincodes</h1>
+        <button className="btn-primary" onClick={() => window.location.href = '/gutschein'}>
+          <FaPlus /> Neuer Gutschein
+        </button>
+      </div>
 
-            {/* + Button zum Erstellen eines neuen Gutscheins */}
-            <button className="add-btn" onClick={() => window.location.href = '/gutschein'}>
-                <FaPlus /> Neuer Gutschein
-            </button>
-
-            <ul>
-                {gutscheine.map(gutschein => (
-                    <li key={gutschein.gutscheincode}>
-                        <div>
-                            <strong>Kartennummer:</strong> {gutschein.kartennummer}
-                        </div>
-                        <div>
-                            <strong>Guthaben:</strong> {gutschein.guthaben} CHF
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+      <div className="gutscheine-list">
+        {gutscheine.length === 0 ? (
+          <div className="empty-state">Keine Gutscheine vorhanden.</div>
+        ) : (
+          gutscheine.map(gutschein => (
+            <div className="gutschein-card" key={gutschein.gutscheincode}>
+              <div className="gutschein-info">
+                <p><span>Kartennummer:</span> {gutschein.kartennummer}</p>
+                <p><span>Guthaben:</span> {gutschein.guthaben} CHF</p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default AlleGutscheine;

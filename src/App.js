@@ -83,6 +83,7 @@ import DownloadZusammenfassung from './components/Administrativ/DownloadZusammen
 import GSKarteDetails from './components/Administrativ/GSKarteDetails';
 import ArtikelDetail from './components/Administrativ/ArtikelDetail';
 import VoucherBarcodes from './components/Administrativ/VouchersBarcodes';
+import PrinterManager from './components/Kasse/PrinterManager';
 
 const App = () => {
   
@@ -156,6 +157,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
+
       {!isKassenModus && <Navbar />}
       
         <Routes>
@@ -180,6 +182,7 @@ const App = () => {
           <Route path="/kassenlogin"   element={<Kassenlogin onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
           <Route path="/einnahmeausgabe" element={<IncomeExpenseForm onKassenModusChange={toggleKassenModus}/>} />
+          <Route path="/drucker" element={<PrinterManager onKassenModusChange={toggleKassenModus}/>} />
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
