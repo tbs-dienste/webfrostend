@@ -45,7 +45,8 @@
     "react-stars": "^2.2.5",
     "sass": "^1.72.0",
     "uuid": "^11.0.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yoga-layout": "^3.2.1"
   },
   "scripts": {
     "start": "react-scripts start",
