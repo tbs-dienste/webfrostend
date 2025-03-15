@@ -1,62 +1,78 @@
 .printer-manager-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f4f7fa;
-    padding: 20px;
-  }
-  
-  .card {
-    width: 100%;
-    max-width: 800px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-top: 20px;
-    padding: 20px;
-  }
-  
-  .card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .card-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .progress-bar {
-    width: 100%;
-    height: 25px;
-    background-color: #e0e0e0;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  
-  .progress-bar-inner {
-    width: 100%;
-    transition: width 0.3s ease;
-  }
-  
-  .progress-bar-inner.black {
-    background-color: #000000;
-  }
-  
-  .progress-bar-inner.yellow {
-    background-color: #FFEB3B;
-  }
-  
-  .progress-bar-inner.blue {
-    background-color: #2196F3;
-  }
-  
-  .progress-bar-inner.pink {
-    background-color: #E91E63;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f4f4f4;
+}
+
+.status-window {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.epson-logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.printer-model {
+  color: #666;
+}
+
+.status-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.ink-levels-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 200px;
+  margin-bottom: 1.5rem;
+}
+
+.ink-cartridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+}
+
+.ink-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.ink-bar {
+  position: relative;
+  width: 40px;
+  height: 150px;
+  border: 2px solid #ccc;
+  border-radius: 0.5rem;
+  background: #eee;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.ink-fill {
+  width: 100%;
+  transition: height 0.3s ease-in-out;
+}
+
+.ink-percentage {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
