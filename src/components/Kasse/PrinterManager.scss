@@ -1,78 +1,134 @@
 .printer-manager-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #f4f4f4;
-}
-
-.status-window {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-}
-
-.status-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.epson-logo {
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.printer-model {
-  color: #666;
-}
-
-.status-title {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.ink-levels-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  height: 200px;
-  margin-bottom: 1.5rem;
-}
-
-.ink-cartridge {
-  display: flex;
   flex-direction: column;
   align-items: center;
-  width: 60px;
-}
+  gap: 2rem;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
 
-.ink-label {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
+  h2 {
+    font-size: 2rem;
+    color: #333;
+  }
 
-.ink-bar {
-  position: relative;
-  width: 40px;
-  height: 150px;
-  border: 2px solid #ccc;
-  border-radius: 0.5rem;
-  background: #eee;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-}
+  .printer-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.ink-fill {
-  width: 100%;
-  transition: height 0.3s ease-in-out;
-}
+    label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
 
-.ink-percentage {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+  }
+
+  .status-window {
+    width: 400px;
+    background: #f7f7f7;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .epson-logo {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #2196f3;
+      }
+
+      .printer-model {
+        font-size: 1rem;
+        color: #777;
+      }
+    }
+
+    .status-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .ink-levels-container {
+      display: flex;
+      gap: 1rem;
+
+      .ink-cartridge {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .ink-label {
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .ink-bar {
+          width: 40px;
+          height: 150px;
+          background: #e0e0e0;
+          border-radius: 8px;
+          display: flex;
+          align-items: flex-end;
+          overflow: hidden;
+
+          .ink-fill {
+            width: 100%;
+            transition: height 0.3s ease-in-out;
+          }
+        }
+
+        .ink-percentage {
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      .loading,
+      .no-ink-data {
+        text-align: center;
+        width: 100%;
+        color: #999;
+      }
+    }
+
+    .status-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+
+      button {
+        flex: 1;
+        padding: 0.75rem;
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #1976d2;
+        }
+
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
 }

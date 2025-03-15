@@ -14,13 +14,17 @@ const PrinterManager = () => {
   }, []);
 
   const fetchInkLevels = useCallback(async () => {
+    if (!selectedPrinter) return;
     setInkLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/printer/check-ink', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { printerName: selectedPrinter },
-      });
+      const res = await axios.get(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/printer/check-ink',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { printerName: selectedPrinter },
+        }
+      );
       setInkLevels(res.data.inkLevels);
     } catch (err) {
       console.error('Fehler beim Abrufen der Tintenfüllstände:', err);
@@ -30,20 +34,23 @@ const PrinterManager = () => {
   }, [selectedPrinter]);
 
   useEffect(() => {
-    if (selectedPrinter) fetchInkLevels();
+    fetchInkLevels();
   }, [selectedPrinter, fetchInkLevels]);
 
   const fetchPrinters = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/printer', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/printer',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setPrinters(res.data.printers);
-      setSelectedPrinter(res.data.selectedPrinter);
+      setSelectedPrinter(res.data.selectedPrinter || res.data.printers[0]);
     } catch (err) {
-      console.error(err);
+      console.error('Fehler beim Abrufen der Druckerliste:', err);
     } finally {
       setLoading(false);
     }
@@ -52,19 +59,36 @@ const PrinterManager = () => {
   const handleSetPrinter = async (printerName) => {
     setLoading(true);
     try {
-      await axios.post('/api/printer/setPrinter', { printerName });
+      const token = localStorage.getItem('token');
+      await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/printer/setPrinter',
+        { printerName },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setSelectedPrinter(printerName);
+      fetchInkLevels();
     } catch (err) {
-      console.error(err);
+      console.error('Fehler beim Setzen des Druckers:', err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleTestPrint = async () => {
+    if (!selectedPrinter) return alert('Kein Drucker ausgewählt!');
     setLoading(true);
     try {
-      const res = await axios.get('/api/printer/testPrint', { responseType: 'blob' });
+      const token = localStorage.getItem('token');
+      const res = await axios.get(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/printer/testPrint',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { printerName: selectedPrinter },
+          responseType: 'blob',
+        }
+      );
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -72,7 +96,7 @@ const PrinterManager = () => {
       document.body.appendChild(link);
       link.click();
     } catch (err) {
-      console.error(err);
+      console.error('Fehler beim Testdruck:', err);
     } finally {
       setLoading(false);
     }
@@ -80,26 +104,55 @@ const PrinterManager = () => {
 
   const getInkColor = (color) => {
     switch (color.toLowerCase()) {
-      case 'schwarz': return '#000000';
-      case 'gelb': return '#FFEB3B';
-      case 'blau': return '#2196F3';
-      case 'pink': return '#E91E63';
-      default: return '#e0e0e0';
+      case 'schwarz':
+      case 'black':
+        return '#000';
+      case 'gelb':
+      case 'yellow':
+        return '#FFEB3B';
+      case 'cyan':
+      case 'blau':
+        return '#03A9F4';
+      case 'magenta':
+      case 'pink':
+        return '#E91E63';
+      default:
+        return '#9E9E9E';
     }
   };
 
   return (
     <div className="printer-manager-container">
+      <h2>Druckerverwaltung</h2>
+
+      <div className="printer-selection">
+        <label htmlFor="printer-select">Drucker auswählen:</label>
+        <select
+          id="printer-select"
+          value={selectedPrinter || ''}
+          onChange={(e) => handleSetPrinter(e.target.value)}
+          disabled={loading}
+        >
+          {printers.map((printer, index) => (
+            <option key={index} value={printer}>
+              {printer.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="status-window">
         <div className="status-header">
           <div className="epson-logo">EPSON</div>
-          <div className="printer-model">C82 Series (USB)</div>
+          <div className="printer-model">{selectedPrinter || 'Kein Drucker ausgewählt'}</div>
         </div>
 
-        <div className="status-title">Verbleibender Tintenstand</div>
+        <div className="status-title">Tintenfüllstände</div>
 
         <div className="ink-levels-container">
-          {inkLevels ? (
+          {inkLoading ? (
+            <div className="loading">Lade...</div>
+          ) : inkLevels ? (
             Object.entries(inkLevels).map(([color, level], index) => (
               <div className="ink-cartridge" key={index}>
                 <div className="ink-label">{color.toUpperCase()}</div>
@@ -107,8 +160,8 @@ const PrinterManager = () => {
                   <div
                     className="ink-fill"
                     style={{
-                      height: level,
-                      backgroundColor: getInkColor(color)
+                      height: `${level}`,
+                      backgroundColor: getInkColor(color),
                     }}
                   />
                 </div>
@@ -116,14 +169,17 @@ const PrinterManager = () => {
               </div>
             ))
           ) : (
-            <div className="no-ink-data">Tintenstand nicht geladen</div>
+            <div className="no-ink-data">Keine Daten verfügbar</div>
           )}
         </div>
 
-
         <div className="status-footer">
-          <button onClick={fetchPrinters}>Aktualisieren</button>
-          <button onClick={handleTestPrint} disabled={!selectedPrinter || loading}>Testdruck</button>
+          <button onClick={fetchPrinters} disabled={loading}>
+            Aktualisieren
+          </button>
+          <button onClick={handleTestPrint} disabled={!selectedPrinter || loading}>
+            Testdruck
+          </button>
         </div>
       </div>
     </div>
