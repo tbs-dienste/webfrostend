@@ -1,6 +1,6 @@
 import React from 'react';
 import './Sidebar.scss';
-import { FaPrint, FaChartBar, FaUsers, FaFileAlt, FaTachometerAlt } from 'react-icons/fa';
+import { FaPrint, FaChartBar, FaUsers, FaFileAlt, FaTachometerAlt, FaCashRegister } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -11,7 +11,7 @@ const Sidebar = () => {
     { path: '/drucker', icon: <FaPrint />, label: 'Drucker' },
     { path: '/transaktionen', icon: <FaFileAlt />, label: 'Transaktionen' },
     { path: '/berichte', icon: <FaChartBar />, label: 'Berichte' },
-    { path: '/benutzereinstellungen', icon: <FaUsers />, label: 'Benutzereinstellungen' },
+    { path: '/kasse', icon: <FaCashRegister />, label: 'Kasse' },
   ];
 
   return (

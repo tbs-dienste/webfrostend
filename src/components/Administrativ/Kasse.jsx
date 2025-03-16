@@ -788,6 +788,11 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
 
+  const goToSettings = () => {
+    navigate('/drucker');
+  };
+
+
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
 
@@ -932,7 +937,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button onClick={toggleLastReciepts} className="sign-out-button">
                 <FontAwesomeIcon icon={faPrint} />
               </button>
-              <button>Einstellungen</button>
+              <button onClick={goToSettings}>Einstellungen</button>
               <button>Kunden Detail</button>
 
 

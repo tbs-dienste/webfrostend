@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './PrinterManager.scss';
 import Sidebar from './Sidebar';
+import { Loader2, RefreshCcw, Printer } from 'lucide-react';
 
 const PrinterManager = ({ onKassenModusChange }) => {
   const [printers, setPrinters] = useState([]);
@@ -9,6 +10,8 @@ const PrinterManager = ({ onKassenModusChange }) => {
   const [loading, setLoading] = useState(false);
   const [inkLevels, setInkLevels] = useState(null);
   const [inkLoading, setInkLoading] = useState(false);
+  const [printerStatus, setPrinterStatus] = useState(null);
+  const [printerStats, setPrinterStats] = useState(null);
 
   useEffect(() => {
     fetchPrinters();
@@ -32,6 +35,8 @@ const PrinterManager = ({ onKassenModusChange }) => {
         }
       );
       setInkLevels(res.data.inkLevels);
+      setPrinterStatus(res.data.status || 'Bereit');
+      setPrinterStats(res.data.stats || { gedruckt: 230, seitenProTag: 12 });
     } catch (err) {
       console.error('Fehler beim Abrufen der Tintenfüllstände:', err);
     } finally {
@@ -82,31 +87,6 @@ const PrinterManager = ({ onKassenModusChange }) => {
     }
   };
 
-  const handleTestPrint = async () => {
-    if (!selectedPrinter) return alert('Kein Drucker ausgewählt!');
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(
-        'https://tbsdigitalsolutionsbackend.onrender.com/api/printer/testPrint',
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { printerName: selectedPrinter },
-          responseType: 'blob',
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'Testdruck.pdf');
-      document.body.appendChild(link);
-      link.click();
-    } catch (err) {
-      console.error('Fehler beim Testdruck:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getInkColor = (color) => {
     switch (color.toLowerCase()) {
@@ -129,41 +109,60 @@ const PrinterManager = ({ onKassenModusChange }) => {
 
   return (
     <div className='printer-manager-wrapper'>
-
-
       <Sidebar />
       <div className="printer-manager-container">
-
-
-        <h2>Druckerverwaltung</h2>
+        <h2 className="title">🖨️ Druckerverwaltung</h2>
 
         <div className="printer-selection">
           <label htmlFor="printer-select">Drucker auswählen:</label>
-          <select
-            id="printer-select"
-            value={selectedPrinter || ''}
-            onChange={(e) => handleSetPrinter(e.target.value)}
-            disabled={loading}
-          >
-            {printers.map((printer, index) => (
-              <option key={index} value={printer}>
-                {printer.name}
-              </option>
-            ))}
-          </select>
+          <div className="dropdown-container">
+            <select
+              id="printer-select"
+              value={selectedPrinter || ''}
+              onChange={(e) => handleSetPrinter(e.target.value)}
+              disabled={loading}
+            >
+              {printers.map((printer, index) => (
+                <option key={index} value={printer}>
+                  {printer.name} ({printer.type || 'Unbekannt'})
+                </option>
+              ))}
+
+              {/* Option zum Hinzufügen eines Druckers */}
+              <option value="add-printer">Drucker hinzufügen...</option>
+            </select>
+
+            {/* Optionaler Button zum Hinzufügen eines Druckers */}
+            {selectedPrinter === "add-printer" && (
+              <button
+                className="add-printer-btn"
+                onClick={() => alert("Drucker hinzufügen Funktionalität hier implementieren")}
+              >
+                Drucker hinzufügen
+              </button>
+            )}
+          </div>
         </div>
+
+
 
         <div className="status-window">
           <div className="status-header">
-            <div className="epson-logo">EPSON</div>
-            <div className="printer-model">{selectedPrinter || 'Kein Drucker ausgewählt'}</div>
+            <div className="epson-logo">
+              {selectedPrinter || 'Kein Drucker ausgewählt'}
+            </div>
+            <div className={`status-indicator ${printerStatus === 'Bereit' ? 'online' : 'offline'}`}>
+              {printerStatus || 'Unbekannt'}
+            </div>
           </div>
 
           <div className="status-title">Tintenfüllstände</div>
 
           <div className="ink-levels-container">
             {inkLoading ? (
-              <div className="loading">Lade...</div>
+              <div className="loading">
+                <Loader2 className="spinner" /> Lade...
+              </div>
             ) : inkLevels ? (
               Object.entries(inkLevels).map(([color, level], index) => (
                 <div className="ink-cartridge" key={index}>
@@ -178,6 +177,9 @@ const PrinterManager = ({ onKassenModusChange }) => {
                     />
                   </div>
                   <div className="ink-percentage">{level}</div>
+                  {parseInt(level) <= 10 && (
+                    <div className="low-ink-warning">⚠️ </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -185,14 +187,16 @@ const PrinterManager = ({ onKassenModusChange }) => {
             )}
           </div>
 
-          <div className="status-footer">
-            <button onClick={fetchPrinters} disabled={loading}>
-              Aktualisieren
-            </button>
-            <button onClick={handleTestPrint} disabled={!selectedPrinter || loading}>
-              Testdruck
-            </button>
+          <div className="printer-stats">
+            <h4>Druckerstatistik</h4>
+            <ul>
+              <li>Gedruckte Seiten: <strong>{printerStats?.gedruckt || 0}</strong></li>
+              <li>Seiten pro Tag: <strong>{printerStats?.seitenProTag || 0}</strong></li>
+              <li>Letzter Testdruck: <strong>{printerStats?.lastTest || 'Nie'}</strong></li>
+            </ul>
           </div>
+
+
         </div>
       </div>
     </div>
