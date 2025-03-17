@@ -7,146 +7,155 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSignOutAlt,
   faHome,
-  faCogs as faServicestack,
+  faCogs,
   faPhoneAlt,
   faDollarSign,
   faQuestionCircle,
   faStar,
-  faBars as faMenu,
+  faBars,
   faSignInAlt,
   faUser,
   faDownload,
   faMoneyBill,
   faPaperPlane,
-  faBarChart,
+  faChartBar,
   faVirus,
-  faBarcode,
   faCashRegister,
   faInfoCircle
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
   const currentPath = window.location.pathname;
-  const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [userType, setUserType] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        if (decodedToken.exp * 1000 < Date.now()) {
+        const decoded = jwtDecode(token);
+        if (decoded.exp * 1000 < Date.now()) {
           handleLogout();
         } else {
-          setUserType(decodedToken.userType);
-          setIsLoggedIn(true);
+          setUserRole(decoded.userType);
+          setLoggedIn(true);
         }
       } catch (error) {
-        console.error('Ungültiger Token:', error);
+        console.error('Token ungültig:', error);
         handleLogout();
       }
     } else {
-      setIsLoggedIn(false);
+      setLoggedIn(false);
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUserType('');
-    setIsLoggedIn(false);
+    setUserRole('');
+    setLoggedIn(false);
     navigate('/');
     window.location.reload();
   };
 
   const handleKassenLogout = () => {
     localStorage.removeItem('token');
-    setUserType('');
-    setIsLoggedIn(false);
+    setUserRole('');
+    setLoggedIn(false);
     navigate('/kassenlogin');
     window.location.reload();
   };
 
-  const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
+  const toggleMenu = () => setMenuOpen(prev => !prev);
 
   useEffect(() => {
-    if (burgerMenuActive) {
+    if (menuOpen) {
       document.body.classList.add('no-scroll');
     } else {
       document.body.classList.remove('no-scroll');
     }
     return () => document.body.classList.remove('no-scroll');
-  }, [burgerMenuActive]);
+  }, [menuOpen]);
 
   return (
-    <nav className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
-      <div className="navbar-container">
-        <div className="logo-box">
-          <Link to="/">
-            <img src={logo} alt="Logo" className="logo" />
+    <nav className={`navbar ${menuOpen ? 'menu-open' : ''}`}>
+      <div className="navbar__wrapper">
+
+        {/* LOGO */}
+        <div className="navbar__logo-container">
+          <Link to="/" className="navbar__logo-link">
+            <img src={logo} alt="TBS Solutions Logo" className="navbar__logo" />
           </Link>
         </div>
 
-        <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
-          <FontAwesomeIcon icon={faMenu} />
+        {/* BURGER ICON */}
+        <div className={`navbar__toggle-icon ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
+          <FontAwesomeIcon icon={faBars} />
         </div>
 
-        <div className={`nav-items ${burgerMenuActive ? 'active' : ''}`}>
-          <ul>
-            <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
+        {/* MENU */}
+        <div className={`navbar__menu ${menuOpen ? 'active' : ''}`}>
+          <ul className="navbar__list">
 
+            {/* IMMER SICHTBAR */}
+            <NavItem to="/" text="Startseite" icon={faHome} currentPath={currentPath} onClick={toggleMenu} />
+            <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} currentPath={currentPath} onClick={toggleMenu} />
+            <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} />
+            <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} />
+            <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faCogs} currentPath={currentPath} />
+            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} />
+            <NavItem to="/preisinformationen" text="Preise" icon={faDollarSign} currentPath={currentPath} />
 
-            {isLoggedIn && userType === 'admin' && (
+            {/* NUR WENN EINGELOGGT */}
+            {loggedIn && (
               <>
-                <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/download" text="Download" icon={faDownload} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem
-                  to="/kassenlogin"
-                  text="Kasse"
-                  icon={faCashRegister}
-                  currentPath={currentPath}
-                  onClick={() => {
-                    handleKassenLogout();
-                    toggleBurgerMenu();
-                  }}
-                />
+                {/* Admin UND Mitarbeiter haben Kategorien */}
+                <li className="navbar__category">Mein Bereich</li>
 
-                <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/statistiken" text="Statistik" icon={faBarChart} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                {userRole === 'admin' && (
+                  <>
+                    <li className="navbar__category">Admin Panel</li>
+                    <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUser} currentPath={currentPath} />
+                    <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} />
+                    <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} />
+                    <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} />
+                    <NavItem to="/statistiken" text="Statistiken" icon={faChartBar} currentPath={currentPath} />
+                    <NavItem to="/download" text="Downloads" icon={faDownload} currentPath={currentPath} />
+                    <NavItem
+                      to="/kassenlogin"
+                      text="Kasse starten"
+                      icon={faCashRegister}
+                      currentPath={currentPath}
+                      onClick={() => {
+                        handleKassenLogout();
+                        toggleMenu();
+                      }}
+                    />
+                  </>
+                )}
+
+                {userRole === 'mitarbeiter' && (
+                  <>
+                    <li className="navbar__category">Mitarbeiter Portal</li>
+                    <NavItem to="/antrag" text="Neuer Antrag" icon={faPaperPlane} currentPath={currentPath} />
+                    <NavItem to="/alleAntraege" text="Alle Anträge" icon={faPaperPlane} currentPath={currentPath} />
+                    <NavItem to="/createkrankmeldung" text="Krankmeldung" icon={faVirus} currentPath={currentPath} />
+                  </>
+                )}
+
+                {/* Gemeinsame Links für beide */}
+                <NavItem to="/profile" text="Mein Profil" icon={faUser} currentPath={currentPath} />
               </>
             )}
 
-            {isLoggedIn && userType === 'mitarbeiter' && (
-              <>
-                <NavItem to="/antrag" text="Antrag stellen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/alleAntraege" text="Alle Anträge" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/createkrankmeldung" text="Krank Melden" icon={faVirus} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
-            )}
-
-            {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
-              <>
-                <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/profile" text="Profil" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
-            )}
-
-            {!isLoggedIn && (
-              <NavItem to="/login" text="Login" icon={faSignInAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            )}
-
-            {isLoggedIn && (
-              <button className="logout-button" onClick={handleLogout}>
+            {/* LOGIN / LOGOUT */}
+            {!loggedIn ? (
+              <NavItem to="/login" text="Einloggen" icon={faSignInAlt} currentPath={currentPath} />
+            ) : (
+              <button className="navbar__logout-button" onClick={handleLogout}>
                 <FontAwesomeIcon icon={faSignOutAlt} />
-                Logout
+                <span>Logout</span>
               </button>
             )}
           </ul>
@@ -158,10 +167,14 @@ function Navbar() {
 
 function NavItem({ to, text, icon, currentPath, onClick }) {
   return (
-    <li>
-      <Link to={to} className={`nav-link ${currentPath === to ? 'active' : ''}`} onClick={onClick}>
-        {icon && <span className="icon"><FontAwesomeIcon icon={icon} /></span>}
-        {text}
+    <li className="navbar__item">
+      <Link
+        to={to}
+        className={`navbar__link ${currentPath === to ? 'active' : ''}`}
+        onClick={onClick}
+      >
+        {icon && <FontAwesomeIcon icon={icon} className="navbar__icon" />}
+        <span className="navbar__text">{text}</span>
       </Link>
     </li>
   );
