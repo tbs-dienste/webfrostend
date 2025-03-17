@@ -1,120 +1,252 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import JsBarcode from "jsbarcode";
-import { PDFDownloadLink, Document, Page, View, Text, StyleSheet, Image } from "@react-pdf/renderer";
+import {
+  PDFDownloadLink,
+  Document,
+  Page,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 
-// PDF-Styles
+// Maße in pt (1 pt = 1/72 inch)
+const cardWidth = 242.65;
+const cardHeight = 153;
+const margin = 10;
+
+// PDF Styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    padding: 40,
+    padding: margin,
     fontFamily: "Helvetica",
   },
-  title: { fontSize: 24, textAlign: "center", marginBottom: 20, fontWeight: "bold" },
-  card: {
-    width: "100%",
-    padding: 20,
-    border: "2px solid black",
-    borderRadius: 10,
-    textAlign: "center",
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginBottom: margin * 2,
   },
-  productText: { fontSize: 18, marginBottom: 10, fontWeight: "bold" },
-  barcodeImage: { width: 300, height: 150, marginVertical: 20 },
-  barcodeText: { fontSize: 16, marginTop: 10 },
-  detailsText: { fontSize: 14, marginVertical: 5 },
+  cardWrapper: {
+    marginRight: margin * 4,
+  },
+  cardFront: {
+    width: cardWidth,
+    height: cardHeight,
+    border: "1pt solid black",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f9f9f9",
+  },
+  cardBack: {
+    width: cardWidth,
+    height: cardHeight,
+    border: "1pt solid #333",
+    borderRadius: 8,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    padding: 10,
+    backgroundColor: "#ffffff",
+    position: "relative",
+  },
+  topBar: {
+    height: 10,
+    backgroundColor: "#000000",
+    width: "100%",
+    marginBottom: 5,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  infoContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  noticeText: {
+    fontSize: 6,
+    lineHeight: 1.2,
+    textAlign: "justify",
+    color: "#444444",
+    marginTop: 5,
+  },
+  footerText: {
+    fontSize: 5,
+    color: "#666666",
+    textAlign: "center",
+    marginTop: 5,
+  },
+  barcodeContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  barcodeImage: {
+    width: "60%",
+    height: 30,
+  },
+  barcodeText: {
+    fontSize: 6,
+    marginTop: 2,
+    color: "#333333",
+  },
+  frontText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 });
 
-// PDF-Komponente für Gutscheine
-const GutscheinePDF = ({ gutscheine }) => (
-  <Document>
-    {gutscheine.map((gutschein) => (
-      <Page key={gutschein.kartennummer} size="A4" style={styles.page}>
-        <Text style={styles.title}>Gutschein</Text>
-        <View style={styles.card}>
-          <Text style={styles.productText}>Kartentyp: {gutschein.kartentyp}</Text>
-          <Image src={gutschein.barcodeImage} style={styles.barcodeImage} />
-          <Text style={styles.barcodeText}>Kartennummer: {gutschein.kartennummer}</Text>
-          <Text style={styles.detailsText}>Guthaben: {gutschein.guthaben} CHF</Text>
-          <Text style={styles.detailsText}>
-            Gültig bis: {gutschein.gueltigBis ? new Date(gutschein.gueltigBis).toLocaleDateString() : "Unbegrenzt"}
-          </Text>
-          <Text style={styles.detailsText}>Status: {gutschein.status}</Text>
-        </View>
-      </Page>
-    ))}
-  </Document>
-);
+// PDF-Komponente
+const GutscheinePDF = ({ gutscheine }) => {
+  const chunkArray = (arr, size) =>
+    arr.reduce((acc, _, i) => (i % size === 0 ? [...acc, arr.slice(i, i + size)] : acc), []);
 
-// Hauptkomponente
-const GutscheinBarcodes = () => {
-  const [gutscheine, setGutscheine] = useState([]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("Kein Token gefunden!");
-      return;
-    }
-
-    axios
-      .get("https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        const fetchedGutscheine = Array.isArray(response.data) ? response.data : response.data.data || [];
-
-        const updatedGutscheine = fetchedGutscheine.map((gutschein) => {
-          const canvas = document.createElement("canvas");
-          JsBarcode(canvas, String(gutschein.kartennummer), {
-            format: "CODE128",
-            width: 3,
-            height: 100,
-            text: `${gutschein.kartennummer}`,
-          });
-          return {
-            ...gutschein,
-            barcodeImage: canvas.toDataURL("image/png"),
-          };
-        });
-
-        setGutscheine(updatedGutscheine);
-      })
-      .catch((error) => {
-        console.error("Fehler beim Laden der Gutscheine:", error);
-        setGutscheine([]);
-      });
-  }, []);
+  const frontChunks = chunkArray(gutscheine, 2);
+  const backChunks = chunkArray(gutscheine, 2);
 
   return (
-    <div className="p-6 text-center">
-      <h1 className="text-2xl font-bold mb-4">Gutscheine Barcodes</h1>
-
-      <div className="flex flex-wrap justify-center gap-6">
-        {gutscheine.map((gutschein) => (
-          <div key={gutschein.kartennummer} className="p-4 border rounded-lg shadow-lg text-center w-64">
-            <h3 className="mb-2 font-semibold text-lg">Kartennummer:</h3>
-            <p className="font-mono text-sm">{gutschein.kartennummer}</p>
-            <img src={gutschein.barcodeImage} alt={`Barcode ${gutschein.kartennummer}`} className="mx-auto mt-4" />
-          </div>
+    <Document>
+      {/* Vorderseite */}
+      <Page size="A4" style={styles.page}>
+        {frontChunks.map((chunk, rowIndex) => (
+          <View key={rowIndex} style={styles.cardRow}>
+            {chunk.map((gutschein, index) => (
+              <View
+                key={gutschein.kartennummer}
+                style={[
+                  styles.cardWrapper,
+                  index === chunk.length - 1 && { marginRight: 0 },
+                ]}
+              >
+                <View style={styles.cardFront}>
+                  <Text style={styles.frontText}>GUTSCHEIN</Text>
+                </View>
+              </View>
+            ))}
+          </View>
         ))}
-      </div>
+      </Page>
 
-      <div className="mt-6">
-        {gutscheine.length > 0 && (
-          <PDFDownloadLink document={<GutscheinePDF gutscheine={gutscheine} />} fileName="gutscheine_barcodes.pdf">
-            {({ loading }) => (
-              <button className="px-4 py-2 bg-blue-600 text-white rounded shadow">
-                {loading ? "PDF wird erstellt..." : "PDF herunterladen"}
-              </button>
-            )}
-          </PDFDownloadLink>
-        )}
-      </div>
+      {/* Rückseite */}
+      <Page size="A4" style={styles.page}>
+        {backChunks.map((chunk, rowIndex) => (
+          <View key={rowIndex} style={styles.cardRow}>
+            {chunk.map((gutschein, index) => (
+              <View
+                key={gutschein.kartennummer}
+                style={[
+                  styles.cardWrapper,
+                  index === chunk.length - 1 && { marginRight: 0 },
+                ]}
+              >
+                <View style={styles.cardBack}>
+                  <View style={styles.topBar} />
+                  <View style={styles.infoContainer}>
+                    <Text style={styles.noticeText}>
+                      Dieser Gutschein ist bei TBS Solutions einlösbar. Er ist gültig bis zum
+                      31.12.9999. Eine Barauszahlung ist ausgeschlossen. Im Falle von Verlust oder
+                      Diebstahl übernimmt TBS Solutions keine Haftung. Der Gutschein ist
+                      übertragbar und kann von jeder berechtigten Person eingelöst werden.
+                    </Text>
+                    <Text style={styles.footerText}>
+                      TBS Solutions · www.tbssolutions.ch · info@tbssolutions.ch
+                    </Text>
+                  </View>
+                  <View style={styles.barcodeContainer}>
+                    <Image src={gutschein.barcodeImage} style={styles.barcodeImage} />
+                    <Text style={styles.barcodeText}>{gutschein.kartennummer}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        ))}
+      </Page>
+    </Document>
+  );
+};
+
+// Haupt-Komponente
+const GutscheinDruck = () => {
+  const [gutscheine, setGutscheine] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGutscheine = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Hole den Token aus dem localStorage
+        const response = await axios.get(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine",
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`, // Token in den Header einfügen
+            }
+          }
+        );
+    
+        const dataWithBarcodes = await Promise.all(
+          response.data.map(async (gutschein) => {
+            const barcodeImage = await generateBarcode(gutschein.kartennummer.toString());
+            return { ...gutschein, barcodeImage };
+          })
+        );
+    
+        setGutscheine(dataWithBarcodes);
+        setLoading(false);
+      } catch (error) {
+        console.error("Fehler beim Abrufen der Gutscheine:", error);
+        setLoading(false);
+      }
+    };
+    
+    fetchGutscheine();
+  }, []);
+
+  const generateBarcode = (kartennummer) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, kartennummer, {
+        format: "CODE128",
+        width: 2,
+        height: 50,
+        displayValue: false,
+      });
+      resolve(canvas.toDataURL("image/png"));
+    });
+  };
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <h1>Gutscheine PDF erstellen</h1>
+
+      {loading ? (
+        <p>Daten werden geladen...</p>
+      ) : gutscheine.length === 0 ? (
+        <p>Keine Gutscheine gefunden!</p>
+      ) : (
+        <PDFDownloadLink
+          document={<GutscheinePDF gutscheine={gutscheine} />}
+          fileName="Gutscheine.pdf"
+          style={{
+            textDecoration: "none",
+            padding: "10px 20px",
+            color: "#fff",
+            backgroundColor: "#007bff",
+            borderRadius: 5,
+          }}
+        >
+          {({ loading }) =>
+            loading ? "PDF wird erstellt..." : "Gutscheine PDF herunterladen"
+          }
+        </PDFDownloadLink>
+      )}
     </div>
   );
 };
 
-export default GutscheinBarcodes;
+export default GutscheinDruck;
