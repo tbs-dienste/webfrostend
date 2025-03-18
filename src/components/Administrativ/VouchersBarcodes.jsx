@@ -55,12 +55,12 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   topBar: {
-    height: 10,
+    height: 20,
+    left: 0,
     backgroundColor: "#000000",
-    width: "100%",
+    width: cardWidth,
     marginBottom: 5,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    borderRadius: 0,
   },
   infoContainer: {
     flexGrow: 1,
@@ -179,23 +179,27 @@ const GutscheinDruck = () => {
   useEffect(() => {
     const fetchGutscheine = async () => {
       try {
-        const token = localStorage.getItem("token"); // Hole den Token aus dem localStorage
+        const token = localStorage.getItem("token");
+
         const response = await axios.get(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine",
           {
-            headers: {
-              'Authorization': `Bearer ${token}`, // Token in den Header einfügen
-            }
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-    
+
+        // Filtere nur Gutscheine, die noch NICHT gedruckt wurden
+        const ungeprinteteGutscheine = response.data.filter(
+          (gutschein) => !gutschein.is_printed
+        );
+
         const dataWithBarcodes = await Promise.all(
-          response.data.map(async (gutschein) => {
+          ungeprinteteGutscheine.map(async (gutschein) => {
             const barcodeImage = await generateBarcode(gutschein.kartennummer.toString());
             return { ...gutschein, barcodeImage };
           })
         );
-    
+
         setGutscheine(dataWithBarcodes);
         setLoading(false);
       } catch (error) {
@@ -203,7 +207,7 @@ const GutscheinDruck = () => {
         setLoading(false);
       }
     };
-    
+
     fetchGutscheine();
   }, []);
 
@@ -220,6 +224,28 @@ const GutscheinDruck = () => {
     });
   };
 
+  const markiereAlsGedruckt = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const ids = gutscheine.map((g) => g.kartennummer); // Nutze kartennummern statt _id
+
+        if (ids.length === 0) return;
+
+        const response = await axios.post(
+            "https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/print",
+            { kartennummern: ids }, // Sendet die kartennummern als Array
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+
+        console.log("Gutscheine erfolgreich als gedruckt markiert", response.data);
+    } catch (error) {
+        console.error("Fehler beim Markieren als gedruckt:", error.response ? error.response.data : error.message);
+    }
+};
+
+
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h1>Gutscheine PDF erstellen</h1>
@@ -227,7 +253,7 @@ const GutscheinDruck = () => {
       {loading ? (
         <p>Daten werden geladen...</p>
       ) : gutscheine.length === 0 ? (
-        <p>Keine Gutscheine gefunden!</p>
+        <p>Keine neuen Gutscheine zu drucken!</p>
       ) : (
         <PDFDownloadLink
           document={<GutscheinePDF gutscheine={gutscheine} />}
@@ -238,6 +264,9 @@ const GutscheinDruck = () => {
             color: "#fff",
             backgroundColor: "#007bff",
             borderRadius: 5,
+          }}
+          onClick={() => {
+            markiereAlsGedruckt(); // Status auf "gedruckt" setzen
           }}
         >
           {({ loading }) =>

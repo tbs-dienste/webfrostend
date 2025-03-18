@@ -1,0 +1,53 @@
+.customer-card-table {
+    margin: 20px;
+    padding: 10px;
+    background-color: #f4f4f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 16px;
+            color: #555;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        td {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+    }
+
+    .barcode-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .barcode-img {
+        max-width: 250px; /* Maximale Breite für das Bild */
+        height: auto;
+        margin-top: 10px;
+    }
+}
