@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import './AddPoints.scss'; // <--- hier dein SCSS importieren!
 
 const AddPoints = () => {
   const [kundenkartennummer, setKundenkartennummer] = useState('');
   const [einkaufsbetrag, setEinkaufsbetrag] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setMessage('');
+    setError('');
+
     try {
       const token = localStorage.getItem('token');
+
       const response = await axios.post(
-        '/api/kundenkarte/addPoints',
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten/addPoints',
         { kundenkartennummer, einkaufsbetrag },
         {
           headers: {
@@ -24,51 +30,55 @@ const AddPoints = () => {
         }
       );
 
-      toast.success(response.data.message);
+      setMessage(response.data.message);
       setKundenkartennummer('');
       setEinkaufsbetrag('');
+
+      setTimeout(() => {
+        navigate('/kundenkarten');
+      }, 1000);
+
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.error || 'Fehler beim Punkte nachtragen.');
+      setError(error.response?.data?.error || 'Fehler beim Punkte nachtragen.');
     }
   };
 
   return (
-    <Card className="max-w-2xl mx-auto mt-10 shadow-lg rounded-2xl bg-white">
-      <CardContent className="p-8">
-        <h2 className="text-2xl font-bold mb-8 text-center">Punkte nachtragen</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Kundenkartennummer */}
-          <div className="col-span-1 md:col-span-2">
-            <Label htmlFor="kundenkartennummer">Kundenkartennummer</Label>
-            <Input
-              type="text"
-              value={kundenkartennummer}
-              onChange={(e) => setKundenkartennummer(e.target.value)}
-              required
-            />
-          </div>
+    <div className="add-points-container">
+      <h2>Punkte nachtragen</h2>
 
-          {/* Einkaufsbetrag */}
-          <div className="col-span-1 md:col-span-2">
-            <Label htmlFor="einkaufsbetrag">Einkaufsbetrag (CHF)</Label>
-            <Input
-              type="number"
-              value={einkaufsbetrag}
-              onChange={(e) => setEinkaufsbetrag(e.target.value)}
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="kundenkartennummer">Kundenkartennummer</label>
+          <input
+            type="text"
+            id="kundenkartennummer"
+            value={kundenkartennummer}
+            onChange={(e) => setKundenkartennummer(e.target.value)}
+            required
+          />
+        </div>
 
-          {/* Button */}
-          <div className="col-span-1 md:col-span-2 flex justify-center mt-4">
-            <Button type="submit" className="w-1/2">
-              Punkte hinzufügen
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <div className="form-group">
+          <label htmlFor="einkaufsbetrag">Einkaufsbetrag (CHF)</label>
+          <input
+            type="number"
+            id="einkaufsbetrag"
+            value={einkaufsbetrag}
+            onChange={(e) => setEinkaufsbetrag(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="button-container">
+          <button type="submit">Punkte hinzufügen</button>
+        </div>
+
+        {message && <div className="success">{message}</div>}
+        {error && <div className="error">{error}</div>}
+      </form>
+    </div>
   );
 };
 
