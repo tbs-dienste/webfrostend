@@ -10,11 +10,12 @@ import {
 } from "@react-pdf/renderer";
 import JsBarcode from "jsbarcode";
 import axios from "axios";
+import logo from "../../../logo.png";
 
 // Maße in pt (1 pt = 1/72 inch)
 const cardWidth = 255;
 const cardHeight = 159;
-const margin = 5;
+const margin = 2;
 
 const styles = StyleSheet.create({
   page: {
@@ -25,13 +26,14 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
   },
   headerContainer: {
-    marginBottom: 40, // Abstand nach unten zu den Karten (40pt)
+    marginTop: 60,
+    marginBottom: 40,
     paddingHorizontal: 20,
   },
   headerLine: {
     fontSize: 12,
     textAlign: "center",
-    marginBottom: 5, // Abstand zwischen den Zeilen
+    marginBottom: 5,
   },
   pageContent: {
     width: "100%",
@@ -57,10 +59,10 @@ const styles = StyleSheet.create({
     height: cardHeight,
     borderRadius: 8,
     padding: 20,
+    backgroundColor: "#003366",
+    position: "relative",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f9f9f9",
-    textAlign: "center",
   },
   cardBack: {
     width: cardWidth,
@@ -69,34 +71,50 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    position: "relative",
+    backgroundColor: "#003366",
   },
   frontText: {
     fontSize: 18,
     fontWeight: "bold",
   },
+  logo: {
+    width: 120,
+    height: 120,
+  },
+  topRightText: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    fontSize: 8,
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+  bottomLeftText: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    fontSize: 8,
+    color: "#ffffff",
+  },
   barcodeContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 5,
+    backgroundColor: "#ffffff",
+    padding: 4,
+    border: "2pt solid #ffffff",
+    borderRadius: 8,
   },
   barcodeImage: {
     width: 150,
-    height: 30,
+    height: 23,
   },
   barcodeText: {
     fontSize: 6,
     marginTop: 2,
     color: "#333333",
-  },
-  topBar: {
-    height: 20,
-    left: 0,
-    backgroundColor: "#000000",
-    width: cardWidth,
-    marginBottom: 5,
-    borderRadius: 0,
   },
 });
 
@@ -131,7 +149,6 @@ const KundenkartePDF = ({ kundenkarte }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header Text untereinander */}
         <View style={styles.headerContainer}>
           <Text style={styles.headerLine}>
             Gerne überreichen wir Ihnen den Wiederholungsdruck Ihrer TBs Prime Club Karte,
@@ -145,26 +162,27 @@ const KundenkartePDF = ({ kundenkarte }) => {
           <Text style={styles.headerLine}>
             Bitte beachten Sie, dass diese Karte nicht als Zahlungsmittel genutzt werden kann.
           </Text>
-          <Text style={styles.headerLine}>{" "}</Text> {/* Leerzeile */}
+          <Text style={styles.headerLine}>{" "}</Text>
           <Text style={styles.headerLine}>
             Mit der TBs Prime Club Karte profitieren Sie von 4 Goldpunkten pro Einkaufsfranken.
           </Text>
-          <Text style={styles.headerLine}>{" "}</Text> {/* Leerzeile */}
+          <Text style={styles.headerLine}>{" "}</Text>
           <Text style={styles.headerLine}>
             Nun wünschen wir Ihnen viel Freude beim Einkaufen.
           </Text>
         </View>
 
-        {/* Kartenbereich */}
         <View style={styles.pageContent}>
-          {/* Vorderseite */}
           <View style={styles.cardWrapper}>
             <View style={styles.cardFront}>
-              <Text style={styles.frontText}>{kundenkarte.name}</Text>
+              {/* Kundenname unten links */}
+              <Text style={styles.bottomLeftText}>{kundenkarte.name}</Text>
+              {/* Logo in der Mitte */}
+              <Image src={logo} style={styles.logo} />
+              <Text style={styles.topRightText}>TBs Prime Club</Text>
             </View>
           </View>
 
-          {/* Rückseite */}
           <View style={styles.cardWrapper}>
             <View style={styles.cardBack}>
               <View style={styles.topBar} />

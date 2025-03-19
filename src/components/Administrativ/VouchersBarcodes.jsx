@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   topBar: {
-    height: 20,
+    height: 30,
     left: 0,
     backgroundColor: "#000000",
     width: cardWidth,
-    marginBottom: 5,
+    marginBottom: 60,
     borderRadius: 0,
   },
   infoContainer: {
