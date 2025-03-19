@@ -71,8 +71,11 @@ const CustomerCards = () => {
     <div className="customer-card-container">
       <div className="header">
         <h2>Kundenkarten Übersicht</h2>
-        <Link to="/add-points" className="btn btn-primary">
+        <Link to="/add-points" className="btn-primary">
           ➕ Punkte Nachtragen
+        </Link>
+        <Link to="/" className="btn-primary">
+          ➕ Kundenkarte erstellen
         </Link>
       </div>
 
@@ -115,10 +118,10 @@ const CustomerCards = () => {
           onChange={(e) => setFilterStatus(e.target.value)}
         />
 
-        <button className="btn btn-search" onClick={handleSearch}>
+        <button className="btn-search" onClick={handleSearch}>
           🔍 Suchen
         </button>
-        <button className="btn btn-reset" onClick={handleReset}>
+        <button className="btn-reset" onClick={handleReset}>
           ❌ Zurücksetzen
         </button>
       </div>
@@ -163,7 +166,7 @@ const CustomerCards = () => {
                   </td>
                   <td>
                     <button
-                      className="btn btn-view"
+                      className="btn-view"
                       onClick={() => handleView(karte.id)}
                     >
                       👁️ Ansehen

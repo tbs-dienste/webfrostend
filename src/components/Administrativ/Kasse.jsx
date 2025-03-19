@@ -812,7 +812,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 <h3>Tagesabschluss abgeschlossen.</h3>
               </div>
             )}
-            <button onClick={cancelPopup} className="btn-cancel">Abbrechen</button>
+            <button onClick={cancelPopup} className="btn btn-cancel">Abbrechen</button>
           </div>
         </div>
       )}
@@ -892,67 +892,67 @@ const Kasse = ({ onKassenModusChange }) => {
             </div>
           ) : (
             <>
-              <button style={{ backgroundColor: '	#FDFF00', color: 'black' }}>Verkauf</button>
-              <button></button>
-              <button></button>
-              <button></button>
-              <button onClick={handleDailyClose}>Tagesabschluss</button>
-              <button onClick={toggleScanInput}>Artikel scannen</button>
-              <button onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
-              <button onClick={toggleBonAbbruch}>Bon Abbruch</button>
+              <button style={{ backgroundColor: '	#FDFF00', color: 'black' }} className='btn'>Verkauf</button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn' onClick={handleDailyClose}>Tagesabschluss</button>
+              <button className='btn' onClick={toggleScanInput}>Artikel scannen</button>
+              <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
+              <button className='btn' onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
               {/* Kunden- und Transaktionsbuttons */}
-              <button>Kunden suchen</button>
+              <button className='btn'>Kunden suchen</button>
 
 
-              <button onClick={handleCustomerCardClick}>Kundenkarte</button>
+              <button className='btn' onClick={handleCustomerCardClick}>Kundenkarte</button>
 
               {/* Weitere Funktionen */}
-              <button>GS-Karte</button>
-              <button onClick={toggleBonParkieren} disabled={selectedProducts.length === 0}>
+              <button className='btn'>GS-Karte</button>
+              <button className='btn' onClick={toggleBonParkieren} disabled={selectedProducts.length === 0}>
                 Bon Parkieren
               </button>
-              <button onClick={addStornoCost} className="btn-storno">
+              <button className='btn btn-storno' onClick={addStornoCost}>
                 Storno-Kosten hinzufügen
               </button>
 
 
-              <button>Artikel suchen</button>
+              <button className='btn'>Artikel suchen</button>
 
 
-              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0}>
+              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
                 Pos. löschen
               </button>
               {/* Unbenutzte Buttons */}
-              <button>Anzahlung</button>
-              <button></button>
-              <button></button>
-              <button></button>
-              <button></button>
-              <button></button>
-              <button onClick={goToProductDetails} >Artikel Detail</button>
-              <button></button>
-              <button></button>
-              <button></button>
-              <button onClick={toggleLastReciepts} className="sign-out-button">
+              <button className='btn'>Anzahlung</button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn' onClick={goToProductDetails} >Artikel Detail</button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button onClick={toggleLastReciepts} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faPrint} />
               </button>
-              <button onClick={goToSettings}>Einstellungen</button>
-              <button>Kunden Detail</button>
+              <button className='btn' onClick={goToSettings}>Einstellungen</button>
+              <button className='btn'>Kunden Detail</button>
 
 
 
 
-              <button onClick={handleCashierSwitch}>Kassierer wechseln</button>
-              <button onClick={handleDailyOverview}>Tagesübersicht</button>
-              <button>Schublade öffnen</button>
-              <button onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
-              <button onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
+              <button className='btn' onClick={handleCashierSwitch}>Kassierer wechseln</button>
+              <button className='btn' onClick={handleDailyOverview}>Tagesübersicht</button>
+              <button className='btn'>Schublade öffnen</button>
+              <button className='btn' onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+              <button className='btn' onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
 
-              <button>Kundenkarte</button>
-              <button onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
+              <button className='btn'>Kundenkarte</button>
+              <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
               {/* Abmelden und Wechseln */}
-              <button onClick={handleSignOut} className="sign-out-button">
+              <button onClick={handleSignOut} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
 
@@ -1138,15 +1138,15 @@ const Kasse = ({ onKassenModusChange }) => {
         {/* Kundenkarte Buttons */}
         {showCustomerCardButtons && (
           <div className="customer-card-buttons">
-            <button className="discount-btn">50 CHF</button>
-            <button className="discount-btn">30 CHF</button>
+            <button className="btn discount-btn">50 CHF</button>
+            <button className="btn discount-btn">30 CHF</button>
           </div>
         )}
         <div className="numeric-keypad-container">
           <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <button style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
-            <button style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
-            <button onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
+            <button className='btn' style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
+            <button className='btn' style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
+            <button className='btn' onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
               EFT
             </button>
           </div>
@@ -1162,7 +1162,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 {number}
               </button>
             ))}
-            <button onClick={handleDotClick}>.</button> {/* Das Komma */}
+            <button className='btn' onClick={handleDotClick}>.</button> {/* Das Komma */}
             <button className="keypad-btn" onClick={() => handleNumericKeypadClick(0)}>
               0
             </button>
