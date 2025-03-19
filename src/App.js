@@ -86,6 +86,7 @@ import VoucherBarcodes from './components/Administrativ/VouchersBarcodes';
 import PrinterManager from './components/Kasse/PrinterManager';
 import CustomerCards from './components/Administrativ/Kundenkarten/CustomerCards';
 import AddPoints from './components/Administrativ/Kundenkarten/AddPoints';
+import CreateCustomerCard from './components/Administrativ/Kundenkarten/CreateCustomerCard';
 
 const App = () => {
   
@@ -177,6 +178,7 @@ const App = () => {
           <Route path="/barcode-gutschein" element={<VoucherBarcodes />} />
           <Route path="/kundenkarten" element={<CustomerCards />} />
           <Route path="/add-points" element={<AddPoints />} />
+          <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
 
 
           <Route

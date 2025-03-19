@@ -74,7 +74,7 @@ const CustomerCards = () => {
         <Link to="/add-points" className="btn-primary">
           ➕ Punkte Nachtragen
         </Link>
-        <Link to="/" className="btn-primary">
+        <Link to="/createKundenkarte" className="btn-primary">
           ➕ Kundenkarte erstellen
         </Link>
       </div>
