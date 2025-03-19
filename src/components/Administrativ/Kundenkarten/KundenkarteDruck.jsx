@@ -12,11 +12,10 @@ import JsBarcode from "jsbarcode";
 import axios from "axios";
 
 // Maße in pt (1 pt = 1/72 inch)
-const cardWidth = 255; // 255pt für Kreditkartengröße
-const cardHeight = 159; // 159pt für Kreditkartengröße
-const margin = 5; // Abstand zwischen Karten
+const cardWidth = 255;
+const cardHeight = 159;
+const margin = 5;
 
-// PDF Styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
@@ -24,27 +23,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: margin,
     fontFamily: "Helvetica",
-    height: "100%",
-    display: "flex",
-    position: "relative",
   },
   headerContainer: {
-    marginBottom: 30,
+    marginBottom: 40, // Abstand nach unten zu den Karten (40pt)
     paddingHorizontal: 20,
   },
-  headerText: {
+  headerLine: {
     fontSize: 12,
     textAlign: "center",
-    marginBottom: 5,
+    marginBottom: 5, // Abstand zwischen den Zeilen
   },
   pageContent: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "flex-end", // Karten nach unten schieben
+    alignItems: "flex-end",
     flexWrap: "wrap",
-    marginTop: "auto", // Nimmt den restlichen Platz, damit die Karten unten sind
-    marginBottom: 5, // Abstand zum unteren Rand
+    marginBottom: 5,
   },
   cardWrapper: {
     width: cardWidth,
@@ -105,7 +100,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// PDF-Komponente
 const KundenkartePDF = ({ kundenkarte }) => {
   const generateBarcode = (kundenkartennummer) => {
     return new Promise((resolve) => {
@@ -137,20 +131,26 @@ const KundenkartePDF = ({ kundenkarte }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header Text */}
+        {/* Header Text untereinander */}
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>
-            Gerne überreichen wir Ihnen den Wiederholungsdruck Ihrer TBs Prime
-            Club Karte, welchen Sie am heutigen Tag oder bis zum Erhalt Ihrer
-            neuen TBs Prime Club Karte für das Sammeln von Goldpunkten einsetzen
-            können. Bitte beachten Sie, dass diese Karte nicht als Zahlungsmittel
-            genutzt werden kann.
+          <Text style={styles.headerLine}>
+            Gerne überreichen wir Ihnen den Wiederholungsdruck Ihrer TBs Prime Club Karte,
           </Text>
-          <Text style={styles.headerText}>
-            Mit der TBs Prime Club Karte profitieren Sie von 4 Goldpunkten pro
-            Einkaufsfranken.
+          <Text style={styles.headerLine}>
+            welchen Sie am heutigen Tag oder bis zum Erhalt Ihrer neuen TBs Prime Club Karte
           </Text>
-          <Text style={styles.headerText}>
+          <Text style={styles.headerLine}>
+            für das Sammeln von Goldpunkten einsetzen können.
+          </Text>
+          <Text style={styles.headerLine}>
+            Bitte beachten Sie, dass diese Karte nicht als Zahlungsmittel genutzt werden kann.
+          </Text>
+          <Text style={styles.headerLine}>{" "}</Text> {/* Leerzeile */}
+          <Text style={styles.headerLine}>
+            Mit der TBs Prime Club Karte profitieren Sie von 4 Goldpunkten pro Einkaufsfranken.
+          </Text>
+          <Text style={styles.headerLine}>{" "}</Text> {/* Leerzeile */}
+          <Text style={styles.headerLine}>
             Nun wünschen wir Ihnen viel Freude beim Einkaufen.
           </Text>
         </View>
@@ -184,7 +184,6 @@ const KundenkartePDF = ({ kundenkarte }) => {
   );
 };
 
-// Haupt-Komponente
 const KundenkarteDruck = () => {
   const [kundenkarte, setKundenkarte] = useState(null);
   const [loading, setLoading] = useState(true);
