@@ -1,23 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './CustomerCards.scss';
 
 const CustomerCards = () => {
   const [kundenkarten, setKundenkarten] = useState([]);
+  const [filteredKarten, setFilteredKarten] = useState([]);
+
+  const [filterVorname, setFilterVorname] = useState('');
+  const [filterNachname, setFilterNachname] = useState('');
+  const [filterOrt, setFilterOrt] = useState('');
+  const [filterKartennummer, setFilterKartennummer] = useState('');
+  const [filterPLZ, setFilterPLZ] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+
   const token = localStorage.getItem('token');
+  const navigate = useNavigate(); // Für Navigation zu Detailseiten
 
   useEffect(() => {
     const fetchCustomerCards = async () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten', {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.data.status === 'success') {
           setKundenkarten(response.data.kundenkarten);
+          setFilteredKarten(response.data.kundenkarten);
         }
       } catch (error) {
         console.error('Fehler beim Abrufen der Kundenkarten:', error);
@@ -27,40 +38,149 @@ const CustomerCards = () => {
     fetchCustomerCards();
   }, [token]);
 
+  const handleSearch = () => {
+    const filtered = kundenkarten.filter((karte) => {
+      return (
+        karte.vorname.toLowerCase().includes(filterVorname.toLowerCase()) &&
+        karte.nachname.toLowerCase().includes(filterNachname.toLowerCase()) &&
+        karte.ort.toLowerCase().includes(filterOrt.toLowerCase()) &&
+        karte.kundenkartennummer.includes(filterKartennummer) &&
+        karte.plz.toString().includes(filterPLZ) &&
+        karte.status.toLowerCase().includes(filterStatus.toLowerCase())
+      );
+    });
+
+    setFilteredKarten(filtered);
+  };
+
+  const handleReset = () => {
+    setFilterVorname('');
+    setFilterNachname('');
+    setFilterOrt('');
+    setFilterKartennummer('');
+    setFilterPLZ('');
+    setFilterStatus('');
+    setFilteredKarten(kundenkarten);
+  };
+
+  const handleView = (id) => {
+    navigate(`/kundenkarte/${id}`);
+  };
+
   return (
-    <div className="customer-card-table">
-      <h2 className="text-2xl font-bold mb-4">Kundenkarten Übersicht</h2>
-      <div className="mb-4">
-        <Link to="/add-points" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <div className="customer-card-container">
+      <div className="header">
+        <h2>Kundenkarten Übersicht</h2>
+        <Link to="/add-points" className="btn btn-primary">
           ➕ Punkte Nachtragen
         </Link>
       </div>
-      <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="p-3 border">Kundenkartennummer</th>
-            <th className="p-3 border">Vorname</th>
-            <th className="p-3 border">Nachname</th>
-            <th className="p-3 border">PLZ</th>
-            <th className="p-3 border">Ort</th>
-            <th className="p-3 border">Punkte</th>
-            <th className="p-3 border">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {kundenkarten.map((karte) => (
-            <tr key={karte.kundenkartennummer} className="hover:bg-gray-50">
-              <td className="p-3 border">{karte.kundenkartennummer}</td>
-              <td className="p-3 border">{karte.vorname}</td>
-              <td className="p-3 border">{karte.nachname}</td>
-              <td className="p-3 border">{karte.plz}</td>
-              <td className="p-3 border">{karte.ort}</td>
-              <td className="p-3 border">{karte.punkte}</td>
-              <td className="p-3 border">{karte.status}</td>
+
+      {/* Filter-Felder */}
+      <div className="filter-fields">
+        <input
+          type="text"
+          placeholder="Kartennummer"
+          value={filterKartennummer}
+          onChange={(e) => setFilterKartennummer(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Vorname"
+          value={filterVorname}
+          onChange={(e) => setFilterVorname(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Nachname"
+          value={filterNachname}
+          onChange={(e) => setFilterNachname(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Ort"
+          value={filterOrt}
+          onChange={(e) => setFilterOrt(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="PLZ"
+          value={filterPLZ}
+          onChange={(e) => setFilterPLZ(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Status (Gold/Silber/Normal)"
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+        />
+
+        <button className="btn btn-search" onClick={handleSearch}>
+          🔍 Suchen
+        </button>
+        <button className="btn btn-reset" onClick={handleReset}>
+          ❌ Zurücksetzen
+        </button>
+      </div>
+
+      {/* Tabelle */}
+      <div className="table-wrapper">
+        <table className="customer-table">
+          <thead>
+            <tr>
+              <th>Kartennummer</th>
+              <th>Vorname</th>
+              <th>Nachname</th>
+              <th>PLZ</th>
+              <th>Ort</th>
+              <th>Punkte</th>
+              <th>Status</th>
+              <th>Aktionen</th> {/* Hier neue Spalte */}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredKarten.length > 0 ? (
+              filteredKarten.map((karte) => (
+                <tr key={karte.kundenkartennummer}>
+                  <td>{karte.kundenkartennummer}</td>
+                  <td>{karte.vorname}</td>
+                  <td>{karte.nachname}</td>
+                  <td>{karte.plz}</td>
+                  <td>{karte.ort}</td>
+                  <td>{karte.punkte}</td>
+                  <td>
+                    <span
+                      className={`status ${
+                        karte.status.toLowerCase() === 'gold'
+                          ? 'gold'
+                          : karte.status.toLowerCase() === 'silber'
+                          ? 'silver'
+                          : 'normal'
+                      }`}
+                    >
+                      {karte.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-view"
+                      onClick={() => handleView(karte.id)}
+                    >
+                      👁️ Ansehen
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="no-results">
+                  Keine Kundenkarten gefunden.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
