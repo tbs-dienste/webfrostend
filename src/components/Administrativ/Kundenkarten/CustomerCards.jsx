@@ -63,8 +63,9 @@ const CustomerCards = () => {
     setFilteredKarten(kundenkarten);
   };
 
-  const handleView = (id) => {
-    navigate(`/kundenkarte/${id}`);
+  // Hier mit kundenkartennummer statt id
+  const handleView = (kundenkartennummer) => {
+    navigate(`/kundenkarte/${kundenkartennummer}`);
   };
 
   return (
@@ -138,7 +139,7 @@ const CustomerCards = () => {
               <th>Ort</th>
               <th>Punkte</th>
               <th>Status</th>
-              <th>Aktionen</th> {/* Hier neue Spalte */}
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +168,7 @@ const CustomerCards = () => {
                   <td>
                     <button
                       className="btn-view"
-                      onClick={() => handleView(karte.id)}
+                      onClick={() => handleView(karte.kundenkartennummer)}
                     >
                       👁️ Ansehen
                     </button>
