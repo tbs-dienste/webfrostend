@@ -571,9 +571,6 @@ const Kasse = ({ onKassenModusChange }) => {
         if (enteredAmount >= totalDue) {
           const change = enteredAmount - totalDue;
 
-          // Du kannst hier optional noch einen API-Call machen,
-          // um die Transaktion zu speichern, wenn du willst!
-
           if (change > 0) {
             setSuccessMessage(
               `Zahlung über ${enteredAmount.toFixed(2)} CHF abgeschlossen. Rückgeld: ${change.toFixed(2)} CHF.`
@@ -582,9 +579,8 @@ const Kasse = ({ onKassenModusChange }) => {
             setSuccessMessage(`Zahlung über ${totalDue.toFixed(2)} CHF abgeschlossen.`);
           }
 
-          // Reset danach
           resetModes();
-          setScannedProducts([]); // 🧹 Produkte leeren nach Bezahlung
+          setScannedProducts([]); // Produkte leeren nach Bezahlung
           setBetrag(""); // Betrag zurücksetzen
         } else {
           setErrorMessage("Der Betrag ist nicht ausreichend.");
@@ -605,15 +601,19 @@ const Kasse = ({ onKassenModusChange }) => {
           return;
         }
 
-        const updates = selectedProducts.map((article_number) => ({
-          article_number,
-          price: parseFloat(price)
+        const productArray = selectedProducts.map((article_number) => ({
+          article_number
         }));
 
-        const response = await axios.put(
+        const response = await axios.put( // <-- HIER IST PUT!
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
-          { selectedProducts: updates },
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            selectedProducts: productArray,
+            price: parseFloat(price)
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
         );
 
         if (response.status === 200) {
@@ -626,7 +626,7 @@ const Kasse = ({ onKassenModusChange }) => {
           setScannedProducts(updatedProducts);
           setSuccessMessage("Preis erfolgreich aktualisiert.");
           resetModes();
-          setPrice(""); // Preisfeld zurücksetzen
+          setPrice("");
         } else {
           setErrorMessage("Fehler beim Aktualisieren der Preise.");
         }
@@ -646,15 +646,19 @@ const Kasse = ({ onKassenModusChange }) => {
           return;
         }
 
-        const updates = selectedProducts.map((article_number) => ({
-          article_number,
-          quantity: parseFloat(quantity)
+        const productArray = selectedProducts.map((article_number) => ({
+          article_number
         }));
 
-        const response = await axios.put(
+        const response = await axios.put( // <-- UND HIER AUCH PUT!
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
-          { selectedProducts: updates },
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            selectedProducts: productArray,
+            quantity: parseFloat(quantity)
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
         );
 
         if (response.status === 200) {
@@ -667,13 +671,14 @@ const Kasse = ({ onKassenModusChange }) => {
           setScannedProducts(updatedProducts);
           setSuccessMessage("Menge erfolgreich aktualisiert.");
           resetModes();
-          setQuantity(""); // Menge zurücksetzen
+          setQuantity("");
         } else {
           setErrorMessage("Fehler beim Aktualisieren der Menge.");
         }
 
         return;
       }
+
 
       // ✅ ARTIKEL SCANNEN
       if (!articleNumber) {
