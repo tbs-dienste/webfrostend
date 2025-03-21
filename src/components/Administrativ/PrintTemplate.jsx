@@ -7,79 +7,85 @@ import Logo from './black.png'; // Hier den Pfad zu deinem Logo angeben
 // Stil für das PDF-Dokument
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    fontFamily: "Helvetica", // Standard Schriftart verwenden
+    padding: 40,
+    fontFamily: "Corbel", // Schriftart auf Corbel geändert
   },
   header: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
     textTransform: "uppercase",
-    color: "#333",
-    marginTop: 120, // Abstand vom Logo
+    color: "#2C3E50",
+    marginTop: 140, // Abstand vom Logo
   },
   logoContainer: {
     position: "absolute",
-    top: 30,
+    top: 40,
     left: 30,
-    width: 100, // Breite des Logos anpassen
-    height: 100, // Höhe des Logos anpassen
+    width: 120, // Breite des Logos anpassen
+    height: 120, // Höhe des Logos anpassen
   },
   table: {
     display: "table",
     width: "100%",
     borderStyle: "solid",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#BDC3C7",
     borderRadius: 8,
-    marginBottom: 30,
+    marginBottom: 40,
     overflow: "hidden",
+    backgroundColor: "#ffffff", // Weißer Hintergrund
   },
   tableRow: {
     flexDirection: "row",
+    backgroundColor: "#f9fafb", // Helles Grau für Zeilen
   },
   tableCell: {
     borderStyle: "solid",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#BDC3C7",
     padding: 12,
     fontSize: 12,
     flex: 1,
     textAlign: "center",
-    color: "#333",
+    color: "#34495E",
+    lineHeight: 1.5, // Für besseren Textabstand
   },
   tableHeader: {
-    backgroundColor: "#f4f4f4",
+    backgroundColor: "#34495E", // Header-Zellen Farbe
     fontWeight: "bold",
     textTransform: "uppercase",
-    color: "#555",
+    color: "#FFFFFF", // Weißer Text
+    padding: 14,
+    fontSize: 14,
+    textAlign: "center", // Header zentrieren
   },
   tableCellText: {
-    fontSize: 10,
-    color: "#666",
+    fontSize: 12,
+    color: "#7F8C8D",
   },
   signatureSection: {
-    marginTop: 50,
+    marginTop: 60,
     alignItems: "center",
     justifyContent: "center",
   },
   signatureLine: {
-    borderTop: "1px solid #000",
+    borderTop: "1px solid #34495E",
     width: "60%",
     marginTop: 20,
     marginBottom: 10,
   },
   signatureText: {
     textAlign: "center",
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 5,
-    color: "#333",
+    color: "#34495E",
   },
   signatureLabel: {
     textAlign: "center",
-    fontSize: 10,
-    color: "#555",
+    fontSize: 12,
+    color: "#BDC3C7",
   },
 });
 
@@ -120,6 +126,7 @@ const PrintTemplate = ({ entry }) => {
         <View style={styles.signatureSection}>
           <View style={styles.signatureLine}></View>
           <Text style={styles.signatureLabel}>Unterschrift</Text>
+          <Text style={styles.signatureText}>__________________________</Text>
         </View>
       </Page>
     </Document>

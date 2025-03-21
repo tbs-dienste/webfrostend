@@ -110,11 +110,13 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   };
 
   const handleRowSelect = (index) => {
+    console.log("Selected Row:", index);
     setSelectedRow(index === selectedRow ? null : index); // Toggle selection
   };
-
+  
 
   const handlePrint = () => {
+    console.log("selectedRow:", selectedRow);
     if (selectedRow !== null && entries.einnahmen[selectedRow]) {
       const entry = entries.einnahmen[selectedRow];
       return (
@@ -129,6 +131,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       return <span>Drucken</span>;
     }
   };
+  
 
 
 
