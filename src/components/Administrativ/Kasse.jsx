@@ -589,7 +589,6 @@ const handleAmountClick = (amount) => {
   
         // Zahlung bestätigen
         setRueckgeld(change);
-        setSuccessMessage(`Zahlung von CHF ${enteredAmount.toFixed(2)} erhalten. Rückgeld: CHF ${change.toFixed(2)}.`);
   
         setIsConfirmed(true);
         setIsPaying(false);
