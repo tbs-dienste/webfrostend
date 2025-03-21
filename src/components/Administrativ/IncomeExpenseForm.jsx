@@ -156,7 +156,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
               }
             );
 
-            // Den Eintrag aus der State entfernen
             setEntries((prevEntries) => {
               const updatedEinnahmen = prevEntries.einnahmen.filter(
                 (entry, index) => index !== selectedRow
@@ -164,12 +163,13 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
               const updatedAusgaben = prevEntries.ausgaben.filter(
                 (entry, index) => index !== selectedRow
               );
-
+            
               return {
                 einnahmen: updatedEinnahmen,
                 ausgaben: updatedAusgaben,
               };
             });
+            
 
             // Auswahl zurücksetzen
             setSelectedRow(null);

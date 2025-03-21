@@ -3,18 +3,21 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Corbel', sans-serif;  // Schriftart geändert
   background: linear-gradient(to bottom right, #f1f4f9, #d7e3fc);
   height: 100vh;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   .top-section {
+    position: absolute;  // Position auf absolute setzen
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
     width: 100%;
-    max-width: 700px;
     margin-bottom: 2rem;
     background: white;
     padding: 1.5rem;
@@ -70,9 +73,8 @@
 
   .entry-table {
     width: 100%;
-    max-width: 700px;
     border-collapse: collapse;
-    margin-top: 2rem;
+    margin-top: 6rem;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -174,36 +176,40 @@
   }
 
   .bottom-buttons {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
+    position: absolute; /* Positioniere die Buttons am unteren Rand */
+    bottom: 0; /* Setze sie am unteren Rand des Containers */
+    display: flex;
+    justify-content: space-between; /* Verteile die Buttons gleichmäßig */
+    align-items: stretch; /* Sorgt dafür, dass die Buttons die gleiche Höhe haben */
+    gap: 1rem; /* Füge Abstand zwischen den Buttons hinzu */
+    flex-wrap: wrap; /* Wenn der Platz nicht ausreicht, können die Buttons umbrochen werden */
+    padding: 1rem;
     width: 100%;
-    max-width: 700px;
-
+    
     button {
-      padding: 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border: none;
+      flex-grow: 1; /* Damit die Buttons den verfügbaren Platz gleichmäßig einnehmen */
+      padding: 1.5rem; /* Erhöht das Padding für breitere und höhere Buttons */
+      font-size: 1.2rem; /* Erhöht die Schriftgröße für mehr Textfluss */
       border-radius: 6px;
-      cursor: pointer;
-      background-color: #2563eb;
+      border: 1px solid #dfe3e8;
+      background-color: #007bff;
       color: white;
-      transition: background-color 0.3s, transform 0.2s;
-
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      height: 60px; /* Setzt eine feste Höhe für die Buttons */
+      
       &:disabled {
-        background-color: #9ca3af;
+        background-color: #ccc;
         cursor: not-allowed;
       }
-
-      &:hover:not(:disabled) {
-        background-color: #1d4ed8;
-        transform: translateY(-2px);
-      }
-
-      &:active:not(:disabled) {
-        transform: translateY(0);
+      
+      &:not(:disabled):hover {
+        background-color: #0056b3;
       }
     }
   }
+  
+  
+  
+  
 }
