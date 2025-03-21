@@ -58,6 +58,22 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     setShowKeypad(false);
   };
 
+  const handlePrint = () => {
+    if (selectedRow !== null && entries.einnahmen[selectedRow]) {
+      const entry = entries.einnahmen[selectedRow];
+      return (
+        <PDFDownloadLink
+          document={<PrintTemplate entry={entry} />}
+          fileName="entry.pdf"
+        >
+          {({ loading }) => (loading ? "Generiere PDF..." : "Drucken")}
+        </PDFDownloadLink>
+      );
+    } else {
+      return <span>Drucken</span>;
+    }
+  };
+
   const handleReset = () => {
     setAmount("");
     setReason("");
@@ -111,26 +127,10 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     }
   };
 
-
   const handleRowSelect = (index) => {
     setSelectedRow(index === selectedRow ? null : index);
   };
 
-  const handlePrint = () => {
-    if (selectedRow !== null && entries.einnahmen[selectedRow]) {
-      const entry = entries.einnahmen[selectedRow];
-      return (
-        <PDFDownloadLink
-          document={<PrintTemplate entry={entry} />}
-          fileName="entry.pdf"
-        >
-          {({ loading }) => (loading ? "Generiere PDF..." : "Drucken")}
-        </PDFDownloadLink>
-      );
-    } else {
-      return <span>Drucken</span>;
-    }
-  };
 
   const handleCancel = async () => {
     if (selectedRow !== null) {
@@ -334,9 +334,9 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         </button>
         <button
           onClick={handlePrint}
-          disabled={selectedRow === null}
+          disabled={selectedRow === null} // Disable the button if no row is selected
         >
-          {selectedRow !== null ? "Drucken" : "Drucken"}
+          {handlePrint()}
         </button>
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Löschen
