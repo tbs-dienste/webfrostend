@@ -10,6 +10,9 @@ import PaymentPrompt from './PaymentPrompt';
 
 const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
+  const [step, setStep] = useState("quantity"); // "quantity" | "article"
+  const [quantityInput, setQuantityInput] = useState(""); // Neue Menge!
+
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [showEFTPopup, setShowEFTPopup] = useState(false);
@@ -686,11 +689,16 @@ const Kasse = ({ onKassenModusChange }) => {
         return;
       }
 
+      if (!quantityInput || isNaN(parseFloat(quantityInput))) {
+        setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
+        return;
+      }
+
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
         {
           article_number: articleNumber,
-          quantity: 1
+          quantity: parseFloat(quantityInput)
         },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -699,11 +707,18 @@ const Kasse = ({ onKassenModusChange }) => {
 
       if (response.status === 200 && response.data) {
         setScannedProducts(response.data);
-        setSuccessMessage(`Artikel ${articleNumber} wurde erfolgreich gescannt.`);
-        setArticleNumber(""); // Eingabefeld leeren
+        setSuccessMessage(
+          `Artikel ${articleNumber} mit Menge ${quantityInput} erfolgreich gescannt.`
+        );
+
+        // Reset für den nächsten Artikel:
+        setArticleNumber("");
+        setQuantityInput("");
+        setStep("quantity");
       } else {
         setErrorMessage("Produkt nicht gefunden oder Scan fehlgeschlagen.");
       }
+
     } catch (error) {
       console.error("Fehler:", error);
       setErrorMessage(
@@ -975,6 +990,50 @@ const Kasse = ({ onKassenModusChange }) => {
         <div className="scanned-products-container">
           <div className="scanned-products">
             <div className="input-container">
+              {!isPaying && !isChangingPrice && !isChangingQuantity && (
+                <>
+                  {step === "quantity" && (
+                    <>
+                      <label>Menge eingeben:</label>
+                      <input
+                        type="text"
+                        className="quantity-display"
+                        value={quantityInput}
+                        onChange={(e) => setQuantityInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            if (!quantityInput || isNaN(parseFloat(quantityInput))) {
+                              setErrorMessage("Bitte eine gültige Menge eingeben.");
+                              return;
+                            }
+                            setStep("article");
+                            setErrorMessage("");
+                          }
+                        }}
+                      />
+                    </>
+                  )}
+
+                  {step === "article" && (
+                    <>
+                      <label>Artikelnummer eingeben:</label>
+                      <input
+                        type="text"
+                        className="quantity-display"
+                        value={articleNumber}
+                        onChange={(e) => setArticleNumber(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleConfirm();
+                          }
+                        }}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
+              {/* Die anderen Eingaben bleiben wie sie sind */}
               {isPaying && (
                 <>
                   <label>Betrag eingeben:</label>
@@ -1001,7 +1060,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
               {isChangingQuantity && (
                 <>
-                  <label>Menge:</label>
+                  <label>Menge ändern:</label>
                   <input
                     type="text"
                     className="quantity-display"
@@ -1010,19 +1069,8 @@ const Kasse = ({ onKassenModusChange }) => {
                   />
                 </>
               )}
-
-              {!isPaying && !isChangingPrice && !isChangingQuantity && (
-                <>
-                  <label>Artikelnummer eingeben:</label>
-                  <input
-                    type="text"
-                    className="quantity-display"
-                    value={articleNumber}
-                    onChange={(e) => setArticleNumber(e.target.value)}
-                  />
-                </>
-              )}
             </div>
+
 
 
             <div className="kasse-header">
