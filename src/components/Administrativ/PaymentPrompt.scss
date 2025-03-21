@@ -1,74 +1,172 @@
 .payment-prompt-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Abgedunkelter Hintergrund */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Abgedunkelter Hintergrund */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.payment-prompt-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px; /* Abgerundete Ecken */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stärkere Schatten für besseren 3D-Effekt */
+  text-align: center;
+  width: 500px; /* Breitere Box */
+  max-width: 90%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.payment-prompt-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.payment-prompt-subtext {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.payment-prompt-card-selection {
+  margin-top: 20px;
+}
+
+.payment-prompt-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.card-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.payment-prompt-card-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  width: 120px;
+  transition: all 0.3s ease-in-out;
   
-  .payment-prompt-box {
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px; /* Abgerundete Ecken */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stärkere Schatten für besseren 3D-Effekt */
-    text-align: center;
-    width: 500px; /* Breitere Box */
-    max-width: 80%; /* Box kann bis zu 80% des Viewports einnehmen */
+  &.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    transform: scale(1.1); /* Vergrößerung bei Auswahl */
   }
-  
-  .payment-prompt-text {
-    font-size: 22px; /* Größere Schrift für den Titel */
-    font-weight: bold;
-    margin-bottom: 20px;
+
+  &:hover {
+    background-color: #e0e0e0;
   }
-  
-  .payment-prompt-subtext {
-    font-size: 16px; /* Größere Schrift für Untertext */
-    margin-bottom: 15px;
-  }
-  
-  .payment-prompt-amount {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 20px 0;
-  }
-  
-  .payment-prompt-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px; /* Zwischenraum zwischen den Buttons */
-  }
-  
-  .payment-prompt-button {
-    padding: 15px 30px; /* Größere Buttons */
-    font-size: 16px; /* Größere Schrift */
-    cursor: pointer;
-    border: none;
-    border-radius: 8px; /* Abgerundete Ecken für die Buttons */
-    width: 48%; /* Breite der Buttons erhöhen */
-  }
-  
-  .payment-prompt-button.cancel {
-    background-color: #f44336; /* Rote Farbe für "Abbrechen" */
+}
+
+.payment-prompt-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.payment-prompt-button {
+  padding: 15px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  width: 48%;
+  transition: background-color 0.3s ease;
+
+  &.cancel {
+    background-color: #f44336;
     color: white;
   }
-  
-  .payment-prompt-button.continue {
-    background-color: #4caf50; /* Grüne Farbe für "Weiter" */
+
+  &.continue {
+    background-color: #4caf50;
     color: white;
   }
-  
-  .payment-prompt-button:hover {
+
+  &:hover {
     opacity: 0.9;
   }
-  
-  .payment-prompt-button:disabled {
+
+  &:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
   }
-  
+}
+
+.receipt-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Abgedunkelter Hintergrund */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.receipt-popup-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 16px; /* Abgerundete Ecken */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stärkere Schatten für besseren 3D-Effekt */
+  text-align: left;
+  width: 500px; /* Breitere Box */
+  max-width: 90%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.receipt-popup-box h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.receipt-popup-box p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.receipt-popup-box hr {
+  margin: 20px 0;
+  border: 1px solid #ccc;
+}
+
+.receipt-popup-box button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.receipt-popup-box button:hover {
+  background-color: #45a049;
+}
