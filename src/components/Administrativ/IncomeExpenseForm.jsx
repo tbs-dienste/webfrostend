@@ -11,8 +11,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [showKeypad, setShowKeypad] = useState(true);
   const [activeMode, setActiveMode] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [entries, setEntries] = useState({ einnahmen: [], ausgaben: [] }); // Korrekt initialisiert
-  const [exchangeRate, setExchangeRate] = useState(1.1); // Kurs Euro -> CHF, hier ein Beispiel
+  const [entries, setEntries] = useState({ einnahmen: [], ausgaben: [] });
+  const [exchangeRate, setExchangeRate] = useState(1.1); // Beispiel Euro -> CHF
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -38,7 +38,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const handleNumberClick = (value) => {
     setAmount((prev) => prev + value);
   };
-
 
   const handleModeChange = (mode) => {
     setActiveMode(mode);
@@ -66,7 +65,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     setShowKeypad(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!reason) {
       alert("Bitte einen Grund auswählen!");
       return;
@@ -87,36 +86,37 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       amountInFW: finalAmountFW,
       exchangeRate: exchangeRate,
       date: new Date().toLocaleDateString(),
-      type: activeMode === "income" ? "Einnahme" : "Ausgabe",  // Hinzufügen von Typ (Einnahme/Ausgabe)
+      type: activeMode === "income" ? "Einnahme" : "Ausgabe",
     };
 
-    // Bearer Token für die API-Post-Anfrage
-    const token = localStorage.getItem('token');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben',
+        newEntry,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    // Senden der Daten an die Backend-API
-    axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben', newEntry, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-      .then(response => {
-        setEntries((prevEntries) => [...prevEntries, response.data]);
-        handleReset();
-      })
-      .catch(error => {
-        console.error("Error submitting entry:", error);
-        alert("Fehler beim Übermitteln des Eintrags!");
-      });
+      setEntries((prevEntries) => ({
+        einnahmen: [...prevEntries.einnahmen, response.data],
+        ausgaben: prevEntries.ausgaben,
+      }));
+
+      handleReset();
+    } catch (error) {
+      console.error("Fehler beim Übermitteln des Eintrags:", error);
+      alert("Fehler beim Übermitteln des Eintrags!");
+    }
   };
+
 
   const handleRowSelect = (index) => {
-    console.log("Selected Row:", index);
-    setSelectedRow(index === selectedRow ? null : index); // Toggle selection
+    setSelectedRow(index === selectedRow ? null : index);
   };
-  
 
   const handlePrint = () => {
-    console.log("selectedRow:", selectedRow);
     if (selectedRow !== null && entries.einnahmen[selectedRow]) {
       const entry = entries.einnahmen[selectedRow];
       return (
@@ -131,9 +131,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       return <span>Drucken</span>;
     }
   };
-  
-
-
 
   const handleCancel = async () => {
     if (selectedRow !== null) {
@@ -143,10 +140,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       if (selectedEntry) {
         if (window.confirm("Bist du sicher, dass du diesen Service löschen möchtest?")) {
           try {
-            // Token aus localStorage abrufen
             const token = localStorage.getItem('token');
 
-            // Axios DELETE-Request mit Token im Header
             await axios.delete(
               `https://tbsdigitalsolutionsbackend.onrender.com/api/einnahmenAusgaben/${selectedEntry._id}`,
               {
@@ -163,15 +158,13 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
               const updatedAusgaben = prevEntries.ausgaben.filter(
                 (entry, index) => index !== selectedRow
               );
-            
+
               return {
                 einnahmen: updatedEinnahmen,
                 ausgaben: updatedAusgaben,
               };
             });
-            
 
-            // Auswahl zurücksetzen
             setSelectedRow(null);
           } catch (error) {
             console.error("Fehler beim Löschen des Service:", error);
@@ -180,9 +173,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
       }
     }
   };
-
-
-
 
   return (
     <div className="income-expense-container">
@@ -235,7 +225,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             <option value="Euro">Euro</option>
           </select>
         </div>
-
       </div>
 
       <table className="entry-table">
@@ -260,7 +249,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             entries.einnahmen.map((entry, index) => (
               <tr
                 key={index}
-                onClick={() => handleRowSelect(index)} // Handle row selection
+                onClick={() => handleRowSelect(index)}
                 className={selectedRow === index ? "selected" : ""}
               >
                 <td>{entry.reason}</td>
@@ -283,7 +272,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
             entries.ausgaben.map((entry, index) => (
               <tr
                 key={index}
-                onClick={() => handleRowSelect(index)} // Handle row selection
+                onClick={() => handleRowSelect(index)}
                 className={selectedRow === index ? "selected" : ""}
               >
                 <td>{entry.reason}</td>
@@ -298,8 +287,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           )}
         </tbody>
       </table>
-
-
 
       {showKeypad && (
         <div className="keypad-section">
@@ -326,7 +313,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         </div>
       )}
 
-
       <div className="bottom-buttons">
         <button disabled>
           X
@@ -348,21 +334,19 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         </button>
         <button
           onClick={handlePrint}
-          disabled={selectedRow === null} // Disable the button if no row is selected
+          disabled={selectedRow === null}
         >
-          {handlePrint()}
+          {selectedRow !== null ? "Drucken" : "Drucken"}
         </button>
-
         <button onClick={handleCancel} disabled={selectedRow === null}>
-          Storno
+          Löschen
         </button>
-
-        <button onClick={handleSubmit} disabled={!amount || !reason}>
-          Übernehmen
+        <button onClick={handleSubmit}>Übernehmen</button> {/* Übernehmen Button */}
+        <button>
+          Exit
         </button>
-
-        <button onClick={handleReset}>Exit</button>
       </div>
+
     </div>
   );
 };
