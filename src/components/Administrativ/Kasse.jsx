@@ -12,6 +12,8 @@ const Kasse = ({ onKassenModusChange }) => {
   const [isPaying, setIsPaying] = useState(false);
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
   const [quantityInput, setQuantityInput] = useState(""); // Neue Menge!
+  const [rueckgeld, setRueckgeld] = useState(0);
+  const [enteredAmount, setEnteredAmount] = useState(0);
 
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -543,9 +545,9 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const handleConfirm = async () => {
-    setErrorMessage(""); // Reset Fehler
-    setSuccessMessage(""); // Reset Erfolg
-    setIsConfirmed(false); // Bestätigungsstatus zurücksetzen
+    setErrorMessage(""); // Fehler zurücksetzen
+    setSuccessMessage(""); // Erfolgsmeldung zurücksetzen
+    setIsConfirmed(false); // Bestätigung zurücksetzen
 
     const token = localStorage.getItem("token");
 
@@ -557,50 +559,57 @@ const Kasse = ({ onKassenModusChange }) => {
     try {
       setLoading(true);
 
-      // 💸 ZAHLUNGSMODUS
+      // 🧮 Gesamtbetrag der Produkte berechnen
+      const totalDue = scannedProducts.reduce((total, product) => {
+        const quantity = product.quantity || 1;
+        return total + (product.price * quantity);
+      }, 0);
+
+      const totalDueRounded = parseFloat(totalDue.toFixed(2));
+      console.log("💰 Gesamtbetrag (totalDueRounded):", totalDueRounded);
+
+      // ✅ ZAHLUNG BESTÄTIGEN
       if (isPaying) {
         if (!betrag || isNaN(parseFloat(betrag))) {
           setErrorMessage("Bitte geben Sie einen gültigen Betrag ein.");
+          setLoading(false);
           return;
         }
 
-        const totalDue = scannedProducts.reduce(
-          (sum, product) => sum + product.price * product.quantity,
-          0
-        );
+        const enteredAmount = parseFloat(parseFloat(betrag).toFixed(2));
+        console.log("💳 Eingegebener Betrag:", enteredAmount);
 
-        const enteredAmount = parseFloat(betrag);
-
-        if (enteredAmount >= totalDue) {
-          const change = enteredAmount - totalDue;
-
-          if (change > 0) {
-            setSuccessMessage(
-              `Zahlung über ${enteredAmount.toFixed(2)} CHF abgeschlossen. Rückgeld: ${change.toFixed(2)} CHF.`
-            );
-          } else {
-            setSuccessMessage(`Zahlung über ${totalDue.toFixed(2)} CHF abgeschlossen.`);
-          }
-
-          resetModes();
-          setScannedProducts([]); // Produkte leeren nach Bezahlung
-          setBetrag(""); // Betrag zurücksetzen
-        } else {
-          setErrorMessage("Der Betrag ist nicht ausreichend.");
+        if (enteredAmount < totalDueRounded) {
+          setErrorMessage(`Der eingegebene Betrag reicht nicht aus. Es fehlen CHF ${(totalDueRounded - enteredAmount).toFixed(2)}.`);
+          setLoading(false);
+          return;
         }
 
-        return; // Exit hier, weil Zahlung fertig!
+        const change = parseFloat((enteredAmount - totalDueRounded).toFixed(2));
+        console.log("💸 Rückgeld:", change);
+
+        // Hier deine Logik für Zahlung speichern etc.
+        setRueckgeld(change);
+        setSuccessMessage(`Zahlung von CHF ${enteredAmount.toFixed(2)} erhalten. Rückgeld: CHF ${change.toFixed(2)}.`);
+
+        setIsConfirmed(true);
+        setIsPaying(false);
+        setBetrag("");
+        setLoading(false);
+        return; // Zahlung abgeschlossen, raus hier!
       }
 
-      // 💰 PREIS ÄNDERN
+      // ✅ PREIS ÄNDERN
       if (isChangingPrice) {
         if (!selectedProducts.length) {
           setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
+          setLoading(false);
           return;
         }
 
         if (!price || isNaN(parseFloat(price))) {
           setErrorMessage("Bitte geben Sie einen gültigen Preis ein.");
+          setLoading(false);
           return;
         }
 
@@ -608,7 +617,7 @@ const Kasse = ({ onKassenModusChange }) => {
           article_number
         }));
 
-        const response = await axios.put( // <-- HIER IST PUT!
+        const response = await axios.put(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
           {
             selectedProducts: productArray,
@@ -634,18 +643,21 @@ const Kasse = ({ onKassenModusChange }) => {
           setErrorMessage("Fehler beim Aktualisieren der Preise.");
         }
 
-        return;
+        setLoading(false);
+        return; // Preisänderung fertig!
       }
 
-      // 🔢 MENGE ÄNDERN
+      // ✅ MENGE ÄNDERN
       if (isChangingQuantity) {
         if (!selectedProducts.length) {
           setErrorMessage("Bitte wählen Sie mindestens ein Produkt aus.");
+          setLoading(false);
           return;
         }
 
         if (!quantity || isNaN(parseFloat(quantity))) {
           setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
+          setLoading(false);
           return;
         }
 
@@ -653,7 +665,7 @@ const Kasse = ({ onKassenModusChange }) => {
           article_number
         }));
 
-        const response = await axios.put( // <-- UND HIER AUCH PUT!
+        const response = await axios.put(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
           {
             selectedProducts: productArray,
@@ -679,18 +691,20 @@ const Kasse = ({ onKassenModusChange }) => {
           setErrorMessage("Fehler beim Aktualisieren der Menge.");
         }
 
-        return;
+        setLoading(false);
+        return; // Mengenänderung fertig!
       }
-
 
       // ✅ ARTIKEL SCANNEN
       if (!articleNumber) {
         setErrorMessage("Bitte geben Sie eine Artikelnummer ein.");
+        setLoading(false);
         return;
       }
 
       if (!quantityInput || isNaN(parseFloat(quantityInput))) {
         setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
+        setLoading(false);
         return;
       }
 
@@ -711,7 +725,6 @@ const Kasse = ({ onKassenModusChange }) => {
           `Artikel ${articleNumber} mit Menge ${quantityInput} erfolgreich gescannt.`
         );
 
-        // Reset für den nächsten Artikel:
         setArticleNumber("");
         setQuantityInput("");
         setStep("quantity");
@@ -728,6 +741,8 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false);
     }
   };
+
+
 
 
   const resetModes = () => {
@@ -1073,6 +1088,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
+
             <div className="kasse-header">
               <h1>Quittung</h1>
               <h4>Verkäufer {salespersonName}</h4>
@@ -1150,31 +1166,71 @@ const Kasse = ({ onKassenModusChange }) => {
 
             )}
           </div>
+          {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
+          {!isConfirmed && (
+            <div className="total-products">
+              <table>
+                <tbody>
+                  <tr>
+                    <td><strong>Subtotal</strong></td>
+                    <td><strong>CHF</strong></td>
+                    <td>{totalPrice.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="2">---------------------------------------------------</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Total</strong></td>
+                    <td><strong>CHF</strong></td>
+                    <td>{totalPrice.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Anzahl Teile</strong></td>
+                    <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          {/* Total Products - Direkt unter Scanned Products */}
-          <div className="total-products">
-            <table>
-              <tbody>
-                <tr>
-                  <td><strong>Subtotal</strong></td>
-                  <td><strong>CHF</strong></td>
-                  <td>{totalPrice.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td colSpan="2">---------------------------------------------------</td>
-                </tr>
-                <tr>
-                  <td><strong>Total</strong></td>
-                  <td><strong>CHF</strong></td>
-                  <td>{totalPrice.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td><strong>Anzahl Teile</strong></td>
-                  <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {/* Gegeben und Rückgeld - Nur anzeigen, wenn bezahlt */}
+          {isConfirmed && (
+            <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+
+              {/* Gegeben */}
+              <div style={{
+                flex: 1,
+                backgroundColor: "yellow",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "1.2rem"
+              }}>
+                Gegeben<br />
+                CHF {enteredAmount.toFixed(2)} {/* Der eingegebene Betrag wird hier angezeigt */}
+              </div>
+
+              {/* Rückgeld */}
+              <div style={{
+                flex: 1,
+                backgroundColor: "#b9fbc0", // hellgrün
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "1.2rem"
+              }}>
+                Rückgeld<br />
+                CHF {rueckgeld.toFixed(2)} {/* Rückgeld wird hier angezeigt */}
+              </div>
+
+            </div>
+          )}
+
+
         </div>
 
 
