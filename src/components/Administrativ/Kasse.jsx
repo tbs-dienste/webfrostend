@@ -1194,32 +1194,96 @@ const handleAmountClick = (amount) => {
 
             )}
           </div>
-          {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
-          {!isConfirmed && (
-            <div className="total-products">
-              <table>
-                <tbody>
-                  <tr>
-                    <td><strong>Subtotal</strong></td>
-                    <td><strong>CHF</strong></td>
-                    <td>{totalPrice.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2">---------------------------------------------------</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>CHF</strong></td>
-                    <td>{totalPrice.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Anzahl Teile</strong></td>
-                    <td>{Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
+         {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
+{!isConfirmed && (
+  <div style={{
+    backgroundColor: "#fff",
+    padding: "20px",
+    borderRadius: "10px",
+    boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "20px"
+  }}>
+    <table style={{
+      width: "100%",
+      borderCollapse: "collapse"
+    }}>
+      <tbody>
+        <tr>
+          <td style={{
+            fontWeight: "bold",
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <strong>Subtotal</strong>
+          </td>
+          <td style={{
+            fontWeight: "bold",
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <strong>CHF</strong>
+          </td>
+          <td style={{
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            {totalPrice.toFixed(2)}
+          </td>
+        </tr>
+        <tr>
+          <td colSpan="2" style={{
+            padding: "10px",
+            textAlign: "center",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <hr />
+          </td>
+        </tr>
+        <tr>
+          <td style={{
+            fontWeight: "bold",
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <strong>Total</strong>
+          </td>
+          <td style={{
+            fontWeight: "bold",
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <strong>CHF</strong>
+          </td>
+          <td style={{
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            {totalPrice.toFixed(2)}
+          </td>
+        </tr>
+        <tr>
+          <td style={{
+            fontWeight: "bold",
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            <strong>Anzahl Teile</strong>
+          </td>
+          <td style={{
+            padding: "10px",
+            borderBottom: "1px solid #ddd"
+          }}>
+            {Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+)}
+
 
           {/* Gegeben und Rückgeld - Nur anzeigen, wenn bezahlt */}
           {isConfirmed && (
