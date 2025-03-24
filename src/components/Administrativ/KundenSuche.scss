@@ -91,6 +91,7 @@
     position: absolute; /* Positioniere die Buttons am unteren Rand */
     bottom: 0; /* Setze sie am unteren Rand des Containers */
     display: flex;
+    flex-direction: row; /* Stellt sicher, dass die Buttons nebeneinander sind */
     justify-content: space-between; /* Verteile die Buttons gleichmäßig */
     align-items: stretch; /* Sorgt dafür, dass die Buttons die gleiche Höhe haben */
     gap: 1rem; /* Füge Abstand zwischen den Buttons hinzu */
@@ -120,6 +121,7 @@
       }
     }
   }
+  
 
   .result-table {
     margin-top: 2rem;

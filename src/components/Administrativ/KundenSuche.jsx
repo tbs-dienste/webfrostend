@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Keyboard from '../Kasse/Keyboard'; // Importiere hier deine Tastatur-Komponente!
 import './KundenSuche.scss'; // Optional für dein Styling
+import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 
 const KundenSuche = ({ onKassenModusChange }) => {
   const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
@@ -13,6 +14,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
     telnr: '',
   });
   const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
+  const navigate = useNavigate(); // Um zu Kasse zu navigieren
 
   // Kassenmodus aktivieren
   useEffect(() => {
@@ -27,6 +29,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
     document.getElementById('name').focus();
   }, []);
 
+  // Handhabung der Tastenanschläge
   const handleKeyPress = (key) => {
     if (!activeField) return;
 
@@ -50,8 +53,11 @@ const KundenSuche = ({ onKassenModusChange }) => {
     });
   };
 
+  const goToKasse = () => {
+    navigate('/kasse');
+  };
+
   const handleSearch = () => {
-    // Hier kannst du die Logik für die Suche implementieren.
     // Beispielhafte Daten für die Suche
     const allResults = [
       { kundennr: '1234', name: 'Max Mustermann', plz: '12345', ort: 'Musterstadt', strasse: 'Musterstraße 1', telnr: '0123456789' },
@@ -108,7 +114,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
           Suchen
         </button>
         <button>Übernehmen</button>
-        <button>Exit</button>
+        <button onClick={goToKasse}>Exit</button>
       </div>
 
       {/* Ergebnistabelle */}

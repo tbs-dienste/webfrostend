@@ -855,6 +855,12 @@ const handleAmountClick = (amount) => {
   };
 
 
+  const goToKundenSuche = () => {
+    navigate('/kundensuche');
+  };
+
+
+
   return (
     <div className={`kasse-container ${kasseMode ? 'kasse-mode' : ''}`}>
 
@@ -964,7 +970,7 @@ const handleAmountClick = (amount) => {
               <button className='btn' onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
               {/* Kunden- und Transaktionsbuttons */}
-              <button className='btn'>Kunden suchen</button>
+              <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
 
 
               <button className='btn' onClick={handleCustomerCardClick}>Kundenkarte</button>
