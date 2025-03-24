@@ -182,7 +182,7 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
-          <Route path="/kundensuche" element={<KundenSuche />} />
+          <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
 
 
           <Route

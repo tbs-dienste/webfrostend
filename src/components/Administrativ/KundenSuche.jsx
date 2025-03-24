@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Keyboard from '../Kasse/Keyboard'; // Importiere hier deine Tastatur-Komponente!
 import './KundenSuche.scss'; // Optional für dein Styling
 
-const KundenSuche = () => {
-  const [activeField, setActiveField] = useState(null); // Speichert das aktuell aktive Eingabefeld
+const KundenSuche = ({ onKassenModusChange }) => {
+  const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
   const [formData, setFormData] = useState({
     kundennr: '',
     name: '',
@@ -12,6 +12,20 @@ const KundenSuche = () => {
     strasse: '',
     telnr: '',
   });
+  const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
+
+  // Kassenmodus aktivieren
+  useEffect(() => {
+    onKassenModusChange(true);
+    return () => {
+      onKassenModusChange(false); // Kassenmodus zurücksetzen
+    };
+  }, [onKassenModusChange]);
+
+  // Fokus auf das 'name' Feld setzen, wenn die Komponente geladen wird
+  useEffect(() => {
+    document.getElementById('name').focus();
+  }, []);
 
   const handleKeyPress = (key) => {
     if (!activeField) return;
@@ -36,103 +50,101 @@ const KundenSuche = () => {
     });
   };
 
+  const handleSearch = () => {
+    // Hier kannst du die Logik für die Suche implementieren.
+    // Beispielhafte Daten für die Suche
+    const allResults = [
+      { kundennr: '1234', name: 'Max Mustermann', plz: '12345', ort: 'Musterstadt', strasse: 'Musterstraße 1', telnr: '0123456789' },
+      { kundennr: '5678', name: 'Erika Mustermann', plz: '67890', ort: 'Beispielstadt', strasse: 'Beispielstraße 2', telnr: '0987654321' },
+    ];
+
+    // Filtert basierend auf Name und PLZ
+    const filteredResults = allResults.filter((result) => {
+      const nameMatches = result.name.toLowerCase().includes(formData.name.toLowerCase());
+      const plzMatches = result.plz.includes(formData.plz);
+      return (nameMatches && plzMatches); // Beide Kriterien müssen zutreffen
+    });
+
+    setSearchResults(filteredResults); // Zeigt die gefilterten Ergebnisse an
+  };
+
   return (
     <div className="kundensuche-container">
       <div className="kundensuche-form">
-        <h2>Kundensuche</h2>
+        {['kundennr', 'name', 'plz', 'ort', 'strasse', 'telnr'].map((field) => (
+          <div
+            key={field}
+            className={`input-field ${activeField === field ? 'active' : ''}`}
+            onClick={() => setActiveField(field)} // Aktiviert das Eingabefeld
+          >
+            <label>{field.toUpperCase()}</label>
+            <input
+              id={field} // Setzt das ID-Attribut für jedes Eingabefeld
+              type="text"
+              name={field}
+              value={formData[field]}
+              onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+              readOnly={true} // Alle Felder sind readonly
+              autoFocus={field === 'name'} // Setzt den Fokus auf das 'name' Feld
+            />
+          </div>
+        ))}
+      </div>
 
-        <div
-          className={`input-field ${activeField === 'kundennr' ? 'active' : ''}`}
-          onClick={() => setActiveField('kundennr')} // Aktiviert das Eingabefeld
-        >
-          <label>KUNDENNR</label>
-          <input
-            type="text"
-            name="kundennr"
-            value={formData.kundennr}
-            onChange={(e) => setFormData({ ...formData, kundennr: e.target.value })}
-            readOnly
-          />
-        </div>
-
-        <div
-          className={`input-field ${activeField === 'name' ? 'active' : ''}`}
-          onClick={() => setActiveField('name')}
-        >
-          <label>NAME</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            readOnly
-          />
-        </div>
-
-        <div
-          className={`input-field ${activeField === 'plz' ? 'active' : ''}`}
-          onClick={() => setActiveField('plz')}
-        >
-          <label>PLZ</label>
-          <input
-            type="text"
-            name="plz"
-            value={formData.plz}
-            onChange={(e) => setFormData({ ...formData, plz: e.target.value })}
-            readOnly
-          />
-        </div>
-
-        <div
-          className={`input-field ${activeField === 'ort' ? 'active' : ''}`}
-          onClick={() => setActiveField('ort')}
-        >
-          <label>ORT</label>
-          <input
-            type="text"
-            name="ort"
-            value={formData.ort}
-            onChange={(e) => setFormData({ ...formData, ort: e.target.value })}
-            readOnly
-          />
-        </div>
-
-        <div
-          className={`input-field ${activeField === 'strasse' ? 'active' : ''}`}
-          onClick={() => setActiveField('strasse')}
-        >
-          <label>STRASSE</label>
-          <input
-            type="text"
-            name="strasse"
-            value={formData.strasse}
-            onChange={(e) => setFormData({ ...formData, strasse: e.target.value })}
-            readOnly
-          />
-        </div>
-
-        <div
-          className={`input-field ${activeField === 'telnr' ? 'active' : ''}`}
-          onClick={() => setActiveField('telnr')}
-        >
-          <label>TELNR</label>
-          <input
-            type="text"
-            name="telnr"
-            value={formData.telnr}
-            onChange={(e) => setFormData({ ...formData, telnr: e.target.value })}
-            readOnly
-          />
-        </div>
-
+      <div className="bottom-buttons">
+        <button disabled>X</button>
+        <button disabled>X</button>
+        <button disabled>X</button>
+        <button disabled>X</button>
+        <button disabled>X</button>
+        <button onClick={() => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' })}>
+          Filter löschen
+        </button>
+        <button disabled>Detail</button>
         <button
           className="suche-button"
-          onClick={() => console.log('Suchen mit:', formData)}
+          onClick={handleSearch} // Trigger the search
         >
           Suchen
         </button>
+        <button>Übernehmen</button>
+        <button>Exit</button>
       </div>
 
+      {/* Ergebnistabelle */}
+      <div className="result-table">
+        <h3>Suchergebnisse</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Kundennr</th>
+              <th>Name</th>
+              <th>PLZ</th>
+              <th>Ort</th>
+              <th>Straße</th>
+              <th>Telefonnummer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {searchResults.length > 0 ? (
+              searchResults.map((result, index) => (
+                <tr key={index}>
+                  <td>{result.kundennr}</td>
+                  <td>{result.name}</td>
+                  <td>{result.plz}</td>
+                  <td>{result.ort}</td>
+                  <td>{result.strasse}</td>
+                  <td>{result.telnr}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6">Keine Ergebnisse gefunden</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       <Keyboard onKeyPress={handleKeyPress} /> {/* Tastatur-Komponente */}
     </div>
   );
