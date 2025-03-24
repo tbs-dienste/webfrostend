@@ -88,6 +88,7 @@ import CustomerCards from './components/Administrativ/Kundenkarten/CustomerCards
 import AddPoints from './components/Administrativ/Kundenkarten/AddPoints';
 import CreateCustomerCard from './components/Administrativ/Kundenkarten/CreateCustomerCard';
 import KundenkarteDruck from './components/Administrativ/Kundenkarten/KundenkarteDruck';
+import KundenSuche from './components/Administrativ/KundenSuche';
 
 const App = () => {
   
@@ -181,6 +182,7 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
+          <Route path="/kundensuche" element={<KundenSuche />} />
 
 
           <Route

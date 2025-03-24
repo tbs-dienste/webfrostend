@@ -1,0 +1,92 @@
+.kundensuche-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f7f7f7;
+    min-height: 100vh;
+  }
+  
+  .kundensuche-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;  /* Horizontal Layout */
+    gap: 1rem;
+    flex-wrap: nowrap;  /* Verhindert Umbruch */
+  }
+  
+  .kundensuche-form h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .input-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 14%;  /* 7 Felder nebeneinander, anpassen nach Bedarf */
+    min-width: 150px;
+  }
+  
+  .input-field label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .input-field input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .input-field input:focus {
+    border-color: #007bff;
+  }
+  
+  .input-field.active input {
+    background-color: #e9f7ff;
+  }
+  
+  .suche-button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .suche-button:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 1024px) {
+    .kundensuche-form {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .kundensuche-form {
+      width: 100%;
+    }
+  }
+  
