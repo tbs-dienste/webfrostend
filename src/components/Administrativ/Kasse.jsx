@@ -130,52 +130,63 @@ const Kasse = ({ onKassenModusChange }) => {
     }
   }, [kundenkarte]);
 
-  // Funktion zum Abrufen der gescannten Produkte
-  const fetchScannedProducts = async () => {
-    setLoading(true); // Ladeanimation starten
-    try {
-      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+// Funktion zum Abrufen und Hinzufügen NUR neuer Produkte
+const fetchScannedProducts = async () => {
+  setLoading(true);
+  try {
+    const response = await axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Antwort von Server:", response.data);
+
+    // Kundenkarte setzen
+    if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
+      setKundenkarte({
+        kundenkartennummer: response.data.kundenkarte.kundenkartennummer,
+        vorname: response.data.kundenkarte.vorname,
+        nachname: response.data.kundenkarte.nachname,
+        plz: response.data.kundenkarte.plz,
+        ort: response.data.kundenkarte.ort,
       });
+      console.log("Kundenkarte aus der Antwort gesetzt:", response.data.kundenkarte);
+    } else {
+      setKundenkarte(null);
+      console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
+    }
 
-      // Debugging der Antwort
-      console.log("Antwort von Server:", response.data);
+    // Neue Produkte ermitteln
+    setScannedProducts(prevProducts => {
+      const newProducts = response.data.data.filter(
+        newProd => !prevProducts.some(prevProd => prevProd.article_number === newProd.article_number)
+      );
 
-      // Kundenkarte direkt aus der Antwort setzen
-      if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
-        setKundenkarte({
-          kundenkartennummer: response.data.kundenkarte.kundenkartennummer,
-          vorname: response.data.kundenkarte.vorname,
-          nachname: response.data.kundenkarte.nachname,
-          plz: response.data.kundenkarte.plz,
-          ort: response.data.kundenkarte.ort,
-        });
-        console.log("Kundenkarte aus der Antwort gesetzt:", response.data.kundenkarte);
+      if (newProducts.length > 0) {
+        console.log("Neue Produkte hinzugefügt:", newProducts);
       } else {
-        setKundenkarte(null); // Keine gültige Kundenkarte
-        console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
+        console.log("Keine neuen Produkte gefunden.");
       }
 
-      setScannedProducts(response.data.data); // Gescannten Produkte setzen
-      console.log("Gespeicherte Produkte und Kundenkarte erfolgreich abgerufen");
-    } catch (error) {
-      console.error('Fehler beim Abrufen der gescannten Produkte:', error);
-    } finally {
-      setLoading(false); // Ladeanimation stoppen
-    }
-  };
+      return [...prevProducts, ...newProducts]; // Nur neue Produkte hinzufügen
+    });
 
-  // Effekt, um fetchScannedProducts alle paar Sekunden automatisch aufzurufen
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchScannedProducts(); // Alle 5 Sekunden die Produkte abrufen
-    }, 500); // Intervallzeit in Millisekunden (5000 ms = 5 Sekunden)
+  } catch (error) {
+    console.error("Fehler beim Abrufen der gescannten Produkte:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-    // Aufräumen, wenn die Komponente unmontiert wird
-    return () => clearInterval(intervalId);
-  }, []); // Leeres Array sorgt dafür, dass der Effekt nur einmal bei der Komponentenerstellung ausgeführt wird
+// Effekt, um fetchScannedProducts alle 5 Sekunden automatisch aufzurufen
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    fetchScannedProducts();
+  }, 5000); // Alle 5 Sekunden abrufen
+
+  return () => clearInterval(intervalId);
+}, []);
 
 
 
@@ -1467,7 +1478,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
           <div className="action-buttons">
             <button onClick={handleConfirm} className="btn-confirm" disabled={loading}>
-              {loading ? "Aktualisiere..." : "Bestätigen"}
+              Bestätigen
             </button>
 
             <button onClick={clearScannedProducts} className="btn-delete">
