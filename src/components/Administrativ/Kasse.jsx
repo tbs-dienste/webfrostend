@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
 import PaymentPrompt from './PaymentPrompt';
 
 const Kasse = ({ onKassenModusChange }) => {
+  const [response, setResponse] = useState(null);
   const [isPaying, setIsPaying] = useState(false);
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
   const [quantityInput, setQuantityInput] = useState(""); // Neue Menge!
@@ -49,38 +50,122 @@ const Kasse = ({ onKassenModusChange }) => {
   const [showReceiptPopup, setShowReceiptPopup] = useState(false);
   const [showLastReceipt, setShowLastReceipt] = useState(false); // Zustand, um die Quittung anzuzeigen
   const [kundeNummer, setKundeNummer] = useState(generateRandomNumber());
+  const [kundenkarte, setKundenkarte] = useState(null);
+
+  const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
 
   const [salespersonName, setSalespersonName] = useState('');
   const anzahlTeile = scannedProducts.reduce((sum, product) => sum + product.quantity, 0);
 
-
-
-
+  // useEffect: Berechnung des Gesamtpreises, wenn Produkte gescannt oder entfernt werden
   useEffect(() => {
     if (scannedProducts.length > 0) {
-      calculateTotalPrice(); // Gesamtpreis neu berechnen, wenn Produkte hinzugefügt oder entfernt werden
+      console.log("Produkte wurden gescannt:", scannedProducts);
+      calculateTotalPrice(); // Gesamtpreis neu berechnen
     }
   }, [scannedProducts]);
 
+  // useEffect: Gesamtpreis neu berechnen, wenn sich gescannte Produkte ändern
+  useEffect(() => {
+    calculateTotalPrice(); // Gesamtpreis neu berechnen
+  }, [scannedProducts]);
 
+  // useEffect: Abrufen der gescannten Produkte und Rabatte beim Initialisieren
+  useEffect(() => {
+    fetchScannedProducts();
+    fetchDiscounts();
+  }, []);
+
+  // useEffect: Dekodieren des Tokens und Setzen des Verkäufernamens
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
       setSalespersonName(`${decoded.vorname || "Unbekannt"} ${decoded.nachname || ""}`.trim());
+      console.log("Verkäufername aus Token dekodiert:", decoded.vorname, decoded.nachname);
     }
   }, []);
 
+  // useEffect: Kassenmodus aktivieren, wenn Token vorhanden
   useEffect(() => {
-    // Überprüfen, ob der Token vorhanden ist
     const token = localStorage.getItem("token");
     if (token) {
-      // Falls der Token vorhanden ist, wird der Kassenmodus automatisch aktiviert
       setKasseMode(true); // Kassenmodus aktivieren
       onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
+      console.log("Kassenmodus aktiviert.");
     }
   }, []);
+
+  // useEffect: Setzen der Kundenkarte aus der Antwort des Servers
+  useEffect(() => {
+    console.log("Antwort von Server:", response); // Debugging
+
+    // Setze die Kundenkarte aus der Antwort
+    if (response?.kundenkarte) {
+      setKundenkarte({
+        kundenkartennummer: response.kundenkarte.kundenkartennummer,
+        vorname: response.kundenkarte.vorname,
+        nachname: response.kundenkarte.nachname,
+        plz: response.kundenkarte.plz,
+        ort: response.kundenkarte.ort
+      });
+      console.log("Kundenkarte aus der Antwort gesetzt:", response.kundenkarte);
+    } else {
+      setKundenkarte(null);
+      console.log("Keine gültige Kundenkarte im Response.");
+    }
+  }, [response]);
+
+  // useEffect: Debugging der aktuellen Kundenkarte
+  useEffect(() => {
+    console.log("Aktuelle Kundenkarte:", kundenkarte); // Debugging
+
+    // Überprüfen, ob die Kundenkarte gesetzt wurde
+    if (kundenkarte) {
+      console.log("Kundenkarte gefunden:", kundenkarte);
+    } else {
+      console.log("Kundenkarte ist null.");
+    }
+  }, [kundenkarte]);
+
+  // Funktion zum Abrufen der gescannten Produkte
+  const fetchScannedProducts = async () => {
+    setLoading(true); // Ladeanimation starten
+    try {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Debugging der Antwort
+      console.log("Antwort von Server:", response.data);
+
+      // Kundenkarte direkt aus der Antwort setzen
+      if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
+        setKundenkarte({
+          kundenkartennummer: response.data.kundenkarte.kundenkartennummer,
+          vorname: response.data.kundenkarte.vorname,
+          nachname: response.data.kundenkarte.nachname,
+          plz: response.data.kundenkarte.plz,
+          ort: response.data.kundenkarte.ort,
+        });
+        console.log("Kundenkarte aus der Antwort gesetzt:", response.data.kundenkarte);
+      } else {
+        setKundenkarte(null); // Keine gültige Kundenkarte
+        console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
+      }
+
+      setScannedProducts(response.data.data); // Gescannten Produkte setzen
+      console.log("Gespeicherte Produkte und Kundenkarte erfolgreich abgerufen");
+    } catch (error) {
+      console.error('Fehler beim Abrufen der gescannten Produkte:', error);
+    } finally {
+      setLoading(false); // Ladeanimation stoppen
+    }
+  };
+
 
 
 
@@ -110,24 +195,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-  const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
-
-  // Gescannte Produkte abrufen
-  const fetchScannedProducts = async () => {
-    setLoading(true); // Ladeanimation starten
-    try {
-      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setScannedProducts(response.data.data);
-    } catch (error) {
-      console.error('Fehler beim Abrufen der gescannten Produkte:', error);
-    } finally {
-      setLoading(false); // Ladeanimation stoppen
-    }
-  };
 
   // Rabatte abrufen
   const fetchDiscounts = async () => {
@@ -307,11 +374,11 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
 
-// Diese Funktion wird aufgerufen, wenn der Benutzer auf einen Betrag wie "50" klickt
-const handleAmountClick = (amount) => {
-  setBetrag(amount.toString());
-  handleConfirm(); // Direkt bestätigen
-};
+  // Diese Funktion wird aufgerufen, wenn der Benutzer auf einen Betrag wie "50" klickt
+  const handleAmountClick = (amount) => {
+    setBetrag(amount.toString());
+    handleConfirm(); // Direkt bestätigen
+  };
 
 
 
@@ -552,70 +619,70 @@ const handleAmountClick = (amount) => {
     setErrorMessage(""); // Fehler zurücksetzen
     setSuccessMessage(""); // Erfolgsmeldung zurücksetzen
     setIsConfirmed(false); // Bestätigung zurücksetzen
-  
+
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       setErrorMessage("Nicht authentifiziert.");
       return;
     }
-  
+
     try {
       setLoading(true);
-  
+
       // 🧮 Gesamtbetrag der Produkte berechnen
       const totalDue = scannedProducts.reduce((total, product) => {
         const quantity = product.quantity || 1;
         return total + (product.price * quantity);
       }, 0);
-  
+
       const totalDueRounded = parseFloat(totalDue.toFixed(2));
       console.log("💰 Gesamtbetrag (totalDueRounded):", totalDueRounded);
-  
+
       // 🧾 Betrag automatisch übernehmen, wenn ein Betrag eingegeben wird
       if (betrag) {
         // Wenn der Betrag eingegeben wird, überprüfen und als "eingegebenen Betrag" setzen
         const enteredAmount = parseFloat(betrag);
         console.log("💳 Eingegebener Betrag:", enteredAmount);
-  
+
         if (enteredAmount < totalDueRounded) {
           setErrorMessage(`Der eingegebene Betrag reicht nicht aus. Es fehlen CHF ${(totalDueRounded - enteredAmount).toFixed(2)}.`);
           setLoading(false);
           return;
         }
-  
+
         const change = parseFloat((enteredAmount - totalDueRounded).toFixed(2));
         console.log("💸 Rückgeld:", change);
-  
+
         // Zahlung bestätigen
         setRueckgeld(change);
-  
+
         setIsConfirmed(true);
         setIsPaying(false);
         setBetrag(""); // Den Betrag zurücksetzen
         setLoading(false);
         return; // Zahlung abgeschlossen, raus hier!
       }
-  
+
       // ✅ ZAHLUNG BESTÄTIGEN, WENN EIN BETRAG KLICKED WIRD (Z.B. 50)
       if (isPaying) {
         if (betrag && !isNaN(parseFloat(betrag))) {
           const enteredAmount = parseFloat(betrag);
           console.log("💳 Eingegebener Betrag:", enteredAmount);
-  
+
           if (enteredAmount < totalDueRounded) {
             setErrorMessage(`Der eingegebene Betrag reicht nicht aus. Es fehlen CHF ${(totalDueRounded - enteredAmount).toFixed(2)}.`);
             setLoading(false);
             return;
           }
-  
+
           const change = parseFloat((enteredAmount - totalDueRounded).toFixed(2));
           console.log("💸 Rückgeld:", change);
-  
+
           // Zahlung bestätigen
           setRueckgeld(change);
           setSuccessMessage(`Zahlung von CHF ${enteredAmount.toFixed(2)} erhalten. Rückgeld: CHF ${change.toFixed(2)}.`);
-  
+
           setIsConfirmed(true);
           setIsPaying(false);
           setBetrag(""); // Den Betrag zurücksetzen
@@ -623,7 +690,7 @@ const handleAmountClick = (amount) => {
           return; // Zahlung abgeschlossen, raus hier!
         }
       }
-  
+
       // ✅ PREIS ÄNDERN
       if (isChangingPrice) {
         if (!selectedProducts.length) {
@@ -631,17 +698,17 @@ const handleAmountClick = (amount) => {
           setLoading(false);
           return;
         }
-  
+
         if (!price || isNaN(parseFloat(price))) {
           setErrorMessage("Bitte geben Sie einen gültigen Preis ein.");
           setLoading(false);
           return;
         }
-  
+
         const productArray = selectedProducts.map((article_number) => ({
           article_number
         }));
-  
+
         const response = await axios.put(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-price",
           {
@@ -652,14 +719,14 @@ const handleAmountClick = (amount) => {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
-  
+
         if (response.status === 200) {
           const updatedProducts = scannedProducts.map((product) =>
             selectedProducts.includes(product.article_number)
               ? { ...product, price: parseFloat(price) }
               : product
           );
-  
+
           setScannedProducts(updatedProducts);
           setSuccessMessage("Preis erfolgreich aktualisiert.");
           resetModes();
@@ -667,11 +734,11 @@ const handleAmountClick = (amount) => {
         } else {
           setErrorMessage("Fehler beim Aktualisieren der Preise.");
         }
-  
+
         setLoading(false);
         return; // Preisänderung fertig!
       }
-  
+
       // ✅ MENGE ÄNDERN
       if (isChangingQuantity) {
         if (!selectedProducts.length) {
@@ -679,17 +746,17 @@ const handleAmountClick = (amount) => {
           setLoading(false);
           return;
         }
-  
+
         if (!quantity || isNaN(parseFloat(quantity))) {
           setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
           setLoading(false);
           return;
         }
-  
+
         const productArray = selectedProducts.map((article_number) => ({
           article_number
         }));
-  
+
         const response = await axios.put(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/products/update-quantity",
           {
@@ -700,14 +767,14 @@ const handleAmountClick = (amount) => {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
-  
+
         if (response.status === 200) {
           const updatedProducts = scannedProducts.map((product) =>
             selectedProducts.includes(product.article_number)
               ? { ...product, quantity: parseFloat(quantity) }
               : product
           );
-  
+
           setScannedProducts(updatedProducts);
           setSuccessMessage("Menge erfolgreich aktualisiert.");
           resetModes();
@@ -715,24 +782,24 @@ const handleAmountClick = (amount) => {
         } else {
           setErrorMessage("Fehler beim Aktualisieren der Menge.");
         }
-  
+
         setLoading(false);
         return; // Mengenänderung fertig!
       }
-  
+
       // ✅ ARTIKEL SCANNEN
       if (!articleNumber) {
         setErrorMessage("Bitte geben Sie eine Artikelnummer ein.");
         setLoading(false);
         return;
       }
-  
+
       if (!quantityInput || isNaN(parseFloat(quantityInput))) {
         setErrorMessage("Bitte geben Sie eine gültige Menge ein.");
         setLoading(false);
         return;
       }
-  
+
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
         {
@@ -743,20 +810,20 @@ const handleAmountClick = (amount) => {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-  
+
       if (response.status === 200 && response.data) {
         setScannedProducts(response.data);
         setSuccessMessage(
           `Artikel ${articleNumber} mit Menge ${quantityInput} erfolgreich gescannt.`
         );
-  
+
         setArticleNumber("");
         setQuantityInput("");
         setStep("quantity");
       } else {
         setErrorMessage("Produkt nicht gefunden oder Scan fehlgeschlagen.");
       }
-  
+
     } catch (error) {
       console.error("Fehler:", error);
       setErrorMessage(
@@ -766,9 +833,9 @@ const handleAmountClick = (amount) => {
       setLoading(false);
     }
   };
-  
-  
-  
+
+
+
 
 
 
@@ -828,15 +895,7 @@ const handleAmountClick = (amount) => {
   };
 
 
-  useEffect(() => {
-    calculateTotalPrice(); // Gesamtpreis neu berechnen, wenn gescannte Produkte sich ändern
-  }, [scannedProducts]);
 
-
-  useEffect(() => {
-    fetchScannedProducts();
-    fetchDiscounts();
-  }, []);
 
   function generateRandomNumber() {
     return Math.floor(100000000 + Math.random() * 900000000); // 9-stellige Nummer
@@ -1121,12 +1180,17 @@ const handleAmountClick = (amount) => {
 
 
 
-
-            <div className="kasse-header">
-              <h1>Quittung</h1>
-              <h4>Verkäufer {salespersonName}</h4>
-              <h4>Kunde {kundeNummer}</h4>
+            <div className="kasse-header" style={{ fontSize: '16px' }}>
+              <h1 style={{ fontSize: '2rem', fontFamily: 'monospace', color: 'rgb(51, 51, 51)' }}>Quittung</h1>
+              <h4 style={{ fontFamily: 'monospace', fontSize: '1.2rem', color: 'rgb(192, 127, 71)' }}>VerkäuferIn {salespersonName}</h4>
+              <div className="kundenkarte-info" style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'rgb(85, 85, 85)' }}>
+                <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.vorname} {kundenkarte?.nachname}</p>
+                <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.plz} {kundenkarte?.ort}</p>
+              </div>
             </div>
+
+
+
 
             {scannedProducts.length === 0 ? (
               <p>Keine Produkte gescannt.</p>
@@ -1199,95 +1263,95 @@ const handleAmountClick = (amount) => {
 
             )}
           </div>
-         {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
-{!isConfirmed && (
-  <div style={{
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-    marginTop: "20px",
-    display: "flex",
-    justifyContent: "space-between",
-    gap: "20px"
-  }}>
-    <table style={{
-      width: "100%",
-      borderCollapse: "collapse"
-    }}>
-      <tbody>
-        <tr>
-          <td style={{
-            fontWeight: "bold",
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <strong>Subtotal</strong>
-          </td>
-          <td style={{
-            fontWeight: "bold",
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <strong>CHF</strong>
-          </td>
-          <td style={{
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            {totalPrice.toFixed(2)}
-          </td>
-        </tr>
-        <tr>
-          <td colSpan="2" style={{
-            padding: "10px",
-            textAlign: "center",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <hr />
-          </td>
-        </tr>
-        <tr>
-          <td style={{
-            fontWeight: "bold",
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <strong>Total</strong>
-          </td>
-          <td style={{
-            fontWeight: "bold",
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <strong>CHF</strong>
-          </td>
-          <td style={{
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            {totalPrice.toFixed(2)}
-          </td>
-        </tr>
-        <tr>
-          <td style={{
-            fontWeight: "bold",
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            <strong>Anzahl Teile</strong>
-          </td>
-          <td style={{
-            padding: "10px",
-            borderBottom: "1px solid #ddd"
-          }}>
-            {Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-)}
+          {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
+          {!isConfirmed && (
+            <div style={{
+              backgroundColor: "#fff",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "20px"
+            }}>
+              <table style={{
+                width: "100%",
+                borderCollapse: "collapse"
+              }}>
+                <tbody>
+                  <tr>
+                    <td style={{
+                      fontWeight: "bold",
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <strong>Subtotal</strong>
+                    </td>
+                    <td style={{
+                      fontWeight: "bold",
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <strong>CHF</strong>
+                    </td>
+                    <td style={{
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      {totalPrice.toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="2" style={{
+                      padding: "10px",
+                      textAlign: "center",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <hr />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{
+                      fontWeight: "bold",
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <strong>Total</strong>
+                    </td>
+                    <td style={{
+                      fontWeight: "bold",
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <strong>CHF</strong>
+                    </td>
+                    <td style={{
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      {totalPrice.toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{
+                      fontWeight: "bold",
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      <strong>Anzahl Teile</strong>
+                    </td>
+                    <td style={{
+                      padding: "10px",
+                      borderBottom: "1px solid #ddd"
+                    }}>
+                      {Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
 
 
           {/* Gegeben und Rückgeld - Nur anzeigen, wenn bezahlt */}
