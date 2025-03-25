@@ -10,6 +10,7 @@ import PaymentPrompt from './PaymentPrompt';
 
 const Kasse = ({ onKassenModusChange }) => {
   const [response, setResponse] = useState(null);
+  const [currentBonNumber, setCurrentBonNumber] = useState("");
   const [isPaying, setIsPaying] = useState(false);
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
   const [quantityInput, setQuantityInput] = useState(""); // Neue Menge!
@@ -165,6 +166,16 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false); // Ladeanimation stoppen
     }
   };
+
+  // Effekt, um fetchScannedProducts alle paar Sekunden automatisch aufzurufen
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchScannedProducts(); // Alle 5 Sekunden die Produkte abrufen
+    }, 500); // Intervallzeit in Millisekunden (5000 ms = 5 Sekunden)
+
+    // Aufräumen, wenn die Komponente unmontiert wird
+    return () => clearInterval(intervalId);
+  }, []); // Leeres Array sorgt dafür, dass der Effekt nur einmal bei der Komponentenerstellung ausgeführt wird
 
 
 
@@ -463,10 +474,20 @@ const Kasse = ({ onKassenModusChange }) => {
       return;
     }
 
+    // Hier sicherstellen, dass die Bon-Nummer vorhanden ist
+    const bonNumber = currentBonNumber; // `currentBonNumber` sollte die Bon-Nummer enthalten, z.B. aus einem Input-Feld
+
+    if (!bonNumber) {
+      console.error("Bon-Nummer fehlt. Aktion abgebrochen.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/park-bon", {}, {
+      const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/park-bon", {
+        bon_number: bonNumber // Bon-Nummer wird hier übermittelt
+      }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -474,7 +495,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
       console.log("Bon erfolgreich geparkt:", response.data.message);
 
-      await fetchScannedProducts(); // falls du das nach dem Parkieren brauchst
+      await fetchScannedProducts(); // Falls du das nach dem Parkieren brauchst
 
     } catch (error) {
       console.error("Fehler beim Parken des Bons:", error.response?.data || error.message);
@@ -482,6 +503,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false);
     }
   };
+
 
 
 
@@ -1036,7 +1058,7 @@ const Kasse = ({ onKassenModusChange }) => {
 
               {/* Weitere Funktionen */}
               <button className='btn'>GS-Karte</button>
-              <button className='btn' onClick={toggleBonParkieren} disabled={selectedProducts.length === 0}>
+              <button className='btn' onClick={toggleBonParkieren}>
                 Bon Parkieren
               </button>
               <button className='btn btn-storno' onClick={addStornoCost}>
