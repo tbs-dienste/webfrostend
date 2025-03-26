@@ -90,6 +90,10 @@ import CreateCustomerCard from './components/Administrativ/Kundenkarten/CreateCu
 import KundenkarteDruck from './components/Administrativ/Kundenkarten/KundenkarteDruck';
 import KundenSuche from './components/Administrativ/KundenSuche';
 import CreateStellenBeschreibung from './components/Administrativ/Stellenbeschreibung/CreateStellenBeschreibung';
+import StellenausschreibungDetail from './components/Administrativ/Stellenbeschreibung/StellenausschreibungDetail';
+import Stellenanzeigen from './components/Administrativ/Stellenbeschreibung/Stellenanzeigen';
+import "./App.css";
+
 
 const App = () => {
   
@@ -184,6 +188,8 @@ const App = () => {
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
+          <Route path="/stellendetail" element={<StellenausschreibungDetail />} />
+          <Route path="/stellen" element={<Stellenanzeigen />} />
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
 

@@ -4,16 +4,16 @@ import './CreateStellenBeschreibung.scss';
 
 const CreateStellenBeschreibung = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    supervisor: '',
-    startDate: '',
-    workingHoursPercentage: '',
-    partTimeOption: '',
-    substitute: [''],
-    tasks: [''],
-    skills: [''],
-    responsibilities: [''],
-    requirements: [''],
+    bezeichnung: '',
+    vorgesetzter: '',
+    startDatum: '',
+    arbeitszeitProzent: '',
+    teilzeitOption: '',
+    vertretung: [''],
+    aufgaben: [''],
+    kompetenzen: [''],
+    verantwortlichkeiten: [''],
+    anforderungen: [''],
     status: 'Entwurf',
   });
 
@@ -89,9 +89,9 @@ const CreateStellenBeschreibung = () => {
           <label>Titel</label>
           <input
             type="text"
-            name="title"
-            value={formData.title}
-            onChange={(e) => handleChange(e, null, 'title')}
+            name="bezeichnung"
+            value={formData.bezeichnung}
+            onChange={(e) => handleChange(e, null, 'bezeichnung')}
             required
           />
         </div>
@@ -100,9 +100,9 @@ const CreateStellenBeschreibung = () => {
           <label>Vorgesetzter</label>
           <input
             type="text"
-            name="supervisor"
-            value={formData.supervisor}
-            onChange={(e) => handleChange(e, null, 'supervisor')}
+            name="vorgesetzter"
+            value={formData.vorgesetzter}
+            onChange={(e) => handleChange(e, null, 'vorgesetzter')}
             required
           />
         </div>
@@ -111,9 +111,9 @@ const CreateStellenBeschreibung = () => {
           <label>Startdatum</label>
           <input
             type="date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={(e) => handleChange(e, null, 'startDate')}
+            name="startDatum"
+            value={formData.startDatum}
+            onChange={(e) => handleChange(e, null, 'startDatum')}
             required
           />
         </div>
@@ -122,9 +122,9 @@ const CreateStellenBeschreibung = () => {
           <label>Arbeitszeitanteil (%)</label>
           <input
             type="number"
-            name="workingHoursPercentage"
-            value={formData.workingHoursPercentage}
-            onChange={(e) => handleChange(e, null, 'workingHoursPercentage')}
+            name="arbeitszeitProzent"
+            value={formData.arbeitszeitProzent}
+            onChange={(e) => handleChange(e, null, 'arbeitszeitProzent')}
             min="0"
             max="100"
             required
@@ -135,9 +135,9 @@ const CreateStellenBeschreibung = () => {
           <label>Teilzeitoption</label>
           <input
             type="text"
-            name="partTimeOption"
-            value={formData.partTimeOption}
-            onChange={(e) => handleChange(e, null, 'partTimeOption')}
+            name="teilzeitOption"
+            value={formData.teilzeitOption}
+            onChange={(e) => handleChange(e, null, 'teilzeitOption')}
           />
         </div>
 
@@ -154,21 +154,21 @@ const CreateStellenBeschreibung = () => {
           </select>
         </div>
 
-        {/* Dynamische Felder für Substitute */}
+        {/* Dynamische Felder für Vertretung */}
         <div className="dynamic-fields">
           <label>Vertretung</label>
-          {formData.substitute.map((item, index) => (
+          {formData.vertretung.map((item, index) => (
             <div key={index} className="dynamic-field">
               <input
                 type="text"
                 value={item}
-                onChange={(e) => handleChange(e, index, 'substitute')}
+                onChange={(e) => handleChange(e, index, 'vertretung')}
                 placeholder="Vertretung hinzufügen"
               />
-              {formData.substitute.length > 1 && (
+              {formData.vertretung.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleRemoveField(index, 'substitute')}
+                  onClick={() => handleRemoveField(index, 'vertretung')}
                   className="remove-btn"
                 >
                   <FaTrashAlt />
@@ -178,28 +178,28 @@ const CreateStellenBeschreibung = () => {
           ))}
           <button
             type="button"
-            onClick={() => handleAddField('substitute')}
+            onClick={() => handleAddField('vertretung')}
             className="add-btn"
           >
             <FaPlus /> Hinzufügen
           </button>
         </div>
 
-        {/* Dynamische Felder für Tasks */}
+        {/* Dynamische Felder für Aufgaben */}
         <div className="dynamic-fields">
           <label>Aufgaben</label>
-          {formData.tasks.map((item, index) => (
+          {formData.aufgaben.map((item, index) => (
             <div key={index} className="dynamic-field">
               <input
                 type="text"
                 value={item}
-                onChange={(e) => handleChange(e, index, 'tasks')}
+                onChange={(e) => handleChange(e, index, 'aufgaben')}
                 placeholder="Aufgabe hinzufügen"
               />
-              {formData.tasks.length > 1 && (
+              {formData.aufgaben.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleRemoveField(index, 'tasks')}
+                  onClick={() => handleRemoveField(index, 'aufgaben')}
                   className="remove-btn"
                 >
                   <FaTrashAlt />
@@ -209,28 +209,28 @@ const CreateStellenBeschreibung = () => {
           ))}
           <button
             type="button"
-            onClick={() => handleAddField('tasks')}
+            onClick={() => handleAddField('aufgaben')}
             className="add-btn"
           >
             <FaPlus /> Hinzufügen
           </button>
         </div>
 
-        {/* Dynamische Felder für Skills */}
+        {/* Dynamische Felder für Kompetenzen */}
         <div className="dynamic-fields">
           <label>Fähigkeiten</label>
-          {formData.skills.map((item, index) => (
+          {formData.kompetenzen.map((item, index) => (
             <div key={index} className="dynamic-field">
               <input
                 type="text"
                 value={item}
-                onChange={(e) => handleChange(e, index, 'skills')}
+                onChange={(e) => handleChange(e, index, 'kompetenzen')}
                 placeholder="Fähigkeit hinzufügen"
               />
-              {formData.skills.length > 1 && (
+              {formData.kompetenzen.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleRemoveField(index, 'skills')}
+                  onClick={() => handleRemoveField(index, 'kompetenzen')}
                   className="remove-btn"
                 >
                   <FaTrashAlt />
@@ -240,28 +240,28 @@ const CreateStellenBeschreibung = () => {
           ))}
           <button
             type="button"
-            onClick={() => handleAddField('skills')}
+            onClick={() => handleAddField('kompetenzen')}
             className="add-btn"
           >
             <FaPlus /> Hinzufügen
           </button>
         </div>
 
-        {/* Dynamische Felder für Responsibilities */}
+        {/* Dynamische Felder für Verantwortlichkeiten */}
         <div className="dynamic-fields">
           <label>Verantwortlichkeiten</label>
-          {formData.responsibilities.map((item, index) => (
+          {formData.verantwortlichkeiten.map((item, index) => (
             <div key={index} className="dynamic-field">
               <input
                 type="text"
                 value={item}
-                onChange={(e) => handleChange(e, index, 'responsibilities')}
+                onChange={(e) => handleChange(e, index, 'verantwortlichkeiten')}
                 placeholder="Verantwortlichkeit hinzufügen"
               />
-              {formData.responsibilities.length > 1 && (
+              {formData.verantwortlichkeiten.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleRemoveField(index, 'responsibilities')}
+                  onClick={() => handleRemoveField(index, 'verantwortlichkeiten')}
                   className="remove-btn"
                 >
                   <FaTrashAlt />
@@ -271,28 +271,28 @@ const CreateStellenBeschreibung = () => {
           ))}
           <button
             type="button"
-            onClick={() => handleAddField('responsibilities')}
+            onClick={() => handleAddField('verantwortlichkeiten')}
             className="add-btn"
           >
             <FaPlus /> Hinzufügen
           </button>
         </div>
 
-        {/* Dynamische Felder für Requirements */}
+        {/* Dynamische Felder für Anforderungen */}
         <div className="dynamic-fields">
           <label>Anforderungen</label>
-          {formData.requirements.map((item, index) => (
+          {formData.anforderungen.map((item, index) => (
             <div key={index} className="dynamic-field">
               <input
                 type="text"
                 value={item}
-                onChange={(e) => handleChange(e, index, 'requirements')}
+                onChange={(e) => handleChange(e, index, 'anforderungen')}
                 placeholder="Anforderung hinzufügen"
               />
-              {formData.requirements.length > 1 && (
+              {formData.anforderungen.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleRemoveField(index, 'requirements')}
+                  onClick={() => handleRemoveField(index, 'anforderungen')}
                   className="remove-btn"
                 >
                   <FaTrashAlt />
@@ -302,7 +302,7 @@ const CreateStellenBeschreibung = () => {
           ))}
           <button
             type="button"
-            onClick={() => handleAddField('requirements')}
+            onClick={() => handleAddField('anforderungen')}
             className="add-btn"
           >
             <FaPlus /> Hinzufügen

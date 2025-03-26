@@ -22,7 +22,8 @@ import {
   faVirus,
   faBarcode,
   faCashRegister,
-  faInfoCircle
+  faInfoCircle,
+  faPerson
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -100,6 +101,8 @@ function Navbar() {
             <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
             <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={toggleBurgerMenu} />
+            <NavItem to="/stellen" text="Stellen" icon={faPerson} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
             <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
 
 
