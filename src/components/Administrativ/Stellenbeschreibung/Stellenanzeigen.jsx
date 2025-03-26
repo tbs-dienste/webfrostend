@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode"; // jwt-decode importieren
+import { useNavigate } from 'react-router-dom'; // Für Navigation importieren
+import { jwtDecode } from "jwt-decode"; 
 import './Stellenanzeigen.scss';
 
 const Stellenanzeigen = () => {
@@ -8,7 +9,7 @@ const Stellenanzeigen = () => {
     const [filteredStellen, setFilteredStellen] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
-    const [selectedStelle, setSelectedStelle] = useState(null); // Zustand für die Details der ausgewählten Stelle
+    const navigate = useNavigate(); // Navigation Hook
 
     // Admin-Check und Stellenanzeige laden
     useEffect(() => {
@@ -25,13 +26,12 @@ const Stellenanzeigen = () => {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/stellen');
                 const fetchedStellen = response.data.data;
 
-                // Nur veröffentlichte Stellen ohne Token anzeigen
                 const filtered = fetchedStellen.filter(stelle => 
                     stelle.status === 'Veröffentlicht' && !localStorage.getItem('token')
                 );
 
                 setStellen(fetchedStellen);
-                setFilteredStellen(filtered); // Nur veröffentlichte Stellen ohne Token
+                setFilteredStellen(filtered); 
             } catch (error) {
                 console.error("Fehler beim Abrufen der Stellen:", error);
             }
@@ -45,7 +45,7 @@ const Stellenanzeigen = () => {
         setStatusFilter(status);
         if (status === '') {
             setFilteredStellen(stellen.filter(stelle => 
-                (stelle.status === 'Veröffentlicht' || isAdmin) // Alle anzeigen, wenn Admin oder 'Veröffentlicht'
+                (stelle.status === 'Veröffentlicht' || isAdmin)
             ));
         } else {
             const filtered = stellen.filter(stelle => 
@@ -55,9 +55,9 @@ const Stellenanzeigen = () => {
         }
     };
 
-    // Funktion zum Anzeigen der Details der ausgewählten Stelle
-    const handleMehrErfahren = (stelle) => {
-        setSelectedStelle(stelle); // Setze die ausgewählte Stelle
+    // Funktion zum Weiterleiten auf Stellen-Detail-Seite mit Stellen-ID
+    const handleMehrErfahren = (stelleId) => {
+        navigate(`/stellen-detail/${stelleId}`); // Weiterleitung mit Stellen-ID als Parameter
     };
 
     return (
@@ -89,28 +89,15 @@ const Stellenanzeigen = () => {
                             <p><strong>Vorgesetzter:</strong> {stelle.vorgesetzter}</p>
                             <p><strong>Startdatum:</strong> {new Date(stelle.start_datum).toLocaleDateString()}</p>
 
-                            {/* "Mehr erfahren"-Button */}
                             <button 
                                 className="mehr-erfahren-button" 
-                                onClick={() => handleMehrErfahren(stelle)}>
+                                onClick={() => handleMehrErfahren(stelle.id)} // Bei Klick wird die Stellen-ID weitergegeben
+                            >
                                 Mehr erfahren
                             </button>
                         </li>
                     ))}
                 </ul>
-            )}
-
-            {selectedStelle && (
-                <div className="stellen-details">
-                    <h2>Details zur Stelle</h2>
-                    <p><strong>Bezeichnung:</strong> {selectedStelle.bezeichnung}</p>
-                    <p><strong>Vorgesetzter:</strong> {selectedStelle.vorgesetzter}</p>
-                    <p><strong>Startdatum:</strong> {new Date(selectedStelle.start_datum).toLocaleDateString()}</p>
-                    <p><strong>Status:</strong> {selectedStelle.status}</p>
-                    <p><strong>Arbeitszeit:</strong> {selectedStelle.arbeitszeit_prozent}%</p>
-                    <p><strong>Teilzeitoption:</strong> {selectedStelle.teilzeit_option ? 'Ja' : 'Nein'}</p>
-                    <button onClick={() => setSelectedStelle(null)}>Schließen</button>
-                </div>
             )}
         </div>
     );

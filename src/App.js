@@ -188,7 +188,7 @@ const App = () => {
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
-          <Route path="/stellendetail" element={<StellenausschreibungDetail />} />
+          <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />
           <Route path="/stellen" element={<Stellenanzeigen />} />
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
