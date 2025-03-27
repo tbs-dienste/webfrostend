@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom"; 
+import { FaArrowUp, FaArrowDown, FaPaperPlane, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import "./StellenausschreibungDetail.scss";
 
 const StellenausschreibungDetail = () => {
@@ -38,20 +39,17 @@ const StellenausschreibungDetail = () => {
       });
   }, []);
 
-
   const handleBewerbungChange = (e) => {
     const { name, value } = e.target;
     setBewerbung((prev) => ({ ...prev, [name]: value }));
   };
 
-
   const handleSubmitBewerbung = async (e) => {
     e.preventDefault();
-  
     try {
       await axios.post(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/bewerbungen/${stellenId}`,
-        bewerbung,  // JSON senden statt FormData
+        bewerbung,
         { headers: { "Content-Type": "application/json" } }
       );
       setBewerbungStatus("Bewerbung erfolgreich eingereicht!");
@@ -61,7 +59,6 @@ const StellenausschreibungDetail = () => {
       setTimeout(() => setBewerbungStatus(null), 5000);
     }
   };
-  
 
   if (loading) return <p className="loading">Lade Stellenanzeige...</p>;
   if (error) return <p className="error">Fehler: {error}</p>;
@@ -89,26 +86,28 @@ const StellenausschreibungDetail = () => {
       </table>
 
       {[
-        { key: "vertretung", title: "Vertretung" },
-        { key: "stellen_aufgaben", title: "Aufgaben" },
-        { key: "kompetenzen", title: "Kompetenzen" },
-        { key: "verantwortlichkeiten", title: "Verantwortlichkeiten" },
-        { key: "anforderungen", title: "Anforderungen" },
-      ].map(({ key, title }) =>
+        { key: "vertretung", title: "Vertretung", icon: <FaCheckCircle /> },
+        { key: "stellen_aufgaben", title: "Aufgaben", icon: <FaExclamationCircle /> },
+        { key: "kompetenzen", title: "Kompetenzen", icon: <FaCheckCircle /> },
+        { key: "verantwortlichkeiten", title: "Verantwortlichkeiten", icon: <FaExclamationCircle /> },
+        { key: "anforderungen", title: "Anforderungen", icon: <FaCheckCircle /> },
+      ].map(({ key, title, icon }) =>
         stellen[key]?.length ? (
           <div key={key} className="stellen-section">
-            <h3>{title}</h3>
-            <ul>
+            <h3>{icon} {title}</h3>
+            <div className="icon-list">
               {stellen[key].map((item) => (
-                <li key={item.id}>{item.wert}</li>
+                <div key={item.id} className="icon-item">
+                  {icon} {item.wert}
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         ) : null
       )}
 
       <div className="bewerbung-toggle" onClick={() => setShowBewerbung(!showBewerbung)}>
-        <span className="arrow">{showBewerbung ? "▲" : "▼"}</span>
+        <span className="arrow">{showBewerbung ? <FaArrowUp /> : <FaArrowDown />}</span>
         <h3>Jetzt Bewerben</h3>
       </div>
 
@@ -128,10 +127,9 @@ const StellenausschreibungDetail = () => {
                 />
               </div>
             ))}
-
-          
-
-            <button type="submit" className="bewerben-button">Bewerben</button>
+            <button type="submit" className="bewerben-button">
+              <FaPaperPlane /> Bewerben
+            </button>
           </form>
           {bewerbungStatus && <p className="bewerbung-status">{bewerbungStatus}</p>}
         </div>
