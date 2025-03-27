@@ -1,41 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import './Navbar.scss';
-import logo from '../../logo.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import "./Navbar.scss";
+import logo from "../../logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSignOutAlt,
   faHome,
-  faCogs as faServicestack,
+  faCogs,
   faPhoneAlt,
   faDollarSign,
   faQuestionCircle,
   faStar,
-  faBars as faMenu,
+  faBars,
   faSignInAlt,
   faUser,
-  faDownload,
-  faMoneyBill,
-  faPaperPlane,
-  faBarChart,
-  faVirus,
-  faBarcode,
-  faCashRegister,
   faInfoCircle,
-  faPerson,
-  faCreditCard
-} from '@fortawesome/free-solid-svg-icons';
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
-  const currentPath = window.location.pathname;
   const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [userType, setUserType] = useState('');
+  const [userType, setUserType] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
@@ -46,129 +39,134 @@ function Navbar() {
           setIsLoggedIn(true);
         }
       } catch (error) {
-        console.error('Ungültiger Token:', error);
+        console.error("Ungültiger Token:", error);
         handleLogout();
       }
-    } else {
-      setIsLoggedIn(false);
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUserType('');
+    localStorage.removeItem("token");
+    setUserType("");
     setIsLoggedIn(false);
-    navigate('/');
+    navigate("/");
     window.location.reload();
   };
-
-  const handleKassenLogout = () => {
-    localStorage.removeItem('token');
-    setUserType('');
-    setIsLoggedIn(false);
-    navigate('/kassenlogin');
-    window.location.reload();
-  };
-
-  const toggleBurgerMenu = () => setBurgerMenuActive(prev => !prev);
-
-  useEffect(() => {
-    if (burgerMenuActive) {
-      document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
-    return () => document.body.classList.remove('no-scroll');
-  }, [burgerMenuActive]);
 
   return (
-    <nav className={`navbar ${burgerMenuActive ? 'burger-menu-active' : ''}`}>
+    <nav className={`navbar ${burgerMenuActive ? "burger-menu-active" : ""}`}>
       <div className="navbar-container">
         <div className="logo-box">
-          <Link to="/">
+          <Link to="/" onClick={() => setBurgerMenuActive(false)}>
             <img src={logo} alt="Logo" className="logo" />
           </Link>
         </div>
 
-        <div className={`menu-icon ${burgerMenuActive ? 'active' : ''}`} onClick={toggleBurgerMenu}>
-          <FontAwesomeIcon icon={faMenu} />
+        <div className="menu-icon" onClick={() => setBurgerMenuActive(!burgerMenuActive)}>
+          <FontAwesomeIcon icon={faBars} />
         </div>
 
-        <div className={`nav-items ${burgerMenuActive ? 'active' : ''}`}>
-          <ul>
-            <NavItem to="/" text="Home" icon={faHome} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faServicestack} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            <NavItem to="/stellen" text="Stellen" icon={faPerson} currentPath={currentPath} onClick={toggleBurgerMenu} />
+        <ul className={`nav-items ${burgerMenuActive ? "active" : ""}`}>
+          <NavItem to="/" text="Home" icon={faHome} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faCogs} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} setBurgerMenuActive={setBurgerMenuActive} />
 
-            <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} currentPath={currentPath} onClick={toggleBurgerMenu} />
+          {isLoggedIn && userType === "admin" && (
+            <DropdownItem
+              text="Admin"
+              icon={faUser}
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              setBurgerMenuActive={setBurgerMenuActive}
+              options={[
+                { to: "/mitarbeiter", text: "Mitarbeiter" },
+                { to: "/download", text: "Download" },
+                { to: "/kundenkarten", text: "Kundenkarten" },
+                { to: "/kassenlogin", text: "Kasse" },
+                { to: "/gutscheine-liste", text: "Gutscheine" },
+                { to: "/rechnungen", text: "Rechnungen" },
+                { to: "/statistiken", text: "Statistik" },
+              ]}
+            />
+          )}
 
+          {isLoggedIn && userType === "mitarbeiter" && (
+            <DropdownItem
+              text="Abwesenheitsverwaltung"
+              icon={faUser}
+              activeDropdown={activeDropdown}
+              setActiveDropdown={setActiveDropdown}
+              setBurgerMenuActive={setBurgerMenuActive}
+              options={[
+                { to: "/createkrankmeldung", text: "Krankmeldung einreichen" },
+                { to: "/antrag", text: "Antrag stellen" },
+                { to: "/alleAntraege", text: "Meine Anträge" },
+              ]}
+            />
+          )}
 
-            {isLoggedIn && userType === 'admin' && (
-              <>
-                <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/download" text="Download" icon={faDownload} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/kundenkarten" text="Kundenkarte" icon={faCreditCard} currentPath={currentPath} onClick={toggleBurgerMenu} />
+          {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
+            <>
+              <NavItem to="/kunden" text="Kunden" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+              <NavItem to="/profile" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+            </>
+          )}
 
-                <NavItem
-                  to="/kassenlogin"
-                  text="Kasse"
-                  icon={faCashRegister}
-                  currentPath={currentPath}
-                  onClick={() => {
-                    handleKassenLogout();
-                    toggleBurgerMenu();
-                  }}
-                />
-
-                <NavItem to="/gutscheine-liste" text="Gutscheine" icon={faMoneyBill} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/rechnungen" text="Rechnungen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/statistiken" text="Statistik" icon={faBarChart} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
-            )}
-
-            {isLoggedIn && userType === 'mitarbeiter' && (
-              <>
-                <NavItem to="/antrag" text="Antrag stellen" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/alleAntraege" text="Alle Anträge" icon={faPaperPlane} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/createkrankmeldung" text="Krank Melden" icon={faVirus} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
-            )}
-
-            {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
-              <>
-                <NavItem to="/kunden" text="Kunden" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-                <NavItem to="/profile" text="Profil" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
-              </>
-            )}
-
-            {!isLoggedIn && (
-              <NavItem to="/login" text="Login" icon={faSignInAlt} currentPath={currentPath} onClick={toggleBurgerMenu} />
-            )}
-
-            {isLoggedIn && (
-              <button className="logout-button" onClick={handleLogout}>
-                <FontAwesomeIcon icon={faSignOutAlt} />
-                Logout
-              </button>
-            )}
-          </ul>
-        </div>
+          {!isLoggedIn ? (
+            <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />
+          ) : (
+            <button className="logout-button" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+            </button>
+          )}
+        </ul>
       </div>
     </nav>
   );
 }
 
-function NavItem({ to, text, icon, currentPath, onClick }) {
+function NavItem({ to, text, icon, setBurgerMenuActive }) {
   return (
     <li>
-      <Link to={to} className={`nav-link ${currentPath === to ? 'active' : ''}`} onClick={onClick}>
-        {icon && <span className="icon"><FontAwesomeIcon icon={icon} /></span>}
-        {text}
+      <Link to={to} className="nav-link" onClick={() => setBurgerMenuActive(false)}>
+        <FontAwesomeIcon icon={icon} className="icon" /> {text}
       </Link>
+    </li>
+  );
+}
+
+function DropdownItem({ text, icon, activeDropdown, setActiveDropdown, setBurgerMenuActive, options }) {
+  const isActive = activeDropdown === text;
+  return (
+    <li className="dropdown">
+      <div
+        className="nav-link dropdown-toggle"
+        onClick={() => setActiveDropdown(isActive ? null : text)}
+      >
+        <FontAwesomeIcon icon={icon} className="icon" /> {text} <FontAwesomeIcon icon={faChevronDown} />
+      </div>
+      {isActive && (
+        <ul className="dropdown-menu">
+          {options.map((option, index) => (
+            <li key={index}>
+              <Link
+                to={option.to}
+                className="dropdown-item"
+                onClick={() => {
+                  setActiveDropdown(null);
+                  setBurgerMenuActive(false);
+                }}
+              >
+                {option.text}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
