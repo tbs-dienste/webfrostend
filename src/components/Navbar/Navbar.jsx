@@ -23,7 +23,8 @@ import {
   faBarcode,
   faCashRegister,
   faInfoCircle,
-  faPerson
+  faPerson,
+  faCreditCard
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -110,6 +111,8 @@ function Navbar() {
               <>
                 <NavItem to="/mitarbeiter" text="Mitarbeiter" icon={faUser} currentPath={currentPath} onClick={toggleBurgerMenu} />
                 <NavItem to="/download" text="Download" icon={faDownload} currentPath={currentPath} onClick={toggleBurgerMenu} />
+                <NavItem to="/kundenkarten" text="Kundenkarte" icon={faCreditCard} currentPath={currentPath} onClick={toggleBurgerMenu} />
+
                 <NavItem
                   to="/kassenlogin"
                   text="Kasse"
