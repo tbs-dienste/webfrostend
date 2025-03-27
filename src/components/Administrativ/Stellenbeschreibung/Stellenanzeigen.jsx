@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Für Navigation importieren
-import { jwtDecode } from "jwt-decode"; 
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; 
 import './Stellenanzeigen.scss';
 
 const Stellenanzeigen = () => {
@@ -9,9 +9,9 @@ const Stellenanzeigen = () => {
     const [filteredStellen, setFilteredStellen] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
-    const navigate = useNavigate(); // Navigation Hook
+    const navigate = useNavigate();
 
-    // Admin-Check und Stellenanzeige laden
+    // Initialisiere die Komponenten und lade Stellenausschreibungen
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -25,7 +25,8 @@ const Stellenanzeigen = () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/stellen');
                 const fetchedStellen = response.data.data;
-
+                
+                // Filtere Stellen für nicht-Admin-Nutzer
                 const filtered = fetchedStellen.filter(stelle => 
                     stelle.status === 'Veröffentlicht' && !localStorage.getItem('token')
                 );
@@ -40,7 +41,7 @@ const Stellenanzeigen = () => {
         fetchStellen();
     }, []);
 
-    // Filter für Stellenanzeigen basierend auf Status
+    // Filter für Stellenanzeigen je nach Status
     const filterStellen = (status) => {
         setStatusFilter(status);
         if (status === '') {
@@ -55,15 +56,19 @@ const Stellenanzeigen = () => {
         }
     };
 
-    // Funktion zum Weiterleiten auf Stellen-Detail-Seite mit Stellen-ID
+    // Navigiere zu Detailansicht der Stelle
     const handleMehrErfahren = (stelleId) => {
-        navigate(`/stellen-detail/${stelleId}`); // Weiterleitung mit Stellen-ID als Parameter
+        navigate(`/stellen-detail/${stelleId}`);
     };
 
     return (
         <div className="stellen-container">
-            <h1 className="stellen-title">Verfügbare Stellen</h1>
+            <h1 className="stellen-title">Starte Deine Karriere bei uns – Deine Zukunft beginnt hier!</h1>
+            <p className="stellen-intro">
+                Entdecke spannende Möglichkeiten, die genau zu Deinem Profil passen. Werde Teil eines dynamischen Teams und entwickle Dich in einer herausfordernden und fördernden Arbeitsumgebung.
+            </p>
 
+            {/* Admin-Filterbuttons für den Status */}
             {isAdmin && (
                 <div className="filter-buttons">
                     <button onClick={() => filterStellen('')} className={statusFilter === '' ? 'active' : ''}>Alle</button>
@@ -73,25 +78,32 @@ const Stellenanzeigen = () => {
                 </div>
             )}
 
+            {/* Anzeige der Stellenanzeigen */}
             {filteredStellen.length === 0 ? (
-                <p className="no-stellen">Derzeit sind keine Stellen verfügbar.</p>
+                <p className="no-stellen">Aktuell gibt es keine offenen Stellen – aber bleib dran! Schicke uns Deine Bewerbung und werde Teil des nächsten Teams!</p>
             ) : (
                 <ul className="stellen-list">
                     {filteredStellen.map((stelle) => (
                         <li className="stellen-item" key={stelle.id}>
                             <div className="stellen-header">
-                                <h2>{stelle.bezeichnung}</h2>
-
+                                <h2 className="stellen-bezeichnung">{stelle.bezeichnung}</h2>
                                 {isAdmin && (
                                     <span className={`status ${stelle.status.toLowerCase()}`}>{stelle.status}</span>
                                 )}
                             </div>
-                            <p><strong>Vorgesetzter:</strong> {stelle.vorgesetzter}</p>
-                            <p><strong>Startdatum:</strong> {new Date(stelle.start_datum).toLocaleDateString()}</p>
+
+                            <p className="stellen-detail"><strong>Abteilung:</strong> {stelle.abteilung_name}</p>
+                            <p className="stellen-detail"><strong>Startdatum:</strong> {new Date(stelle.start_datum).toLocaleDateString()}</p>
+                            
+                            
+                            {/* Hinweis zu Arbeitszeiten und Optionen */}
+                            <p className="stellen-detail">
+                                <strong>Arbeitszeit:</strong> {stelle.arbeitszeit_prozent}% - {stelle.teilzeit_option ? 'Teilzeitoption verfügbar' : 'Vollzeit'}
+                            </p>
 
                             <button 
                                 className="mehr-erfahren-button" 
-                                onClick={() => handleMehrErfahren(stelle.id)} // Bei Klick wird die Stellen-ID weitergegeben
+                                onClick={() => handleMehrErfahren(stelle.id)}
                             >
                                 Mehr erfahren
                             </button>
