@@ -27,16 +27,17 @@ const StellenausschreibungDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`https://tbsdigitalsolutionsbackend.onrender.com/api/stellen/${stellenId}`)
+      .get("https://tbsdigitalsolutionsbackend.onrender.com/api/stellen/3")
       .then((response) => {
-        setStellen(response.data.stellen); 
+        setStellen(response.data);
         setLoading(false);
       })
       .catch((error) => {
         setError(error.message);
         setLoading(false);
       });
-  }, [stellenId]);
+  }, []);
+
 
   const handleBewerbungChange = (e) => {
     const { name, value } = e.target;
@@ -74,15 +75,15 @@ const StellenausschreibungDetail = () => {
         <tbody>
           <tr>
             <td>Vorgesetzter:</td>
-            <td>{stellen?.vorgesetzter}</td>
+            <td>{stellen.stellen.vorgesetzter}</td>
           </tr>
           <tr>
             <td>Startdatum:</td>
-            <td>{stellen?.start_datum ? new Date(stellen.start_datum).toLocaleDateString() : "-"}</td>
+            <td>{new Date(stellen.stellen.start_datum).toLocaleDateString()}</td>
           </tr>
           <tr>
             <td>Arbeitszeit:</td>
-            <td>{stellen?.arbeitszeit_prozent || 0}%</td>
+            <td>{stellen.stellen.arbeitszeit_prozent}%</td>
           </tr>
         </tbody>
       </table>
