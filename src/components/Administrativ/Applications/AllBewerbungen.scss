@@ -1,0 +1,76 @@
+.bewerbungen-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .bewerbung-box {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .bewerbung-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  
+    h2 {
+      font-size: 1.25rem;
+      color: #333;
+      font-weight: bold;
+    }
+  
+    .status {
+      font-size: 0.875rem;
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+  
+    .status.offen {
+      background-color: #ffcc00;
+      color: #fff;
+    }
+  
+    .status.abgeschlossen {
+      background-color: #28a745;
+      color: #fff;
+    }
+  
+    .status.inBearbeitung {
+      background-color: #007bff;
+      color: #fff;
+    }
+  }
+  
+  .bewerbung-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  
+    .bewerbung-detail {
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      color: #555;
+  
+      .icon {
+        margin-right: 8px;
+        color: #007bff;
+      }
+    }
+  }
+  

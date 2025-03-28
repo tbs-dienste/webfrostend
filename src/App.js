@@ -93,6 +93,7 @@ import CreateStellenBeschreibung from './components/Administrativ/Stellenbeschre
 import StellenausschreibungDetail from './components/Administrativ/Stellenbeschreibung/StellenausschreibungDetail';
 import Stellenanzeigen from './components/Administrativ/Stellenbeschreibung/Stellenanzeigen';
 import "./App.css";
+import AllBewerbungen from './components/Administrativ/Applications/AllBewerbungen';
 
 
 const App = () => {
@@ -190,6 +191,7 @@ const App = () => {
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />
           <Route path="/stellen" element={<Stellenanzeigen />} />
+          <Route path="/allbewerbungen" element={<AllBewerbungen />} />
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
 

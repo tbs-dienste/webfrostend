@@ -93,6 +93,8 @@ function Navbar() {
                 { to: "/gutscheine-liste", text: "Gutscheine" },
                 { to: "/rechnungen", text: "Rechnungen" },
                 { to: "/statistiken", text: "Statistik" },
+                { to: "/allbewerbungen", text: "Bewerbungen" },
+
               ]}
             />
           )}
