@@ -59,6 +59,18 @@
       &:hover {
         background-color: #f9f9f9;
       }
+
+      &.online {
+        background-color: #d4f7d3; /* Helle grüne Farbe für "online" */
+      }
+
+      &.birthday {
+        background-color: #fff4e1; /* Helle gelbe Farbe für "Geburtstag" */
+      }
+
+      &.krank {
+        background-color: #fff3cd; /* Helle gelbe Farbe für "krank" */
+      }
     }
 
     .status-icon {
