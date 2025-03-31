@@ -21,14 +21,11 @@ const Mitarbeiter = () => {
         });
 
         if (Array.isArray(response.data.data)) {
-          // Hier nehmen wir den hatGeburtstag-Wert direkt aus der API-Daten und setzen ihn
           const updatedMitarbeiter = response.data.data.map((m) => ({
             ...m,
-            hatGeburtstag: m.hatGeburtstag, // Wir übernehmen den Wert aus der API direkt
+            hatGeburtstag: m.hatGeburtstag,
           }));
           setMitarbeiterListe(updatedMitarbeiter);
-        } else {
-          console.error('Expected an array but received:', response.data);
         }
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -40,9 +37,6 @@ const Mitarbeiter = () => {
 
     fetchMitarbeiter();
   }, []);
-
-
-
 
   const handleShowConfirmationModal = (id) => {
     setShowConfirmationModal(true);
@@ -69,31 +63,12 @@ const Mitarbeiter = () => {
     setShowConfirmationModal(false);
   };
 
-  // Funktion zur Überprüfung, ob der Mitarbeiter heute Geburtstag hat
-  const checkBirthday = (geburtstag) => {
-    const today = new Date();
-    const birthday = new Date(geburtstag);
-    return today.getDate() === birthday.getDate() && today.getMonth() === birthday.getMonth();
-  };
-
-  // Funktion zur Berechnung des Geburtstagsjubiläums
-  const calculateAge = (geburtstag) => {
-    const today = new Date();
-    const birthday = new Date(geburtstag);
-    let age = today.getFullYear() - birthday.getFullYear();
-    const isBeforeBirthdayThisYear =
-      today.getMonth() < birthday.getMonth() ||
-      (today.getMonth() === birthday.getMonth() && today.getDate() < birthday.getDate());
-    if (isBeforeBirthdayThisYear) age -= 1;
-    return age;
-  };
-
   return (
     <div className="mitarbeiter-container">
-      <h2>Mitarbeiter</h2>
-      <Link to="/mitarbeitererfassen">+</Link>
+      <h2>Mitarbeiterverwaltung</h2>
+      <Link to="/mitarbeitererfassen" className="add-button">+</Link>
       {loading ? (
-        <p>Lade Mitarbeiter...</p>
+        <p className="loading-text">Lade Mitarbeiter...</p>
       ) : (
         <table className="mitarbeiter-tabelle">
           <thead>
@@ -109,55 +84,33 @@ const Mitarbeiter = () => {
               mitarbeiterListe.map((m) => (
                 <tr
                   key={m.id}
-                  className={`
-                    ${m.krankGemeldet ? 'krank' : ''} 
+                  className={`mitarbeiter-row 
+                    ${m.krankGemeldet ? 'krank' : ''}
                     ${m.status === 'online' ? 'online' : ''}
+                    ${m.hatGeburtstag ? 'birthday' : ''}
                   `}
                 >
                   <td>{m.mitarbeiternummer}</td>
                   <td>{m.vorname} {m.nachname}</td>
                   <td>
                     {m.hatGeburtstag && (
-                      <>
-                        <FaBirthdayCake
-                          className="birthday-icon"
-                          title={`Heute ist der ${m.geburtstagsInfo} von ${m.vorname}!`}
-                        />
-                      </>
-                    )}
-
-
-
-                    {m.status === 'online' && (
-                      <FaGlobe
-                        className="online-icon"
-                        title="Mitarbeiter ist online"
-                      />
+                      <FaBirthdayCake className="status-icon birthday" title={`Heute ist der ${m.geburtstagsInfo} von ${m.vorname}!`} />
                     )}
                     {m.status === 'online' && (
-                      <FaLongArrowAltLeft
-                        className="online-icon"
-                        title="Mitarbeiter ist online"
-                      />
+                      <FaGlobe className="status-icon online" title="Mitarbeiter ist online" />
                     )}
                     {m.status === 'abwesend' && (
-                      <FaDoorOpen
-                        className="abwesend-icon"
-                        title="Mitarbeiter ist abwesend"
-                      />
+                      <FaDoorOpen className="status-icon abwesend" title="Mitarbeiter ist abwesend" />
                     )}
                     {m.krankGemeldet && (
-                      <FaVirus
-                        className="krank-icon"
-                        title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`}
-                      />
+                      <FaVirus className="status-icon krank" title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`} />
                     )}
                   </td>
                   <td>
-                    <Link to={`/mitarbeiteranzeigen/${m.id}`}>
+                    <Link to={`/mitarbeiteranzeigen/${m.id}`} className="action-button">
                       <FaUser /> Anzeigen
                     </Link>
-                    <button onClick={() => handleShowConfirmationModal(m.id)}>
+                    <button onClick={() => handleShowConfirmationModal(m.id)} className="action-button delete">
                       <FaTrash /> Löschen
                     </button>
                   </td>
@@ -165,7 +118,7 @@ const Mitarbeiter = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="4">Keine Mitarbeiter gefunden.</td>
+                <td colSpan="4" className="no-data">Keine Mitarbeiter gefunden.</td>
               </tr>
             )}
           </tbody>
@@ -173,9 +126,13 @@ const Mitarbeiter = () => {
       )}
       {showConfirmationModal && (
         <div className="confirmation-modal">
-          <p>Bist du sicher, dass du diesen Mitarbeiter löschen möchtest?</p>
-          <button onClick={handleDeleteConfirmation}>Ja</button>
-          <button onClick={handleCancelDelete}>Nein</button>
+          <div className="modal-content">
+            <p>Bist du sicher, dass du diesen Mitarbeiter löschen möchtest?</p>
+            <div className="modal-actions">
+              <button onClick={handleDeleteConfirmation} className="confirm-button">Ja</button>
+              <button onClick={handleCancelDelete} className="cancel-button">Nein</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
