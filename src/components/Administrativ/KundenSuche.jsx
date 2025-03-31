@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Keyboard from '../Kasse/Keyboard'; // Importiere hier deine Tastatur-Komponente!
 import './KundenSuche.scss'; // Optional für dein Styling
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
+import axios from 'axios';
 
 const KundenSuche = ({ onKassenModusChange }) => {
   const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
@@ -15,6 +16,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
   });
   const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
   const navigate = useNavigate(); // Um zu Kasse zu navigieren
+  const [kundenkarte, setKundenkarte] = useState(null);
 
   // Kassenmodus aktivieren
   useEffect(() => {
@@ -57,23 +59,28 @@ const KundenSuche = ({ onKassenModusChange }) => {
     navigate('/kasse');
   };
 
-  const handleSearch = () => {
-    // Beispielhafte Daten für die Suche
-    const allResults = [
-      { kundennr: '1234', name: 'Max Mustermann', plz: '12345', ort: 'Musterstadt', strasse: 'Musterstraße 1', telnr: '0123456789' },
-      { kundennr: '5678', name: 'Erika Mustermann', plz: '67890', ort: 'Beispielstadt', strasse: 'Beispielstraße 2', telnr: '0987654321' },
-    ];
+  const handleSearch = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    // Filtert basierend auf Name und PLZ
-    const filteredResults = allResults.filter((result) => {
-      const nameMatches = result.name.toLowerCase().includes(formData.name.toLowerCase());
-      const plzMatches = result.plz.includes(formData.plz);
-      return (nameMatches && plzMatches); // Beide Kriterien müssen zutreffen
-    });
+      if (response.data.status === 'success') {
+        const allResults = response.data.kundenkarten;
 
-    setSearchResults(filteredResults); // Zeigt die gefilterten Ergebnisse an
+        const foundKarte = allResults.find((result) => {
+          const nameMatches = (`${result.vorname} ${result.nachname}`).toLowerCase().includes(formData.name.toLowerCase());
+          const plzMatches = result.plz.includes(formData.plz);
+          return nameMatches && plzMatches;
+        });
+
+        setKundenkarte(foundKarte || null);
+      }
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Kundenkarten:', error);
+    }
   };
-
   return (
     <div className="kundensuche-container">
       <div className="kundensuche-form">

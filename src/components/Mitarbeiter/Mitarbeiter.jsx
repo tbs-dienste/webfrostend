@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake, FaLongArrowAltLeft } from 'react-icons/fa';
+import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake, FaLongArrowAltLeft, FaDoorOpen } from 'react-icons/fa';
 import './Mitarbeiter.scss';
 
 const Mitarbeiter = () => {
@@ -21,9 +21,10 @@ const Mitarbeiter = () => {
         });
 
         if (Array.isArray(response.data.data)) {
+          // Hier nehmen wir den hatGeburtstag-Wert direkt aus der API-Daten und setzen ihn
           const updatedMitarbeiter = response.data.data.map((m) => ({
             ...m,
-            hatGeburtstag: checkBirthday(m.geburtstag), // Berechne, ob der Mitarbeiter heute Geburtstag hat
+            hatGeburtstag: m.hatGeburtstag, // Wir übernehmen den Wert aus der API direkt
           }));
           setMitarbeiterListe(updatedMitarbeiter);
         } else {
@@ -39,6 +40,9 @@ const Mitarbeiter = () => {
 
     fetchMitarbeiter();
   }, []);
+
+
+
 
   const handleShowConfirmationModal = (id) => {
     setShowConfirmationModal(true);
@@ -113,23 +117,33 @@ const Mitarbeiter = () => {
                   <td>{m.mitarbeiternummer}</td>
                   <td>{m.vorname} {m.nachname}</td>
                   <td>
-                    {/* Geburtsstagsicon anzeigen, wenn heute Geburtstag ist */}
                     {m.hatGeburtstag && (
-                      <FaBirthdayCake
-                        className="birthday-icon"
-                        title={`Heute ist der ${calculateAge(m.geburtstag)}. Geburtstag!`}
-                      />
+                      <>
+                        <FaBirthdayCake
+                          className="birthday-icon"
+                          title={`Heute ist der ${m.geburtstagsInfo} von ${m.vorname}!`}
+                        />
+                      </>
                     )}
+
+
+
                     {m.status === 'online' && (
                       <FaGlobe
                         className="online-icon"
                         title="Mitarbeiter ist online"
                       />
                     )}
-                     {m.status === 'online' && (
+                    {m.status === 'online' && (
                       <FaLongArrowAltLeft
                         className="online-icon"
                         title="Mitarbeiter ist online"
+                      />
+                    )}
+                    {m.status === 'abwesend' && (
+                      <FaDoorOpen
+                        className="abwesend-icon"
+                        title="Mitarbeiter ist abwesend"
                       />
                     )}
                     {m.krankGemeldet && (
