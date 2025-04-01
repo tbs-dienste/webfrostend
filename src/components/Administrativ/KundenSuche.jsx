@@ -15,8 +15,8 @@ const KundenSuche = ({ onKassenModusChange }) => {
     telnr: '',
   });
   const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
+  const [selectedRow, setSelectedRow] = useState(null); // Zustand für die markierte Zeile
   const navigate = useNavigate(); // Um zu Kasse zu navigieren
-  const [kundenkarte, setKundenkarte] = useState(null);
 
   // Kassenmodus aktivieren
   useEffect(() => {
@@ -58,7 +58,49 @@ const KundenSuche = ({ onKassenModusChange }) => {
   const goToKasse = () => {
     navigate('/kasse');
   };
+  
+  const handleÜbernehmen = async () => {
+    if (selectedRow === null) {
+      alert("Bitte wählen Sie einen Kunden aus.");
+      return;
+    }
 
+    const selectedCustomer = searchResults[selectedRow]; // Zugriff auf den ausgewählten Kunden
+    const token = localStorage.getItem("token"); // Token aus localStorage abrufen
+  
+    if (!token) {
+      alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
+      return;
+    }
+  
+    try {
+      const response = await axios.post(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
+        { kundenkartennummer: selectedCustomer?.kundenkartennummer }, // optional chaining für sichereren Zugriff
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      console.log("Kundenkarte erfolgreich übernommen und gescannt:", response.data);
+  
+      // Kassenmodus aktualisieren und zur Kasse weiterleiten
+      onKassenModusChange({
+        kundenkartennummer: selectedCustomer?.kundenkartennummer,
+        vorname: selectedCustomer?.vorname,
+        nachname: selectedCustomer?.nachname,
+        plz: selectedCustomer?.plz,
+        ort: selectedCustomer?.ort,
+      });
+  
+      navigate('/kasse');
+  
+    } catch (error) {
+      console.error("Fehler beim Übernehmen der Kundenkarte:", error);
+      alert("Fehler beim Übernehmen der Kundenkarte.");
+    }
+  };
+  
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -66,21 +108,38 @@ const KundenSuche = ({ onKassenModusChange }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      console.log("API Antwort:", response.data); // Debugging
+
       if (response.data.status === 'success') {
         const allResults = response.data.kundenkarten;
 
-        const foundKarte = allResults.find((result) => {
-          const nameMatches = (`${result.vorname} ${result.nachname}`).toLowerCase().includes(formData.name.toLowerCase());
+        console.log("Gefundene Kundenkarten:", allResults); // Debugging
+
+        // Filter nach Name und PLZ
+        const filteredResults = allResults.filter((result) => {
+          const fullName = `${result.vorname} ${result.nachname}`.toLowerCase();
+          const nameMatches = fullName.includes(formData.name.toLowerCase());
           const plzMatches = result.plz.includes(formData.plz);
+
+          console.log(`Vergleiche: '${fullName}' mit '${formData.name.toLowerCase()}' und '${result.plz}' mit '${formData.plz}'`);
+
           return nameMatches && plzMatches;
         });
 
-        setKundenkarte(foundKarte || null);
+        console.log("Gefilterte Kundenkarten:", filteredResults); // Debugging
+
+        setSearchResults(filteredResults); // Ergebnisse setzen
       }
     } catch (error) {
       console.error('Fehler beim Abrufen der Kundenkarten:', error);
     }
   };
+
+  // Funktion zum Markieren der Zeile
+  const handleRowClick = (index) => {
+    setSelectedRow(index); // Setzt die markierte Zeile
+  };
+
   return (
     <div className="kundensuche-container">
       <div className="kundensuche-form">
@@ -120,7 +179,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
         >
           Suchen
         </button>
-        <button>Übernehmen</button>
+        <button onClick={handleÜbernehmen}>Übernehmen</button>
         <button onClick={goToKasse}>Exit</button>
       </div>
 
@@ -132,22 +191,26 @@ const KundenSuche = ({ onKassenModusChange }) => {
             <tr>
               <th>Kundennr</th>
               <th>Name</th>
+              <th>Straße</th>
               <th>PLZ</th>
               <th>Ort</th>
-              <th>Straße</th>
               <th>Telefonnummer</th>
             </tr>
           </thead>
           <tbody>
             {searchResults.length > 0 ? (
               searchResults.map((result, index) => (
-                <tr key={index}>
-                  <td>{result.kundennr}</td>
-                  <td>{result.name}</td>
+                <tr
+                  key={index}
+                  className={selectedRow === index ? 'selected' : ''} // Zeile hervorheben, wenn sie ausgewählt ist
+                  onClick={() => handleRowClick(index)} // Markiert die Zeile beim Klicken
+                >
+                  <td>{result.kundenkartennummer}</td>
+                  <td>{`${result.vorname} ${result.nachname}`}</td>
+                  <td>{result.adresse}</td>
                   <td>{result.plz}</td>
                   <td>{result.ort}</td>
-                  <td>{result.strasse}</td>
-                  <td>{result.telnr}</td>
+                  <td>{result.telefonnummer}</td>
                 </tr>
               ))
             ) : (

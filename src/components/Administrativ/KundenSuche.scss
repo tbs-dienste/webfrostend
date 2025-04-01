@@ -1,169 +1,184 @@
 .kundensuche-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f7f7f7;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f7f7;
+}
+
+.kundensuche-form {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;  /* Horizontal Layout */
+  gap: 1rem;
+  flex-wrap: nowrap;  /* Verhindert Umbruch */
+}
+
+.kundensuche-form h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.input-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 14%;  /* 7 Felder nebeneinander, anpassen nach Bedarf */
+  min-width: 150px;
+}
+
+.input-field label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.input-field input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.input-field input:focus {
+  border-color: #007bff;
+}
+
+.input-field.active input {
+  background-color: #e9f7ff;
+}
+
+.suche-button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.suche-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 1024px) {
   .kundensuche-form {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 2rem;
     width: 100%;
-    display: flex;
-    justify-content: space-between;  /* Horizontal Layout */
-    gap: 1rem;
-    flex-wrap: nowrap;  /* Verhindert Umbruch */
   }
+}
+
+@media (max-width: 768px) {
+  .kundensuche-form {
+    width: 100%;
+  }
+}
+
+.bottom-buttons {
+  position: absolute; /* Positioniere die Buttons am unteren Rand */
+  bottom: 0; /* Setze sie am unteren Rand des Containers */
+  display: flex;
+  flex-direction: row; /* Stellt sicher, dass die Buttons nebeneinander sind */
+  justify-content: space-between; /* Verteile die Buttons gleichmäßig */
+  align-items: stretch; /* Sorgt dafür, dass die Buttons die gleiche Höhe haben */
+  gap: 1rem; /* Füge Abstand zwischen den Buttons hinzu */
+  flex-wrap: wrap; /* Wenn der Platz nicht ausreicht, können die Buttons umbrochen werden */
+  padding: 1rem;
+  width: 100%;
   
-  .kundensuche-form h2 {
-    font-size: 24px;
+  button {
+    flex-grow: 1; /* Damit die Buttons den verfügbaren Platz gleichmäßig einnehmen */
+    padding: 1.5rem; /* Erhöht das Padding für breitere und höhere Buttons */
+    font-size: 1.2rem; /* Erhöht die Schriftgröße für mehr Textfluss */
+    border-radius: 6px;
+    border: 1px solid #dfe3e8;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    height: 60px; /* Setzt eine feste Höhe für die Buttons */
+    
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    
+    &:not(:disabled):hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.result-table {
+  margin-top: 2rem;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+
+  h3 {
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 1rem;
     text-align: center;
-    width: 100%;
   }
-  
-  .input-field {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 14%;  /* 7 Felder nebeneinander, anpassen nach Bedarf */
-    min-width: 150px;
-  }
-  
-  .input-field label {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  
-  .input-field input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    outline: none;
-    transition: all 0.3s ease;
-    width: 100%;
-  }
-  
-  .input-field input:focus {
-    border-color: #007bff;
-  }
-  
-  .input-field.active input {
-    background-color: #e9f7ff;
-  }
-  
-  .suche-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-    margin-top: 1rem;
-  }
-  
-  .suche-button:hover {
-    background-color: #0056b3;
-  }
-  
-  @media (max-width: 1024px) {
-    .kundensuche-form {
-      width: 100%;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .kundensuche-form {
-      width: 100%;
-    }
-  }
-  
-  .bottom-buttons {
-    position: absolute; /* Positioniere die Buttons am unteren Rand */
-    bottom: 0; /* Setze sie am unteren Rand des Containers */
-    display: flex;
-    flex-direction: row; /* Stellt sicher, dass die Buttons nebeneinander sind */
-    justify-content: space-between; /* Verteile die Buttons gleichmäßig */
-    align-items: stretch; /* Sorgt dafür, dass die Buttons die gleiche Höhe haben */
-    gap: 1rem; /* Füge Abstand zwischen den Buttons hinzu */
-    flex-wrap: wrap; /* Wenn der Platz nicht ausreicht, können die Buttons umbrochen werden */
-    padding: 1rem;
-    width: 100%;
-    
-    button {
-      flex-grow: 1; /* Damit die Buttons den verfügbaren Platz gleichmäßig einnehmen */
-      padding: 1.5rem; /* Erhöht das Padding für breitere und höhere Buttons */
-      font-size: 1.2rem; /* Erhöht die Schriftgröße für mehr Textfluss */
-      border-radius: 6px;
-      border: 1px solid #dfe3e8;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      height: 60px; /* Setzt eine feste Höhe für die Buttons */
-      
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-      
-      &:not(:disabled):hover {
-        background-color: #0056b3;
-      }
-    }
-  }
-  
 
-  .result-table {
-    margin-top: 2rem;
+  table {
     width: 100%;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 1rem;
-  
-    h3 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      text-align: center;
+    border-collapse: collapse;
+    text-align: left;
+    
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      font-size: 14px;
     }
-  
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      
-      th, td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-      }
-  
-      th {
-        background-color: #f4f4f4;
-        font-weight: bold;
-      }
-  
-      td {
-        background-color: #fafafa;
-      }
-  
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-  
-      tr:hover {
-        background-color: #f1f1f1;
-      }
+
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    td {
+      background-color: #f9f9f9;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
     }
   }
-  
+}/* Standard Hintergrundfarbe für td */
+table td {
+  background-color: #fff; /* Weiß für nicht ausgewählte Zellen */
+}
+
+/* Wenn die Zeile ausgewählt ist, wird die Hintergrundfarbe der gesamten Zeile geändert */
+table tr.selected {
+  background-color: #6ddffe !important; /* Markierte Zeile mit Hintergrundfarbe */
+  color: rgb(173, 80, 80); /* Textfarbe ändern */
+}
+
+/* Wenn die Zeile beim Hover weiterhin markiert bleibt, bleibt der Hintergrund gleich */
+table tr.selected:hover {
+  background-color: #6ddffe !important;
+  color: rgb(173, 80, 80); /* Textfarbe bleibt auch bei Hover */
+}
+
+

@@ -21,13 +21,12 @@ const MitarbeiterAnzeigen = () => {
         geschlecht: '',
         benutzername: '',
         iban: '',
-        geburtstagdatum: '', // Hinzugefügt
+        geburtstagdatum: '',
         verfügung: '',
         teilzeit_prozent: null,
         fähigkeiten: ''
     });
 
-    // Daten des Mitarbeiters abrufen
     useEffect(() => {
         async function fetchMitarbeiter() {
             try {
@@ -56,29 +55,24 @@ const MitarbeiterAnzeigen = () => {
         fetchMitarbeiter();
     }, [id]);
 
-    // Bearbeitungsmodus umschalten
     const handleEditToggle = () => {
         setEditMode(!editMode); // Umschalten zwischen Bearbeitungs- und Anzeige-Modus
     };
 
-    // Änderungen speichern
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
-    
-            // Überprüfen, ob das Geburtsdatum vorhanden ist, andernfalls nicht in die Anfrage aufnehmen
             const updatedFormData = { ...formData };
             if (!updatedFormData.geburtstagdatum) {
                 updatedFormData.geburtstagdatum = null;  // Geburtsdatum auf null setzen, wenn leer
             }
-    
-            // Sende die aktualisierten Daten an den Backend-Server
+
             await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}`, updatedFormData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             alert('Mitarbeiterdaten erfolgreich gespeichert');
             setEditMode(false);  // Verlasse den Bearbeitungsmodus
             setSelectedMitarbeiter(updatedFormData);  // Setze die geänderten Daten als aktuelle Mitarbeiterdaten
@@ -88,7 +82,6 @@ const MitarbeiterAnzeigen = () => {
         }
     };
 
-    // Eingabewerte ändern
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -97,15 +90,13 @@ const MitarbeiterAnzeigen = () => {
         });
     };
 
-    // Ladezustand anzeigen
     if (loading) {
         return <div className="loading">Lädt...</div>;
     }
 
-    // Funktion zum Formatieren des Geburtsdatums
     const formatDate = (date) => {
         const newDate = new Date(date);
-        return newDate.toLocaleDateString('de-DE');  // Format: DD.MM.YYYY
+        return newDate.toLocaleDateString('de-DE');
     };
 
     return (
@@ -117,7 +108,6 @@ const MitarbeiterAnzeigen = () => {
                 </button>
             </div>
 
-            {/* Edit Mode Form */}
             {editMode ? (
                 <div className="form-section">
                     {Object.keys(formData).map((field) => (
@@ -126,12 +116,11 @@ const MitarbeiterAnzeigen = () => {
                                 {field.charAt(0).toUpperCase() + field.slice(1)}
                             </label>
                             {field === 'geburtstagdatum' ? (
-                                // Geburtsdatum als Date-Feld im Bearbeitungsmodus
                                 <input
                                     type="date"
                                     id={field}
                                     name={field}
-                                    value={formData[field] || ''}  // Fallback auf einen leeren String
+                                    value={formData[field] || ''}
                                     onChange={handleInputChange}
                                     className="input-date"
                                 />
@@ -140,7 +129,7 @@ const MitarbeiterAnzeigen = () => {
                                     type="text"
                                     id={field}
                                     name={field}
-                                    value={formData[field] || ''}  // Fallback auf einen leeren String
+                                    value={formData[field] || ''}
                                     onChange={handleInputChange}
                                     className="input-text"
                                 />
@@ -154,7 +143,6 @@ const MitarbeiterAnzeigen = () => {
                     </div>
                 </div>
             ) : (
-                // Anzeige-Modus (nur Lesemodus)
                 <div className="form-section">
                     {selectedMitarbeiter &&
                         Object.keys(selectedMitarbeiter).map((field) => (
@@ -174,3 +162,4 @@ const MitarbeiterAnzeigen = () => {
 };
 
 export default MitarbeiterAnzeigen;
+
