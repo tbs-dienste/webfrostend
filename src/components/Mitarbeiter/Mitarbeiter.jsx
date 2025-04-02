@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake, FaLongArrowAltLeft, FaDoorOpen } from 'react-icons/fa';
+import { FaTrash, FaUser, FaVirus, FaGlobe, FaBirthdayCake, FaBan, FaDoorOpen } from 'react-icons/fa';
 import './Mitarbeiter.scss';
 
 const Mitarbeiter = () => {
@@ -101,6 +101,9 @@ const Mitarbeiter = () => {
                     )}
                     {m.status === 'abwesend' && (
                       <FaDoorOpen className="status-icon abwesend" title="Mitarbeiter ist abwesend" />
+                    )}
+                    {m.status === 'offline' && (
+                      <FaBan className="status-icon abwesend" title="Mitarbeiter hat sich noch nie eingloggt" />
                     )}
                     {m.krankGemeldet && (
                       <FaVirus className="status-icon krank" title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`} />
