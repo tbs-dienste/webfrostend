@@ -25,14 +25,8 @@ const Stellenanzeigen = () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/stellen');
                 const fetchedStellen = response.data.data;
-                
-                // Filtere Stellen für nicht-Admin-Nutzer
-                const filtered = fetchedStellen.filter(stelle => 
-                    stelle.status === 'Veröffentlicht' && !localStorage.getItem('token')
-                );
-
                 setStellen(fetchedStellen);
-                setFilteredStellen(filtered); 
+                setFilteredStellen(fetchedStellen); // Standardmäßig alle Anzeigen anzeigen
             } catch (error) {
                 console.error("Fehler beim Abrufen der Stellen:", error);
             }
@@ -45,13 +39,9 @@ const Stellenanzeigen = () => {
     const filterStellen = (status) => {
         setStatusFilter(status);
         if (status === '') {
-            setFilteredStellen(stellen.filter(stelle => 
-                (stelle.status === 'Veröffentlicht' || isAdmin)
-            ));
+            setFilteredStellen(stellen);
         } else {
-            const filtered = stellen.filter(stelle => 
-                stelle.status === status && (isAdmin || status !== 'Veröffentlicht')
-            );
+            const filtered = stellen.filter(stelle => stelle.status === status);
             setFilteredStellen(filtered);
         }
     };
@@ -94,7 +84,6 @@ const Stellenanzeigen = () => {
 
                             <p className="stellen-detail"><strong>Abteilung:</strong> {stelle.abteilung_name}</p>
                             <p className="stellen-detail"><strong>Startdatum:</strong> {new Date(stelle.start_datum).toLocaleDateString()}</p>
-                            
                             
                             {/* Hinweis zu Arbeitszeiten und Optionen */}
                             <p className="stellen-detail">

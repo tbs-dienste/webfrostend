@@ -32,6 +32,8 @@ const Statistik = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeChart, setActiveChart] = useState("tag");
+  const [activeUmsatz, setActiveUmsatz] = useState("monat");
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +86,46 @@ const Statistik = () => {
     abgeschlosseneAufträge,
     durchschnittBewertung,
     geschlechtVerteilung,
+    umsatzProJahr,
+    umsatzProMonat,
+
   } = statistikData;
+
+  // Daten für das Diagramm der Transaktionen nach Zahlungsmethode
+  const transaktionenNachMethodeData = {
+    labels: ['Bar', 'Karte'],
+    datasets: [
+      {
+        label: 'Anzahl der Transaktionen',
+        data: statistikData.transaktionenNachMethode.map(item => item.anzahl_transaktionen),
+        backgroundColor: ['#FF6347', '#42A5F5'], // Rot für Bar, Blau für Karte
+      },
+      {
+        label: 'Gesamtbetrag',
+        data: statistikData.transaktionenNachMethode.map(item => parseFloat(item.gesamtbetrag)),
+        backgroundColor: ['#FFEB3B', '#66BB6A'], // Gelb für Bar, Grün für Karte
+      },
+    ],
+  };
+
+  // Daten für das Diagramm der Transaktionen nach Kartenart
+  const transaktionenNachKartenartData = {
+    labels: ['VISA', 'MasterCard', 'Maestro', 'TWINT', 'AMEX', 'Discover'],
+    datasets: [
+      {
+        label: 'Anzahl der Transaktionen',
+        data: statistikData.transaktionenNachKartenart.map(item => item.anzahl_transaktionen),
+        backgroundColor: ['#42A5F5', '#66BB6A', '#FFCA28', '#FF7043', '#AB47BC', '#8D6E63'], // Verschiedene Farben für jede Karte
+      },
+      {
+        label: 'Gesamtbetrag',
+        data: statistikData.transaktionenNachKartenart.map(item => parseFloat(item.gesamtbetrag)),
+        backgroundColor: ['#1E88E5', '#43A047', '#FFB300', '#F4511E', '#8E24AA', '#6D4C41'], // Andere Farbtöne für den Gesamtbetrag
+      },
+    ],
+  };
+
+
 
   // Prepare data for Pie and Bar charts
   const pieChartDataLand = {
@@ -97,8 +138,39 @@ const Statistik = () => {
       },
     ],
   };
-// Beispiel für die Vorbereitung der Daten für ein Pie- und Bar-Diagramm basierend auf Geschlecht
-const pieChartDataGeschlecht = {
+
+  const umsatzData = {
+    monat: {
+      title: "Umsatz pro Monat",
+      labels: umsatzProMonat.map((item) => item.monat),
+      datasets: [
+        {
+          label: "Umsatz in CHF",
+          data: umsatzProMonat.map((item) => item.umsatz),
+          backgroundColor: "#36A2EB",
+          borderColor: "#36A2EB",
+          borderWidth: 1,
+        },
+      ],
+    },
+    jahr: {
+      title: "Umsatz pro Jahr",
+      labels: umsatzProJahr.map((item) => item.jahr),
+      datasets: [
+        {
+          label: "Umsatz in CHF",
+          data: umsatzProJahr.map((item) => item.umsatz),
+          backgroundColor: "#FF6384",
+          borderColor: "#FF6384",
+          borderWidth: 1,
+        },
+      ],
+    },
+  };
+
+
+  // Beispiel für die Vorbereitung der Daten für ein Pie- und Bar-Diagramm basierend auf Geschlecht
+  const pieChartDataGeschlecht = {
     labels: kundenProGeschlecht.map(item => item.geschlecht), // Labels für jedes Geschlecht
     datasets: [
       {
@@ -109,7 +181,7 @@ const pieChartDataGeschlecht = {
     ],
   };
 
-  
+
 
   const barChartDataTopDienstleistungen = {
     labels: topDienstleistungen.map(item => item.dienstleistung),
@@ -186,8 +258,8 @@ const pieChartDataGeschlecht = {
         },
       ],
     },
-    
-    
+
+
     monat: {
       title: "Kontakte pro Monat",
       labels: Array.from({ length: 31 }, (_, i) => {
@@ -243,7 +315,7 @@ const pieChartDataGeschlecht = {
         },
       ],
     },
-    
+
     jahr: {
       title: "Kontakte pro Jahr",
       labels: kontakteProJahr.map((item) => item.jahr),
@@ -355,6 +427,75 @@ const pieChartDataGeschlecht = {
         <h3>Top Dienstleistungen</h3>
         <Bar data={barChartDataTopDienstleistungen} />
       </div>
+
+      <div className="umsatz-statistik-container">
+        <h2 className="umsatz-title">Umsatzstatistik</h2>
+        <div className="chart-buttons">
+          <button
+            className={activeUmsatz === "monat" ? "active" : ""}
+            onClick={() => setActiveUmsatz("monat")}
+          >
+            Monat
+          </button>
+          <button
+            className={activeUmsatz === "jahr" ? "active" : ""}
+            onClick={() => setActiveUmsatz("jahr")}
+          >
+            Jahr
+          </button>
+        </div>
+        <div className="chart-container">
+          <Bar data={umsatzData[activeUmsatz]} options={{ responsive: true }} />
+        </div>
+      </div>
+
+      <div>
+        <h2>Transaktionen nach Zahlungsmethode</h2>
+        <div style={{ width: '60%', margin: 'auto' }}>
+          <Bar
+            data={transaktionenNachMethodeData}
+            options={{
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Anzahl der Transaktionen & Gesamtbetrag nach Zahlungsmethode',
+                },
+              },
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Zahlungsmethode',
+                  },
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'Wert',
+                  },
+                },
+              },
+            }}
+          />
+        </div>
+
+        <h2>Transaktionen nach Kartenart</h2>
+        <div style={{ width: '60%', margin: 'auto' }}>
+          <Pie
+            data={transaktionenNachKartenartData}
+            options={{
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Anzahl der Transaktionen & Gesamtbetrag nach Kartenart',
+                },
+              },
+            }}
+          />
+        </div>
+      </div>;
     </div>
   );
 };
