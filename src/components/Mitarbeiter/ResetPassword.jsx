@@ -1,34 +1,41 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './ResetPassword.scss'; // SCSS-Stylesheet importieren
 
 const ResetPassword = () => {
-    const { id } = useParams(); // ID von der URL abrufen
+    const navigate = useNavigate();
+    const { id } = useParams(); // ID aus der URL abrufen
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // Loading State
+    const [loading, setLoading] = useState(false); // Ladezustand
 
     const handleResetPassword = async () => {
-        setLoading(true); // Ladezustand aktivieren
+        setLoading(true);
         try {
-            const token = localStorage.getItem('token'); // Token aus localStorage abrufen
-            const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}/reset-password`, {
-                newPasswort: newPassword,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Token im Header hinzufügen
-                },
-            });
+            const token = localStorage.getItem('token');
+            const response = await axios.put(
+                `https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${id}/reset-password`,
+                { newPasswort: newPassword },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
-            setMessage(response.data.message);
+            setMessage("Passwort erfolgreich geändert!");
             setError('');
+            
+            // ⏳ Nach 3 Sekunden zurück zur Mitarbeiteranzeige navigieren
+            setTimeout(() => {
+                navigate(`/mitarbeiteranzeigen/${id}`);
+            }, 1000);
+
         } catch (err) {
             setError(err.response?.data?.error || 'Fehler beim Zurücksetzen des Passworts.');
             setMessage('');
         } finally {
-            setLoading(false); // Ladezustand deaktivieren
+            setLoading(false);
         }
     };
 
@@ -46,7 +53,6 @@ const ResetPassword = () => {
             </button>
             {message && <p className="success-message">{message}</p>}
             {error && <p className="error-message">{error}</p>}
-            <Link to={`/mitarbeiter/${id}`} className="back-link">Zurück zu Mitarbeiter anzeigen</Link> {/* Link zur Mitarbeiter-Anzeige */}
         </div>
     );
 };

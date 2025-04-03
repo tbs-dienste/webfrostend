@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaCheck, FaEdit } from 'react-icons/fa';
 import './MitarbeiterAnzeigen.scss'; // Importiere die SCSS-Datei
 
 const MitarbeiterAnzeigen = () => {
+    const navigate = useNavigate();
+
     const { id } = useParams();  // Zugriff auf die Mitarbeiter-ID aus der URL
     const [selectedMitarbeiter, setSelectedMitarbeiter] = useState(null);  // Mitarbeiterdaten
     const [loading, setLoading] = useState(true);  // Ladezustand
@@ -82,6 +84,10 @@ const MitarbeiterAnzeigen = () => {
         }
     };
 
+    const toggleResetPassword = async () => {
+        navigate(`/mitarbeiter/${id}/reset-password`)
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -155,6 +161,10 @@ const MitarbeiterAnzeigen = () => {
                                 )}
                             </div>
                         ))}
+
+                    <button className="edit-button" onClick={toggleResetPassword}>
+                        <FaEdit />Passwort zurücksetzen
+                    </button>
                 </div>
             )}
         </div>
