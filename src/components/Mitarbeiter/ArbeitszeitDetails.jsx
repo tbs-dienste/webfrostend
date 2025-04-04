@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaUserClock, FaPlus, FaCalendarAlt } from 'react-icons/fa';
 import './ArbeitszeitDetails.scss';
 
 const ArbeitszeitDetails = () => {
@@ -13,13 +13,10 @@ const ArbeitszeitDetails = () => {
 
     axios
       .get(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        console.log('API-Antwort:', response.data);
-        setData(response.data.dienstleistungen); // Setze die Dienstleistungen direkt
+        setData(response.data.dienstleistungen || []);
       })
       .catch((error) => {
         console.error('Fehler beim Abrufen der Daten:', error);
@@ -27,11 +24,7 @@ const ArbeitszeitDetails = () => {
   }, [id]);
 
   const handleDetailClick = (dienstleistungId) => {
-    if (!dienstleistungId) {
-      console.error("Dienstleistungs-ID ist undefined");
-      return;
-    }
-    console.log(`Details für Dienstleistung ID: ${dienstleistungId}`);
+    if (!dienstleistungId) return;
     window.location.href = `/arbeitszeit-erfassen/${id}/${dienstleistungId}`;
   };
 
@@ -40,18 +33,17 @@ const ArbeitszeitDetails = () => {
 
     axios
       .delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/arbeitszeit/${arbeitszeitId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then((response) => {
-        console.log('Arbeitszeit gelöscht:', response.data);
-        setData((prevData) => {
-          return prevData.map((dienstleistung) => ({
+      .then(() => {
+        setData((prevData) =>
+          prevData.map((dienstleistung) => ({
             ...dienstleistung,
-            arbeitszeiten: dienstleistung.arbeitszeiten.filter((mitarbeiter) => mitarbeiter.arbeitszeit_id !== arbeitszeitId),
-          }));
-        });
+            arbeitszeiten: dienstleistung.arbeitszeiten.filter(
+              (mitarbeiter) => mitarbeiter.arbeitszeit_id !== arbeitszeitId
+            ),
+          }))
+        );
       })
       .catch((error) => {
         console.error('Fehler beim Löschen der Arbeitszeit:', error);
@@ -60,50 +52,39 @@ const ArbeitszeitDetails = () => {
 
   return (
     <div className="arbeitszeit-container">
-      <h1>Arbeitszeiten</h1>
+      <h1><FaUserClock /> Arbeitszeiten</h1>
       {data.length > 0 ? (
-        data.map((dienstleistung) => {
-          const dienstleistungId = dienstleistung.dienstleistung_id;
-
-          if (!dienstleistungId) {
-            console.error(`Dienstleistung hat keine ID`);
-            return null;
-          }
-
-          return (
-            <div key={dienstleistungId} className="dienstleistung-section">
-              <h2>
-                {dienstleistung.dienstleistung} (ID: {dienstleistungId})
-                <button onClick={() => handleDetailClick(dienstleistungId)} className="details-button">
-                  +
-                </button>
-              </h2>
-              <div className="arbeitszeit-box">
-                {dienstleistung.arbeitszeiten.length > 0 ? (
-                  dienstleistung.arbeitszeiten.map((mitarbeiter) => (
-                    <div key={mitarbeiter.arbeitszeit_id} className="mitarbeiter-box">
-                      <p><strong>Vorname:</strong> {mitarbeiter.vorname}</p>
-                      <p><strong>Nachname:</strong> {mitarbeiter.nachname}</p>
-                      <p><strong>Startzeit:</strong> {new Date(mitarbeiter.start_time).toLocaleString()}</p>
-                      <p><strong>Endzeit:</strong> {new Date(mitarbeiter.end_time).toLocaleString()}</p>
-                      <p><strong>Arbeitszeit (Stunden):</strong> {mitarbeiter.arbeitszeit}</p>
-                      <button 
-                        onClick={() => handleDeleteClick(mitarbeiter.arbeitszeit_id)} 
-                        className="delete-button"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p>Keine Arbeitszeiten verfügbar.</p>
-                )}
-              </div>
+        data.map((dienstleistung) => (
+          <div key={dienstleistung.dienstleistung_id} className="dienstleistung-section">
+            <div className="dienstleistung-header">
+              <h2><FaCalendarAlt /> {dienstleistung.dienstleistung}</h2>
+              <button onClick={() => handleDetailClick(dienstleistung.dienstleistung_id)} className="details-button">
+                <FaPlus /> Neue Zeit erfassen
+              </button>
             </div>
-          );
-        })
+
+            <div className="arbeitszeit-box">
+              {dienstleistung.arbeitszeiten.length > 0 ? (
+                dienstleistung.arbeitszeiten.map((mitarbeiter) => (
+                  <div key={mitarbeiter.arbeitszeit_id} className="mitarbeiter-box">
+                    <div className="mitarbeiter-info">
+                      <p><strong>👤 {mitarbeiter.vorname} {mitarbeiter.nachname}</strong></p>
+                      <p>⏳ {new Date(mitarbeiter.start_time).toLocaleString()} - {new Date(mitarbeiter.end_time).toLocaleString()}</p>
+                      <p>🕒 {mitarbeiter.arbeitszeit} Std.</p>
+                    </div>
+                    <button onClick={() => handleDeleteClick(mitarbeiter.arbeitszeit_id)} className="delete-button">
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="no-data">Keine Arbeitszeiten verfügbar.</p>
+              )}
+            </div>
+          </div>
+        ))
       ) : (
-        <p>Keine Dienstleistungen verfügbar.</p>
+        <p className="no-data">Keine Dienstleistungen verfügbar.</p>
       )}
     </div>
   );
