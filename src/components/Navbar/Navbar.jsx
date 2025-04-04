@@ -94,6 +94,7 @@ function Navbar() {
                 { to: "/rechnungen", text: "Rechnungen" },
                 { to: "/statistiken", text: "Statistik" },
                 { to: "/allbewerbungen", text: "Bewerbungen" },
+                { to: "/products", text: "Produkte" },
 
               ]}
             />
