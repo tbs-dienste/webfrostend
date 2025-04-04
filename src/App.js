@@ -94,6 +94,8 @@ import StellenausschreibungDetail from './components/Administrativ/Stellenbeschr
 import Stellenanzeigen from './components/Administrativ/Stellenbeschreibung/Stellenanzeigen';
 import "./App.css";
 import AllBewerbungen from './components/Administrativ/Applications/AllBewerbungen';
+import AllProducts from './components/Administrativ/AllProducts';
+import ArtikelSuche from './components/Administrativ/ArtikelSuche';
 
 
 const App = () => {
@@ -179,6 +181,7 @@ const App = () => {
           <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
           <Route path="/alleAntraege" element={<AlleAntraege />} />
           <Route path="/last" element={<LastReceiptViewer />} />
+          <Route path="/products" element={<AllProducts />} />
 
           <Route path="/receipts" element={<Receipts />} />
           <Route path="/gs-karte" element={<GSKarteAbfrage />} />
@@ -194,6 +197,7 @@ const App = () => {
           <Route path="/allbewerbungen" element={<AllBewerbungen />} />
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
+          <Route path="/artikelsuche" element={<ArtikelSuche onKassenModusChange={toggleKassenModus}/>} />
 
 
           <Route

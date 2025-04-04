@@ -386,6 +386,11 @@ useEffect(() => {
   };
 
 
+  const handleArtikelsuche = () => {
+   
+    navigate("/artikelsuche");
+  };
+
   // Funktion für das Klicken auf die Kundenkarte
   const handleCustomerCardClick = () => {
     setShowCustomerCardButtons(!showCustomerCardButtons); // Toggle für die Buttons
@@ -1077,7 +1082,7 @@ useEffect(() => {
               </button>
 
 
-              <button className='btn'>Artikel suchen</button>
+              <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
 
 
               <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>

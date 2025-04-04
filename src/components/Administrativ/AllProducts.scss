@@ -1,0 +1,48 @@
+.all-products-wrapper {
+    padding: 2rem;
+    background-color: #f4f6f8;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .all-products-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+  
+  .all-products-table-wrapper {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow-x: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .all-products-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      font-size: 0.95rem;
+    }
+  
+    th {
+      background-color: #ecf0f1;
+      font-weight: 600;
+      color: #34495e;
+    }
+  
+    td {
+      color: #2c3e50;
+    }
+  
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+  }
+  
