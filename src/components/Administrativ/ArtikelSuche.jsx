@@ -4,20 +4,24 @@ import './KundenSuche.scss'; // Optional für dein Styling
 import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
 import axios from 'axios';
 
-const ArtikelSuche = ({ onKassenModusChange }) => {
-  const [activeField, setActiveField] = useState('artikelnr'); // Standardmäßig ist 'artikelnr' aktiv
+const Artikelsuche = ({ onKassenModusChange }) => {
+  const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
   const [formData, setFormData] = useState({
-    artikelnr: '',
-    artikelbezeichnung: '',
-    hauptaktivitaet: '',
-    von: '',
-    bis: '',
-    agnr: '',
+    article_number: '',
+    article_short_text: '',
+    barcode: '',
+    manufacturer: '',
+    category: '',
     artikelgruppe: '',
-    hgnr: '',
+    artikelgruppe_nummer: '',
     hauptartikelgruppe: '',
-    wgnr: '',
-    warengruppe: '',
+    hauptartikelnummer: '',
+    produktgruppe: '',
+    produktgruppe_nummer: '',
+    gueltig_ab: '',
+    gueltig_bis: '',
+    hauptaktivitaet: '',
+
   });
   const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
   const [selectedRow, setSelectedRow] = useState(null); // Zustand für die markierte Zeile
@@ -31,12 +35,9 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
     };
   }, [onKassenModusChange]);
 
-  // Fokus auf das 'artikelnr' Feld setzen, wenn die Komponente geladen wird
+  // Fokus auf das 'name' Feld setzen, wenn die Komponente geladen wird
   useEffect(() => {
-    const artikelnrInput = document.getElementById('artikelnr');
-    if (artikelnrInput) {
-      artikelnrInput.focus();
-    }
+    document.getElementById('article_short_text').focus();
   }, []);
 
   // Handhabung der Tastenanschläge
@@ -67,25 +68,79 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
     navigate('/kasse');
   };
 
+  const handleÜbernehmen = async () => {
+    if (selectedRow === null) {
+      alert("Bitte wählen Sie einen Kunden aus.");
+      return;
+    }
+
+    const selectedCustomer = searchResults[selectedRow]; // Zugriff auf den ausgewählten Kunden
+    const token = localStorage.getItem("token"); // Token aus localStorage abrufen
+
+    if (!token) {
+      alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
+        { kundenkartennummer: selectedCustomer?.kundenkartennummer }, // optional chaining für sichereren Zugriff
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log("Kundenkarte erfolgreich übernommen und gescannt:", response.data);
+
+      // Kassenmodus aktualisieren und zur Kasse weiterleiten
+      onKassenModusChange({
+        kundenkartennummer: selectedCustomer?.kundenkartennummer,
+        vorname: selectedCustomer?.vorname,
+        nachname: selectedCustomer?.nachname,
+        plz: selectedCustomer?.plz,
+        ort: selectedCustomer?.ort,
+      });
+
+      navigate('/kasse');
+
+    } catch (error) {
+      console.error("Fehler beim Übernehmen der Kundenkarte:", error);
+      alert("Fehler beim Übernehmen der Kundenkarte.");
+    }
+  };
+
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/products', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { artikelnr: formData.artikelnr, artikelbezeichnung: formData.artikelbezeichnung, ...formData }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       console.log("API Antwort:", response.data); // Debugging
 
       if (response.data.status === 'success') {
-        const allResults = response.data.artikel;
+        const allResults = response.data.kundenkarten;
 
-        console.log("Gefundene Artikel:", allResults); // Debugging
+        console.log("Gefundene Kundenkarten:", allResults); // Debugging
 
-        setSearchResults(allResults); // Ergebnisse setzen
+        // Filter nach Name und PLZ
+        const filteredResults = allResults.filter((result) => {
+          const fullName = `${result.vorname} ${result.nachname}`.toLowerCase();
+          const nameMatches = fullName.includes(formData.name.toLowerCase());
+          const plzMatches = result.plz.includes(formData.plz);
+
+          console.log(`Vergleiche: '${fullName}' mit '${formData.name.toLowerCase()}' und '${result.plz}' mit '${formData.plz}'`);
+
+          return nameMatches && plzMatches;
+        });
+
+        console.log("Gefilterte Kundenkarten:", filteredResults); // Debugging
+
+        setSearchResults(filteredResults); // Ergebnisse setzen
       }
     } catch (error) {
-      console.error('Fehler beim Abrufen der Artikel:', error);
+      console.error('Fehler beim Abrufen der Kundenkarten:', error);
     }
   };
 
@@ -97,7 +152,7 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
   return (
     <div className="kundensuche-container">
       <div className="kundensuche-form">
-        {['artikelnr', 'artikelbezeichnung', 'hauptaktivitaet', 'von', 'bis', 'agnr', 'artikelgruppe', 'hgnr', 'hauptartikelgruppe', 'wgnr', 'warengruppe'].map((field) => (
+        {['article_number', 'article_short_text', 'barcode', 'manufacturer', 'category', 'artikelgruppe', 'artikelgruppe_nummer', 'hauptartikelgruppe', 'hauptartikelnummer', 'produktgruppe', 'produktgruppe_nummer', 'gueltig_ab', 'gueltig_bis', 'hauptaktivitaet'].map((field) => (
           <div
             key={field}
             className={`input-field ${activeField === field ? 'active' : ''}`}
@@ -111,7 +166,7 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
               value={formData[field]}
               onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
               readOnly={true} // Alle Felder sind readonly
-              autoFocus={field === 'artikelnr'} // Setzt den Fokus auf das 'artikelnr' Feld
+              autoFocus={field === 'name'} // Setzt den Fokus auf das 'name' Feld
             />
           </div>
         ))}
@@ -123,7 +178,22 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
         <button disabled>X</button>
         <button disabled>X</button>
         <button disabled>X</button>
-        <button onClick={() => setFormData({ artikelnr: '', artikelbezeichnung: '', hauptaktivitaet: '', von: '', bis: '', agnr: '', artikelgruppe: '', hgnr: '', hauptartikelgruppe: '', wgnr: '', warengruppe: '' })}>
+        <button onClick={() => setFormData({
+          article_number: '',
+          article_short_text: '',
+          barcode: '',
+          manufacturer: '',
+          category: '',
+          artikelgruppe: '',
+          artikelgruppe_nummer: '',
+          hauptartikelgruppe: '',
+          hauptartikelnummer: '',
+          produktgruppe: '',
+          produktgruppe_nummer: '',
+          gueltig_ab: '',
+          gueltig_bis: '',
+          hauptaktivitaet: ''
+        })}>
           Filter löschen
         </button>
         <button disabled>Detail</button>
@@ -133,6 +203,7 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
         >
           Suchen
         </button>
+        <button onClick={handleÜbernehmen}>Übernehmen</button>
         <button onClick={goToKasse}>Exit</button>
       </div>
 
@@ -142,18 +213,12 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
         <table>
           <thead>
             <tr>
-              <th>Artikel-Nr.</th>
-              <th>Bezeichnung</th>
-              <th>Hauptaktivität</th>
-              <th>Gültig von</th>
-              <th>Gültig bis</th>
-              <th>Preis</th>
-              <th>AGNR</th>
-              <th>Artikelgruppe</th>
-              <th>HGNR</th>
-              <th>Hauptartikelgruppe</th>
-              <th>WGN</th>
-              <th>Warengruppe</th>
+              <th>ArtikelNr</th>
+              <th>Name</th>
+              <th>Straße</th>
+              <th>PLZ</th>
+              <th>Ort</th>
+              <th>Telefonnummer</th>
             </tr>
           </thead>
           <tbody>
@@ -164,23 +229,17 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
                   className={selectedRow === index ? 'selected' : ''} // Zeile hervorheben, wenn sie ausgewählt ist
                   onClick={() => handleRowClick(index)} // Markiert die Zeile beim Klicken
                 >
-                  <td>{result.artikelnr}</td>
-                  <td>{result.artikelbezeichnung}</td>
-                  <td>{result.hauptaktivitaet}</td>
-                  <td>{result.von}</td>
-                  <td>{result.bis}</td>
-                  <td>{result.preis}</td>
-                  <td>{result.agnr}</td>
-                  <td>{result.artikelgruppe}</td>
-                  <td>{result.hgnr}</td>
-                  <td>{result.hauptartikelgruppe}</td>
-                  <td>{result.wgnr}</td>
-                  <td>{result.warengruppe}</td>
+                  <td>{result.kundenkartennummer}</td>
+                  <td>{`${result.vorname} ${result.nachname}`}</td>
+                  <td>{result.adresse}</td>
+                  <td>{result.plz}</td>
+                  <td>{result.ort}</td>
+                  <td>{result.telefonnummer}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="12">Keine Ergebnisse gefunden</td>
+                <td colSpan="6">Keine Ergebnisse gefunden</td>
               </tr>
             )}
           </tbody>
@@ -191,4 +250,4 @@ const ArtikelSuche = ({ onKassenModusChange }) => {
   );
 };
 
-export default ArtikelSuche;
+export default Artikelsuche;
