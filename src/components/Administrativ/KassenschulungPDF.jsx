@@ -1,6 +1,6 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
-import Logo from './black.png'; // Dein Logo hier einfügen
+import Logo from './black.png';
 
 const styles = StyleSheet.create({
   page: {
@@ -63,6 +63,19 @@ const KassenschulungPDF = () => (
       </View>
 
       <View style={styles.section}>
+        <Text style={styles.bold}>Praxis-Übung:</Text>
+        <Text>
+          Während der Schulung werdet ihr gegenseitig kassieren, um den realen Ablauf zu üben. Dabei bezahlt ihr auch direkt eure Schulungsgebühr von 25 CHF an einen anderen Mitarbeiter über das Kassensystem von TBS Solutions.
+        </Text>
+        <Text style={{ marginTop: 5 }}>
+          Wer mit Karte bezahlt, muss zusätzlich eine Kartengebühr von 5% auf den Betrag bezahlen. Diese Gebühr wird automatisch vom Kassensystem berechnet und direkt beim Bezahlvorgang angezeigt.
+        </Text>
+        <Text style={{ marginTop: 5 }}>
+          Ziel dieser Übung ist es, dass ihr den gesamten Kassiervorgang selbstständig durchführt – vom Scannen der Produkte bis zum Abschluss der Zahlung.
+        </Text>
+      </View>
+
+      <View style={styles.section}>
         <Text><Text style={styles.bold}>Ort:</Text> Wird noch bekannt gegeben</Text>
         <Text><Text style={styles.bold}>Datum und Uhrzeit:</Text> Wird noch bekannt gegeben</Text>
       </View>
@@ -108,13 +121,8 @@ const KassenschulungPDF = () => (
         <Text>Wir sind überzeugt, dass ihr durch diese Schulung optimal vorbereitet werdet und freuen uns auf eure Teilnahme!</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text>Mit freundlichen Grüßen</Text>
-        <Text style={{ marginTop: 20 }}>[Dein Name]</Text>
-        <Text>Inhaber von TBS Solutions</Text>
-      </View>
+      <Text style={styles.footer}>TBS Solutions – Gemeinsam erfolgreich</Text>
 
-      <Text style={styles.footer}>TBS Solutions | www.tbs-solutions.ch</Text>
     </Page>
   </Document>
 );
