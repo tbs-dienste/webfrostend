@@ -153,12 +153,12 @@ const Kasse = ({ onKassenModusChange }) => {
           newProd => !prevProducts.some(prevProd => prevProd.article_number === newProd.article_number)
         );
 
-       
+
 
         // Den totalPrice aus der Antwort setzen
         const totalPrice = parseFloat(response.data.totals.totalPrice);
 
-   
+
         return [...prevProducts, ...newProducts]; // Nur neue Produkte hinzufügen
       });
 
@@ -365,6 +365,11 @@ const Kasse = ({ onKassenModusChange }) => {
   };
 
   const toggleDiscounts = () => {
+    setShowDiscounts(!showDiscounts);
+  };
+
+
+  const toggleBezahlen = () => {
     setShowDiscounts(!showDiscounts);
   };
   const handleCashierSwitch = () => {
@@ -980,7 +985,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
       {/* Dreispaltiges Layout */}
       <div className="kasse-layout">
-        {/* Links: Buttons für Artikel scannen und Rabatte */}
         <div className="left-buttons">
           {showDiscounts ? (
             <div className="discount-buttons">
@@ -1020,6 +1024,76 @@ const Kasse = ({ onKassenModusChange }) => {
                 </button>
               ))}
             </div>
+          ) : isPaying ? (
+            // Wenn isPaying true ist, alle Buttons leer machen
+            <>
+              <button onClick={toggleBezahlen} className="btn">
+                Zurück
+              </button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button
+        className="btn"
+        style={{ backgroundColor: isPaying === 'Barzahlung' ? '#f5e942' : '#56f56b' }}
+        onClick={() => setIsPaying(isPaying === 'Barzahlung' ? null : 'Barzahlung')}
+      >
+        Barzahlung
+      </button>
+      <button
+        className="btn"
+        style={{ backgroundColor: isPaying === 'Anzahlung' ? '#f5e942' : '#56f56b' }}
+        onClick={() => setIsPaying(isPaying === 'Anzahlung' ? null : 'Anzahlung')}
+      >
+        Anzahlung
+      </button>
+      <button
+        className="btn"
+        style={{ backgroundColor: isPaying === 'TBs Batzen' ? '#f5e942' : '#56f56b' }}
+        onClick={() => setIsPaying(isPaying === 'TBs Batzen' ? null : 'TBs Batzen')}
+      >
+        TBs Batzen
+      </button>
+      <button
+        className="btn"
+        style={{ backgroundColor: isPaying === 'Gutschein alt' ? '#f5e942' : '#56f56b' }}
+        onClick={() => setIsPaying(isPaying === 'Gutschein alt' ? null : 'Gutschein alt')}
+      >
+        Gutschein alt
+      </button>
+
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              <button className="btn"></button>
+              {/* Abmelden und Wechseln */}
+              <button onClick={handleSignOut} className="btn sign-out-button">
+                <FontAwesomeIcon icon={faSignOutAlt} />
+              </button>
+            </>
           ) : (
             <>
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
@@ -1034,7 +1108,6 @@ const Kasse = ({ onKassenModusChange }) => {
               {/* Kunden- und Transaktionsbuttons */}
               <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
 
-
               <button className='btn' onClick={handleCustomerCardClick}>Kundenkarte</button>
 
               {/* Weitere Funktionen */}
@@ -1046,9 +1119,7 @@ const Kasse = ({ onKassenModusChange }) => {
                 Storno-Kosten hinzufügen
               </button>
 
-
               <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
-
 
               <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
                 Pos. löschen
@@ -1070,9 +1141,6 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className='btn' onClick={goToSettings}>Einstellungen</button>
               <button className='btn'>Kunden Detail</button>
 
-
-
-
               <button className='btn' onClick={handleCashierSwitch}>Kassierer wechseln</button>
               <button className='btn' onClick={handleDailyOverview}>Tagesübersicht</button>
               <button className='btn'>Schublade öffnen</button>
@@ -1085,15 +1153,10 @@ const Kasse = ({ onKassenModusChange }) => {
               <button onClick={handleSignOut} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
-
-
-
-
-
-
             </>
           )}
         </div>
+
 
 
 
