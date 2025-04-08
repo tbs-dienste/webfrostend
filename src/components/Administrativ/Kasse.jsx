@@ -1099,12 +1099,13 @@ const Kasse = ({ onKassenModusChange }) => {
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
               <button className='btn'></button>
               <button className='btn'></button>
-              <button className='btn'></button>
+    
               <button className='btn' onClick={handleDailyClose}>Tagesabschluss</button>
               <button className='btn' onClick={toggleScanInput}>Artikel scannen</button>
               <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
               <button className='btn' onClick={toggleBonAbbruch}>Bon Abbruch</button>
-
+               
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Verkauf</button>
               {/* Kunden- und Transaktionsbuttons */}
               <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
 
