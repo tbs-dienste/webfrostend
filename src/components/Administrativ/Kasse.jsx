@@ -10,6 +10,8 @@ import PaymentPrompt from './PaymentPrompt';
 
 const Kasse = ({ onKassenModusChange }) => {
   const [response, setResponse] = useState(null);
+  const [totals, setTotals] = useState({ totalPrice: 0 });
+
   const [currentBonNumber, setCurrentBonNumber] = useState("");
   const [isPaying, setIsPaying] = useState(false);
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
@@ -63,13 +65,11 @@ const Kasse = ({ onKassenModusChange }) => {
   useEffect(() => {
     if (scannedProducts.length > 0) {
       console.log("Produkte wurden gescannt:", scannedProducts);
-      calculateTotalPrice(); // Gesamtpreis neu berechnen
     }
   }, [scannedProducts]);
 
   // useEffect: Gesamtpreis neu berechnen, wenn sich gescannte Produkte ändern
   useEffect(() => {
-    calculateTotalPrice(); // Gesamtpreis neu berechnen
   }, [scannedProducts]);
 
   // useEffect: Abrufen der gescannten Produkte und Rabatte beim Initialisieren
@@ -84,7 +84,6 @@ const Kasse = ({ onKassenModusChange }) => {
     if (token) {
       const decoded = jwtDecode(token);
       setSalespersonName(`${decoded.vorname || "Unbekannt"} ${decoded.nachname || ""}`.trim());
-      console.log("Verkäufername aus Token dekodiert:", decoded.vorname, decoded.nachname);
     }
   }, []);
 
@@ -94,13 +93,11 @@ const Kasse = ({ onKassenModusChange }) => {
     if (token) {
       setKasseMode(true); // Kassenmodus aktivieren
       onKassenModusChange(true); // Übermittelt den Modusstatus an die übergeordnete Komponente
-      console.log("Kassenmodus aktiviert.");
     }
   }, []);
 
   // useEffect: Setzen der Kundenkarte aus der Antwort des Servers
   useEffect(() => {
-    console.log("Antwort von Server:", response); // Debugging
 
     // Setze die Kundenkarte aus der Antwort
     if (response?.kundenkarte) {
@@ -111,7 +108,6 @@ const Kasse = ({ onKassenModusChange }) => {
         plz: response.kundenkarte.plz,
         ort: response.kundenkarte.ort
       });
-      console.log("Kundenkarte aus der Antwort gesetzt:", response.kundenkarte);
     } else {
       setKundenkarte(null);
       console.log("Keine gültige Kundenkarte im Response.");
@@ -120,73 +116,68 @@ const Kasse = ({ onKassenModusChange }) => {
 
   // useEffect: Debugging der aktuellen Kundenkarte
   useEffect(() => {
-    console.log("Aktuelle Kundenkarte:", kundenkarte); // Debugging
 
     // Überprüfen, ob die Kundenkarte gesetzt wurde
     if (kundenkarte) {
-      console.log("Kundenkarte gefunden:", kundenkarte);
     } else {
       console.log("Kundenkarte ist null.");
     }
   }, [kundenkarte]);
-
-// Funktion zum Abrufen und Hinzufügen NUR neuer Produkte
-const fetchScannedProducts = async () => {
-  setLoading(true);
-  try {
-    const response = await axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    console.log("Antwort von Server:", response.data);
-
-    // Kundenkarte setzen
-    if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
-      setKundenkarte({
-        kundenkartennummer: response.data.kundenkarte.kundenkartennummer,
-        vorname: response.data.kundenkarte.vorname,
-        nachname: response.data.kundenkarte.nachname,
-        plz: response.data.kundenkarte.plz,
-        ort: response.data.kundenkarte.ort,
+  const fetchScannedProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      console.log("Kundenkarte aus der Antwort gesetzt:", response.data.kundenkarte);
-    } else {
-      setKundenkarte(null);
-      console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
-    }
 
-    // Neue Produkte ermitteln
-    setScannedProducts(prevProducts => {
-      const newProducts = response.data.data.filter(
-        newProd => !prevProducts.some(prevProd => prevProd.article_number === newProd.article_number)
-      );
 
-      if (newProducts.length > 0) {
-        console.log("Neue Produkte hinzugefügt:", newProducts);
+      // Kundenkarte setzen
+      if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
+        setKundenkarte({
+          kundenkartennummer: response.data.kundenkarte.kundenkartennummer,
+          vorname: response.data.kundenkarte.vorname,
+          nachname: response.data.kundenkarte.nachname,
+          plz: response.data.kundenkarte.plz,
+          ort: response.data.kundenkarte.ort,
+        });
       } else {
-        console.log("Keine neuen Produkte gefunden.");
+        setKundenkarte(null);
+        console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
       }
 
-      return [...prevProducts, ...newProducts]; // Nur neue Produkte hinzufügen
-    });
+      // Neue Produkte ermitteln
+      setScannedProducts(prevProducts => {
+        const newProducts = response.data.data.filter(
+          newProd => !prevProducts.some(prevProd => prevProd.article_number === newProd.article_number)
+        );
 
-  } catch (error) {
-    console.error("Fehler beim Abrufen der gescannten Produkte:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+       
 
-// Effekt, um fetchScannedProducts alle 5 Sekunden automatisch aufzurufen
-useEffect(() => {
-  const intervalId = setInterval(() => {
-    fetchScannedProducts();
-  }, 5000); // Alle 5 Sekunden abrufen
+        // Den totalPrice aus der Antwort setzen
+        const totalPrice = parseFloat(response.data.totals.totalPrice);
 
-  return () => clearInterval(intervalId);
-}, []);
+   
+        return [...prevProducts, ...newProducts]; // Nur neue Produkte hinzufügen
+      });
+
+    } catch (error) {
+      console.error("Fehler beim Abrufen der gescannten Produkte:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Effekt, um fetchScannedProducts alle 5 Sekunden automatisch aufzurufen
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchScannedProducts();
+    }, 5000); // Alle 5 Sekunden abrufen
+
+    return () => clearInterval(intervalId);
+  }, []);
 
 
 
@@ -262,7 +253,6 @@ useEffect(() => {
   // Produkte löschen
   const clearScannedProducts = () => {
     setScannedProducts([]);
-    setTotalPrice(0);
   };
 
 
@@ -387,7 +377,7 @@ useEffect(() => {
 
 
   const handleArtikelsuche = () => {
-   
+
     navigate("/artikelsuche");
   };
 
@@ -472,7 +462,6 @@ useEffect(() => {
         }
       });
 
-      console.log("Transaktion abgebrochen:", response.data.message);
 
       // Nach dem Abbruch sofort die gescannten Produkte neu abrufen
       await fetchScannedProducts();
@@ -906,31 +895,7 @@ useEffect(() => {
   };
 
 
-  const calculateTotalPrice = () => {
-    let total = 0;
-    let totalDiscount = 0; // Für die Gesamtberechnung der Rabatte
 
-    scannedProducts.forEach((product) => {
-      const price = parseFloat(product.price);
-      const quantity = parseInt(product.quantity, 10);
-
-      if (!isNaN(price) && !isNaN(quantity)) {
-        // Berechne Rabatt
-        const discountAmount = product.discounts?.reduce((sum, discount) => {
-          return sum + parseFloat(discount.amount);
-        }, 0) || 0;
-
-        const productTotal = price * quantity;
-        total += productTotal;
-        totalDiscount += discountAmount;
-
-        // Abgezogenem Rabatt den Preis nach dem Rabatt berechnen
-        product.finalPrice = productTotal - discountAmount;
-      }
-    });
-
-    setTotalPrice(total - totalDiscount); // Gesamtpreis nach Rabatt
-  };
 
 
 
@@ -1057,7 +1022,7 @@ useEffect(() => {
             </div>
           ) : (
             <>
-              <button style={{ backgroundColor: '	#FDFF00', color: 'black' }} className='btn'>Verkauf</button>
+              <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
               <button className='btn'></button>
               <button className='btn'></button>
               <button className='btn'></button>
@@ -1274,9 +1239,7 @@ useEffect(() => {
 
                             {/* Gesamtpreis */}
                             <span className="total-price">
-                              {product.finalPrice
-                                ? product.finalPrice.toFixed(2)
-                                : (parseFloat(product.price) * product.quantity).toFixed(2)} CHF
+                              {product.finalPrice}
                             </span>
                           </div>
                         </div>
@@ -1301,95 +1264,127 @@ useEffect(() => {
 
             )}
           </div>
-          {/* Total Products - Immer anzeigen, wenn nicht bezahlt */}
+
           {!isConfirmed && (
-            <div style={{
-              backgroundColor: "#fff",
-              padding: "20px",
-              borderRadius: "10px",
-              boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
-              marginTop: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "20px"
-            }}>
-              <table style={{
-                width: "100%",
-                borderCollapse: "collapse"
-              }}>
+            <div
+              style={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0px 0px 10px rgba(0,0,0,0.2)",
+                marginTop: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "20px",
+              }}
+            >
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                }}
+              >
                 <tbody>
                   <tr>
-                    <td style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <strong>Subtotal</strong>
                     </td>
-                    <td style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <strong>CHF</strong>
                     </td>
-                    <td style={{
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
-                      {totalPrice.toFixed(2)}
+                    <td
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      {scannedProducts.reduce(
+                        (total, product) => total + parseFloat(product.price) * product.quantity,
+                        0
+                      ).toFixed(2)}
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan="2" style={{
-                      padding: "10px",
-                      textAlign: "center",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      colSpan="2"
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <hr />
                     </td>
                   </tr>
                   <tr>
-                    <td style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <strong>Total</strong>
                     </td>
-                    <td style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <strong>CHF</strong>
                     </td>
-                    <td style={{
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
-                      {totalPrice.toFixed(2)}
+
+                    <td
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      {totalPrice !== null ? totalPrice.toFixed(2) : "Lädt..."}  {/* Oder ein anderer Platzhalter */}
                     </td>
+
+
                   </tr>
                   <tr>
-                    <td style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
+                    <td
+                      style={{
+                        fontWeight: "bold",
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
                       <strong>Anzahl Teile</strong>
                     </td>
-                    <td style={{
-                      padding: "10px",
-                      borderBottom: "1px solid #ddd"
-                    }}>
-                      {Math.round(scannedProducts.reduce((total, product) => total + product.quantity, 0))}
+                    <td
+                      style={{
+                        padding: "10px",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      {Math.round(
+                        scannedProducts.reduce((total, product) => total + product.quantity, 0)
+                      )}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           )}
+
 
 
           {/* Gegeben und Rückgeld - Nur anzeigen, wenn bezahlt */}
