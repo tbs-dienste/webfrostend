@@ -1045,18 +1045,18 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className="btn"></button>
               <button className="btn"></button>
               <button className="btn"></button>
-              
-    <button onClick={toggleBezahlen} className="btn">Zurück</button>
-    <button onClick={() => setIsPaying('Barzahlung')} className="btn">Barzahlung</button>
-    <button onClick={() => setIsPaying('Kartenzahlung')} className="btn">Kartenzahlung</button>
-    <button onClick={() => setIsPaying('Anzahlung')} className="btn">Anzahlung</button>
-    <button onClick={() => setIsPaying('TBs Batzen')} className="btn">TBs Batzen</button>
-    <button onClick={() => setIsPaying('Gutschein alt')} className="btn">Gutschein alt</button>
-    <button onClick={() => setIsPaying('Gutschein neu')} className="btn">Gutschein neu</button>
-    <button onClick={() => setIsPaying('Trinkgeld')} className="btn">Trinkgeld</button>
-    <button className="btn">Split Payment</button>
-    <button className="btn">Abbrechen</button>
-  
+
+              <button onClick={toggleBezahlen} className="btn">Zurück</button>
+              <button onClick={() => setIsPaying('Barzahlung')} className="btn">Barzahlung</button>
+              <button onClick={() => setIsPaying('Kartenzahlung')} className="btn">Kartenzahlung</button>
+              <button onClick={() => setIsPaying('Anzahlung')} className="btn">Anzahlung</button>
+              <button onClick={() => setIsPaying('TBs Batzen')} className="btn">TBs Batzen</button>
+              <button onClick={() => setIsPaying('Gutschein alt')} className="btn">Gutschein alt</button>
+              <button onClick={() => setIsPaying('Gutschein neu')} className="btn">Gutschein neu</button>
+              <button onClick={() => setIsPaying('Trinkgeld')} className="btn">Trinkgeld</button>
+              <button className="btn">Split Payment</button>
+              <button className="btn">Abbrechen</button>
+
 
               <button className="btn"></button>
               <button className="btn"></button>
@@ -1126,13 +1126,13 @@ const Kasse = ({ onKassenModusChange }) => {
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Subtotal Rabatt</button>
 
               <button className='btn'></button>
-              
-             
+
+
               <button className='btn'></button>
               <button className='btn'></button>
 
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
-              
+
               <button onClick={toggleLastReciepts} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faPrint} />
               </button>
@@ -1140,7 +1140,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className='btn' onClick={goToProductDetails} >Artikel Detail</button>
 
               <button className='btn'>Kunden Detail</button>
-              
+
               <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
 
 
@@ -1543,25 +1543,54 @@ const Kasse = ({ onKassenModusChange }) => {
           </div>
 
 
-          <div className="action-buttons">
-            <button onClick={handleConfirm} className="btn-confirm" disabled={loading}>
+          <div className="action-buttons" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '10px',
+            marginTop: '10px',
+            width: '100%'  // GANZE Breite nutzen
+          }}>
+            <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={handleConfirm} className="btn-confirm">
               Bestätigen
             </button>
-
+           
             <button onClick={clearScannedProducts} className="btn-delete">
               Löschen
             </button>
+
             <button className="btn-200" onClick={() => handleAmountClick(200)}>
               200
             </button>
-            <button className="btn-other" onClick={handlePayClick}>Bezahlen</button>
-            <button style={{ backgroundColor: '#48A23F', color: 'white', padding: '8px 16px', borderRadius: '8px' }} onClick={() => handleAmountClick(50)}>50</button>
-            <button style={{ backgroundColor: '#007AC2', color: 'white', padding: '8px 16px', borderRadius: '8px' }} onClick={() => handleAmountClick(100)}>100</button>
-            <button style={{ backgroundColor: '#FFD700', color: 'white', padding: '8px 16px', borderRadius: '8px' }} onClick={() => handleAmountClick(10)}>10</button>
-            <button style={{ backgroundColor: '#DC241F', color: 'black', padding: '8px 16px', borderRadius: '8px' }} onClick={() => handleAmountClick(20)}>20</button>
-            <button className="btn-2" onClick={() => handleAmountClick(2)}>2</button>
-            <button className="btn-5" onClick={() => handleAmountClick(5)}>5</button>
+
+            <button className="btn-other" onClick={handlePayClick}>
+              Bezahlen
+            </button>
+
+            <button className="btn-50" style={{ backgroundColor: '#48A23F', color: 'white' }} onClick={() => handleAmountClick(50)}>
+              50
+            </button>
+
+            <button className="btn-100" style={{ backgroundColor: '#007AC2', color: 'white' }} onClick={() => handleAmountClick(100)}>
+              100
+            </button>
+
+            <button className="btn-10" style={{ backgroundColor: '#FFD700', color: 'black' }} onClick={() => handleAmountClick(10)}>
+              10
+            </button>
+
+            <button className="btn-20" style={{ backgroundColor: '#DC241F', color: 'white' }} onClick={() => handleAmountClick(20)}>
+              20
+            </button>
+
+            <button className="btn-2" onClick={() => handleAmountClick(2)}>
+              2
+            </button>
+
+            <button className="btn-5" onClick={() => handleAmountClick(5)}>
+              5
+            </button>
           </div>
+
 
         </div>
 
