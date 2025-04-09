@@ -206,10 +206,17 @@
       &:not(:disabled):hover {
         background-color: #0056b3;
       }
+
+      &.active {
+        background-color: yellow; /* Gelber Hintergrund für aktiven Button */
+        color: #333; /* Dunklere Schriftfarbe für bessere Lesbarkeit */
+      }
+    }
+
+    .bottom-buttons button:first-child,
+    .bottom-buttons button:last-child {
+      background-color: transparent;
+      border: none;
     }
   }
-  
-  
-  
-  
 }

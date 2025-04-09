@@ -8,7 +8,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("CHF");
   const [reason, setReason] = useState("");
-  const [showKeypad, setShowKeypad] = useState(true);
+  const [showKeypad, setShowKeypad] = useState(false);  // Keypad initially hidden
   const [activeMode, setActiveMode] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [entries, setEntries] = useState({ einnahmen: [], ausgaben: [] });
@@ -41,6 +41,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
 
   const handleModeChange = (mode) => {
     setActiveMode(mode);
+    setShowKeypad(true); // Show the keypad once a mode is selected
   };
 
   const toggleSign = () => {
@@ -78,7 +79,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
     setAmount("");
     setReason("");
     setActiveMode(null);
-    setShowKeypad(true);
+    setShowKeypad(false); // Hide the keypad when reset
   };
 
   const handleSubmit = async () => {
@@ -130,7 +131,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
   const handleRowSelect = (index) => {
     setSelectedRow(index === selectedRow ? null : index);
   };
-
 
   const handleCancel = async () => {
     if (selectedRow !== null) {
@@ -202,6 +202,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 <option value="stockeinlage">Stockeinlage</option>
                 <option value="gebuehrtoilette">Gebühr Toilette</option>
                 <option value="umtriebsentschaedigung">Umtriebsentschädigung</option>
+                <option value="verpflegung">Verpflegung</option> {/* Neuer Grund */}
+                <option value="gewinnbeteiligung">Gewinnbeteiligung</option> {/* Neuer Grund */}
               </>
             )}
             {activeMode === "expense" && (
@@ -209,8 +211,13 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 <option value="bueromaterial">Büromaterial 8.1%</option>
                 <option value="mwstruckestattung">MWST-Rückerst. 0%</option>
                 <option value="porto">Porto 8.1%</option>
+                <option value="transportkosten">Transportkosten</option> {/* Neuer Grund */}
+                <option value="verpflegungskosten">Verpflegungskosten</option> {/* Neuer Grund */}
+                <option value="kommunikationskosten">Kommunikationskosten</option> {/* Neuer Grund */}
+                <option value="arbeitsmaterial">Arbeitsmaterial</option> {/* Neuer Grund */}
               </>
             )}
+
           </select>
         </div>
 
@@ -341,12 +348,11 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Löschen
         </button>
-        <button onClick={handleSubmit}>Übernehmen</button> {/* Übernehmen Button */}
+        <button onClick={handleSubmit}>Übernehmen</button>
         <button>
           Exit
         </button>
       </div>
-
     </div>
   );
 };
