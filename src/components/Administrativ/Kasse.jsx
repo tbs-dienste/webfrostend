@@ -11,7 +11,8 @@ import PaymentPrompt from './PaymentPrompt';
 const Kasse = ({ onKassenModusChange }) => {
   const [response, setResponse] = useState(null);
   const [totals, setTotals] = useState({ totalPrice: 0 });
-
+  const [bonNumber, setBonNumber] = useState(null); // bonNumber im State definieren
+  const [currentKundenkarte, setCurrentKundenkarte] = useState(""); // Setzt die Kundenkartennummer im State
   const [currentBonNumber, setCurrentBonNumber] = useState("");
   const [isPaying, setIsPaying] = useState(false);
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
@@ -132,7 +133,6 @@ const Kasse = ({ onKassenModusChange }) => {
         },
       });
 
-
       // Kundenkarte setzen
       if (response.data.kundenkarte && response.data.kundenkarte.kundenkartennummer !== "Keine Karte") {
         setKundenkarte({
@@ -147,17 +147,18 @@ const Kasse = ({ onKassenModusChange }) => {
         console.log("Keine gültige Kundenkarte in der Antwort gefunden.");
       }
 
+      // Bon-Nummer setzen
+      const bonNumber = response.data.bonNumber; // Bon-Nummer aus der API-Antwort holen
+      setBonNumber(bonNumber); // Im State speichern
+
       // Neue Produkte ermitteln
       setScannedProducts(prevProducts => {
         const newProducts = response.data.data.filter(
           newProd => !prevProducts.some(prevProd => prevProd.article_number === newProd.article_number)
         );
 
-
-
         // Den totalPrice aus der Antwort setzen
         const totalPrice = parseFloat(response.data.totals.totalPrice);
-
 
         return [...prevProducts, ...newProducts]; // Nur neue Produkte hinzufügen
       });
@@ -168,6 +169,7 @@ const Kasse = ({ onKassenModusChange }) => {
       setLoading(false);
     }
   };
+
 
 
   // Effekt, um fetchScannedProducts alle 5 Sekunden automatisch aufzurufen
@@ -484,35 +486,57 @@ const Kasse = ({ onKassenModusChange }) => {
       return;
     }
 
-    // Hier sicherstellen, dass die Bon-Nummer vorhanden ist
-    const bonNumber = currentBonNumber; // `currentBonNumber` sollte die Bon-Nummer enthalten, z.B. aus einem Input-Feld
+    // Überprüfen, ob die Bon-Nummer korrekt geladen wird
+    const bonNumber = currentBonNumber; // `currentBonNumber` sollte bereits die Bon-Nummer beinhalten
 
     if (!bonNumber) {
       console.error("Bon-Nummer fehlt. Aktion abgebrochen.");
       return;
     }
 
-    setLoading(true);
-
+    // Holen der gescannten Produkte, um die Bon-Nummer zu überprüfen
     try {
-      const response = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/park-bon", {
-        bon_number: bonNumber // Bon-Nummer wird hier übermittelt
-      }, {
+      const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/products/scanned-products`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      console.log("Bon erfolgreich geparkt:", response.data.message);
+      const scannedProducts = response.data;
 
-      await fetchScannedProducts(); // Falls du das nach dem Parkieren brauchst
+      if (scannedProducts.length === 0) {
+        console.error("Keine gescannten Produkte gefunden. Aktion abgebrochen.");
+        return;
+      }
 
+      // Stelle sicher, dass die Bon-Nummer vorhanden ist und korrekt ist
+      const bonNumberFromDB = scannedProducts[0].bon_number;
+
+      if (!bonNumberFromDB) {
+        console.error("Keine Bon-Nummer für gescannte Produkte gefunden. Aktion abgebrochen.");
+        return;
+      }
+
+      console.log("Gefundene Bon-Nummer:", bonNumberFromDB);
+
+      // Verwende die Bon-Nummer aus der Datenbank
+      const responseParkBon = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/products/park-bon", {
+        bon_number: bonNumberFromDB,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Bon erfolgreich geparkt:", responseParkBon.data.message);
+      await fetchScannedProducts();
     } catch (error) {
       console.error("Fehler beim Parken des Bons:", error.response?.data || error.message);
-    } finally {
-      setLoading(false);
     }
   };
+
+
+
 
 
 
@@ -1252,7 +1276,12 @@ const Kasse = ({ onKassenModusChange }) => {
 
             <div className="kasse-header" style={{ fontSize: '16px' }}>
               <h1 style={{ fontSize: '2rem', fontFamily: 'monospace', color: 'rgb(51, 51, 51)' }}>Quittung</h1>
+              <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>
+                Kunde {Math.floor(bonNumber)} {/* Zeigt nur den ganzzahligen Teil der Bon-Nummer */}
+              </p>
               <h4 style={{ fontFamily: 'monospace', fontSize: '1.2rem', color: 'rgb(192, 127, 71)' }}>VerkäuferIn {salespersonName}</h4>
+              
+
               <div className="kundenkarte-info" style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'rgb(85, 85, 85)' }}>
                 <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.vorname} {kundenkarte?.nachname}</p>
                 <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.plz} {kundenkarte?.ort}</p>
@@ -1553,7 +1582,7 @@ const Kasse = ({ onKassenModusChange }) => {
             <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={handleConfirm} className="btn-confirm">
               Bestätigen
             </button>
-           
+
             <button onClick={clearScannedProducts} className="btn-delete">
               Löschen
             </button>
