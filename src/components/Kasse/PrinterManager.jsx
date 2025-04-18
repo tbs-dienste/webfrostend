@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './PrinterManager.scss';
 import Sidebar from './Sidebar';
-import { Loader2, RefreshCcw, Printer } from 'lucide-react';
 
 const PrinterManager = ({ onKassenModusChange }) => {
   const [printers, setPrinters] = useState([]);
@@ -161,7 +160,6 @@ const PrinterManager = ({ onKassenModusChange }) => {
           <div className="ink-levels-container">
             {inkLoading ? (
               <div className="loading">
-                <Loader2 className="spinner" /> Lade...
               </div>
             ) : inkLevels ? (
               Object.entries(inkLevels).map(([color, level], index) => (

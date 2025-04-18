@@ -90,26 +90,44 @@ const CreateCustomerCard = () => {
     setOrte([]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Kundenkarte erstellt:', customerData);
-
-    // Hier kannst du das an dein Backend schicken:
-    // await axios.post('/api/kundenkarte', customerData);
-
-    setCustomerData({
-      vorname: '',
-      nachname: '',
-      telefonnummer: '',
-      mobil: '',
-      adresse: '',
-      plz: '',
-      ort: '',
-      geburtsdatum: '',
-      email: '',
-    });
-    setOrte([]);
+  
+    try {
+      const token = localStorage.getItem('token'); // 👈 falls du den Token dort gespeichert hast
+  
+      const response = await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten',
+        customerData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      console.log('Antwort vom Server:', response.data);
+  
+      // Reset nach erfolgreicher Speicherung
+      setCustomerData({
+        vorname: '',
+        nachname: '',
+        telefonnummer: '',
+        mobil: '',
+        adresse: '',
+        plz: '',
+        ort: '',
+        geburtsdatum: '',
+        email: '',
+      });
+      setOrte([]);
+      alert('Kundenkarte erfolgreich erstellt.');
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      alert('Fehler beim Erstellen der Kundenkarte.');
+    }
   };
+  
 
   return (
     <>
