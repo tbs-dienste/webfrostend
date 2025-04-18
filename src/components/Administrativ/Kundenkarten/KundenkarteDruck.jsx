@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   PDFDownloadLink,
   Document,
@@ -7,9 +7,8 @@ import {
   Text,
   StyleSheet,
   Image,
-} from "@react-pdf/renderer";
-import JsBarcode from "jsbarcode";
-import axios from "axios";
+} from '@react-pdf/renderer';
+import JsBarcode from 'jsbarcode';
 import logo from "../../../logo.png";
 
 // Maße in pt (1 pt = 1/72 inch)
@@ -117,7 +116,6 @@ const styles = StyleSheet.create({
     color: "#333333",
   },
 });
-
 const KundenkartePDF = ({ kundenkarte }) => {
   const generateBarcode = (kundenkartennummer) => {
     return new Promise((resolve) => {
@@ -145,7 +143,6 @@ const KundenkartePDF = ({ kundenkarte }) => {
     };
     fetchBarcode();
   }, [kundenkarte]);
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -176,7 +173,7 @@ const KundenkartePDF = ({ kundenkarte }) => {
           <View style={styles.cardWrapper}>
             <View style={styles.cardFront}>
               {/* Kundenname unten links */}
-              <Text style={styles.bottomLeftText}>{kundenkarte.name}</Text>
+              <Text style={styles.bottomLeftText}>{kundenkarte.vorname} {kundenkarte.nachname}</Text>
               {/* Logo in der Mitte */}
               <Image src={logo} style={styles.logo} />
               <Text style={styles.topRightText}>TBs Prime Club</Text>
@@ -202,61 +199,4 @@ const KundenkartePDF = ({ kundenkarte }) => {
   );
 };
 
-const KundenkarteDruck = () => {
-  const [kundenkarte, setKundenkarte] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchKundenkarte = async () => {
-      try {
-        const response = await axios.get(
-          "https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten/1234567890123456789",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        setKundenkarte(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Kundenkarte:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchKundenkarte();
-  }, []);
-
-  return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <h1>Kundenkarte PDF erstellen</h1>
-
-      {loading ? (
-        <p>Daten werden geladen...</p>
-      ) : !kundenkarte ? (
-        <p>Keine Kundenkarte gefunden!</p>
-      ) : (
-        <PDFDownloadLink
-          document={<KundenkartePDF kundenkarte={kundenkarte} />}
-          fileName={`Kundenkarte_${kundenkarte.kundenkartennummer}.pdf`}
-          style={{
-            textDecoration: "none",
-            padding: "10px 20px",
-            color: "#fff",
-            backgroundColor: "#007bff",
-            borderRadius: 5,
-          }}
-        >
-          {({ loading }) =>
-            loading
-              ? "PDF wird erstellt..."
-              : "Kundenkarte PDF herunterladen"
-          }
-        </PDFDownloadLink>
-      )}
-    </div>
-  );
-};
-
-export default KundenkarteDruck;
+export default KundenkartePDF;

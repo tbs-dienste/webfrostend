@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './CustomerCards.scss';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import KundenkartePDF from '../Kundenkarten/KundenkarteDruck';
 
 const CustomerCards = () => {
   const [kundenkarten, setKundenkarten] = useState([]);
@@ -15,7 +17,7 @@ const CustomerCards = () => {
   const [filterStatus, setFilterStatus] = useState('');
 
   const token = localStorage.getItem('token');
-  const navigate = useNavigate(); // Für Navigation zu Detailseiten
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCustomerCards = async () => {
@@ -63,7 +65,6 @@ const CustomerCards = () => {
     setFilteredKarten(kundenkarten);
   };
 
-  // Hier mit kundenkartennummer statt id
   const handleView = (kundenkartennummer) => {
     navigate(`/kundenkarte/${kundenkartennummer}`);
   };
@@ -165,13 +166,20 @@ const CustomerCards = () => {
                       {karte.status}
                     </span>
                   </td>
-                  <td>
+                  <td className="actions-cell">
                     <button
                       className="btn-view"
                       onClick={() => handleView(karte.kundenkartennummer)}
                     >
                       👁️ Ansehen
                     </button>
+                    <PDFDownloadLink
+                      document={<KundenkartePDF kundenkarte={karte} />}
+                      fileName={`Kundenkarte_${karte.kundenkartennummer}.pdf`}
+                      className="btn-download"
+                    >
+                      🖨️ Karte drucken
+                    </PDFDownloadLink>
                   </td>
                 </tr>
               ))
