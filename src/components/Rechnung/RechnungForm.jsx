@@ -145,61 +145,77 @@ const RechnungForm = () => {
 
                 {/* Display services if a customer is selected */}
                 {kundenId && (
-                    <div className="services-display">
-                        <h3>Benutzerdefinierte Dienstleistungen</h3>
-                        {benutzerdefinierteDienstleistungen.map((dienst, index) => (
-                            <div key={index} className="custom-service">
-                                <input
-                                    type="text"
-                                    placeholder="Dienstleistung Titel"
-                                    value={dienst.title}
-                                    onChange={(e) => {
-                                        const newDienstleistungen = [...benutzerdefinierteDienstleistungen];
-                                        newDienstleistungen[index].title = e.target.value;
-                                        setBenutzerdefinierteDienstleistungen(newDienstleistungen);
-                                    }}
-                                    className="form-input"
-                                    required
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Anzahl"
-                                    value={dienst.anzahl}
-                                    onChange={(e) => {
-                                        const newDienstleistungen = [...benutzerdefinierteDienstleistungen];
-                                        newDienstleistungen[index].anzahl = e.target.value;
-                                        setBenutzerdefinierteDienstleistungen(newDienstleistungen);
-                                    }}
-                                    className="form-input"
-                                    min="1"
-                                    required
-                                />
-                                <input
-                                    type="number"
-                                    placeholder="Preis pro Einheit"
-                                    value={dienst.preisProEinheit}
-                                    onChange={(e) => {
-                                        const newDienstleistungen = [...benutzerdefinierteDienstleistungen];
-                                        newDienstleistungen[index].preisProEinheit = e.target.value;
-                                        setBenutzerdefinierteDienstleistungen(newDienstleistungen);
-                                    }}
-                                    className="form-input"
-                                    min="0"
-                                    required
-                                />
-                                <div className="total-price">
-                                    Total: {dienst.anzahl * dienst.preisProEinheit} CHF
-                                </div>
-                                <button type="button" className="remove-button" onClick={() => handleRemoveBenutzerdefinierteDienstleistung(index)}>
-                                    Entfernen
-                                </button>
-                            </div>
-                        ))}
-                        {/* Show + button only if the customer is selected */}
-                        <button type="button" className="add-service-button" onClick={handleAddBenutzerdefinierteDienstleistung}>
-                            + Benutzerdefinierte Dienstleistung Hinzufügen
-                        </button>
-                    </div>
+                   <div className="services-display">
+                   <h3>Benutzerdefinierte Dienstleistungen</h3>
+               
+                   <table className="services-table">
+                       <thead>
+                           <tr>
+                               <th>Pos</th>
+                               <th>Bezeichnung</th>
+                               <th>Anzahl</th>
+                               <th>Einzelpreis (CHF)</th>
+                               <th>Total (CHF)</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           {benutzerdefinierteDienstleistungen.map((dienst, index) => (
+                               <tr key={index}>
+                                   <td>{index + 1}</td>
+                                   <td>
+                                       <input
+                                           type="text"
+                                           placeholder="Dienstleistung"
+                                           value={dienst.title}
+                                           onChange={(e) => {
+                                               const updated = [...benutzerdefinierteDienstleistungen];
+                                               updated[index].title = e.target.value;
+                                               setBenutzerdefinierteDienstleistungen(updated);
+                                           }}
+                                           required
+                                       />
+                                   </td>
+                                   <td>
+                                       <input
+                                           type="number"
+                                           min="1"
+                                           value={dienst.anzahl}
+                                           onChange={(e) => {
+                                               const updated = [...benutzerdefinierteDienstleistungen];
+                                               updated[index].anzahl = Number(e.target.value);
+                                               setBenutzerdefinierteDienstleistungen(updated);
+                                           }}
+                                           required
+                                       />
+                                   </td>
+                                   <td>
+                                       <input
+                                           type="number"
+                                           min="0"
+                                           value={dienst.preisProEinheit}
+                                           onChange={(e) => {
+                                               const updated = [...benutzerdefinierteDienstleistungen];
+                                               updated[index].preisProEinheit = Number(e.target.value);
+                                               setBenutzerdefinierteDienstleistungen(updated);
+                                           }}
+                                           required
+                                       />
+                                   </td>
+                                   <td>{(dienst.anzahl * dienst.preisProEinheit).toFixed(2)}</td>
+                               </tr>
+                           ))}
+                       </tbody>
+                   </table>
+               
+                   <button
+                       type="button"
+                       className="add-service-button"
+                       onClick={handleAddBenutzerdefinierteDienstleistung}
+                   >
+                       + Dienstleistung hinzufügen
+                   </button>
+               </div>
+               
                 )}
 
                 <button type="submit" className="submit-button">
