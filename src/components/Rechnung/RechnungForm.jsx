@@ -96,32 +96,52 @@ const RechnungForm = () => {
         <div className="create-invoice">
             <h2>Rechnung Erstellen</h2>
             <form onSubmit={handleSubmit} className="invoice-form">
-                <div className="form-group">
-                    <label>Kunden suchen:</label>
-                    <input
-                        type="text"
-                        value={kundenSuche}
-                        onChange={(e) => setKundenSuche(e.target.value)}
-                        placeholder="Kunden Vor- oder Nachname eingeben"
-                        className="form-input"
-                    />
-                    {kundenVorschlaege.length > 0 && (
-                        <ul className="customer-suggestions">
-                            {kundenVorschlaege.map((kunde) => (
-                                <li
-                                    key={kunde.id}
-                                    onClick={() => {
-                                        setKundenId(kunde.id);
-                                        setKundenSuche(`${kunde.vorname} ${kunde.nachname}`);
-                                        setKundenVorschlaege([]);
-                                    }}
-                                >
-                                    {kunde.vorname} {kunde.nachname}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                {!kundenId && (
+                    <div className="form-group">
+                        <label>Kunden suchen:</label>
+                        <input
+                            type="text"
+                            value={kundenSuche}
+                            onChange={(e) => setKundenSuche(e.target.value)}
+                            placeholder="Kunden Vor- oder Nachname eingeben"
+                            className="form-input"
+                        />
+                        {kundenVorschlaege.length > 0 && (
+                            <ul className="customer-suggestions">
+                                {kundenVorschlaege.map((kunde) => (
+                                    <li
+                                        key={kunde.id}
+                                        onClick={() => {
+                                            setKundenId(kunde.id);
+                                            setKundenSuche(`${kunde.vorname} ${kunde.nachname}`);
+                                            setKundenVorschlaege([]);
+                                        }}
+                                    >
+                                        {kunde.vorname} {kunde.nachname}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )}
+
+                {kundenId && (
+                    <div className="kunden-info-box">
+                        {(() => {
+                            const gewaehlterKunde = kunden.find(k => k.id === kundenId);
+                            if (!gewaehlterKunde) return <p>Kunde nicht gefunden.</p>;
+
+                            return (
+                                <div className="kunden-details">
+                                    <p>{gewaehlterKunde.vorname} {gewaehlterKunde.nachname}</p>
+                                    <p>{gewaehlterKunde.strasseHausnummer}</p>
+                                    <p>{gewaehlterKunde.postleitzahl} {gewaehlterKunde.ort}</p>
+                                </div>
+                            );
+                        })()}
+                    </div>
+                )}
+
 
                 {/* Display services if a customer is selected */}
                 {kundenId && (
