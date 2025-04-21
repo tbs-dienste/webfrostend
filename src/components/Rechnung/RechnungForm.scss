@@ -1,221 +1,212 @@
 .create-invoice {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    
-    h2 {
+  font-family: 'Arial', sans-serif;
+  padding: 30px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+
+  h2 {
       text-align: center;
-      margin-bottom: 2rem;
-      font-size: 2.5rem;
+      font-size: 32px;
       color: #333;
-      font-weight: bold;
-    }
-  
-    .invoice-form {
+      margin-bottom: 30px;
+  }
+
+  .invoice-form {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-    
-      .form-group {
-        label {
-          font-weight: 600;
-          font-size: 1.1rem;
-          margin-bottom: 0.5rem;
-        }
-  
-        .form-input {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          font-size: 1rem;
-          margin-bottom: 10px;
-        }
-  
-        .customer-suggestions {
-          list-style: none;
-          background: #fff;
+      gap: 20px;
+  }
+
+  .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+          font-weight: bold;
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 8px;
+      }
+
+      .form-input {
+          padding: 10px;
           border: 1px solid #ddd;
-          position: absolute;
-          z-index: 100;
+          border-radius: 4px;
+          font-size: 14px;
+          color: #333;
+          outline: none;
+          transition: border 0.3s;
+
+          &:focus {
+              border-color: #0056b3;
+          }
+
+          &::placeholder {
+              color: #888;
+          }
+      }
+
+      select.form-input {
+          padding: 10px;
+      }
+  }
+
+  .customer-suggestions {
+      list-style: none;
+      margin-top: 10px;
+      padding-left: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+
+      li {
+          padding: 10px;
+          cursor: pointer;
+          font-size: 14px;
+          color: #333;
+
+          &:hover {
+              background-color: #f1f1f1;
+          }
+      }
+  }
+
+  .kunden-info-box {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .kunden-details {
+          font-size: 14px;
+          color: #333;
+
+          p {
+              margin: 5px 0;
+          }
+      }
+  }
+
+  .services-display {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      h3 {
+          font-size: 18px;
+          color: #333;
+          margin-bottom: 20px;
+      }
+
+      .services-table {
           width: 100%;
-          max-height: 200px;
-          overflow-y: auto;
-          margin-top: 0.25rem;
-  
-          li {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-  
-            &:hover {
-              background-color: #f2f2f2;
-            }
+          border-collapse: collapse;
+          margin-bottom: 20px;
+
+          th,
+          td {
+              padding: 12px 15px;
+              text-align: left;
+              border: 1px solid #ddd;
           }
-        }
-      }
-  
-      .customer-info {
-        background: #f9f9f9;
-        padding: 1.5rem;
-        margin-top: 1rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        h3 {
-          margin-bottom: 1rem;
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-  
-        p {
-          font-size: 1rem;
-          line-height: 1.5;
-        }
-      }
-  
-      .dienstleistungen-container {
-        background: #f9f9f9;
-        padding: 1.5rem;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        
-        h3 {
-          margin-bottom: 1rem;
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-  
-        .dienstleistungen-list {
-          list-style: none;
-          padding: 0;
-          margin-bottom: 1rem;
-  
-          .dienstleistung-item {
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            
-            p {
-              font-size: 1rem;
-            }
-  
-            .total-price {
-              font-weight: 600;
-              font-size: 1.1rem;
-            }
+
+          th {
+              background-color: #f1f1f1;
+              font-weight: bold;
           }
-        }
+
+          td {
+              background-color: #fff;
+          }
+
+          input {
+              padding: 8px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              font-size: 14px;
+              color: #333;
+              width: 100%;
+              box-sizing: border-box;
+              transition: border 0.3s;
+
+              &:focus {
+                  border-color: #0056b3;
+              }
+          }
       }
-  
-      .services-display {
-        background: #f9f9f9;
-        padding: 1.5rem;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        
-        h3 {
-          margin-bottom: 1rem;
-          font-size: 1.5rem;
-          font-weight: bold;
-        }
-  
-        .custom-service {
+
+      .add-service-button {
+          background-color: #28a745;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+
+          &:hover {
+              background-color: #218838;
+          }
+      }
+  }
+
+  .totals {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+
+      .total-row {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 1rem;
-  
-          input {
-            padding: 0.5rem;
-            font-size: 1rem;
-            width: 30%;
-            margin-right: 1rem;
+          font-size: 16px;
+          margin-bottom: 10px;
+
+          .label {
+              font-weight: bold;
+              color: #333;
           }
-  
-          .total-price {
-            font-weight: bold;
-            font-size: 1.1rem;
+
+          .value {
+              color: #333;
           }
-  
-          .remove-button {
-            background: #ff4d4d;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-          }
-        }
-  
-        .add-service-button {
-          background-color: #007bff;
-          color: white;
-          padding: 1rem;
+      }
+
+      .total-with-vat {
+          font-size: 18px;
           font-weight: bold;
-          border-radius: 6px;
-          border: none;
-          cursor: pointer;
-  
-          &:hover {
-            background-color: #0056b3;
-          }
-        }
+          color: #28a745;
       }
-  
-      .submit-button {
-        background: #28a745;
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        cursor: pointer;
-  
-        &:hover {
-          background: #218838;
-        }
-      }
-  
-      .error-message {
-        color: #d9534f;
-        font-weight: bold;
-        text-align: center;
-      }
-    }
   }
-  
-  @media print {
-    .create-invoice {
-      padding: 0;
-      margin: 0;
-      box-shadow: none;
+
+  .submit-button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+      margin-top: 20px;
+
+      &:hover {
+          background-color: #0056b3;
+      }
+  }
+
+  .error-message {
+      color: red;
       font-size: 14px;
-      color: #000;
-      background: none;
-      width: 100%;
-    }
-  
-    .invoice-form {
-      display: block;
-      padding: 1rem;
-    }
-  
-    .form-group,
-    .customer-info,
-    .services-display,
-    .submit-button {
-      margin-bottom: 1rem;
-    }
-    
-    .form-input,
-    .remove-button,
-    .add-service-button {
-      width: 100%;
-    }
+      margin-top: 20px;
   }
-  
+}

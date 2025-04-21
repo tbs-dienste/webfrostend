@@ -9,6 +9,7 @@ const RechnungForm = () => {
     const [kundenVorschlaege, setKundenVorschlaege] = useState([]);
     const [benutzerdefinierteDienstleistungen, setBenutzerdefinierteDienstleistungen] = useState([]);
     const [message, setMessage] = useState('');
+    const [mehrwertsteuerStatus, setMehrwertsteuerStatus] = useState('inkl'); // Default: inkl.
 
     // Fetch all customers
     const fetchKunden = async () => {
@@ -47,6 +48,44 @@ const RechnungForm = () => {
     const handleRemoveBenutzerdefinierteDienstleistung = (index) => {
         const newDienstleistungen = benutzerdefinierteDienstleistungen.filter((_, i) => i !== index);
         setBenutzerdefinierteDienstleistungen(newDienstleistungen);
+    };
+
+    // Update custom service
+    const handleUpdateBenutzerdefinierteDienstleistung = (index, field, value) => {
+        const updatedDienstleistungen = [...benutzerdefinierteDienstleistungen];
+        updatedDienstleistungen[index][field] = value;
+        setBenutzerdefinierteDienstleistungen(updatedDienstleistungen);
+    };
+
+    // Set the first custom service to show default title and price
+    useEffect(() => {
+        if (kundenId && benutzerdefinierteDienstleistungen.length === 0) {
+            setBenutzerdefinierteDienstleistungen([
+                { title: 'Arbeitszeit', anzahl: 1, preisProEinheit: 100 }, // Example working time
+            ]);
+        }
+    }, [kundenId]);
+
+    // Calculate total with or without VAT
+    const calculateTotalWithoutVAT = () => {
+        let total = 0;
+        benutzerdefinierteDienstleistungen.forEach(dienst => {
+            const serviceTotal = dienst.anzahl * dienst.preisProEinheit;
+            total += serviceTotal;
+        });
+        return total.toFixed(2);
+    };
+
+    const calculateVAT = () => {
+        const totalWithoutVAT = parseFloat(calculateTotalWithoutVAT());
+        const vatRate = mehrwertsteuerStatus === 'exkl' ? 0.081 : 0;
+        return (totalWithoutVAT * vatRate).toFixed(2);
+    };
+
+    const calculateTotalWithVAT = () => {
+        const totalWithoutVAT = parseFloat(calculateTotalWithoutVAT());
+        const vatAmount = parseFloat(calculateVAT());
+        return (totalWithoutVAT + vatAmount).toFixed(2);
     };
 
     // Handle form submission
@@ -142,88 +181,112 @@ const RechnungForm = () => {
                     </div>
                 )}
 
+                {/* Mehrwertsteuer Auswahl */}
+                <div className="form-group">
+                    <label>Mehrwertsteuer:</label>
+                    <select 
+                        value={mehrwertsteuerStatus} 
+                        onChange={(e) => setMehrwertsteuerStatus(e.target.value)} 
+                        className="form-input"
+                    >
+                        <option value="inkl">Inkl. MwSt. (inklusive)</option>
+                        <option value="exkl">Exkl. MwSt. (zzgl. 8.1%)</option>
+                    </select>
+                </div>
 
                 {/* Display services if a customer is selected */}
                 {kundenId && (
-                   <div className="services-display">
-                   <h3>Benutzerdefinierte Dienstleistungen</h3>
-               
-                   <table className="services-table">
-                       <thead>
-                           <tr>
-                               <th>Pos</th>
-                               <th>Bezeichnung</th>
-                               <th>Anzahl</th>
-                               <th>Einzelpreis (CHF)</th>
-                               <th>Total (CHF)</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                           {benutzerdefinierteDienstleistungen.map((dienst, index) => (
-                               <tr key={index}>
-                                   <td>{index + 1}</td>
-                                   <td>
-                                       <input
-                                           type="text"
-                                           placeholder="Dienstleistung"
-                                           value={dienst.title}
-                                           onChange={(e) => {
-                                               const updated = [...benutzerdefinierteDienstleistungen];
-                                               updated[index].title = e.target.value;
-                                               setBenutzerdefinierteDienstleistungen(updated);
-                                           }}
-                                           required
-                                       />
-                                   </td>
-                                   <td>
-                                       <input
-                                           type="number"
-                                           min="1"
-                                           value={dienst.anzahl}
-                                           onChange={(e) => {
-                                               const updated = [...benutzerdefinierteDienstleistungen];
-                                               updated[index].anzahl = Number(e.target.value);
-                                               setBenutzerdefinierteDienstleistungen(updated);
-                                           }}
-                                           required
-                                       />
-                                   </td>
-                                   <td>
-                                       <input
-                                           type="number"
-                                           min="0"
-                                           value={dienst.preisProEinheit}
-                                           onChange={(e) => {
-                                               const updated = [...benutzerdefinierteDienstleistungen];
-                                               updated[index].preisProEinheit = Number(e.target.value);
-                                               setBenutzerdefinierteDienstleistungen(updated);
-                                           }}
-                                           required
-                                       />
-                                   </td>
-                                   <td>{(dienst.anzahl * dienst.preisProEinheit).toFixed(2)}</td>
-                               </tr>
-                           ))}
-                       </tbody>
-                   </table>
-               
-                   <button
-                       type="button"
-                       className="add-service-button"
-                       onClick={handleAddBenutzerdefinierteDienstleistung}
-                   >
-                       + Dienstleistung hinzufügen
-                   </button>
-               </div>
-               
+                    <div className="services-display">
+                        <h3>Benutzerdefinierte Dienstleistungen</h3>
+
+                        <table className="services-table">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Bezeichnung</th>
+                                    <th>Anzahl</th>
+                                    <th>Einzelpreis (CHF)</th>
+                                    <th>Total (CHF)</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {benutzerdefinierteDienstleistungen.map((dienst, index) => (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                placeholder="Dienstleistung"
+                                                value={dienst.title}
+                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'title', e.target.value)}
+                                                required
+                                                disabled={index === 0} // Disable first row
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={dienst.anzahl}
+                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'anzahl', e.target.value)}
+                                                required
+                                                disabled={index === 0} // Disable first row
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={dienst.preisProEinheit}
+                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'preisProEinheit', e.target.value)}
+                                                required
+                                                disabled={index === 0} // Disable first row
+                                            />
+                                        </td>
+                                        <td>
+                                            {(dienst.anzahl * dienst.preisProEinheit).toFixed(2)}
+                                        </td>
+                                        <td>
+                                            {index > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveBenutzerdefinierteDienstleistung(index)}
+                                                    className="remove-button"
+                                                >
+                                                    Entfernen
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        <button type="button" onClick={handleAddBenutzerdefinierteDienstleistung} className="add-service-button">
+                            Weitere Dienstleistung hinzufügen
+                        </button>
+                    </div>
                 )}
 
-                <button type="submit" className="submit-button">
-                    Rechnung Erstellen
-                </button>
-            </form>
+                {/* Final Total */}
+                {kundenId && (
+                    <div className="final-total">
+                        <p>Gesamt ohne MwSt.: {calculateTotalWithoutVAT()} CHF</p>
+                        <p>Mehrwertsteuer ({mehrwertsteuerStatus === 'inkl' ? 'inkl.' : 'exkl.'}): {calculateVAT()} CHF</p>
+                        <p>Gesamt mit MwSt.: {calculateTotalWithVAT()} CHF</p>
+                    </div>
+                )}
 
-            {message && <p className="error-message">{message}</p>}
+                {/* Submit Button */}
+                <button type="submit" className="submit-button">
+                    Rechnung erstellen
+                </button>
+
+                {message && <p className="error-message">{message}</p>}
+            </form>
         </div>
     );
 };
