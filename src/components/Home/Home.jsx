@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Home.scss';
 import Loading from '../Loading/Loading';
-import eroeffnung from './eroeffnungrabatt.png';
+import eroeffnung from './summersale.png';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
