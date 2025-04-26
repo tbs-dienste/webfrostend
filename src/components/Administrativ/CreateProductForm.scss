@@ -1,0 +1,135 @@
+.product-form-wrapper {
+    margin: 3rem auto;
+    padding: 3rem;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.6s ease-out;
+  
+    h2 {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      font-size: 2.5rem;
+      color: #222;
+      font-weight: 700;
+    }
+  }
+  
+  .product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+  
+      label {
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.1rem;
+        color: #555;
+      }
+  
+      input[type="text"],
+      input[type="number"] {
+        padding: 0.9rem 1.2rem;
+        border: 1px solid #ddd;
+        border-radius: 14px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #fafafa;
+  
+        &:focus {
+          border-color: #0077cc;
+          background: #fff;
+          box-shadow: 0 0 8px rgba(0, 119, 204, 0.3);
+        }
+      }
+  
+      input[readonly] {
+        background-color: #f0f0f0;
+        border-style: dashed;
+        color: #888;
+      }
+    }
+  
+    .form-inline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.5rem;
+    }
+  
+    .checkbox-field {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 1.2rem;
+      border: 1px dashed #ccc;
+      border-radius: 14px;
+      background: #f9f9f9;
+  
+      input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        accent-color: #00cc88;
+      }
+    }
+  
+    .message {
+      padding: 1rem;
+      border-radius: 14px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 1.1rem;
+  
+      &.error {
+        background-color: #ffe5e5;
+        color: #d10000;
+        border: 1px solid #d10000;
+      }
+  
+      &.success {
+        background-color: #e5ffe5;
+        color: #008f00;
+        border: 1px solid #008f00;
+      }
+    }
+  
+    .submit-btn {
+      padding: 1.2rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #0077cc, #00cc88);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      letter-spacing: 0.5px;
+  
+      &:hover {
+        background: linear-gradient(135deg, #005fa3, #009f6b);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 119, 204, 0.4);
+      }
+    }
+  }
+  
+  /* kleine Animation */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

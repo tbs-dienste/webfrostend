@@ -96,6 +96,7 @@ import "./App.css";
 import AllBewerbungen from './components/Administrativ/Applications/AllBewerbungen';
 import AllProducts from './components/Administrativ/AllProducts';
 import ArtikelSuche from './components/Administrativ/ArtikelSuche';
+import CreateProductForm from './components/Administrativ/CreateProductForm';
 
 
 const App = () => {
@@ -191,6 +192,8 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
+          <Route path="/createProduct" element={<CreateProductForm />} />
+
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />
           <Route path="/stellen" element={<Stellenanzeigen />} />
