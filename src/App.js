@@ -97,12 +97,14 @@ import AllBewerbungen from './components/Administrativ/Applications/AllBewerbung
 import AllProducts from './components/Administrativ/AllProducts';
 import ArtikelSuche from './components/Administrativ/ArtikelSuche';
 import CreateProductForm from './components/Administrativ/CreateProductForm';
+import SpinWheel from './components/Event/SpinWheel';
 
 
 const App = () => {
   
   const [isAdmin, setIsAdmin] = useState(false);
   const [timer, setTimer] = useState(null); 
+  const [fullscreenMode, setFullscreenMode] = useState(false);
 
 
   const [isKassenModus, setIsKassenModus] = useState(false);
@@ -192,7 +194,7 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
-          <Route path="/createProduct" element={<CreateProductForm />} />
+          <Route path="/spin-wheel" element={<SpinWheel setFullscreenMode={setFullscreenMode} fullscreenMode={fullscreenMode} />} />          <Route path="/createProduct" element={<CreateProductForm />} />
 
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />

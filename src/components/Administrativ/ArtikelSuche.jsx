@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Keyboard from '../Kasse/Keyboard'; // Importiere hier deine Tastatur-Komponente!
-import './KundenSuche.scss'; // Optional für dein Styling
-import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
+import Keyboard from '../Kasse/Keyboard';
+import './KundenSuche.scss';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Artikelsuche = ({ onKassenModusChange }) => {
-  const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
+  const [activeField, setActiveField] = useState('article_short_text');
   const [formData, setFormData] = useState({
     article_number: '',
     article_short_text: '',
@@ -20,42 +20,34 @@ const Artikelsuche = ({ onKassenModusChange }) => {
     produktgruppe_nummer: '',
     gueltig_ab: '',
     gueltig_bis: '',
-    hauptaktivitaet: '',
-
+    hauptaktivitaet: ''
   });
-  const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
-  const [selectedRow, setSelectedRow] = useState(null); // Zustand für die markierte Zeile
-  const navigate = useNavigate(); // Um zu Kasse zu navigieren
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const navigate = useNavigate();
 
-  // Kassenmodus aktivieren
   useEffect(() => {
     onKassenModusChange(true);
     return () => {
-      onKassenModusChange(false); // Kassenmodus zurücksetzen
+      onKassenModusChange(false);
     };
   }, [onKassenModusChange]);
 
-  // Fokus auf das 'name' Feld setzen, wenn die Komponente geladen wird
   useEffect(() => {
     document.getElementById('article_short_text').focus();
   }, []);
 
-  // Handhabung der Tastenanschläge
   const handleKeyPress = (key) => {
     if (!activeField) return;
 
     let value = formData[activeField];
 
     if (key === 'DELETE') {
-      value = value.slice(0, -1); // Löscht das letzte Zeichen
+      value = value.slice(0, -1);
     } else if (key === 'SPACE') {
-      value += ' '; // Fügt ein Leerzeichen hinzu
-    } else if (key === 'ENTER') {
-      // Optional: Handle Enter
-    } else if (key === 'TAB') {
-      // Optional: Wechsel zum nächsten Feld
+      value += ' ';
     } else {
-      value += key; // Fügt den gedrückten Key hinzu
+      value += key;
     }
 
     setFormData({
@@ -70,12 +62,12 @@ const Artikelsuche = ({ onKassenModusChange }) => {
 
   const handleÜbernehmen = async () => {
     if (selectedRow === null) {
-      alert("Bitte wählen Sie einen Kunden aus.");
+      alert("Bitte wählen Sie einen Artikel aus.");
       return;
     }
 
-    const selectedCustomer = searchResults[selectedRow]; // Zugriff auf den ausgewählten Kunden
-    const token = localStorage.getItem("token"); // Token aus localStorage abrufen
+    const selectedArticle = searchResults[selectedRow];
+    const token = localStorage.getItem("token");
 
     if (!token) {
       alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
@@ -85,68 +77,62 @@ const Artikelsuche = ({ onKassenModusChange }) => {
     try {
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
-        { kundenkartennummer: selectedCustomer?.kundenkartennummer }, // optional chaining für sichereren Zugriff
+        { article_number: selectedArticle.article_number },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log("Kundenkarte erfolgreich übernommen und gescannt:", response.data);
+      console.log("Artikel erfolgreich übernommen und gescannt:", response.data);
 
-      // Kassenmodus aktualisieren und zur Kasse weiterleiten
       onKassenModusChange({
-        kundenkartennummer: selectedCustomer?.kundenkartennummer,
-        vorname: selectedCustomer?.vorname,
-        nachname: selectedCustomer?.nachname,
-        plz: selectedCustomer?.plz,
-        ort: selectedCustomer?.ort,
+        article_number: selectedArticle.article_number,
+        article_short_text: selectedArticle.article_short_text,
+        price: selectedArticle.price,
       });
 
       navigate('/kasse');
-
     } catch (error) {
-      console.error("Fehler beim Übernehmen der Kundenkarte:", error);
-      alert("Fehler beim Übernehmen der Kundenkarte.");
+      console.error("Fehler beim Übernehmen des Artikels:", error);
+      alert("Fehler beim Übernehmen des Artikels.");
     }
   };
 
+  
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/products', {
         headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       console.log("API Antwort:", response.data); // Debugging
-
-      if (response.data.status === 'success') {
-        const allResults = response.data.kundenkarten;
-
-        console.log("Gefundene Kundenkarten:", allResults); // Debugging
-
-        // Filter nach Name und PLZ
-        const filteredResults = allResults.filter((result) => {
-          const fullName = `${result.vorname} ${result.nachname}`.toLowerCase();
-          const nameMatches = fullName.includes(formData.name.toLowerCase());
-          const plzMatches = result.plz.includes(formData.plz);
-
-          console.log(`Vergleiche: '${fullName}' mit '${formData.name.toLowerCase()}' und '${result.plz}' mit '${formData.plz}'`);
-
-          return nameMatches && plzMatches;
-        });
-
-        console.log("Gefilterte Kundenkarten:", filteredResults); // Debugging
-
-        setSearchResults(filteredResults); // Ergebnisse setzen
-      }
+  
+      // Produkte aus Response holen
+      const allResults = response.data.data || [];
+  
+      console.log("Gefundene Produkte:", allResults);
+  
+      // Wenn du NUR nach article_short_text suchen willst:
+      const filteredResults = allResults.filter((product) => {
+        return product.article_short_text
+          ?.toLowerCase()
+          .includes(formData.article_short_text.toLowerCase());
+      });
+  
+      console.log("Gefilterte Artikel:", filteredResults);
+  
+      setSearchResults(filteredResults); // Ergebnisse setzen
     } catch (error) {
-      console.error('Fehler beim Abrufen der Kundenkarten:', error);
+      console.error('Fehler beim Abrufen der Produkte:', error);
+      alert('Fehler beim Abrufen der Produkte.');
     }
   };
+  
+  
 
-  // Funktion zum Markieren der Zeile
   const handleRowClick = (index) => {
-    setSelectedRow(index); // Setzt die markierte Zeile
+    setSelectedRow(index);
   };
 
   return (
@@ -156,17 +142,17 @@ const Artikelsuche = ({ onKassenModusChange }) => {
           <div
             key={field}
             className={`input-field ${activeField === field ? 'active' : ''}`}
-            onClick={() => setActiveField(field)} // Aktiviert das Eingabefeld
+            onClick={() => setActiveField(field)}
           >
             <label>{field.toUpperCase()}</label>
             <input
-              id={field} // Setzt das ID-Attribut für jedes Eingabefeld
+              id={field}
               type="text"
               name={field}
               value={formData[field]}
               onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-              readOnly={true} // Alle Felder sind readonly
-              autoFocus={field === 'name'} // Setzt den Fokus auf das 'name' Feld
+              readOnly
+              autoFocus={field === 'article_short_text'}
             />
           </div>
         ))}
@@ -199,7 +185,7 @@ const Artikelsuche = ({ onKassenModusChange }) => {
         <button disabled>Detail</button>
         <button
           className="suche-button"
-          onClick={handleSearch} // Trigger the search
+          onClick={handleSearch}
         >
           Suchen
         </button>
@@ -207,45 +193,43 @@ const Artikelsuche = ({ onKassenModusChange }) => {
         <button onClick={goToKasse}>Exit</button>
       </div>
 
-      {/* Ergebnistabelle */}
       <div className="result-table">
         <h3>Suchergebnisse</h3>
         <table>
           <thead>
             <tr>
-              <th>ArtikelNr</th>
-              <th>Name</th>
-              <th>Straße</th>
-              <th>PLZ</th>
-              <th>Ort</th>
-              <th>Telefonnummer</th>
+              <th>Artikelnummer</th>
+              <th>Artikelname</th>
+              <th>Barcode</th>
+              <th>Hersteller</th>
+              <th>Preis</th>
             </tr>
           </thead>
           <tbody>
             {searchResults.length > 0 ? (
-              searchResults.map((result, index) => (
+              searchResults.map((product, index) => (
                 <tr
                   key={index}
-                  className={selectedRow === index ? 'selected' : ''} // Zeile hervorheben, wenn sie ausgewählt ist
-                  onClick={() => handleRowClick(index)} // Markiert die Zeile beim Klicken
+                  className={selectedRow === index ? 'selected' : ''}
+                  onClick={() => handleRowClick(index)}
                 >
-                  <td>{result.kundenkartennummer}</td>
-                  <td>{`${result.vorname} ${result.nachname}`}</td>
-                  <td>{result.adresse}</td>
-                  <td>{result.plz}</td>
-                  <td>{result.ort}</td>
-                  <td>{result.telefonnummer}</td>
+                  <td>{product.article_number}</td>
+                  <td>{product.article_short_text}</td>
+                  <td>{product.barcode}</td>
+                  <td>{product.manufacturer}</td>
+                  <td>{product.price} CHF</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6">Keine Ergebnisse gefunden</td>
+                <td colSpan="5">Keine Ergebnisse gefunden</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      <Keyboard onKeyPress={handleKeyPress} /> {/* Tastatur-Komponente */}
+
+      <Keyboard onKeyPress={handleKeyPress} />
     </div>
   );
 };
