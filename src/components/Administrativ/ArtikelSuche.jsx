@@ -159,38 +159,24 @@ const Artikelsuche = ({ onKassenModusChange }) => {
       </div>
 
       <div className="bottom-buttons">
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button onClick={() => setFormData({
-          article_number: '',
-          article_short_text: '',
-          barcode: '',
-          manufacturer: '',
-          category: '',
-          artikelgruppe: '',
-          artikelgruppe_nummer: '',
-          hauptartikelgruppe: '',
-          hauptartikelnummer: '',
-          produktgruppe: '',
-          produktgruppe_nummer: '',
-          gueltig_ab: '',
-          gueltig_bis: '',
-          hauptaktivitaet: ''
-        })}>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button onClick={() => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' })}>
           Filter löschen
         </button>
         <button disabled>Detail</button>
-        <button
-          className="suche-button"
-          onClick={handleSearch}
-        >
+        <button onClick={handleSearch}>
           Suchen
         </button>
-        <button onClick={handleÜbernehmen}>Übernehmen</button>
-        <button onClick={goToKasse}>Exit</button>
+        <button onClick={handleÜbernehmen}>
+          Übernehmen
+        </button>
+        <button onClick={goToKasse}>
+          Exit
+        </button>
       </div>
 
       <div className="result-table">

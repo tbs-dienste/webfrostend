@@ -58,7 +58,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
   const goToKasse = () => {
     navigate('/kasse');
   };
-  
+
   const handleÜbernehmen = async () => {
     if (selectedRow === null) {
       alert("Bitte wählen Sie einen Kunden aus.");
@@ -67,12 +67,12 @@ const KundenSuche = ({ onKassenModusChange }) => {
 
     const selectedCustomer = searchResults[selectedRow]; // Zugriff auf den ausgewählten Kunden
     const token = localStorage.getItem("token"); // Token aus localStorage abrufen
-  
+
     if (!token) {
       alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
       return;
     }
-  
+
     try {
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
@@ -81,9 +81,9 @@ const KundenSuche = ({ onKassenModusChange }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       console.log("Kundenkarte erfolgreich übernommen und gescannt:", response.data);
-  
+
       // Kassenmodus aktualisieren und zur Kasse weiterleiten
       onKassenModusChange({
         kundenkartennummer: selectedCustomer?.kundenkartennummer,
@@ -92,15 +92,15 @@ const KundenSuche = ({ onKassenModusChange }) => {
         plz: selectedCustomer?.plz,
         ort: selectedCustomer?.ort,
       });
-  
+
       navigate('/kasse');
-  
+
     } catch (error) {
       console.error("Fehler beim Übernehmen der Kundenkarte:", error);
       alert("Fehler beim Übernehmen der Kundenkarte.");
     }
   };
-  
+
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -163,25 +163,7 @@ const KundenSuche = ({ onKassenModusChange }) => {
         ))}
       </div>
 
-      <div className="bottom-buttons">
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button disabled>X</button>
-        <button onClick={() => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' })}>
-          Filter löschen
-        </button>
-        <button disabled>Detail</button>
-        <button
-          className="suche-button"
-          onClick={handleSearch} // Trigger the search
-        >
-          Suchen
-        </button>
-        <button onClick={handleÜbernehmen}>Übernehmen</button>
-        <button onClick={goToKasse}>Exit</button>
-      </div>
+
 
       {/* Ergebnistabelle */}
       <div className="result-table">
@@ -222,6 +204,27 @@ const KundenSuche = ({ onKassenModusChange }) => {
         </table>
       </div>
       <Keyboard onKeyPress={handleKeyPress} /> {/* Tastatur-Komponente */}
+      <div className="bottom-buttons">
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button disabled className="icon-button">X</button>
+        <button onClick={() => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' })}>
+          Filter löschen
+        </button>
+        <button disabled>Detail</button>
+        <button onClick={handleSearch}>
+          Suchen
+        </button>
+        <button onClick={handleÜbernehmen}>
+          Übernehmen
+        </button>
+        <button onClick={goToKasse}>
+          Exit
+        </button>
+      </div>
+
     </div>
   );
 };
