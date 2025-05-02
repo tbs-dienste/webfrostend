@@ -374,6 +374,8 @@ const Kasse = ({ onKassenModusChange }) => {
   const toggleBezahlen = () => {
     setShowDiscounts(!showDiscounts);
   };
+
+  
   const handleCashierSwitch = () => {
     // Token aus dem localStorage entfernen
     localStorage.removeItem("token");
@@ -1062,6 +1064,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className="btn"></button>
               <button className="btn"></button>
               <button className="btn"></button>
+
               <button className="btn"></button>
               <button className="btn"></button>
               <button className="btn"></button>
@@ -1070,16 +1073,85 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className="btn"></button>
               <button className="btn"></button>
 
-              <button onClick={toggleBezahlen} className="btn">Zurück</button>
-              <button onClick={() => setIsPaying('Barzahlung')} className="btn">Barzahlung</button>
-              <button onClick={() => setIsPaying('Kartenzahlung')} className="btn">Kartenzahlung</button>
-              <button onClick={() => setIsPaying('Anzahlung')} className="btn">Anzahlung</button>
-              <button onClick={() => setIsPaying('TBs Batzen')} className="btn">TBs Batzen</button>
-              <button onClick={() => setIsPaying('Gutschein alt')} className="btn">Gutschein alt</button>
-              <button onClick={() => setIsPaying('Gutschein neu')} className="btn">Gutschein neu</button>
-              <button onClick={() => setIsPaying('Trinkgeld')} className="btn">Trinkgeld</button>
-              <button className="btn">Split Payment</button>
-              <button className="btn">Abbrechen</button>
+      <button
+        onClick={() => setIsPaying('Barzahlung')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Barzahlung' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Barzahlung
+      </button>
+      <button
+        onClick={() => setIsPaying('Kartenzahlung')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Kartenzahlung' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Kartenzahlung
+      </button>
+      <button
+        onClick={() => setIsPaying('Anzahlung')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Anzahlung' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Anzahlung
+      </button>
+      <button
+        onClick={() => setIsPaying('TBs Batzen')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'TBs Batzen' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        TBs Batzen
+      </button>
+      <button
+        onClick={() => setIsPaying('Gutschein alt')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Gutschein alt' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Gutschein alt
+      </button>
+      <button
+        onClick={() => setIsPaying('Gutschein neu')}
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Gutschein neu' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Gutschein neu
+      </button>
+     
+      <button
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Split Payment' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Split Payment
+      </button>
+      <button
+        className="btn"
+        style={{
+          backgroundColor: isPaying === 'Einzelrechnung' ? '#f3ff73' : '#85ff63',
+          color: 'black',
+        }}
+      >
+        Einzel Rechnung
+      </button>
 
 
               <button className="btn"></button>
@@ -1284,7 +1356,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <div className="kundenkarte-info" style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'rgb(85, 85, 85)' }}>
                 <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.vorname} {kundenkarte?.nachname}</p>
-                <p style={{ fontFamily: 'monospace', margin: '0.5rem 0' }}>{kundenkarte?.plz} {kundenkarte?.ort}</p>
               </div>
             </div>
 

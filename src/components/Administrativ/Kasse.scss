@@ -17,7 +17,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   padding: 30px;
   background-color: $secondary-color;
   border-radius: $border-radius;
-  box-shadow: $shadow;
 }
 
 // Einheitliche Buttons
@@ -36,16 +35,12 @@ $button-size: 90px; // Einheitliche Button-Größe
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background-color: darken($primary-color, 10%);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
-  &:active {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+ 
 
   &.btn-yes {
     background-color: $accent-color;
@@ -92,7 +87,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   padding: 20px;
   background-color: $secondary-color;
   border-radius: $border-radius;
-  box-shadow: $shadow;
   align-items: center;
 }
 
@@ -115,16 +109,11 @@ $button-size: 90px; // Einheitliche Button-Größe
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
   &:hover {
     background-color: darken($primary-color, 10%);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 
-  &:active {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
 
   &.back-button {
     background-color: $danger-color; /* Zurück-Button speziell */
@@ -152,7 +141,6 @@ $button-size: 90px; // Einheitliche Button-Größe
     background: white;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     max-height: calc(100vh - 120px); // Platz für total-products lassen
   }
@@ -161,7 +149,6 @@ $button-size: 90px; // Einheitliche Button-Größe
     background: #f2ecae;
     padding: 15px;
     border-radius: 12px;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: fixed;
     bottom: 10px; // Leichter Abstand zum Rand
@@ -219,12 +206,9 @@ $button-size: 90px; // Einheitliche Button-Größe
     padding: 10px;
     border-radius: $border-radius;
     border: 1px solid $light-gray;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow $transition;
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
       border-color: $primary-color;
     }
   }
@@ -282,7 +266,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   border-radius: $border-radius;
   background-color: $primary-color;
   color: white;
-  box-shadow: $shadow;
 
   &:hover {
     background-color: darken($primary-color, 10%);
@@ -294,7 +277,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   color: white;
   border: none;
   border-radius: $border-radius;
-  box-shadow: $shadow;
 
   &:hover {
     background-color: darken(#4caf50, 10%);
@@ -310,7 +292,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   padding: 10px;
   border-radius: $border-radius;
   border: 1px solid $light-gray;
-  box-shadow: $shadow;
   width: 160px;
   height: 50px;
 
@@ -324,10 +305,7 @@ $button-size: 90px; // Einheitliche Button-Größe
     outline: none;
     pointer-events: none; // Verhindert jegliche Interaktionen
 
-    &:focus {
-      box-shadow: none;
-      border-color: transparent;
-    }
+   
   }
 }
 
@@ -340,7 +318,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   padding: 15px;
   background-color: white;
   border-radius: $border-radius;
-  box-shadow: $shadow;
   align-items: center;
   background-color: #f2ecae;
   height: $button-size;
@@ -366,7 +343,6 @@ $button-size: 90px; // Einheitliche Button-Größe
     padding: 10px;
     border-radius: $border-radius;
     border: 1px solid $light-gray;
-    box-shadow: $shadow;
     width: 160px;
     height: 50px;
 
