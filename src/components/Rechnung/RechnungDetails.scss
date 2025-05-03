@@ -1,113 +1,130 @@
+// RechnungDetails.scss
+
 .rechnung-detail {
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 20px auto;
-  font-family: 'Arial', sans-serif;
-
-  &__loading,
-  &__error {
-      text-align: center;
-      font-size: 1.2em;
-      color: #555;
-  }
-
-  &__title {
-      font-size: 2em;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f7fc;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    &__title {
+      font-size: 24px;
+      font-weight: bold;
       color: #333;
       margin-bottom: 20px;
-      border-bottom: 2px solid #ccc;
-      padding-bottom: 10px;
-  }
-
-  &__info {
-      display: flex;
-      margin-bottom: 15px;
-
-      &__label {
-          font-weight: bold;
-          color: #666;
-          margin-right: 10px;
-          min-width: 150px;
-      }
-
-      &__value {
-          font-size: 1.2em;
-          color: #333;
-      }
-  }
-
-  p {
-      margin: 10px 0;
-      font-size: 1.1em;
-      color: #555;
-  }
-
-  &__status-buttons {
-      margin: 15px 0;
-
-      .status-button {
-          margin-right: 10px;
-          padding: 10px 15px;
-          font-size: 1em;
-          color: #fff;
-          background-color: #007bff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-
-          &:hover {
-              background-color: #0056b3;
-          }
-      }
-  }
-
-  h4 {
-      font-size: 1.5em;
-      color: #333;
-      margin-top: 20px;
-      margin-bottom: 10px;
-  }
-
-  &__services,
-  &__custom-services {
-      list-style: none;
-      padding: 0;
-      font-size: 1em;
-      color: #444;
-
-      li {
-          padding: 5px 0;
-          display: flex;
-          justify-content: space-between;
-          border-bottom: 1px solid #e0e0e0;
-
-          &:last-child {
-              border-bottom: none;
-          }
-      }
-  }
-
-  &__delete {
-      margin-top: 30px;
+    }
+  
+    &__loading,
+    &__error {
       text-align: center;
-
-      .delete-button {
-          padding: 10px 20px;
-          font-size: 1em;
-          color: #fff;
-          background-color: #dc3545;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-
-          &:hover {
-              background-color: #c82333;
-          }
+      font-size: 16px;
+      color: #ff4d4f;
+    }
+  
+    &__info {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      
+      .rechnung-detail__label {
+        font-weight: bold;
+        color: #555;
       }
+  
+      .rechnung-detail__value {
+        color: #333;
+      }
+    }
+  
+    &__status-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+  
+      .status-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #0056b3;
+        }
+  
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  
+    &__table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+  
+      th, td {
+        padding: 12px 20px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 14px;
+      }
+  
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+  
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+  
+      td {
+        color: #333;
+      }
+    }
+  
+    &__actions {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      
+      .delete-button,
+      .download-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+  
+      .delete-button {
+        background-color: #ff4d4f;
+        color: white;
+        
+        &:hover {
+          background-color: #e04d45;
+        }
+      }
+  
+      .download-button {
+        background-color: #28a745;
+        color: white;
+  
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
   }
-}
+  
