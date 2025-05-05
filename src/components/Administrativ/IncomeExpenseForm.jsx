@@ -211,6 +211,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 <option value="bueromaterial">Büromaterial 8.1%</option>
                 <option value="mwstruckestattung">MWST-Rückerst. 0%</option>
                 <option value="porto">Porto 8.1%</option>
+                <option value="kundenbestellung">Kundenbestellung</option>
                 <option value="transportkosten">Transportkosten</option> {/* Neuer Grund */}
                 <option value="verpflegungskosten">Verpflegungskosten</option> {/* Neuer Grund */}
                 <option value="kommunikationskosten">Kommunikationskosten</option> {/* Neuer Grund */}
