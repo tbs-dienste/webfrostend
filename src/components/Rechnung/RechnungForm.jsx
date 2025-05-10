@@ -5,157 +5,145 @@ import './RechnungForm.scss';
 const RechnungForm = () => {
     const [kundenSuche, setKundenSuche] = useState('');
     const [kundenId, setKundenId] = useState('');
-    const [kunden, setKunden] = useState([]); // State for customers
+    const [kunden, setKunden] = useState([]);
     const [kundenVorschlaege, setKundenVorschlaege] = useState([]);
-    const [benutzerdefinierteDienstleistungen, setBenutzerdefinierteDienstleistungen] = useState([]);
+    const [dienstleistungen, setDienstleistungen] = useState([]);
+    const [mehrwertsteuerStatus, setMehrwertsteuerStatus] = useState('inkl');
     const [message, setMessage] = useState('');
-    const [mehrwertsteuerStatus, setMehrwertsteuerStatus] = useState('inkl'); // Default: inkl.
 
-    // Fetch all customers
-    const fetchKunden = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setKunden(response.data.data); // Set customers
-        } catch (error) {
-            console.error('Fehler beim Abrufen der Kunden:', error);
-        }
-    };
-
-    // Filter customer suggestions based on search input
-    const fetchKundenVorschlaege = () => {
-        if (kundenSuche.length > 2) {
-            const filteredKunden = kunden.filter((kunde) =>
-                `${kunde.vorname} ${kunde.nachname}`.toLowerCase().includes(kundenSuche.toLowerCase())
-            );
-            setKundenVorschlaege(filteredKunden);
-        } else {
-            setKundenVorschlaege([]);
-        }
-    };
-
-    // Add custom service
-    const handleAddBenutzerdefinierteDienstleistung = () => {
-        setBenutzerdefinierteDienstleistungen([
-            ...benutzerdefinierteDienstleistungen,
-            { title: '', anzahl: 1, preisProEinheit: 0 },
-        ]);
-    };
-
-    // Remove custom service
-    const handleRemoveBenutzerdefinierteDienstleistung = (index) => {
-        const newDienstleistungen = benutzerdefinierteDienstleistungen.filter((_, i) => i !== index);
-        setBenutzerdefinierteDienstleistungen(newDienstleistungen);
-    };
-
-    // Update custom service
-    const handleUpdateBenutzerdefinierteDienstleistung = (index, field, value) => {
-        const updatedDienstleistungen = [...benutzerdefinierteDienstleistungen];
-        updatedDienstleistungen[index][field] = value;
-        setBenutzerdefinierteDienstleistungen(updatedDienstleistungen);
-    };
-
-    // Set the first custom service to show default title and price
-    useEffect(() => {
-        if (kundenId && benutzerdefinierteDienstleistungen.length === 0) {
-            setBenutzerdefinierteDienstleistungen([
-                { title: 'Arbeitszeit', anzahl: 1, preisProEinheit: 100 }, // Example working time
-            ]);
-        }
-    }, [kundenId]);
-
-    // Calculate total with or without VAT
-    const calculateTotalWithoutVAT = () => {
-        let total = 0;
-        benutzerdefinierteDienstleistungen.forEach(dienst => {
-            const serviceTotal = dienst.anzahl * dienst.preisProEinheit;
-            total += serviceTotal;
-        });
-        return total.toFixed(2);
-    };
-
-    const calculateVAT = () => {
-        const totalWithoutVAT = parseFloat(calculateTotalWithoutVAT());
-        const vatRate = mehrwertsteuerStatus === 'exkl' ? 0.081 : 0;
-        return (totalWithoutVAT * vatRate).toFixed(2);
-    };
-
-    const calculateTotalWithVAT = () => {
-        const totalWithoutVAT = parseFloat(calculateTotalWithoutVAT());
-        const vatAmount = parseFloat(calculateVAT());
-        return (totalWithoutVAT + vatAmount).toFixed(2);
-    };
-
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!kundenId) {
-            setMessage('Bitte einen Kunden auswählen.');
-            return;
-        }
-
-        const invoiceData = {
-            kundenId,
-            benutzerdefinierteDienstleistungen,
-        };
-
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen',
-                invoiceData,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            window.location.href = "/rechnungen";
-            setMessage('');
-            setBenutzerdefinierteDienstleistungen([]);
-            setKundenSuche('');
-            setKundenId('');
-        } catch (error) {
-            console.error('Fehler beim Erstellen der Rechnung:', error);
-        }
-    };
-
-    // Fetch customers on component mount
     useEffect(() => {
         fetchKunden();
     }, []);
 
-    // Fetch customer suggestions whenever the search input changes
     useEffect(() => {
-        fetchKundenVorschlaege();
+        if (kundenSuche.length > 2) {
+            const vorschlaege = kunden.filter(k =>
+                `${k.vorname} ${k.nachname}`.toLowerCase().includes(kundenSuche.toLowerCase())
+            );
+            setKundenVorschlaege(vorschlaege);
+        } else {
+            setKundenVorschlaege([]);
+        }
     }, [kundenSuche, kunden]);
 
+    useEffect(() => {
+        if (kundenId) {
+            fetchDienstleistungenFürKunde(kundenId);
+        }
+    }, [kundenId]);
+    
+    const fetchDienstleistungenFürKunde = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/arbeitszeiten/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+    
+            const serverDienstleistungen = res.data.dienstleistungen || [];
+    
+            const umgewandelt = serverDienstleistungen.map(d => ({
+                title: d.dienstleistung,
+                anzahl: parseFloat(d.gesamtArbeitszeit).toFixed(2),
+                preisProEinheit: parseFloat(d.preisProStunde).toFixed(2)
+            }));
+    
+            setDienstleistungen(umgewandelt);
+        } catch (err) {
+            console.error("Fehler beim Laden der automatischen Dienstleistungen:", err);
+        }
+    };
+    
+    
+
+    const fetchKunden = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setKunden(res.data.data);
+        } catch (error) {
+            console.error('Fehler beim Laden der Kunden:', error);
+        }
+    };
+
+    const handleAddDienstleistung = () => {
+        setDienstleistungen([
+            ...dienstleistungen,
+            { title: '', anzahl: 1, preisProEinheit: 0 }
+        ]);
+    };
+
+    const handleUpdateDienstleistung = (index, field, value) => {
+        const updated = [...dienstleistungen];
+        updated[index][field] = value;
+        setDienstleistungen(updated);
+    };
+
+    const handleRemoveDienstleistung = (index) => {
+        const updated = dienstleistungen.filter((_, i) => i !== index);
+        setDienstleistungen(updated);
+    };
+
+    const calculateTotal = () => {
+        return dienstleistungen.reduce((sum, d) => sum + (parseFloat(d.anzahl) * parseFloat(d.preisProEinheit)), 0);
+    };
+
+    const calculateVAT = () => {
+        const netto = calculateTotal();
+        return mehrwertsteuerStatus === 'exkl' ? netto * 0.081 : 0;
+    };
+
+    const calculateGesamt = () => {
+        return (calculateTotal() + calculateVAT()).toFixed(2);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!kundenId) {
+            setMessage('Bitte Kunden auswählen.');
+            return;
+        }
+
+        const data = {
+            kundenId,
+            benutzerdefinierteDienstleistungen: dienstleistungen
+        };
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen', data, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            window.location.href = "/rechnungen";
+        } catch (err) {
+            console.error('Fehler beim Erstellen der Rechnung:', err);
+        }
+    };
+
     return (
-        <div className="create-invoice">
-            <h2>Rechnung Erstellen</h2>
-            <form onSubmit={handleSubmit} className="invoice-form">
+        <div className="rechnung-form">
+            <h2>Rechnung erstellen</h2>
+            <form onSubmit={handleSubmit}>
+                {/* Kundensuche */}
                 {!kundenId && (
                     <div className="form-group">
-                        <label>Kunden suchen:</label>
+                        <label>Kunde suchen:</label>
                         <input
                             type="text"
                             value={kundenSuche}
                             onChange={(e) => setKundenSuche(e.target.value)}
-                            placeholder="Kunden Vor- oder Nachname eingeben"
-                            className="form-input"
+                            placeholder="Vor- oder Nachname"
                         />
                         {kundenVorschlaege.length > 0 && (
-                            <ul className="customer-suggestions">
-                                {kundenVorschlaege.map((kunde) => (
-                                    <li
-                                        key={kunde.id}
-                                        onClick={() => {
-                                            setKundenId(kunde.id);
-                                            setKundenSuche(`${kunde.vorname} ${kunde.nachname}`);
-                                            setKundenVorschlaege([]);
-                                        }}
-                                    >
+                            <ul className="vorschlaege">
+                                {kundenVorschlaege.map(kunde => (
+                                    <li key={kunde.id} onClick={() => {
+                                        setKundenId(kunde.id);
+                                        setKundenSuche(`${kunde.vorname} ${kunde.nachname}`);
+                                        setKundenVorschlaege([]);
+                                    }}>
                                         {kunde.vorname} {kunde.nachname}
                                     </li>
                                 ))}
@@ -164,128 +152,95 @@ const RechnungForm = () => {
                     </div>
                 )}
 
+                {/* Kundenanzeige */}
                 {kundenId && (
-                    <div className="kunden-info-box">
+                    <div className="kunden-info">
                         {(() => {
-                            const gewaehlterKunde = kunden.find(k => k.id === kundenId);
-                            if (!gewaehlterKunde) return <p>Kunde nicht gefunden.</p>;
-
-                            return (
-                                <div className="kunden-details">
-                                    <p>{gewaehlterKunde.vorname} {gewaehlterKunde.nachname}</p>
-                                    <p>{gewaehlterKunde.strasseHausnummer}</p>
-                                    <p>{gewaehlterKunde.postleitzahl} {gewaehlterKunde.ort}</p>
-                                </div>
-                            );
+                            const k = kunden.find(k => k.id === kundenId);
+                            return k ? (
+                                <>
+                                    <p><strong>{k.vorname} {k.nachname}</strong></p>
+                                    <p>{k.strasseHausnummer}</p>
+                                    <p>{k.postleitzahl} {k.ort}</p>
+                                </>
+                            ) : <p>Kunde nicht gefunden.</p>;
                         })()}
                     </div>
                 )}
 
-                {/* Mehrwertsteuer Auswahl */}
+                {/* Mehrwertsteuer */}
                 <div className="form-group">
                     <label>Mehrwertsteuer:</label>
-                    <select 
-                        value={mehrwertsteuerStatus} 
-                        onChange={(e) => setMehrwertsteuerStatus(e.target.value)} 
-                        className="form-input"
-                    >
-                        <option value="inkl">Inkl. MwSt. (inklusive)</option>
-                        <option value="exkl">Exkl. MwSt. (zzgl. 8.1%)</option>
+                    <select value={mehrwertsteuerStatus} onChange={e => setMehrwertsteuerStatus(e.target.value)}>
+                        <option value="inkl">Inkl. MwSt.</option>
+                        <option value="exkl">Exkl. MwSt. (8.1%)</option>
                     </select>
                 </div>
 
-                {/* Display services if a customer is selected */}
-                {kundenId && (
-                    <div className="services-display">
-                        <h3>Benutzerdefinierte Dienstleistungen</h3>
+                {/* Dienstleistungen */}
+                <h3>Dienstleistungen</h3>
+                <table className="dienstleistungen">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Bezeichnung</th>
+                            <th>Menge</th>
+                            <th>Einzelpreis</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {dienstleistungen.map((dienst, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>
+                                    <input
+                                        type="text"
+                                        value={dienst.title}
+                                        onChange={e => handleUpdateDienstleistung(index, 'title', e.target.value)}
+                                        disabled={index === 0}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        step="0.1"
+                                        value={dienst.anzahl}
+                                        onChange={e => handleUpdateDienstleistung(index, 'anzahl', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        step="0.05"
+                                        value={dienst.preisProEinheit}
+                                        onChange={e => handleUpdateDienstleistung(index, 'preisProEinheit', e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    {(dienst.anzahl * dienst.preisProEinheit).toFixed(2)} CHF
+                                </td>
+                                <td>
+                                    {index > 0 && (
+                                        <button type="button" onClick={() => handleRemoveDienstleistung(index)}>✖</button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <button type="button" onClick={handleAddDienstleistung} className="add-btn">+ Dienstleistung</button>
 
-                        <table className="services-table">
-                            <thead>
-                                <tr>
-                                    <th>Pos</th>
-                                    <th>Bezeichnung</th>
-                                    <th>Anzahl</th>
-                                    <th>Einzelpreis (CHF)</th>
-                                    <th>Total (CHF)</th>
-                                    <th>Aktionen</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {benutzerdefinierteDienstleistungen.map((dienst, index) => (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                placeholder="Dienstleistung"
-                                                value={dienst.title}
-                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'title', e.target.value)}
-                                                required
-                                                disabled={index === 0} // Disable first row
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                value={dienst.anzahl}
-                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'anzahl', e.target.value)}
-                                                required
-                                                disabled={index === 0} // Disable first row
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                value={dienst.preisProEinheit}
-                                                onChange={(e) => handleUpdateBenutzerdefinierteDienstleistung(index, 'preisProEinheit', e.target.value)}
-                                                required
-                                                disabled={index === 0} // Disable first row
-                                            />
-                                        </td>
-                                        <td>
-                                            {(dienst.anzahl * dienst.preisProEinheit).toFixed(2)}
-                                        </td>
-                                        <td>
-                                            {index > 0 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveBenutzerdefinierteDienstleistung(index)}
-                                                    className="remove-button"
-                                                >
-                                                    Entfernen
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                {/* Gesamtbetrag */}
+                <div className="summe">
+                    <p>Zwischensumme: {calculateTotal().toFixed(2)} CHF</p>
+                    <p>Mehrwertsteuer: {calculateVAT().toFixed(2)} CHF</p>
+                    <p><strong>Gesamt: {calculateGesamt()} CHF</strong></p>
+                </div>
 
-                        <button type="button" onClick={handleAddBenutzerdefinierteDienstleistung} className="add-service-button">
-                            Weitere Dienstleistung hinzufügen
-                        </button>
-                    </div>
-                )}
-
-                {/* Final Total */}
-                {kundenId && (
-                    <div className="final-total">
-                        <p>Gesamt ohne MwSt.: {calculateTotalWithoutVAT()} CHF</p>
-                        <p>Mehrwertsteuer ({mehrwertsteuerStatus === 'inkl' ? 'inkl.' : 'exkl.'}): {calculateVAT()} CHF</p>
-                        <p>Gesamt mit MwSt.: {calculateTotalWithVAT()} CHF</p>
-                    </div>
-                )}
-
-                {/* Submit Button */}
-                <button type="submit" className="submit-button">
-                    Rechnung erstellen
-                </button>
-
-                {message && <p className="error-message">{message}</p>}
+                <button type="submit" className="submit-btn">Rechnung speichern</button>
+                {message && <p className="error-msg">{message}</p>}
             </form>
         </div>
     );
