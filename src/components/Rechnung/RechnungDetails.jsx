@@ -4,6 +4,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import "./RechnungDetails.scss";
+import logoBlack from "./black.png";
 
 const RechnungDetails = () => {
   const { id } = useParams();
@@ -57,85 +58,78 @@ const RechnungDetails = () => {
       }
     }
   };
-  const generatePDF = (rechnung) => {
-    if (!kunde) {
-      alert("Kundendaten nicht verfügbar.");
-      return;
-    }
 
+  const generatePDF = (rechnung) => {
     const doc = new jsPDF();
     const blue = [54, 162, 235];
-
-    // Kopfbereich – Absender
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.setTextColor(...blue);
-    doc.text("Deine Firma GmbH", 14, 20);
-
-    doc.setFontSize(10);
-    doc.setTextColor(0);
-    doc.setFont("helvetica", "normal");
-    doc.text("Musterstraße 1", 14, 26);
-    doc.text("12345 Bern", 14, 31);
-
-    // Kundenadresse
+    
+    // Logo oben links hinzufügen und kleiner machen
+    doc.addImage(logoBlack, 'PNG', 14, 10, 30, 30); // Logo kleiner machen (30x30px)
+    
+    // Kundenadresse weiter oben platzieren
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text(`${kunde.vorname} ${kunde.nachname}`, 14, 50);
+    doc.text(`${kunde.vorname} ${kunde.nachname}`, 14, 60);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(kunde.adresse || "Adresse folgt", 14, 55);
-    doc.text(`${kunde.plz || "PLZ"} ${kunde.ort || "Ort"}`, 14, 60);
-
-    // Titel
-    doc.setFontSize(20);
+    doc.text(kunde.adresse || "Adresse folgt", 14, 65);
+    doc.text(`${kunde.plz || "PLZ"} ${kunde.ort || "Ort"}`, 14, 70);
+    
+    // Titel weiter nach oben verschieben
+    doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0);
-    doc.text("RECHNUNG", 105, 80, { align: "center" });
-
-    // Rechnungsinformationen
+    doc.text("RECHNUNG", 105, 90, { align: "center" });
+    
+    // Rechnungsinformationen weiter oben platzieren
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    doc.text(`Rechnungsnummer: ${rechnung.rechnungsnummer}`, 14, 95);
-    doc.text(`Rechnungsdatum: ${new Date(rechnung.rechnungsdatum).toLocaleDateString()}`, 14, 100);
-    doc.text(`Fälligkeitsdatum: ${new Date(rechnung.faelligkeitsdatum).toLocaleDateString()}`, 14, 105);
-
-    // Dienstleistungen & Tabelle
+    
+    const currentDate = new Date();
+    const faelligkeitsdatum = new Date(currentDate);
+    faelligkeitsdatum.setDate(currentDate.getDate() + 30); // Fälligkeitsdatum ist 30 Tage nach dem aktuellen Datum
+    
+    doc.text(`Rechnungsnummer: ${rechnung.rechnungsnummer}`, 14, 105);
+    doc.text(`Rechnungsdatum: ${currentDate.toLocaleDateString()}`, 14, 110); // Aktuelles Datum für Rechnungsdatum
+    doc.text(`Fälligkeitsdatum: ${faelligkeitsdatum.toLocaleDateString()}`, 14, 115); // Fälligkeitsdatum: 30 Tage nach Rechnungsdatum
+    
+    // Dienstleistungen & Tabelle weiter oben
     const dienstleistungen = [
       ...(rechnung.dienstleistungen || []),
       ...(rechnung.benutzerdefinierte_dienstleistungen || [])
     ];
-
+    
     const tableRows = dienstleistungen.map((service, index) => {
       const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
       const anzahl = service.anzahl || 1;
+      const bezeichnung = service.dienstleistung || service.title || '';
       return [
         index + 1,
-        service.title,
+        bezeichnung,
         anzahl,
         preis.toFixed(2),
         (preis * anzahl).toFixed(2),
       ];
     });
-
+    
     const netTotal = dienstleistungen.reduce((sum, s) => {
       const preis = parseFloat(s.kosten) || parseFloat(s.preisProEinheit) || 0;
       const anzahl = s.anzahl || 1;
       return sum + (preis * anzahl);
     }, 0);
-
+    
     const mwstRate = 8.1;
     const taxAmount = (netTotal * mwstRate) / 100;
     const total = netTotal + taxAmount;
-
+    
     const summaryRows = [
       [{ content: `MwSt (${mwstRate}%)`, colSpan: 4, styles: { halign: 'right', fontStyle: 'bold' } }, { content: `${taxAmount.toFixed(2)} CHF`, styles: { halign: 'right' } }],
       [{ content: "Gesamtbetrag (inkl. MwSt)", colSpan: 4, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }, { content: `${total.toFixed(2)} CHF`, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }],
     ];
-
-    // Tabelle
+    
+    // Tabelle weiter oben platzieren
     doc.autoTable({
-      startY: 115,
+      startY: 125,  // Startposition der Tabelle höher
       head: [["Pos.", "Bezeichnung", "Anzahl", "Einzelpreis (CHF)", "Total (CHF)"]],
       body: [...tableRows, ...summaryRows],
       theme: "striped",
@@ -163,22 +157,40 @@ const RechnungDetails = () => {
         3: { halign: 'right', cellWidth: 30 },
         4: { halign: 'right', cellWidth: 30 },
       },
+      // Seitenumbruch, wenn die Tabelle zu groß ist
+      didDrawPage: (data) => {
+        const pageHeight = doc.internal.pageSize.height;
+        if (data.cursor.y > pageHeight - 50) {
+          doc.addPage(); // Neue Seite hinzufügen, wenn der Platz nicht ausreicht
+        }
+      },
     });
-
-    // Fußbereich – Zahlungsinfo & Dank
+    
+    // Fußbereich – Zahlungsinformation & QR-Hinweis weiter oben
     let y = doc.lastAutoTable.finalY + 20;
-    doc.setFontSize(10);
+    
     doc.setFont("helvetica", "normal");
-    doc.text("Bitte überweisen Sie den Gesamtbetrag bis zum Fälligkeitsdatum auf folgendes Konto:", 14, y);
-    y += 10;
-    doc.setFont("helvetica", "bold");
-    doc.text("IBAN: CH12 3456 7890 1234 5678 9   ·   BIC: ABCDCH22XXX", 14, y);
+    doc.setFontSize(10);
+    doc.text("Bitte begleichen Sie den Gesamtbetrag bis zum Fälligkeitsdatum per QR-Rechnung.", 14, y);
+    y += 8;
+    doc.text("Scannen Sie den QR-Code in Ihrer Banking-App, um die Zahlung zu tätigen.", 14, y);
+    y += 8;
+    doc.text("Die Rechnung muss innerhalb von 30 Tagen bezahlt werden, sonst erfolgt eine kostenpflichtige Mahnung.", 14, y);
+    
     y += 15;
+    doc.setFont("helvetica", "normal");
+    doc.text("Wir danken Ihnen für Ihr Vertrauen und freuen uns auf die weitere Zusammenarbeit.", 14, y);
+    
+    // Tbs Solutions ganz unten
+    y += 20;
     doc.setFont("helvetica", "italic");
-    doc.text("Vielen Dank für Ihr Vertrauen!", 14, y);
-
+    doc.setFontSize(8);
+    doc.text("TBs Solutions", 14, y);
+    
     doc.save(`${rechnung.rechnungsnummer}_Rechnung.pdf`);
   };
+  
+
 
 
   if (loading) return <div className="rechnung-detail__loading">Lade...</div>;
@@ -218,39 +230,39 @@ const RechnungDetails = () => {
         </>
       )}
 
-{rechnung && (
-  <div className="rechnung-detail__tabelle">
-    <h3>Dienstleistungen</h3>
-    <table className="dienstleistung-tabelle">
-      <thead>
-        <tr>
-          <th>Pos.</th>
-          <th>Dienstleistung</th>
-          <th>Anzahl</th>
-          <th>Einzelpreis (CHF)</th>
-          <th>Total (CHF)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {[...(rechnung.dienstleistungen || []), ...(rechnung.benutzerdefinierte_dienstleistungen || [])].map((service, index) => {
-          const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
-          const anzahl = service.anzahl || 1;
-          const total = (preis * anzahl).toFixed(2);
+      {rechnung && (
+        <div className="rechnung-detail__tabelle">
+          <h3>Dienstleistungen</h3>
+          <table className="dienstleistung-tabelle">
+            <thead>
+              <tr>
+                <th>Pos.</th>
+                <th>Dienstleistung</th>
+                <th>Anzahl</th>
+                <th>Einzelpreis (CHF)</th>
+                <th>Total (CHF)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...(rechnung.dienstleistungen || []), ...(rechnung.benutzerdefinierte_dienstleistungen || [])].map((service, index) => {
+                const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
+                const anzahl = service.anzahl || 1;
+                const total = (preis * anzahl).toFixed(2);
 
-          return (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{service.title}</td>
-              <td>{anzahl}</td>
-              <td>{preis.toFixed(2)}</td>
-              <td>{total}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  </div>
-)}
+                return (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{service.title}</td>
+                    <td>{anzahl}</td>
+                    <td>{preis.toFixed(2)}</td>
+                    <td>{total}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
 
     </div>
