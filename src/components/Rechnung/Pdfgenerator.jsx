@@ -17,26 +17,29 @@ function PdfMerger() {
       alert('Bitte lade beide PDFs hoch.');
       return;
     }
-
+  
     try {
-      // Erstelle ein neues PDF-Dokument
       const mergedPdf = await PDFDocument.create();
-
-      // Füge die PDFs hinzu
+  
       for (const file of files) {
         const pdfBytes = await file.arrayBuffer();
         const pdfDoc = await PDFDocument.load(pdfBytes);
-        const [firstPage] = await mergedPdf.copyPages(pdfDoc, [0]);
-        mergedPdf.addPage(firstPage);
+  
+        const copiedPages = await mergedPdf.copyPages(
+          pdfDoc,
+          pdfDoc.getPageIndices() // <-- ALLE Seiten holen
+        );
+  
+        copiedPages.forEach((page) => mergedPdf.addPage(page));
       }
-
-      // Speichere das neue PDF
+  
       const mergedPdfBytes = await mergedPdf.save();
       saveAs(new Blob([mergedPdfBytes], { type: 'application/pdf' }), 'merged.pdf');
     } catch (error) {
       console.error('Fehler beim Zusammenführen der PDFs:', error);
     }
   };
+  
 
   return (
     <div className="pdf-merger-container">

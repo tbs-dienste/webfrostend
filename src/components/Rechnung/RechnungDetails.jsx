@@ -221,7 +221,9 @@ const RechnungDetails = () => {
             )}
           </div>
 
-          <button className="delete-button" onClick={deleteRechnung}>Rechnung löschen</button>
+          {rechnung.status !== "Bezahlt" && (
+  <button className="delete-button" onClick={deleteRechnung}>Rechnung löschen</button>
+)}
           <button className="generate-pdf-button" onClick={() => generatePDF(rechnung)}>Rechnung als PDF generieren</button>
         </>
       )}
