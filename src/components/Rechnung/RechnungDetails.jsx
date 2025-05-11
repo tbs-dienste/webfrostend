@@ -62,11 +62,11 @@ const RechnungDetails = () => {
   const generatePDF = (rechnung) => {
     const doc = new jsPDF();
     const blue = [54, 162, 235];
-    
-    // Logo oben links hinzufügen und kleiner machen
-    doc.addImage(logoBlack, 'PNG', 14, 10, 30, 30); // Logo kleiner machen (30x30px)
-    
-    // Kundenadresse weiter oben platzieren
+  
+    // Logo oben links
+    doc.addImage(logoBlack, 'PNG', 14, 10, 30, 30);
+  
+    // Kundenadresse
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.text(`${kunde.vorname} ${kunde.nachname}`, 14, 60);
@@ -74,31 +74,29 @@ const RechnungDetails = () => {
     doc.setFontSize(10);
     doc.text(kunde.adresse || "Adresse folgt", 14, 65);
     doc.text(`${kunde.plz || "PLZ"} ${kunde.ort || "Ort"}`, 14, 70);
-    
-    // Titel weiter nach oben verschieben
+  
+    // Rechnungstitel
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0);
     doc.text("RECHNUNG", 105, 90, { align: "center" });
-    
-    // Rechnungsinformationen weiter oben platzieren
+  
+    // Rechnungsdaten
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    
     const currentDate = new Date();
     const faelligkeitsdatum = new Date(currentDate);
-    faelligkeitsdatum.setDate(currentDate.getDate() + 30); // Fälligkeitsdatum ist 30 Tage nach dem aktuellen Datum
-    
+    faelligkeitsdatum.setDate(currentDate.getDate() + 30);
     doc.text(`Rechnungsnummer: ${rechnung.rechnungsnummer}`, 14, 105);
-    doc.text(`Rechnungsdatum: ${currentDate.toLocaleDateString()}`, 14, 110); // Aktuelles Datum für Rechnungsdatum
-    doc.text(`Fälligkeitsdatum: ${faelligkeitsdatum.toLocaleDateString()}`, 14, 115); // Fälligkeitsdatum: 30 Tage nach Rechnungsdatum
-    
-    // Dienstleistungen & Tabelle weiter oben
+    doc.text(`Rechnungsdatum: ${currentDate.toLocaleDateString()}`, 14, 110);
+    doc.text(`Fälligkeitsdatum: ${faelligkeitsdatum.toLocaleDateString()}`, 14, 115);
+  
+    // Dienstleistungen
     const dienstleistungen = [
       ...(rechnung.dienstleistungen || []),
       ...(rechnung.benutzerdefinierte_dienstleistungen || [])
     ];
-    
+  
     const tableRows = dienstleistungen.map((service, index) => {
       const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
       const anzahl = service.anzahl || 1;
@@ -111,25 +109,25 @@ const RechnungDetails = () => {
         (preis * anzahl).toFixed(2),
       ];
     });
-    
+  
     const netTotal = dienstleistungen.reduce((sum, s) => {
       const preis = parseFloat(s.kosten) || parseFloat(s.preisProEinheit) || 0;
       const anzahl = s.anzahl || 1;
       return sum + (preis * anzahl);
     }, 0);
-    
+  
     const mwstRate = 8.1;
     const taxAmount = (netTotal * mwstRate) / 100;
     const total = netTotal + taxAmount;
-    
+  
     const summaryRows = [
       [{ content: `MwSt (${mwstRate}%)`, colSpan: 4, styles: { halign: 'right', fontStyle: 'bold' } }, { content: `${taxAmount.toFixed(2)} CHF`, styles: { halign: 'right' } }],
       [{ content: "Gesamtbetrag (inkl. MwSt)", colSpan: 4, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }, { content: `${total.toFixed(2)} CHF`, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }],
     ];
-    
-    // Tabelle weiter oben platzieren
+  
+    // Tabelle mit automatischem Seitenumbruch
     doc.autoTable({
-      startY: 125,  // Startposition der Tabelle höher
+      startY: 125,
       head: [["Pos.", "Bezeichnung", "Anzahl", "Einzelpreis (CHF)", "Total (CHF)"]],
       body: [...tableRows, ...summaryRows],
       theme: "striped",
@@ -156,19 +154,19 @@ const RechnungDetails = () => {
         2: { halign: 'center', cellWidth: 20 },
         3: { halign: 'right', cellWidth: 30 },
         4: { halign: 'right', cellWidth: 30 },
-      },
-      // Seitenumbruch, wenn die Tabelle zu groß ist
-      didDrawPage: (data) => {
-        const pageHeight = doc.internal.pageSize.height;
-        if (data.cursor.y > pageHeight - 50) {
-          doc.addPage(); // Neue Seite hinzufügen, wenn der Platz nicht ausreicht
-        }
-      },
+      }
     });
-    
-    // Fußbereich – Zahlungsinformation & QR-Hinweis weiter oben
+  
+    // Fußbereich nach Tabelle
     let y = doc.lastAutoTable.finalY + 20;
-    
+    const pageHeight = doc.internal.pageSize.height;
+  
+    // Prüfen ob Platz für Fußtext ist, sonst neue Seite
+    if (y > pageHeight - 50) {
+      doc.addPage();
+      y = 20;
+    }
+  
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text("Bitte begleichen Sie den Gesamtbetrag bis zum Fälligkeitsdatum per QR-Rechnung.", 14, y);
@@ -176,17 +174,15 @@ const RechnungDetails = () => {
     doc.text("Scannen Sie den QR-Code in Ihrer Banking-App, um die Zahlung zu tätigen.", 14, y);
     y += 8;
     doc.text("Die Rechnung muss innerhalb von 30 Tagen bezahlt werden, sonst erfolgt eine kostenpflichtige Mahnung.", 14, y);
-    
     y += 15;
-    doc.setFont("helvetica", "normal");
     doc.text("Wir danken Ihnen für Ihr Vertrauen und freuen uns auf die weitere Zusammenarbeit.", 14, y);
-    
-    // Tbs Solutions ganz unten
+  
+    // Absender
     y += 20;
     doc.setFont("helvetica", "italic");
     doc.setFontSize(8);
     doc.text("TBs Solutions", 14, y);
-    
+  
     doc.save(`${rechnung.rechnungsnummer}_Rechnung.pdf`);
   };
   
