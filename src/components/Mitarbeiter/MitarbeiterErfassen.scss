@@ -1,64 +1,137 @@
 .mitarbeiter-erfassen {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  max-width: 960px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
 
   h2 {
-    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
     color: #333;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      width: 50px;
+      height: 3px;
+      background-color: #4e73df;
+      border-radius: 5px;
+      transform: translateX(-50%);
+    }
   }
 
   .formular {
     display: flex;
-    flex-direction: column;
-
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+    
     .formular-gruppe {
-      margin-bottom: 15px;
+      width: 48%; // Für 2 Spalten
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
 
       label {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #555;
         display: flex;
         align-items: center;
-        margin-bottom: 5px;
-        color: #555;
-
+        
         svg {
-          margin-right: 8px;
-          color: #007bff; // Icon-Farbe
+          margin-right: 10px;
+          color: #4e73df;
         }
       }
 
       input,
       select,
       textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        transition: border-color 0.3s;
-
+        padding: 14px;
+        font-size: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #fafafa;
+        transition: all 0.3s ease;
+        
         &:focus {
-          border-color: #007bff; // Fokus-Farbe
+          border-color: #4e73df;
+          background-color: #fff;
           outline: none;
+        }
+
+        &::placeholder {
+          color: #bbb;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .teilzeit-section {
+        background: #f4f9ff;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px dashed #4e73df;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        label {
+          color: #333;
+          font-weight: 600;
+        }
+
+        input {
+          background: #fff;
         }
       }
 
       button {
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
+        padding: 14px 25px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #fff;
+        background-color: #4e73df;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
 
         &:hover {
-          background-color: #0056b3; // Hover-Farbe
+          background-color: #3558c7;
+        }
+
+        &:focus {
+          outline: none;
         }
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .formular {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .formular-gruppe {
+      width: 100%;
     }
   }
 }
