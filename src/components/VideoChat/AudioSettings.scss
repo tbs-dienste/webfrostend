@@ -1,152 +1,191 @@
-// Farben und Variablen
-$primary-color: #007bff;
-$secondary-color: #6c757d;
-$background-color: #f8f9fa;
-$success-color: #28a745;
-$inactive-color: lighten($secondary-color, 40%);
-$border-radius: 8px;
-$font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
 .audio-settings {
-  padding: 30px;
-  background-color: $background-color;
-  font-family: $font-family;
-  max-width: 500px;
-  margin: 0 auto;
-  border-radius: $border-radius;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  max-width: 700px;
+  margin: auto;
+  background-color: #f9fafb;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 
-  .mic-access, .mic-settings, .waiting-room {
-    padding: 20px;
-    background-color: white;
-    border-radius: $border-radius;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .mic-access {
     text-align: center;
-    margin-bottom: 20px;
 
     p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 12px;
       font-size: 1rem;
-      color: $secondary-color;
-      margin-bottom: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #1d4ed8;
+      }
     }
   }
 
-  button {
-    display: inline-block;
-    width: auto;
-    padding: 10px 20px;
-    margin-top: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
-    color: white;
-    background-color: $primary-color;
-    border: none;
-    border-radius: $border-radius;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .mic-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
-    &:hover {
-      background-color: darken($primary-color, 10%);
+    p {
+      font-size: 1.2rem;
+      font-weight: 500;
     }
-  }
-
-  .mic-selection, .speaker-settings {
-    margin: 20px 0;
-    text-align: left;
 
     label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
       display: block;
-      font-size: 0.9rem;
-      color: $secondary-color;
-      margin-bottom: 8px;
     }
 
     select {
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
       width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: $border-radius;
-      border: 1px solid lighten($secondary-color, 30%);
-      background-color: white;
-      transition: border-color 0.3s ease;
+    }
 
-      &:focus {
-        border-color: $primary-color;
-        outline: none;
-        box-shadow: 0 0 5px rgba($primary-color, 0.3);
+    .mic-selection,
+    .speaker-settings {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .volume-indicator {
+      display: flex;
+      gap: 4px;
+      height: 20px;
+
+      .volume-bar {
+        flex: 1;
+        background-color: #d1d5db;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+
+        &.active {
+          background-color: #22c55e;
+        }
       }
     }
-  }
 
-  .volume-indicator {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-
-    .volume-bar {
-      flex: 1;
-      height: 20px;
-      margin: 0 2px;
-      background-color: $inactive-color;
-      border-radius: $border-radius;
+    .test-audio,
+    .start-video {
+      background-color: #10b981;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
       transition: background-color 0.2s ease;
 
-      &.active {
-        background-color: $success-color;
+      &:hover {
+        background-color: #059669;
       }
-    }
-  }
 
-  .test-audio {
-    display: inline-block;
-    margin: 10px auto;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: $success-color;
-    border-radius: $border-radius;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+      &.start-video {
+        background-color: #3b82f6;
 
-    &:hover {
-      background-color: darken($success-color, 10%);
+        &:hover {
+          background-color: #2563eb;
+        }
+      }
     }
   }
 
   .waiting-room {
+    text-align: center;
+
+    p {
+      font-size: 1.2rem;
+    }
+
     .fact {
-      font-size: 1.1rem;
-      color: $primary-color;
-      margin-bottom: 20px;
+      font-style: italic;
+      color: #6b7280;
+      margin: 1rem 0;
     }
 
     .loading-bar {
       width: 100%;
       height: 10px;
-      background-color: lighten($primary-color, 50%);
-      border-radius: $border-radius;
+      background-color: #e5e7eb;
+      border-radius: 8px;
       overflow: hidden;
-      position: relative;
+      margin: 1rem 0;
 
       .loading-progress {
+        width: 100%;
         height: 100%;
-        width: 0%;
-        background-color: $primary-color;
+        background: linear-gradient(90deg, #3b82f6, #60a5fa);
         animation: loading 8s linear infinite;
-        position: absolute;
-        top: 0;
-        left: 0;
       }
     }
-  }
 
-  @keyframes loading {
-    0% {
-      width: 0%;
+    @keyframes loading {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(100%);
+      }
     }
-    100% {
-      width: 100%;
+
+    .waiting-queue {
+      margin-top: 2rem;
+      text-align: left;
+
+      h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: #111827;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          background-color: #ffffff;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          padding: 0.75rem;
+          margin-bottom: 0.5rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+
+          span {
+            font-size: 0.9rem;
+            color: #374151;
+          }
+
+          button {
+            background-color: #f59e0b;
+            color: white;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #d97706;
+            }
+          }
+        }
+      }
     }
   }
 }

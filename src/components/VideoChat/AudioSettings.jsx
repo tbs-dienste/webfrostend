@@ -1,4 +1,3 @@
-// AudioSettings.js
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import './AudioSettings.scss';
@@ -16,12 +15,23 @@ function AudioSettings() {
   const [waitingQueue, setWaitingQueue] = useState([]);
   const audioRef = useRef(null);
   const mediaStreamRef = useRef(null); // Referenz für den MediaStream
+  const audioTestRef = useRef(null); // Referenz für den Audio-Test
 
   const facts = [
     "Wussten Sie schon, dass Videoanrufe die Kommunikation verbessern können?",
     "Wussten Sie schon, dass regelmäßige Pausen Ihre Produktivität steigern?",
     "Wussten Sie schon, dass eine stabile Internetverbindung für klare Videoanrufe sorgt?",
     "Wussten Sie schon, dass Lächeln Ihre Stimme freundlicher klingen lässt?",
+    "Wussten Sie schon, dass Augenkontakt in Videoanrufen Vertrauen schafft?",
+    "Wussten Sie schon, dass Hintergrundgeräusche die Gesprächsqualität stark beeinflussen können?",
+    "Wussten Sie schon, dass eine aufrechte Sitzhaltung Ihre Ausstrahlung verbessert?",
+    "Wussten Sie schon, dass Tageslicht Sie in Videoanrufen sympathischer wirken lässt?",
+    "Wussten Sie schon, dass ein kurzer Smalltalk zu Beginn die Gesprächsatmosphäre auflockert?",
+    "Wussten Sie schon, dass ein neutraler Hintergrund in Videoanrufen professionell wirkt?",
+    "Wussten Sie schon, dass Sie mit klarer Aussprache besser verstanden werden?",
+    "Wussten Sie schon, dass Headsets oft für besseren Klang sorgen als eingebaute Mikrofone?",
+    "Wussten Sie schon, dass es hilft, vor dem Anruf die Kamera zu testen?",
+    "Wussten Sie schon, dass positive Körpersprache Ihre Wirkung deutlich verstärken kann?",
   ];
 
   useEffect(() => {
@@ -133,7 +143,23 @@ function AudioSettings() {
     }
   };
 
+  // Funktion zum Testen des Lautsprechers
   const handleTestAudio = async () => {
+    if (audioTestRef.current) {
+      audioTestRef.current.play().catch(error => console.error("Error playing audio: ", error));
+    }
+  };
+
+  // Funktion zum Stoppen des Lautsprechertests
+  const stopTestAudio = () => {
+    if (audioTestRef.current) {
+      audioTestRef.current.pause();
+      audioTestRef.current.currentTime = 0;
+    }
+  };
+
+  // Funktion zum Testen des Mikrofons
+  const handleTestMic = () => {
     if (mediaStreamRef.current) {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const source = audioContext.createMediaStreamSource(mediaStreamRef.current);
@@ -141,6 +167,13 @@ function AudioSettings() {
       const audioElement = new Audio();
       audioElement.srcObject = mediaStreamRef.current; // Setze den Audio-Stream als Quelle
       audioElement.play().catch(error => console.error("Error playing audio: ", error));
+    }
+  };
+
+  // Funktion zum Stoppen des Mikrofons
+  const stopTestMic = () => {
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => track.stop()); // Stoppe den Stream
     }
   };
 
@@ -186,6 +219,15 @@ function AudioSettings() {
             <button className="test-audio" onClick={handleTestAudio}>
               Lautsprecher testen
             </button>
+            <button className="stop-audio" onClick={stopTestAudio}>
+              Lautsprecher stoppen
+            </button>
+            <button className="test-mic" onClick={handleTestMic}>
+              Mikrofon testen
+            </button>
+            <button className="stop-mic" onClick={stopTestMic}>
+              Mikrofon stoppen
+            </button>
             <button className="start-video" onClick={handleStartVideo}>Video Beratung starten</button>
           </div>
         )
@@ -218,7 +260,7 @@ const WaitingRoom = ({ facts, currentFact, waitingQueue, moveToConsultation }) =
               <span>IP: {client.ip}</span>
               <span>Status: {client.status}</span>
               {client.status === 'waiting' && (
-                <button onClick={() => moveToConsultation(client.id)}>In Beratung holen</button>
+                <button onClick={() => moveToConsultation(client.id)}>Jetzt in Beratung</button>
               )}
             </li>
           ))}
