@@ -98,6 +98,8 @@ import AllProducts from './components/Administrativ/AllProducts';
 import ArtikelSuche from './components/Administrativ/ArtikelSuche';
 import CreateProductForm from './components/Administrativ/CreateProductForm';
 import SpinWheel from './components/Event/SpinWheel';
+import ProductDetails from './components/Administrativ/ProductDetails';
+import AddToBestandForm from './components/Administrativ/AddToBestandForm';
 
 
 const App = () => {
@@ -226,6 +228,12 @@ const App = () => {
           <Route path="/download/:kundenId" element={<DownloadZusammenfassung />} />
           <Route path="/arbeitsvertrag" element={<Arbeitsvertrag />} />
           <Route path="/kunden/:id" element={<KundenAnzeigen />} />
+          <Route path="/product/:article_number" element={<ProductDetails />} />
+          <Route
+  path="/bestand-erhöhen"
+  element={<AddToBestandForm onKassenModusChange={toggleKassenModus} />}
+/>
+
           <Route path="/aufgaben/:kundenId" element={<AufgabenList />} />
           <Route path="/unteraufgabe/:unteraufgabenId" element={<AufgabenDetail />}/>
           <Route path="/kunden" element={<Kunden />} />

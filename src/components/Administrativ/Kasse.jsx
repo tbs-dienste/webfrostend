@@ -1177,7 +1177,7 @@ const Kasse = ({ onKassenModusChange }) => {
           ) : (
             <>
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
-              <button className='btn'></button>
+              <button className="btn"></button>
               <button className='btn' onClick={goToSettings}>Einstellungen</button>
 
               <button className='btn' onClick={handleDailyClose}>Tagesabschluss</button>

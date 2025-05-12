@@ -1,0 +1,83 @@
+.product-details {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+
+  h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+
+  .error-message {
+    color: #d8000c;
+    background-color: #ffbaba;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .product-info {
+    .product-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-size: 1.6rem;
+        color: #222;
+      }
+
+      .manufacturer {
+        font-size: 1rem;
+        color: #888;
+        font-style: italic;
+      }
+    }
+
+    .product-info-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 40px;
+      margin-bottom: 1.5rem;
+
+      p {
+        margin: 0;
+        font-size: 0.95rem;
+
+        strong {
+          color: #444;
+        }
+      }
+    }
+
+    .generate-pdf-btn {
+      display: inline-block;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      text-align: center;
+      margin: 0 auto;
+
+      &:hover {
+        background: #0056b3;
+      }
+    }
+  }
+
+  .no-product {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #666;
+  }
+}

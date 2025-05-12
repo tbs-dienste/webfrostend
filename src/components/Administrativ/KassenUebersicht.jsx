@@ -31,6 +31,8 @@ const KassenUebersicht = ({ onKassenModusChange }) => {
         <Link to="/einnahmeausgabe" className="link">Einnahmen Ausgaben</Link>
         <Link to="/prov-abschluss" className="link">Prov. Abschluss</Link>
         <Link to="/receipts" className="link">Tagesübersicht</Link>
+        <Link to="/bestand-erhöhen" className="link">Bestand erhöhen</Link>
+
         <Link to="/kassenlogin" className="link">
           <FaDoorOpen className="exit-icon" /> 
         </Link>
