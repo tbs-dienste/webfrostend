@@ -1,117 +1,181 @@
 .arbeitszeit-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-
+  padding: 3rem;
+  background-color: #f7f7f7;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
   h1 {
-    text-align: center;
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    color: #2d3a44;
+    margin-bottom: 2rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
-    justify-content: center;
+    
+    svg {
+      margin-right: 1rem;
+      font-size: 2rem;
+      color: #007bff;
+    }
   }
 
   .dienstleistung-section {
-    background: #ffffff;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-
+    width: 100%;
+    max-width: 1200px;
+    background-color: #ffffff;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
     &:hover {
-      transform: scale(1.02);
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .dienstleistung-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 1.5rem;
 
       h2 {
-        font-size: 18px;
-        color: #222;
+        font-size: 2rem;
+        color: #2d3a44;
         display: flex;
         align-items: center;
-        gap: 8px;
+        
+        svg {
+          margin-right: 0.5rem;
+          color: #28a745;
+          font-size: 1.5rem;
+        }
       }
 
       .details-button {
-        background: #007bff;
-        color: #fff;
+        background-color: #007bff;
+        color: white;
+        padding: 0.8rem 1.5rem;
         border: none;
-        padding: 8px 12px;
-        font-size: 14px;
-        border-radius: 4px;
+        border-radius: 8px;
+        font-size: 1.2rem;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: background 0.2s;
+        transition: background-color 0.3s ease;
 
         &:hover {
-          background: #0056b3;
+          background-color: #0056b3;
+        }
+
+        svg {
+          margin-right: 0.5rem;
         }
       }
     }
 
     .arbeitszeit-box {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
 
       .mitarbeiter-box {
-        background: #f1f1f1;
-        padding: 12px;
-        border-radius: 6px;
-        border-left: 4px solid #007bff;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: box-shadow 0.2s;
-
+        padding: 1.5rem;
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        
         &:hover {
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          background-color: #e2e2e2;
         }
 
-        .mitarbeiter-info {
-          p {
-            margin: 4px 0;
-            font-size: 14px;
-            color: #333;
+        .mitarbeiter-details {
+          display: flex;
+          align-items: center;
+
+          svg {
+            color: #007bff;
+            margin-right: 1rem;
+            font-size: 1.4rem;
+          }
+
+          .mitarbeiter-name {
+            font-size: 1.6rem;
+            color: #2d3a44;
+            font-weight: 600;
           }
         }
 
-        .delete-button {
-          background: #dc3545;
-          color: #fff;
-          border: none;
-          padding: 6px 8px;
-          font-size: 14px;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: background 0.2s;
+        .arbeitszeit-actions {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
 
-          &:hover {
-            background: #c82333;
+          .action-button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #218838;
+            }
+          }
+
+          .time-span {
+            font-size: 1.4rem;
+            color: #007bff;
+            font-weight: 500;
           }
         }
       }
-    }
 
-    .no-data {
-      text-align: center;
-      font-style: italic;
-      color: #777;
+      .note-box {
+        background-color: #fff3cd;
+        border-left: 5px solid #ffc107;
+        padding: 1rem;
+        margin-top: 2rem;
+        font-size: 1.4rem;
+        color: #856404;
+        border-radius: 8px;
+      }
+    }
+  }
+
+  .footer {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 2rem;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #007bff;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    .footer-button {
+      background-color: #ffc107;
+      color: #333;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1.5rem;
+      
+      &:hover {
+        background-color: #e0a800;
+      }
     }
   }
 }

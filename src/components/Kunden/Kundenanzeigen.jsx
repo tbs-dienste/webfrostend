@@ -261,12 +261,6 @@ const KundenAnzeigen = () => {
 
 
 
-          {/* Link Buttons */}
-          <div className="link-button-container">
-            <Link to={`/${id}/gesamtarbeitszeit`} className="link-button">
-              Details anzeigen
-            </Link>
-          </div>
           <div className="link-button-container">
             <Link to={`/arbeitszeiten/${id}`} className="link-button">
               Arbeitszeiten anzeigen

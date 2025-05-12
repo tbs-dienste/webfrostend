@@ -1,89 +1,136 @@
-// FaqEditComponent.scss
+.edit-faq-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 60px 80px;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.4s ease-in;
 
-.faq-edit-container {
+  h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  .edit-faq-form {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 2rem auto;
-  
-    h2 {
-      font-size: 2rem;
-      color: #333;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-  
-    form {
-      width: 100%;
-      
-      div {
-        margin-bottom: 1.5rem;
-  
-        label {
-          display: block;
-          font-weight: bold;
-          margin-bottom: 0.5rem;
-          color: #555;
-        }
-  
-        input[type="text"],
-        textarea {
-          width: 100%;
-          padding: 0.8rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          font-size: 1rem;
-          color: #333;
-  
-          &:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-          }
-        }
-  
-        textarea {
-          min-height: 100px;
-          resize: vertical; // Erlaubt vertikale Größenänderung
-        }
+    gap: 32px;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #374151;
+
+      span {
+        margin-bottom: 12px;
+        color: #4b5563;
       }
-  
-      button[type="submit"] {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s;
-  
-        &:hover {
-          background-color: #0056b3;
-        }
-  
+
+      input,
+      textarea {
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid #d1d5db;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #f9fafb;
+
         &:focus {
           outline: none;
-          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+          background-color: #fff;
         }
       }
+
+      textarea {
+        resize: vertical;
+        min-height: 180px;
+      }
     }
-  
-    .error {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-      text-align: center;
-    }
-  
-    .loading {
+
+    .submit-button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      font-weight: 600;
       font-size: 1.2rem;
-      color: #007bff;
+      border: none;
+      padding: 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+      }
+
+      &:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+
+    .error-message {
+      margin-top: -16px;
+      padding: 16px;
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      font-size: 1rem;
+      text-align: left;
     }
   }
-  
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-faq-container {
+    padding: 40px 20px;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .edit-faq-form {
+      padding: 30px;
+      gap: 24px;
+
+      label {
+        font-size: 1rem;
+
+        input,
+        textarea {
+          padding: 14px;
+          font-size: 0.95rem;
+        }
+      }
+
+      .submit-button {
+        font-size: 1rem;
+        padding: 14px;
+      }
+    }
+  }
+}

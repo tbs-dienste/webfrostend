@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import './FaqEditComponent.scss'; // Importiere das SCSS
+import './FaqEditComponent.scss';
 
 const FaqEditComponent = () => {
-  const { id } = useParams(); // FAQ-ID aus den URL-Parametern abrufen
+  const { id } = useParams();
   const [faq, setFaq] = useState({ question: '', answer: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -44,22 +44,21 @@ const FaqEditComponent = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      window.location.href = '/faq'; // Nach dem Bearbeiten zur FAQ-Liste zurückleiten
+      window.location.href = '/faq';
     } catch (error) {
       console.error("Fehler beim Aktualisieren der FAQ:", error);
       setError("Fehler beim Aktualisieren der FAQ.");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (loading) return <div className="edit-faq-container"><p>Loading...</p></div>;
 
   return (
-    <div className="faq-edit-container">
-      <h2>FAQ bearbeiten</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Frage:</label>
+    <div className="edit-faq-container">
+      <h1>FAQ bearbeiten</h1>
+      <form className="edit-faq-form" onSubmit={handleSubmit}>
+        <label>
+          <span>Frage</span>
           <input
             type="text"
             name="question"
@@ -67,17 +66,18 @@ const FaqEditComponent = () => {
             onChange={handleChange}
             required
           />
-        </div>
-        <div>
-          <label>Antwort:</label>
+        </label>
+        <label>
+          <span>Antwort</span>
           <textarea
             name="answer"
             value={faq.answer}
             onChange={handleChange}
             required
           />
-        </div>
-        <button type="submit">Änderungen speichern</button>
+        </label>
+        {error && <div className="error-message">{error}</div>}
+        <button type="submit" className="submit-button">Änderungen speichern</button>
       </form>
     </div>
   );

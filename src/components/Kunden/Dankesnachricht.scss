@@ -1,17 +1,96 @@
 .dankesnachricht-container {
-    width: 80%;
-    margin: 0 auto;
+  padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 5rem auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+  color: #333333;
+  line-height: 1.6;
+
+  h2 {
+    font-size: 2.5rem;
+    color: #2d3a44;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
     text-align: center;
-    padding: 20px;
-  
-    h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  
-    p {
-      font-size: 18px;
-      margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.4rem;
+    color: #555555;
+    margin-bottom: 1.2rem;
+    text-align: justify;
+    
+    &:last-child {
+      margin-bottom: 0;
     }
   }
-  
+
+  .highlight {
+    font-weight: 600;
+    color: #007bff;
+  }
+
+  .contact-details {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f0f8ff;
+    border-left: 5px solid #007bff;
+    border-radius: 8px;
+    font-size: 1.4rem;
+    color: #333;
+    font-weight: 500;
+
+    .email-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    color: #777777;
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dankesnachricht-container {
+    padding: 3rem 1.5rem;
+    margin: 3rem auto;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+
+  .contact-details {
+    padding: 1rem;
+  }
+
+  .footer {
+    font-size: 1rem;
+  }
+}

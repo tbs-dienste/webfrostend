@@ -1,70 +1,135 @@
 .create-faq-container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 30px;
-  background-color: #ffffff; /* White background for a clean look */
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* More prominent shadow for a modern touch */
-  border: 1px solid #e0e0e0; /* Light border for subtle definition */
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 60px 80px;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.4s ease-in;
 
   h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.4em; /* Larger font size for a stronger title */
-    color: #333; /* Dark gray color for the title */
-    font-weight: 700; /* Bold font weight for emphasis */
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 40px;
+    text-align: left;
   }
 
   .add-faq-form {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    gap: 32px;
 
-    .form-group {
-      margin-bottom: 20px;
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #374151;
 
-      label {
-        display: block;
-        margin-bottom: 8px;
-        font-size: 1.1em; /* Slightly larger font size for labels */
-        font-weight: 600; /* Bold font weight for labels */
-        color: #555; /* Medium gray color for labels */
+      span {
+        margin-bottom: 12px;
+        color: #4b5563;
       }
 
       input,
       textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc; /* Light border for inputs */
-        border-radius: 6px;
-        font-size: 1em;
-        transition: border-color 0.3s ease; /* Smooth transition for border color */
-        
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid #d1d5db;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background-color: #f9fafb;
+
         &:focus {
-          border-color: #007bff; /* Blue border color on focus */
-          outline: none; /* Remove default outline */
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+          background-color: #fff;
         }
       }
 
       textarea {
         resize: vertical;
-        min-height: 150px;
+        min-height: 180px;
       }
     }
 
     .submit-button {
-      background-color: #007bff; /* Primary color */
-      color: #fff;
-      padding: 12px 24px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
       border: none;
-      border-radius: 6px;
-      font-size: 1.1em;
+      padding: 18px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the button */
+      transition: all 0.3s ease;
 
       &:hover {
-        background-color: #0056b3; /* Darker color on hover */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+      }
+
+      &:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+
+    .error-message {
+      margin-top: -16px;
+      padding: 16px;
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      border-radius: 12px;
+      font-size: 1rem;
+      text-align: left;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .create-faq-container {
+    padding: 40px 20px;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .add-faq-form {
+      padding: 30px;
+      gap: 24px;
+
+      label {
+        font-size: 1rem;
+
+        input,
+        textarea {
+          padding: 14px;
+          font-size: 0.95rem;
+        }
+      }
+
+      .submit-button {
+        font-size: 1rem;
+        padding: 14px;
       }
     }
   }

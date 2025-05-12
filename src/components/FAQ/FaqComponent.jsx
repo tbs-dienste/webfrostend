@@ -11,24 +11,20 @@ const FaqComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false); // State für Admin-Status
+  const [activeFaq, setActiveFaq] = useState(null); // State für die aktivierte FAQ
 
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
-        // Token aus localStorage abrufen
         const token = localStorage.getItem('token');
-
-        // Überprüfen, ob ein Token vorhanden ist
         if (token) {
-          // Benutzerinformationen aus dem Token dekodieren
           const decodedToken = jwtDecode(token);
-          setIsAdmin(decodedToken.userType === 'admin'); // Benutzerstatus setzen
+          setIsAdmin(decodedToken.userType === 'admin');
         }
 
-        // Axios GET-Request mit Token im Header
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/faq', {
           headers: {
-            Authorization: `Bearer ${token}`, // Token im Header setzen
+            Authorization: `Bearer ${token}`,
           },
         });
         setFaqs(response.data.data);
@@ -46,13 +42,10 @@ const FaqComponent = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bist du sicher, dass du diese FAQ löschen möchtest?")) {
       try {
-        // Token aus localStorage abrufen
         const token = localStorage.getItem('token');
-
-        // Axios DELETE-Request mit Token im Header
         await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/faq/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Token im Header setzen
+            Authorization: `Bearer ${token}`,
           },
         });
         setFaqs(faqs.filter(faq => faq.id !== id));
@@ -60,6 +53,10 @@ const FaqComponent = () => {
         console.error("Fehler beim Löschen der FAQ:", error);
       }
     }
+  };
+
+  const toggleFaq = (id) => {
+    setActiveFaq(activeFaq === id ? null : id); // Wenn die FAQ bereits geöffnet ist, schließen
   };
 
   if (loading) return <Loading />;
@@ -77,13 +74,17 @@ const FaqComponent = () => {
       <div className="faq-list">
         {faqs.map(faq => (
           <div className="faq-card" key={faq.id}>
-            <h2>{faq.question}</h2>
-            <p>
-              {faq.answer && faq.answer.length > 150
-                ? `${faq.answer.substring(0, 150)}...`
-                : faq.answer || "Keine Antwort verfügbar"}
-            </p>
-            
+            <div className="faq-header" onClick={() => toggleFaq(faq.id)}>
+              <h2>{faq.question}</h2>
+            </div>
+            {activeFaq === faq.id && (
+              <div className="faq-answer">
+                <p>
+                  {faq.answer || "Keine Antwort verfügbar"}
+                </p>
+              </div>
+            )}
+
             {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
               <div className="admin-buttons">
                 <Link to={`/faq-edit/${faq.id}`} className="edit-button">
