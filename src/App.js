@@ -100,6 +100,7 @@ import CreateProductForm from './components/Administrativ/CreateProductForm';
 import SpinWheel from './components/Event/SpinWheel';
 import ProductDetails from './components/Administrativ/ProductDetails';
 import AddToBestandForm from './components/Administrativ/AddToBestandForm';
+import UmbuchungPDFExport from './components/Umbuchung/UmbuchungPDFExport';
 
 
 const App = () => {
@@ -214,6 +215,8 @@ const App = () => {
           <Route path="/kassenlogin"   element={<Kassenlogin onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/kassenuebersicht" element={<KassenUebersicht onKassenModusChange={toggleKassenModus} />} />
           <Route path="/einnahmeausgabe" element={<IncomeExpenseForm onKassenModusChange={toggleKassenModus}/>} />
+          <Route path="/umbuchung" element={<UmbuchungPDFExport />} />
+
           <Route path="/drucker" element={<PrinterManager onKassenModusChange={toggleKassenModus}/>} />
 
           <Route path="/download" element={<Download />} />
