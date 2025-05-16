@@ -108,94 +108,30 @@ const KundenAnzeigen = () => {
         <div>
           {editMode ? (
             <div>
-              <div className="input-group">
-                <label>Kundennummer:</label>
-                <input
-                  type="text"
-                  name="kundennummer"
-                  value={editedData.kundennummer || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Firma:</label>
-                <input
-                  type="text"
-                  name="firma"
-                  value={editedData.firma || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Vorname:</label>
-                <input
-                  type="text"
-                  name="vorname"
-                  value={editedData.vorname || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Nachname:</label>
-                <input
-                  type="text"
-                  name="nachname"
-                  value={editedData.nachname || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={editedData.email || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Mobil:</label>
-                <input
-                  type="tel"
-                  name="mobil"
-                  value={editedData.mobil || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Adresse:</label>
-                <input
-                  type="text"
-                  name="strasseHausnummer"
-                  value={editedData.strasseHausnummer || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>PLZ:</label>
-                <input
-                  type="text"
-                  name="postleitzahl"
-                  value={editedData.postleitzahl || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="input-group">
-                <label>Ort:</label>
-                <input
-                  type="text"
-                  name="ort"
-                  value={editedData.ort || ''}
-                  onChange={handleInputChange}
-                />
-              </div>
+              {[
+                { label: 'Kundennummer', name: 'kundennummer' },
+                { label: 'Firma', name: 'firma' },
+                { label: 'Vorname', name: 'vorname' },
+                { label: 'Nachname', name: 'nachname' },
+                { label: 'Email', name: 'email', type: 'email' },
+                { label: 'Mobil', name: 'mobil', type: 'tel' },
+                { label: 'Adresse', name: 'strasseHausnummer' },
+                { label: 'PLZ', name: 'postleitzahl' },
+                { label: 'Ort', name: 'ort' }
+              ].map(({ label, name, type = 'text' }) => (
+                <div className="input-group" key={name}>
+                  <label>{label}:</label>
+                  <input
+                    type={type}
+                    name={name}
+                    value={editedData[name] || ''}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              ))}
               <div className="button-group">
-                <button onClick={handleSave}>
-                  <FaSave /> Speichern
-                </button>
-                <button onClick={handleUndo}>
-                  <FaUndo /> Änderungen zurücksetzen
-                </button>
+                <button onClick={handleSave}><FaSave /> Speichern</button>
+                <button onClick={handleUndo}><FaUndo /> Änderungen zurücksetzen</button>
               </div>
             </div>
           ) : (
@@ -210,15 +146,10 @@ const KundenAnzeigen = () => {
               <p><strong>PLZ:</strong> {selectedKunde.postleitzahl}</p>
               <p><strong>Ort:</strong> {selectedKunde.ort}</p>
               <p><strong>Status:</strong> {selectedKunde.status}</p>
-              <button onClick={handleEdit}>
-                <FaEdit /> Bearbeiten
-              </button>
+              <button onClick={handleEdit}><FaEdit /> Bearbeiten</button>
             </div>
           )}
 
-
-
-          {/* Status Buttons */}
           <div className="status-buttons">
             <h3>Status aktualisieren</h3>
             {['offen', 'inBearbeitung', 'abgeschlossen'].map((status) => (
@@ -232,34 +163,31 @@ const KundenAnzeigen = () => {
             ))}
           </div>
 
-        {/* Bewertungen oder Button für den Bewertungslink */}
-{selectedKunde.status === 'abgeschlossen' && (
-  <>
-    {selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
-      <div>
-        <h3>Bewertungen:</h3>
-        {selectedKunde.bewertungen.map((bewertung, index) => (
-          <div key={index} className="bewertung">
-            <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
-            <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
-            <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
-            <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
-            <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
-            <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
-            <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
-            <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <button onClick={copyLinkToClipboard} className="copy-link-button">
-        <FaCopy /> Link zum Bewerten kopieren
-      </button>
-    )}
-  </>
-)}
-
-
+          {selectedKunde.status === 'abgeschlossen' && (
+            <>
+              {selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
+                <div>
+                  <h3>Bewertungen:</h3>
+                  {selectedKunde.bewertungen.map((bewertung, index) => (
+                    <div key={index} className="bewertung">
+                      <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
+                      <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
+                      <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
+                      <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
+                      <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
+                      <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
+                      <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
+                      <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <button onClick={copyLinkToClipboard} className="copy-link-button">
+                  <FaCopy /> Link zum Bewerten kopieren
+                </button>
+              )}
+            </>
+          )}
 
           <div className="link-button-container">
             <Link to={`/arbeitszeiten/${id}`} className="link-button">
@@ -267,7 +195,6 @@ const KundenAnzeigen = () => {
             </Link>
           </div>
 
-          {/* Dienstleistungen und Rechnungen anzeigen */}
           <div className="dienstleistungen-container">
             <h3>Verfügbare Dienstleistungen</h3>
             {selectedKunde.dienstleistungen && selectedKunde.dienstleistungen.length > 0 ? (
@@ -283,18 +210,18 @@ const KundenAnzeigen = () => {
             )}
           </div>
 
-          <h3>Rechnungen</h3>
-          {selectedKunde.rechnungen && selectedKunde.rechnungen.length > 0 ? (
-            <ul className="rechnungen-list">
-              {selectedKunde.rechnungen.map((rechnung) => (
-                <li key={rechnung.id} className="rechnung-item">
-                  <p>Rechnung #{rechnung.id}: {rechnung.betrag} € - Status: {rechnung.status}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Keine Rechnungen verfügbar.</p>
-          )}
+          <div className="dienstleistungen-container">
+            <h3>Unterschrift</h3>
+            {selectedKunde.unterschrift ? (
+              <img
+                src={`data:image/png;base64,${selectedKunde.unterschrift}`}
+                alt="Unterschrift"
+                className="unterschrift-bild"
+              />
+            ) : (
+              <p>Keine Unterschrift vorhanden.</p>
+            )}
+          </div>
         </div>
       ) : (
         <p>Kunde nicht gefunden.</p>
