@@ -4,7 +4,6 @@ import {
     Page, Text, View, Document, StyleSheet, PDFDownloadLink, Image,
 } from '@react-pdf/renderer';
 
-// Barcode mit JsBarcode erzeugen und DataURL zurückgeben
 const generateJsBarcodeDataURL = (text) => {
     return new Promise((resolve, reject) => {
         try {
@@ -12,8 +11,8 @@ const generateJsBarcodeDataURL = (text) => {
             JsBarcode(canvas, text, {
                 format: 'code128',
                 displayValue: false,
-                height: 25,  // schmaler als vorher
-                width: 1,    // schmaler Balken
+                height: 25,
+                width: 1,
                 margin: 0,
             });
             const dataUrl = canvas.toDataURL('image/png');
@@ -105,14 +104,11 @@ const styles = StyleSheet.create({
 
 const UmbuchungPDF = ({
     belegnummer, barcode, artikelnummer, beschreibung, menge, barcodeArtikel,
+    vonStandort, nachStandort,
 }) => (
     <Document>
         <Page size="A4" style={styles.page}>
-
-            {/* Logo oben rechts */}
             <Image src="/logo.png" style={styles.logo} />
-
-            {/* Unsichtbare Tabelle für Infos */}
             <View style={styles.infoTable}>
                 <View style={styles.infoRow}>
                     <Text style={styles.infoLabel}>Information</Text>
@@ -127,39 +123,30 @@ const UmbuchungPDF = ({
                 </View>
                 <View style={{ marginBottom: 6 }}>
                     <Text style={styles.infoLabel}>Betrieb / Beschreibung</Text>
-                    <Text>von 2050 / LOEB Thun Bälliz 39, 3600 Thun</Text>
-                    <Text>nach 2070 / LOEB Biel Nidaugasse 50, 2502 Biel/Bienne</Text>
+                    <Text>von {vonStandort}</Text>
+                    <Text>nach {nachStandort}</Text>
                     <Text>Versand per Post</Text>
                     <Text>Kundenbestellung</Text>
                 </View>
                 <Text style={styles.lieferantenNummer}>Lieferantennummer: 30018</Text>
             </View>
-
-            {/* Artikelnummer + Barcode oben */}
             <View style={{ marginTop: 20, marginBottom: 10 }}>
                 <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{artikelnummer}</Text>
                 <Image style={styles.barcodeImage} src={barcodeArtikel} />
             </View>
-
-            {/* Graue Box mit Beschreibung und Menge nebeneinander */}
             <View style={styles.artikelBox}>
                 <Text style={styles.infoItem}>{beschreibung}</Text>
                 <Text style={styles.infoItemLast}>{menge} ST</Text>
             </View>
-
-            {/* Weitere Sachen nebeneinander (bitte hier anpassen falls du andere Infos willst) */}
             <View style={styles.infoRowFlex}>
                 <Text style={styles.infoItem}>Info 1: Wert 1</Text>
                 <Text style={styles.infoItem}>Info 2: Wert 2</Text>
                 <Text style={styles.infoItemLast}>Info 3: Wert 3</Text>
             </View>
-
-            {/* Footer */}
             <View style={styles.footer}>
                 <Text>Ausgestellt von: MDE028</Text>
                 <Text>Unterschrift: ___________________  Datum: ____________</Text>
             </View>
-
         </Page>
     </Document>
 );
@@ -167,13 +154,20 @@ const UmbuchungPDF = ({
 export default function UmbuchungPDFWrapper() {
     const [barcodeURL, setBarcodeURL] = useState(null);
     const [artikelBarcodeURL, setArtikelBarcodeURL] = useState(null);
-
     const [belegnummer] = useState(Math.floor(1000000000 + Math.random() * 9000000000).toString());
 
-    // Zustände für Eingaben
     const [artikelnummer, setArtikelnummer] = useState('3599843003');
     const [beschreibung, setBeschreibung] = useState('linen shirt jacket,34616 silv ecru ch,L');
-    const [menge, setMenge] = useState(1);
+    const [menge, setMenge] = useState(Math.floor(Math.random() * 3) + 1);
+
+    const standorte = [
+        '2050 / LOEB Thun Bälliz 39, 3600 Thun',
+        '2000 / LOEB Bern Spitalgasse 47-51, 3001 Bern',
+        '2070 / LOEB Biel Nidaugasse 50, 2502 Biel/Bienne',
+    ];
+
+    const [vonStandort, setVonStandort] = useState(standorte[0]);
+    const [nachStandort, setNachStandort] = useState(standorte[2]);
 
     useEffect(() => {
         generateJsBarcodeDataURL(belegnummer).then(setBarcodeURL);
@@ -190,6 +184,7 @@ export default function UmbuchungPDFWrapper() {
     return (
         <div style={{ maxWidth: 400, margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
             <h2>Artikel Daten eingeben</h2>
+
             <label>
                 Artikelnummer:
                 <input
@@ -199,6 +194,7 @@ export default function UmbuchungPDFWrapper() {
                     style={{ width: '100%', marginBottom: 10, padding: 6, fontSize: 14 }}
                 />
             </label>
+
             <label>
                 Beschreibung:
                 <input
@@ -208,15 +204,39 @@ export default function UmbuchungPDFWrapper() {
                     style={{ width: '100%', marginBottom: 10, padding: 6, fontSize: 14 }}
                 />
             </label>
+
             <label>
-                Menge:
+                Menge (wird zufällig generiert):
                 <input
                     type="number"
                     min="1"
+                    max="3"
                     value={menge}
-                    onChange={(e) => setMenge(e.target.value)}
-                    style={{ width: '100%', marginBottom: 20, padding: 6, fontSize: 14 }}
+                    onChange={(e) => setMenge(Number(e.target.value))}
+                    style={{ width: '100%', marginBottom: 10, padding: 6, fontSize: 14 }}
                 />
+            </label>
+
+            <label>
+                Von Standort:
+                <select
+                    value={vonStandort}
+                    onChange={(e) => setVonStandort(e.target.value)}
+                    style={{ width: '100%', marginBottom: 10, padding: 6, fontSize: 14 }}
+                >
+                    {standorte.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+            </label>
+
+            <label>
+                Nach Standort:
+                <select
+                    value={nachStandort}
+                    onChange={(e) => setNachStandort(e.target.value)}
+                    style={{ width: '100%', marginBottom: 20, padding: 6, fontSize: 14 }}
+                >
+                    {standorte.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
             </label>
 
             <PDFDownloadLink
@@ -228,6 +248,8 @@ export default function UmbuchungPDFWrapper() {
                         beschreibung={beschreibung}
                         menge={menge}
                         barcodeArtikel={artikelBarcodeURL}
+                        vonStandort={vonStandort}
+                        nachStandort={nachStandort}
                     />
                 )}
                 fileName="umbuchung.pdf"
