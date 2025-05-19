@@ -298,6 +298,39 @@ export default function UmbuchungPDFWrapper() {
                     {standorte.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
             </label>
+            
+            
+            
+                <PDFDownloadLink
+      document={
+        <UmbuchungPDF
+          belegnummer={belegnummer}
+          barcode={barcodeURL}
+          artikelnummer={artikelnummer}
+          beschreibung={beschreibung}
+          menge={menge}
+          barcodeArtikel={artikelBarcodeURL}
+          vonStandort={vonStandort}
+          nachStandort={nachStandort}
+          lieferantennummer={lieferantennummer}
+          mdenumber={mdenumber}
+        />
+      }
+      fileName={`umbuchung_${belegnummer}.pdf`}
+      style={{
+        margin: '10px 0',
+        padding: '8px 16px',
+        backgroundColor: '#007bff',
+        color: 'white',
+        textDecoration: 'none',
+        borderRadius: 4,
+        display: 'inline-block',
+      }}
+    >
+      {({ loading }) => (loading ? 'Lade PDF...' : 'PDF herunterladen')}
+    </PDFDownloadLink>
+
+  
 
             <PDFViewer width="100%" height={400}>
                 <UmbuchungPDF
