@@ -1177,7 +1177,7 @@ const Kasse = ({ onKassenModusChange }) => {
           ) : (
             <>
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
-              <button className="btn"></button>
+              <button className='btn'></button>
               <button className='btn' onClick={goToSettings}>Einstellungen</button>
 
               <button className='btn' onClick={handleDailyClose}>Tagesabschluss</button>
@@ -1219,15 +1219,21 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className='btn'></button>
 
               <button className='btn'></button>
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Subtotal Rabatt</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
+
+              <button className='btn'></button>              
+
 
               <button className='btn'></button>
 
-
-              <button className='btn'></button>
               <button className='btn'></button>
 
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
+
+           
+              <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Karten Ladung</button>
+
+
 
               <button onClick={toggleLastReciepts} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faPrint} />
@@ -1247,7 +1253,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <button className='btn'>Kundenkarte</button>
               <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
-              <button className='btn'></button>
 
               {/* Abmelden und Wechseln */}
               <button onClick={handleSignOut} className="btn sign-out-button">

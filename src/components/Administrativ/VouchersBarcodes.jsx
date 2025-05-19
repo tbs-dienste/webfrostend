@@ -148,10 +148,7 @@ const GutscheinePDF = ({ gutscheine }) => {
                   <View style={styles.topBar} />
                   <View style={styles.infoContainer}>
                     <Text style={styles.noticeText}>
-                      Dieser Gutschein ist bei TBS Solutions einlösbar. Er ist gültig bis zum
-                      31.12.9999. Eine Barauszahlung ist ausgeschlossen. Im Falle von Verlust oder
-                      Diebstahl übernimmt TBS Solutions keine Haftung. Der Gutschein ist
-                      übertragbar und kann von jeder berechtigten Person eingelöst werden.
+                      Karte in allen TBs Solutions Verkaufssteellen einlösbar. Saldo kann an der Kasse abgefragt werden- Keine Barauszahlung des Gesamtbetrags oder des Restsaldos möglich. Die Karte wird bei Verlust oder Diebstahl nicht ersetzt. AGB und Ausnahmen tbs-solutions.vercel.app
                     </Text>
                     <Text style={styles.footerText}>
                       TBS Solutions · www.tbssolutions.ch · info@tbssolutions.ch
