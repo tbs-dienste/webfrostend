@@ -3,7 +3,9 @@ import JsBarcode from 'jsbarcode';
 import {
     Page, Text, View, Document, StyleSheet, PDFDownloadLink, Image,
 } from '@react-pdf/renderer';
+import { PDFViewer } from '@react-pdf/renderer';
 
+// Funktion zum Erzeugen eines Barcode-DataURLs
 const generateJsBarcodeDataURL = (text) => {
     return new Promise((resolve, reject) => {
         try {
@@ -22,7 +24,6 @@ const generateJsBarcodeDataURL = (text) => {
         }
     });
 };
-
 const styles = StyleSheet.create({
     page: {
         padding: 30,
@@ -40,28 +41,79 @@ const styles = StyleSheet.create({
         height: 40,
         objectFit: 'contain',
     },
-    infoTable: {
-        marginTop: 10,
-        marginBottom: 10,
-        flexDirection: 'column',
-    },
-    infoRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 4,
-    },
-    infoLabel: {
+    title: {
+        fontSize: 15,
         fontWeight: 'bold',
-    },
-    lieferantenNummer: {
-        marginTop: 8,
-        fontWeight: 'bold',
+        marginBottom: 20,
+        marginTop: 80,
     },
     barcodeImage: {
-        width: 140,
+        width: 70,
         height: 25,
         marginTop: 6,
     },
+
+    // Neue Kopfzeile oberhalb der Artikelbox
+    artikelHeaderBox: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        backgroundColor: '#d9d9d9',
+        borderTopLeftRadius: 4,
+        borderTopRightRadius: 4,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        marginTop: 10,
+    },
+    headerArtikel: {
+        flex: 1,
+        fontWeight: 'bold',
+        fontSize: 12,
+    },
+    headerBeschreibung: {
+        flex: 2,
+        fontWeight: 'bold',
+        fontSize: 12,
+        paddingLeft: 10,
+    },
+    headerMenge: {
+        width: 50,
+        fontWeight: 'bold',
+        fontSize: 12,
+        textAlign: 'right',
+    },
+
+    artikelBox: {
+        backgroundColor: '#f0f0f0',
+        padding: 10,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    artikelInfoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    artikelLeft: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    artikelnummerText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    mengeText: {
+        width: 50,
+        fontSize: 12,
+        fontWeight: 'normal',
+        textAlign: 'right',
+    },
+
     footer: {
         position: 'absolute',
         bottom: 30,
@@ -75,76 +127,76 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         fontSize: 10,
     },
-    artikelBox: {
-        backgroundColor: '#f0f0f0',
-        padding: 10,
-        marginTop: 10,
-        marginBottom: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: '#ccc',
-    },
-    infoRowFlex: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 6,
-    },
-    infoItem: {
-        flex: 1,
-        fontSize: 11,
-        marginRight: 10,
-    },
-    infoItemLast: {
-        flex: 1,
-        fontSize: 11,
-    },
 });
 
+
+// PDF-Komponente bekommt Lieferantennummer als Prop
 const UmbuchungPDF = ({
     belegnummer, barcode, artikelnummer, beschreibung, menge, barcodeArtikel,
-    vonStandort, nachStandort,
+    vonStandort, nachStandort, lieferantennummer, mdenumber
 }) => (
     <Document>
         <Page size="A4" style={styles.page}>
             <Image src="/logo.png" style={styles.logo} />
-            <View style={styles.infoTable}>
-                <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Information</Text>
-                    <View>
-                        <Text>Belegnr.: {belegnummer}</Text>
-                        <Image style={styles.barcodeImage} src={barcode} />
-                    </View>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.infoLabel}>Buchungsdatum</Text>
-                    <Text>{new Date().toLocaleDateString()}</Text>
-                </View>
-                <View style={{ marginBottom: 6 }}>
-                    <Text style={styles.infoLabel}>Betrieb / Beschreibung</Text>
+            <Text style={styles.title}>Umbuchung Filiale an Filiale</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}>Information</Text>
+                <Text style={{ width: 60 }}>Belegnr.</Text>
+                <Text style={{ width: 100 }}>{belegnummer}</Text>
+                <Image style={styles.barcodeImage} src={barcode} />
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}>Buchungsdatum</Text>
+                <Text>{new Date().toLocaleDateString()}</Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 5 }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}>Betrieb / Beschreibung</Text>
+                <View>
                     <Text>von {vonStandort}</Text>
                     <Text>nach {nachStandort}</Text>
-                    <Text>Versand per Post</Text>
-                    <Text>Kundenbestellung</Text>
                 </View>
-                <Text style={styles.lieferantenNummer}>Lieferantennummer: 30018</Text>
             </View>
-            <View style={{ marginTop: 20, marginBottom: 10 }}>
-                <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{artikelnummer}</Text>
-                <Image style={styles.barcodeImage} src={barcodeArtikel} />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}>Lieferantennummer</Text>
+                <Text></Text>
             </View>
-            <View style={styles.artikelBox}>
-                <Text style={styles.infoItem}>{beschreibung}</Text>
-                <Text style={styles.infoItemLast}>{menge} ST</Text>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}></Text>
+                <Text>Versand per Post</Text>
             </View>
-            <View style={styles.infoRowFlex}>
-                <Text style={styles.infoItem}>Info 1: Wert 1</Text>
-                <Text style={styles.infoItem}>Info 2: Wert 2</Text>
-                <Text style={styles.infoItemLast}>Info 3: Wert 3</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}></Text>
+                <Text>{lieferantennummer}</Text>
             </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[{ fontWeight: 'bold', width: 180 }]}></Text>
+                <Text>Kundenbestellung</Text>
+            </View>
+
+            <View style={styles.artikelHeaderBox}>
+  <Text style={styles.headerArtikel}>Artikel</Text>
+  <Text style={styles.headerBeschreibung}>Beschreibung</Text>
+  <Text style={styles.headerMenge}>Menge</Text>
+</View>
+
+<View style={styles.artikelBox}>
+  <View style={styles.artikelInfoRow}>
+    <View style={styles.artikelLeft}>
+      <View>
+        <Text style={styles.artikelnummerText}>{artikelnummer}</Text>
+        <Image style={styles.barcodeImage} src={barcodeArtikel} />
+      </View>
+      <Text>{beschreibung}</Text>
+    </View>
+    <Text style={styles.mengeText}>{menge} ST</Text>
+  </View>
+</View>
+
+
             <View style={styles.footer}>
-                <Text>Ausgestellt von: MDE028</Text>
+                <Text>Ausgestellt von: {mdenumber}</Text>
                 <Text>Unterschrift: ___________________  Datum: ____________</Text>
             </View>
         </Page>
@@ -155,6 +207,14 @@ export default function UmbuchungPDFWrapper() {
     const [barcodeURL, setBarcodeURL] = useState(null);
     const [artikelBarcodeURL, setArtikelBarcodeURL] = useState(null);
     const [belegnummer] = useState(Math.floor(1000000000 + Math.random() * 9000000000).toString());
+    const [lieferantennummer] = useState(Math.floor(10000 + Math.random() * 90000).toString());
+    const [mdenumber] = useState(() => {
+        const randomDigits = Math.floor(Math.random() * 100).toString().padStart(2, '0'); // z. B. '07'
+        return `MDE0${randomDigits}`;
+    });
+
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('de-CH'); // Format: TT.MM.JJJJ
 
     const [artikelnummer, setArtikelnummer] = useState('3599843003');
     const [beschreibung, setBeschreibung] = useState('linen shirt jacket,34616 silv ecru ch,L');
@@ -233,40 +293,26 @@ export default function UmbuchungPDFWrapper() {
                 <select
                     value={nachStandort}
                     onChange={(e) => setNachStandort(e.target.value)}
-                    style={{ width: '100%', marginBottom: 20, padding: 6, fontSize: 14 }}
+                    style={{ width: '100%', marginBottom: 10, padding: 6, fontSize: 14 }}
                 >
                     {standorte.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
             </label>
 
-            <PDFDownloadLink
-                document={(
-                    <UmbuchungPDF
-                        belegnummer={belegnummer}
-                        barcode={barcodeURL}
-                        artikelnummer={artikelnummer}
-                        beschreibung={beschreibung}
-                        menge={menge}
-                        barcodeArtikel={artikelBarcodeURL}
-                        vonStandort={vonStandort}
-                        nachStandort={nachStandort}
-                    />
-                )}
-                fileName="umbuchung.pdf"
-                style={{
-                    textDecoration: 'none',
-                    padding: '10px 15px',
-                    color: 'white',
-                    backgroundColor: '#007bff',
-                    borderRadius: 5,
-                    fontWeight: 'bold',
-                    display: 'inline-block',
-                    textAlign: 'center',
-                    width: '100%',
-                }}
-            >
-                {({ loading }) => (loading ? 'Generiere PDF...' : 'PDF herunterladen')}
-            </PDFDownloadLink>
+            <PDFViewer width="100%" height={400}>
+                <UmbuchungPDF
+                    belegnummer={belegnummer}
+                    barcode={barcodeURL}
+                    artikelnummer={artikelnummer}
+                    beschreibung={beschreibung}
+                    menge={menge}
+                    barcodeArtikel={artikelBarcodeURL}
+                    vonStandort={vonStandort}
+                    nachStandort={nachStandort}
+                    lieferantennummer={lieferantennummer}
+                    mdenumber={mdenumber}
+                />
+            </PDFViewer>
         </div>
     );
 }
