@@ -4,6 +4,7 @@ import {
     Page, Text, View, Document, StyleSheet, PDFDownloadLink, Image,
 } from '@react-pdf/renderer';
 import { PDFViewer } from '@react-pdf/renderer';
+import loeb from "./loeb.png";
 
 // Funktion zum Erzeugen eines Barcode-DataURLs
 const generateJsBarcodeDataURL = (text) => {
@@ -16,7 +17,9 @@ const generateJsBarcodeDataURL = (text) => {
                 height: 25,
                 width: 1,
                 margin: 0,
+                background: null, // <<< Hintergrund transparent setzen
             });
+            
             const dataUrl = canvas.toDataURL('image/png');
             resolve(dataUrl);
         } catch (error) {
@@ -36,9 +39,9 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute',
         top: 30,
-        right: 30,
+        right: 60,
         width: 100,
-        height: 40,
+        height: 80,
         objectFit: 'contain',
     },
     title: {
@@ -64,7 +67,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 4,
         borderWidth: 1,
         borderColor: '#ccc',
-        marginTop: 10,
+        marginTop: 20,
     },
     headerArtikel: {
         flex: 1,
@@ -130,6 +133,7 @@ const styles = StyleSheet.create({
 });
 
 
+
 // PDF-Komponente bekommt Lieferantennummer als Prop
 const UmbuchungPDF = ({
     belegnummer, barcode, artikelnummer, beschreibung, menge, barcodeArtikel,
@@ -137,7 +141,7 @@ const UmbuchungPDF = ({
 }) => (
     <Document>
         <Page size="A4" style={styles.page}>
-            <Image src="/logo.png" style={styles.logo} />
+            <Image src={loeb} style={styles.logo} />
             <Text style={styles.title}>Umbuchung Filiale an Filiale</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                 <Text style={[{ fontWeight: 'bold', width: 180 }]}>Information</Text>
@@ -147,7 +151,7 @@ const UmbuchungPDF = ({
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={[{ fontWeight: 'bold', width: 180 }]}>Buchungsdatum</Text>
-                <Text>{new Date().toLocaleDateString()}</Text>
+                <Text>{new Date(Date.now() - 86400000).toLocaleDateString('de-CH')}</Text>
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 5 }}>
