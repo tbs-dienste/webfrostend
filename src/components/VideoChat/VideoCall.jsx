@@ -176,39 +176,48 @@ const VideoCall = () => {
     };
 
     return (
-        <div className={`video-call-container ${isScreenSharing ? 'screen-sharing-active' : ''} ${isMinimized ? 'minimized' : ''}`}>
-        <div className={`video-container ${isScreenSharing ? 'small-video' : ''}`} id="local-video">
-            <video ref={localVideoRef} autoPlay muted playsInline></video>
-        </div>
-        <div className={`video-container ${isScreenSharing ? 'small-video' : ''}`} id="remote-video">
-            {remoteStreamVisible && <video ref={remoteVideoRef} autoPlay playsInline></video>}
-            {!remoteStreamVisible && <div className="placeholder">Video hidden during screen share</div>}
-        </div>
-        {isScreenSharing && <div className="screen-share-display">Screen sharing active</div>}
-        <div className="controls">
-            <button onClick={startCall} disabled={isCallActive}>
-                <FontAwesomeIcon icon={faPhone} /> Start Call
-            </button>
-            <button onClick={endCall} disabled={!isCallActive}>
-                <FontAwesomeIcon icon={faPhoneSlash} /> End Call
-            </button>
-            <button onClick={toggleAudio} disabled={!isCallActive}>
-                <FontAwesomeIcon icon={isAudioEnabled ? faMicrophone : faMicrophoneSlash} /> {isAudioEnabled ? 'Mute' : 'Unmute'}
-            </button>
-            <button onClick={toggleVideo} disabled={!isCallActive}>
-                <FontAwesomeIcon icon={isVideoEnabled ? faVideo : faVideoSlash} /> {isVideoEnabled ? 'Cam Off' : 'Cam On'}
-            </button> {/* Add the muted microphone icon here */}
-    
-            <button onClick={isScreenSharing ? stopScreenShare : startScreenShare} disabled={!isCallActive}>
-                <FontAwesomeIcon icon={isScreenSharing ? faStopCircle : faShareSquare} /> {isScreenSharing ? 'Stop Share' : 'Share Screen'}
-            </button>
-            <button onClick={toggleMinimize}>
-                <FontAwesomeIcon icon={isMinimized ? faExpandArrowsAlt : faCompressArrowsAlt} /> {isMinimized ? 'Expand' : 'Minimize'}
-            </button>
-        </div>
-       
+<div className={`video-call-container ${isScreenSharing ? 'screen-sharing-active' : ''} ${isMinimized ? 'minimized' : ''}`}>
+  <div className="video-section">
+    <div className="video-container" id="local-video">
+      <video ref={localVideoRef} autoPlay muted playsInline></video>
     </div>
-    
+    <div className="video-container" id="remote-video">
+      {remoteStreamVisible ? (
+        <video ref={remoteVideoRef} autoPlay playsInline></video>
+      ) : (
+        <div className="placeholder">Video hidden during screen share</div>
+      )}
+    </div>
+  </div>
+
+  {isScreenSharing && <div className="screen-share-display">Screen sharing active</div>}
+
+  <div className="controls">
+    <button onClick={startCall} disabled={isCallActive}>
+      <FontAwesomeIcon icon={faPhone} /> Start Call
+    </button>
+    <button onClick={endCall} disabled={!isCallActive}>
+      <FontAwesomeIcon icon={faPhoneSlash} /> End Call
+    </button>
+    <button onClick={toggleAudio} disabled={!isCallActive}>
+      <FontAwesomeIcon icon={isAudioEnabled ? faMicrophone : faMicrophoneSlash} />
+      {isAudioEnabled ? 'Mute' : 'Unmute'}
+    </button>
+    <button onClick={toggleVideo} disabled={!isCallActive}>
+      <FontAwesomeIcon icon={isVideoEnabled ? faVideo : faVideoSlash} />
+      {isVideoEnabled ? 'Cam Off' : 'Cam On'}
+    </button>
+    <button onClick={isScreenSharing ? stopScreenShare : startScreenShare} disabled={!isCallActive}>
+      <FontAwesomeIcon icon={isScreenSharing ? faStopCircle : faShareSquare} />
+      {isScreenSharing ? 'Stop Share' : 'Share Screen'}
+    </button>
+    <button onClick={toggleMinimize}>
+      <FontAwesomeIcon icon={isMinimized ? faExpandArrowsAlt : faCompressArrowsAlt} />
+      {isMinimized ? 'Expand' : 'Minimize'}
+    </button>
+  </div>
+</div>
+
     );
 };
 
