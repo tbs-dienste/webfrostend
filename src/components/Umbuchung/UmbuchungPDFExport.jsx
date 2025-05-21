@@ -19,7 +19,7 @@ const generateJsBarcodeDataURL = (text) => {
                 margin: 0,
                 background: null, // <<< Hintergrund transparent setzen
             });
-            
+
             const dataUrl = canvas.toDataURL('image/png');
             resolve(dataUrl);
         } catch (error) {
@@ -29,7 +29,7 @@ const generateJsBarcodeDataURL = (text) => {
 };
 const styles = StyleSheet.create({
     page: {
-        padding: 30,
+        padding: 40,
         fontSize: 11,
         fontFamily: 'Helvetica',
         flexDirection: 'column',
@@ -39,35 +39,36 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute',
         top: 30,
-        right: 60,
+        right: 40,
         width: 100,
         height: 80,
         objectFit: 'contain',
     },
     title: {
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 20,
-        marginTop: 80,
+        marginTop: 60,
+        marginBottom: 30,
+    },
+    section: {
+        marginBottom: 14,
     },
     barcodeImage: {
         width: 70,
         height: 25,
         marginTop: 6,
     },
-
-    // Neue Kopfzeile oberhalb der Artikelbox
     artikelHeaderBox: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 6,
-        paddingHorizontal: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
         backgroundColor: '#d9d9d9',
-        borderTopLeftRadius: 4,
-        borderTopRightRadius: 4,
+        borderTopLeftRadius: 6,
+        borderTopRightRadius: 6,
         borderWidth: 1,
         borderColor: '#ccc',
-        marginTop: 20,
+        marginTop: 25,
     },
     headerArtikel: {
         flex: 1,
@@ -81,19 +82,20 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     headerMenge: {
-        width: 50,
+        width: 60,
         fontWeight: 'bold',
         fontSize: 12,
         textAlign: 'right',
     },
-
     artikelBox: {
-        backgroundColor: '#f0f0f0',
-        padding: 10,
-        borderBottomLeftRadius: 4,
-        borderBottomRightRadius: 4,
+        backgroundColor: '#f8f8f8',
+        padding: 12,
+        borderBottomLeftRadius: 6,
+        borderBottomRightRadius: 6,
         borderWidth: 1,
+        borderTopWidth: 0,
         borderColor: '#ccc',
+        marginBottom: 10,
     },
     artikelInfoRow: {
         flexDirection: 'row',
@@ -103,20 +105,18 @@ const styles = StyleSheet.create({
     artikelLeft: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
+        alignItems: 'flex-start',
+        gap: 10,
     },
     artikelnummerText: {
         fontSize: 12,
         fontWeight: 'bold',
     },
     mengeText: {
-        width: 50,
+        width: 60,
         fontSize: 12,
-        fontWeight: 'normal',
         textAlign: 'right',
     },
-
     footer: {
         position: 'absolute',
         bottom: 30,
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
     },
 });
+
 
 
 
@@ -180,23 +181,36 @@ const UmbuchungPDF = ({
             </View>
 
             <View style={styles.artikelHeaderBox}>
-  <Text style={styles.headerArtikel}>Artikel</Text>
-  <Text style={styles.headerBeschreibung}>Beschreibung</Text>
-  <Text style={styles.headerMenge}>Menge</Text>
+    <Text style={styles.headerArtikel}>Artikel</Text>
+    <Text style={styles.headerBeschreibung}>Beschreibung</Text>
+    <Text style={styles.headerMenge}>Menge</Text>
 </View>
 
 <View style={styles.artikelBox}>
-  <View style={styles.artikelInfoRow}>
-    <View style={styles.artikelLeft}>
-      <View>
-        <Text style={styles.artikelnummerText}>{artikelnummer}</Text>
-        <Image style={styles.barcodeImage} src={barcodeArtikel} />
-      </View>
-      <Text>{beschreibung}</Text>
+    <View style={styles.artikelInfoRow}>
+        <View style={styles.artikelLeft}>
+            <View>
+                <Text style={styles.artikelnummerText}>{artikelnummer}</Text>
+                <Image style={styles.barcodeImage} src={barcodeArtikel} />
+            </View>
+            <Text>{beschreibung}</Text>
+        </View>
+        <Text style={styles.mengeText}>{menge} ST</Text>
     </View>
-    <Text style={styles.mengeText}>{menge} ST</Text>
-  </View>
 </View>
+
+{/* Totalzeile separat und mit eigenem Hintergrund */}
+<View style={[styles.artikelBox, { backgroundColor: '#e4e4e4', marginTop: -5 }]}>
+    <View style={styles.artikelInfoRow}>
+        <View style={styles.artikelLeft}>
+            <Text style={[styles.artikelnummerText, { fontWeight: 'bold' }]}>Total</Text>
+        </View>
+        <Text style={[styles.mengeText, { fontWeight: 'bold' }]}>{menge} ST</Text>
+    </View>
+</View>
+
+
+
 
 
             <View style={styles.footer}>
@@ -302,39 +316,39 @@ export default function UmbuchungPDFWrapper() {
                     {standorte.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
             </label>
-            
-            
-            
-                <PDFDownloadLink
-      document={
-        <UmbuchungPDF
-          belegnummer={belegnummer}
-          barcode={barcodeURL}
-          artikelnummer={artikelnummer}
-          beschreibung={beschreibung}
-          menge={menge}
-          barcodeArtikel={artikelBarcodeURL}
-          vonStandort={vonStandort}
-          nachStandort={nachStandort}
-          lieferantennummer={lieferantennummer}
-          mdenumber={mdenumber}
-        />
-      }
-      fileName={`umbuchung_${belegnummer}.pdf`}
-      style={{
-        margin: '10px 0',
-        padding: '8px 16px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        textDecoration: 'none',
-        borderRadius: 4,
-        display: 'inline-block',
-      }}
-    >
-      {({ loading }) => (loading ? 'Lade PDF...' : 'PDF herunterladen')}
-    </PDFDownloadLink>
 
-  
+
+
+            <PDFDownloadLink
+                document={
+                    <UmbuchungPDF
+                        belegnummer={belegnummer}
+                        barcode={barcodeURL}
+                        artikelnummer={artikelnummer}
+                        beschreibung={beschreibung}
+                        menge={menge}
+                        barcodeArtikel={artikelBarcodeURL}
+                        vonStandort={vonStandort}
+                        nachStandort={nachStandort}
+                        lieferantennummer={lieferantennummer}
+                        mdenumber={mdenumber}
+                    />
+                }
+                fileName={`umbuchung_${belegnummer}.pdf`}
+                style={{
+                    margin: '10px 0',
+                    padding: '8px 16px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: 4,
+                    display: 'inline-block',
+                }}
+            >
+                {({ loading }) => (loading ? 'Lade PDF...' : 'PDF herunterladen')}
+            </PDFDownloadLink>
+
+
 
             <PDFViewer width="100%" height={400}>
                 <UmbuchungPDF
