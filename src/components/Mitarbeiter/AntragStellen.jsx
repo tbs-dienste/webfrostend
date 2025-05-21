@@ -1,183 +1,143 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { FaPlusCircle, FaTrashAlt } from 'react-icons/fa'; // Icons für "Hinzufügen" und "Löschen"
+import { FaPlusCircle, FaTrashAlt, FaPaperPlane } from 'react-icons/fa';
 import './AntragStellen.scss';
 
 const AntragStellen = () => {
     const [requests, setRequests] = useState([
-        {
-            description: '',
-            isHoliday: false,
-            isFreewish: false,
-            startDate: '',
-            endDate: '',
-        },
+        { description: '', isHoliday: false, isFreewish: false, startDate: '', endDate: '' }
     ]);
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    // Add a new request entry
     const handleAddRequest = () => {
-        setRequests([
-            ...requests,
-            {
-                description: '',
-                isHoliday: false,
-                isFreewish: false,
-                startDate: '',
-                endDate: '',
-            },
-        ]);
+        setRequests([...requests, { description: '', isHoliday: false, isFreewish: false, startDate: '', endDate: '' }]);
     };
 
-    // Remove a specific request entry
     const handleRemoveRequest = (index) => {
-        const newRequests = requests.filter((_, i) => i !== index);
-        setRequests(newRequests);
+        setRequests(prev => prev.filter((_, i) => i !== index));
     };
 
-    // Handle input changes for each field
-    const handleInputChange = (index, event) => {
-        const { name, checked, type, value } = event.target;
-        const newRequests = [...requests];
-
+    const handleInputChange = (index, e) => {
+        const { name, value, type, checked } = e.target;
+        const updatedRequests = [...requests];
         if (type === 'checkbox') {
             if (name === 'isHoliday') {
-                newRequests[index].isHoliday = checked;
-                if (checked) newRequests[index].isFreewish = false;
-            }
-            if (name === 'isFreewish') {
-                newRequests[index].isFreewish = checked;
-                if (checked) newRequests[index].isHoliday = false;
+                updatedRequests[index].isHoliday = checked;
+                if (checked) updatedRequests[index].isFreewish = false;
+            } else if (name === 'isFreewish') {
+                updatedRequests[index].isFreewish = checked;
+                if (checked) updatedRequests[index].isHoliday = false;
             }
         } else {
-            newRequests[index][name] = value;
+            updatedRequests[index][name] = value;
         }
-
-        setRequests(newRequests);
+        setRequests(updatedRequests);
     };
 
-    // Submit the requests with the Bearer token
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         setLoading(true);
         setError('');
-
         const token = localStorage.getItem('token');
         if (!token) {
             setError('Token nicht gefunden. Bitte einloggen!');
             setLoading(false);
             return;
         }
-
         try {
-            const response = await axios.post(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/wunsch',
-                { requests },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/wunsch', { requests }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             window.location.href = "/alleantraege";
-        } catch (error) {
-            setError(error.response?.data?.error || 'Fehler beim Erstellen der Anträge');
+        } catch (err) {
+            setError(err.response?.data?.error || 'Fehler beim Erstellen der Anträge');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="antrag-stellen">
-            <h2 className="title">Antrag(e) stellen</h2>
+        <div className="antrag-container">
+            <h1><FaPaperPlane className="icon-title" /> Antrag(e) stellen</h1>
             <form onSubmit={handleSubmit}>
-                {requests.map((request, index) => (
-                    <div key={index} className="request-form">
-                        <div className="input-group">
+                {requests.map((req, index) => (
+                    <div key={index} className="antrag-card">
+                        <div className="antrag-header">
+                            <h2>Antrag {index + 1}</h2>
+                            <button type="button" onClick={() => handleRemoveRequest(index)} className="icon-btn remove">
+                                <FaTrashAlt /> Entfernen
+                            </button>
+                        </div>
+
+                        <div className="form-row">
                             <label>Beschreibung</label>
                             <input
                                 type="text"
                                 name="description"
-                                value={request.description}
-                                onChange={(event) => handleInputChange(index, event)}
+                                value={req.description}
+                                onChange={(e) => handleInputChange(index, e)}
                                 placeholder="Beschreiben Sie Ihren Antrag"
                                 required
                             />
                         </div>
 
-                        <div className="checkbox-group">
-                            <div className="checkbox">
-                                <label>Urlaubsantrag</label>
+                        <div className="form-row checkboxes">
+                            <label>
                                 <input
                                     type="checkbox"
                                     name="isHoliday"
-                                    checked={request.isHoliday}
-                                    onChange={(event) => handleInputChange(index, event)}
+                                    checked={req.isHoliday}
+                                    onChange={(e) => handleInputChange(index, e)}
                                 />
-                            </div>
-                            <div className="checkbox">
-                                <label>Freizeitwunsch</label>
+                                Urlaubsantrag
+                            </label>
+                            <label>
                                 <input
                                     type="checkbox"
                                     name="isFreewish"
-                                    checked={request.isFreewish}
-                                    onChange={(event) => handleInputChange(index, event)}
+                                    checked={req.isFreewish}
+                                    onChange={(e) => handleInputChange(index, e)}
                                 />
-                            </div>
+                                Freizeitwunsch
+                            </label>
                         </div>
 
-                        <div className="date-inputs">
-                            <div className="input-group">
+                        <div className="form-row date-row">
+                            <div>
                                 <label>Startdatum</label>
                                 <input
                                     type="date"
                                     name="startDate"
-                                    value={request.startDate}
-                                    onChange={(event) => handleInputChange(index, event)}
+                                    value={req.startDate}
+                                    onChange={(e) => handleInputChange(index, e)}
                                     required
                                 />
                             </div>
-
-                            <div className="input-group">
+                            <div>
                                 <label>Enddatum</label>
                                 <input
                                     type="date"
                                     name="endDate"
-                                    value={request.endDate}
-                                    onChange={(event) => handleInputChange(index, event)}
+                                    value={req.endDate}
+                                    onChange={(e) => handleInputChange(index, e)}
                                     required
                                 />
                             </div>
                         </div>
-
-                        <button
-                            type="button"
-                            onClick={() => handleRemoveRequest(index)}
-                            className="remove-btn"
-                        >
-                            <FaTrashAlt /> Antrag entfernen
-                        </button>
                     </div>
                 ))}
-                <div className="action-buttons">
-                    <button
-                        type="button"
-                        onClick={handleAddRequest}
-                        className="add-btn"
-                    >
+
+                <div className="button-group">
+                    <button type="button" onClick={handleAddRequest} className="icon-btn add">
                         <FaPlusCircle /> Neuen Antrag hinzufügen
                     </button>
-                    <button
-                        type="submit"
-                        className="submit-btn"
-                        disabled={loading}
-                    >
-                        {loading ? 'Sende...' : 'Anträge einreichen'}
+                    <button type="submit" className="submit-btn" disabled={loading}>
+                        <FaPaperPlane /> {loading ? 'Senden...' : 'Anträge einreichen'}
                     </button>
                 </div>
+                {error && <p className="error-msg">{error}</p>}
             </form>
-            {error && <p className="error">{error}</p>}
         </div>
     );
 };

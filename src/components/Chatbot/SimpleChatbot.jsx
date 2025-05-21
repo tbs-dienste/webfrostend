@@ -2,70 +2,79 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faTimes } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import './SimpleChatbot.scss'; // Stil für die Chatbot-Komponente
+import './SimpleChatbot.scss';
 
 const SimpleChatbot = () => {
   const [messages, setMessages] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [typing, setTyping] = useState(false);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   const toggleChatbot = () => {
-    setIsOpen(!isOpen);
-    setHasUnreadMessages(false); // Benachrichtigung zurücksetzen, wenn geöffnet
+    setIsOpen(prev => !prev);
+    setHasUnreadMessages(false);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleUserMessage = async (text) => {
-    if (!text.trim()) return;
+    const trimmedText = text.trim();
+    if (!trimmedText) return;
 
-    const newMessages = [...messages, { text, sender: 'user' }];
+    const newMessages = [...messages, { text: trimmedText, sender: 'user' }];
     setMessages(newMessages);
-    setHasUnreadMessages(!isOpen); // Setzt die Benachrichtigung, wenn der Chat geschlossen ist
-
+    setHasUnreadMessages(!isOpen);
     setTyping(true);
-    try {
-      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/chatbot-answers/findAnswer', { question: text });
-      const reply = response.data.reply;
 
-      setMessages([...newMessages, { text: reply, sender: 'bot' }]);
+    try {
+      const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/chatbot-answers/find-answer', { question: trimmedText });
+      const replyText = response.data.reply || "Entschuldigung, ich konnte keine Antwort finden.";
+
+      setMessages(prev => [...prev, { text: replyText, sender: 'bot' }]);
     } catch (error) {
       console.error("Fehler beim Abrufen der Antwort:", error);
-      setMessages([...newMessages, { text: "Entschuldigung, ich kann die Antwort nicht abrufen.", sender: 'bot' }]);
+      setMessages(prev => [...prev, { text: "Fehler beim Abrufen der Antwort. Bitte versuchen Sie es später erneut.", sender: 'bot' }]);
     } finally {
       setTyping(false);
     }
   };
 
+  const handleSend = () => {
+    const input = inputRef.current;
+    if (input && input.value.trim()) {
+      handleUserMessage(input.value);
+      input.value = '';
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      scrollToBottom();
     }
   }, [messages, isOpen]);
 
   return (
     <div className={`chatbot-container ${isOpen ? 'open' : ''}`}>
-      <div className="chatbot-button" onClick={toggleChatbot}>
-        {isOpen ? (
-          <FontAwesomeIcon icon={faTimes} />
-        ) : (
-          <>
-            <FontAwesomeIcon icon={faComments} />
-            {hasUnreadMessages && <div className="unread-badge">!</div>}
-          </>
-        )}
+      <div className="chatbot-toggle" onClick={toggleChatbot}>
+        <FontAwesomeIcon icon={isOpen ? faTimes : faComments} />
+        {!isOpen && hasUnreadMessages && <div className="unread-badge">!</div>}
       </div>
 
       {isOpen && (
         <div className="chatbot-content">
+          <div className="chatbot-header">Chatbot</div>
+
           <div className="messages-container">
             {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`message ${message.sender}`}
-                dangerouslySetInnerHTML={{ __html: message.text }}
-              />
+              <div key={index} className={`message ${message.sender}`}>
+                <div dangerouslySetInnerHTML={{ __html: message.text }} />
+              </div>
             ))}
+
             {typing && (
               <div className="message bot typing">
                 <span></span><span></span><span></span>
@@ -73,24 +82,15 @@ const SimpleChatbot = () => {
             )}
             <div ref={messagesEndRef} />
           </div>
+
           <div className="user-input">
             <input
+              ref={inputRef}
               type="text"
               placeholder="Ihre Nachricht..."
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleUserMessage(e.target.value);
-                  e.target.value = '';
-                }
-              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
-            <button onClick={() => {
-              const input = document.querySelector('.user-input input');
-              handleUserMessage(input.value);
-              input.value = '';
-            }}>
-              Senden
-            </button>
+            <button onClick={handleSend}>Senden</button>
           </div>
         </div>
       )}

@@ -1,99 +1,95 @@
-.bewertung-app {
-    background: #f9f9f9;
-    padding: 50px 20px;
-    font-family: 'Roboto', sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
+.kunden-bewertungen {
+  padding: 4rem 2rem;
+  background: #f0f4f8;
+  font-family: 'Segoe UI', sans-serif;
+
   .header {
     text-align: center;
-    margin-bottom: 30px;
-  
+    margin-bottom: 3rem;
+
     h1 {
-      font-size: 2.5rem;
-      color: #333;
-      font-weight: 600;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.5rem;
     }
-  
+
     p {
       font-size: 1.2rem;
-      color: #666;
+      color: #555;
     }
   }
-  
-  .durchschnitt-rating {
+
+  .durchschnitt-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 40px;
-  
-    .rating-value {
+    margin-bottom: 3rem;
+    gap: 1rem;
+
+    .score {
       font-size: 2rem;
-      color: #333;
-      margin-left: 10px;
       font-weight: 600;
+      color: #222;
     }
   }
-  
-  .bewertungen-container {
+
+  .bewertungen-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
   }
-  
-  .bewertung-box {
-    background: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  .bewertung-card {
+    background: #ffffff;
+    padding: 1.8rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
     text-decoration: none;
-    
+    color: #333;
+    transition: all 0.3s ease;
+
     &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
     }
-  
-    .bewertung-header {
+
+    .bewertung-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
-  
-      .bewertung-text {
-        font-size: 1.4rem;
-        font-weight: 500;
-        color: #333;
+      margin-bottom: 1rem;
+
+      h3 {
+        font-size: 1.3rem;
+        color: #111;
+        margin: 0;
       }
     }
-  
-    .bewertung-details {
-      margin-top: 15px;
+
+    .mehr {
+      color: #007BFF;
+      font-weight: 500;
       font-size: 1rem;
-      color: #777;
-      cursor: pointer;
+      margin-top: 0.5rem;
       transition: color 0.3s ease;
-  
+
       &:hover {
-        color: #007BFF;
+        color: #0056b3;
       }
     }
   }
-  
-  @media (max-width: 768px) {
-    .bewertung-app {
-      padding: 30px 15px;
+
+  @media (max-width: 600px) {
+    .durchschnitt-box {
+      flex-direction: column;
     }
-  
-    .bewertungen-container {
-      grid-template-columns: 1fr 1fr;
+
+    .score {
+      font-size: 1.5rem;
     }
-  
-    .bewertung-box {
-      padding: 15px;
+
+    .bewertung-card {
+      padding: 1.2rem;
     }
   }
-  
+}

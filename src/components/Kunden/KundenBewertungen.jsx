@@ -32,50 +32,32 @@ const KundenBewertungen = () => {
   };
 
   const dummyBewertungen = [
-    {
-      id: 1,
-      gesamt: "Sehr gut",
-      gesamtrating: 4.5
-    }
+    { id: 1, gesamt: "Sehr gut", gesamtrating: 4.5 }
   ];
 
   return (
-    <div className="bewertung-app">
-      <div className="header">
+    <div className="kunden-bewertungen">
+      <section className="header">
         <h1>Kundenbewertungen</h1>
-        <p>Erfahren Sie, was unsere Kunden sagen</p>
-      </div>
-      
-      <div className="durchschnitt-rating">
-        <ReactStars
-          count={5}
-          value={parseFloat(durchschnitt)}
-          size={50}
-          color2={'#FFD700'}
-          edit={false}
-        />
-        <span className="rating-value">{durchschnitt}</span>
-      </div>
-      
-      <div className="bewertungen-container">
-        {bewertungen.map(bewertung => (
-          <Link to={`/bewertung/${bewertung.id}`} key={bewertung.id} className="bewertung-box">
-            <div className="bewertung-header">
-              <p className="bewertung-text">{bewertung.gesamt}</p>
-              <ReactStars
-                count={5}
-                value={parseFloat(bewertung.gesamtrating)}
-                size={24}
-                color2={'#FFD700'}
-                edit={false}
-              />
+        <p>Erfahren Sie, wie Kunden unsere Leistungen bewerten</p>
+      </section>
+
+      <section className="durchschnitt-box">
+        <ReactStars count={5} value={parseFloat(durchschnitt)} size={48} color2={'#FFD700'} edit={false} />
+        <div className="score">{durchschnitt} / 5</div>
+      </section>
+
+      <section className="bewertungen-grid">
+        {bewertungen.map(b => (
+          <Link to={`/bewertung/${b.id}`} className="bewertung-card" key={b.id}>
+            <div className="bewertung-title">
+              <h3>{b.gesamt}</h3>
+              <ReactStars count={5} value={parseFloat(b.gesamtrating)} size={20} color2={'#FFD700'} edit={false} />
             </div>
-            <div className="bewertung-details">
-              <p className="bewertung-summary">Lesen Sie mehr...</p>
-            </div>
+            <p className="mehr">➤ Bewertung ansehen</p>
           </Link>
         ))}
-      </div>
+      </section>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import axios from 'axios';
 import './Home.scss';
 import Loading from '../Loading/Loading';
 import eroeffnung from './summersale.png';
+import SimpleChatbot from '../Chatbot/SimpleChatbot';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -103,6 +104,7 @@ const Home = () => {
         <div className="button-container">
           <Link to="/dienstleistungen" className="button">Jetzt entdecken</Link>
         </div>
+        <SimpleChatbot />
       </div>
     </div>
   );
