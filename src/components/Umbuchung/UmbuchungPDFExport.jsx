@@ -234,8 +234,8 @@ export default function UmbuchungPDFWrapper() {
     const today = new Date();
     const formattedDate = today.toLocaleDateString('de-CH'); // Format: TT.MM.JJJJ
 
-    const [artikelnummer, setArtikelnummer] = useState('3599843003');
-    const [beschreibung, setBeschreibung] = useState('linen shirt jacket,34616 silv ecru ch,L');
+    const [artikelnummer, setArtikelnummer] = useState('3082278');
+    const [beschreibung, setBeschreibung] = useState('Kenwood kMix Wasserkocher ZJX650WH');
     const [menge, setMenge] = useState(Math.floor(Math.random() * 3) + 1);
 
     const standorte = [
