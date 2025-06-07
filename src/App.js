@@ -101,6 +101,8 @@ import SpinWheel from './components/Event/SpinWheel';
 import ProductDetails from './components/Administrativ/ProductDetails';
 import AddToBestandForm from './components/Administrativ/AddToBestandForm';
 import UmbuchungPDFExport from './components/Umbuchung/UmbuchungPDFExport';
+import Bilanz from './components/Administrativ/Bilanz';
+
 
 
 const App = () => {
@@ -203,6 +205,7 @@ const App = () => {
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />
           <Route path="/stellen" element={<Stellenanzeigen />} />
           <Route path="/allbewerbungen" element={<AllBewerbungen />} />
+  <Route path="/bilanz" element={<Bilanz />} />
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/artikelsuche" element={<ArtikelSuche onKassenModusChange={toggleKassenModus}/>} />
