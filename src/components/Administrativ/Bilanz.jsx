@@ -15,7 +15,7 @@ const Bilanz = () => {
   const fetchBilanzen = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/products',{
+      const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bilanz',{
         headers: { Authorization: `Bearer ${token}` },
       });
       setBilanzen(res.data.bilanzen);
