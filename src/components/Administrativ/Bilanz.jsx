@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import './BilanzDashboard.scss';
+import './Bilanz.scss';
 
 const Bilanz = () => {
   const [bilanzen, setBilanzen] = useState([]);
