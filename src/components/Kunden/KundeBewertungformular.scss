@@ -1,100 +1,128 @@
 .bewertung-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 30px;
-    background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    padding: 4rem 2rem;
+    background: #f5f9ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     h2 {
-        text-align: center;
-        font-size: 28px;
-        color: #0d47a1;
-        margin-bottom: 25px;
+        font-size: 2.5rem;
+        color: #0a2c6b;
+        margin-bottom: 2rem;
+        font-weight: 800;
+        letter-spacing: 1px;
         text-transform: uppercase;
-        font-weight: bold;
     }
 
     .danke-box {
-        padding: 20px;
-        text-align: center;
-        background-color: #e0ffe0;
-        color: #2e7d32;
-        border-radius: 12px;
-        font-size: 20px;
-        font-weight: bold;
+        background: #e0fbe0;
+        padding: 2rem 3rem;
+        border-radius: 1rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1b5e20;
+        box-shadow: 0 0 12px rgba(0, 128, 0, 0.15);
     }
 
     .bewertung-form {
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
+        width: 100%;
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        padding: 2rem;
+        background: white;
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 
         .bewertung-feld {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 0.75rem;
 
             .label-und-rating {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                flex-wrap: wrap;
+
                 label {
-                    font-size: 18px;
+                    font-size: 1.1rem;
                     font-weight: 600;
-                    color: #1a237e;
+                    color: #0d47a1;
+                    margin-bottom: 0.5rem;
                 }
+
                 .bewertung-sterne {
-                    margin-right: 10px;
+                    margin-top: 0.5rem;
                 }
             }
 
             .bewertung-input,
             textarea {
-                padding: 14px;
-                border: 1px solid #c5cae9;
-                border-radius: 8px;
-                font-size: 16px;
-                outline: none;
-                transition: border-color 0.3s, box-shadow 0.3s;
+                padding: 0.9rem 1.1rem;
+                border: 1px solid #cbd5e0;
+                border-radius: 0.6rem;
+                font-size: 1rem;
+                transition: border 0.2s ease, box-shadow 0.2s ease;
+                background: #f9fbff;
 
                 &:focus {
-                    border-color: #3f51b5;
-                    box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
+                    border-color: #1e88e5;
+                    box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.1);
+                    outline: none;
                 }
             }
 
-            .capitalized-input {
-                text-transform: none;
-            }
-
-            .uppercase-input {
-                text-transform: none;
+            textarea {
+                min-height: 120px;
+                resize: vertical;
             }
         }
 
         .submit-button {
-            padding: 15px;
-            background: linear-gradient(135deg, #1e88e5, #1565c0);
-            color: #fff;
-            font-size: 18px;
+            grid-column: 1 / -1;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(90deg, #1976d2, #0d47a1);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
             border: none;
-            border-radius: 8px;
+            border-radius: 0.8rem;
             cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s;
 
             &:hover {
-                background: linear-gradient(135deg, #1565c0, #0d47a1);
+                background: linear-gradient(90deg, #0d47a1, #0a2c6b);
+                transform: translateY(-2px);
             }
         }
 
         .fehler-nachricht {
+            grid-column: 1 / -1;
             color: #d32f2f;
-            font-size: 16px;
+            font-size: 1rem;
             text-align: center;
-            margin-top: -10px;
+            margin-top: -1rem;
+        }
+    }
+
+    // Mobile Optimierung
+    @media (max-width: 600px) {
+        padding: 2rem 1rem;
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        .bewertung-form {
+            padding: 1.5rem;
+            grid-template-columns: 1fr;
+
+            .submit-button,
+            .fehler-nachricht {
+                grid-column: 1;
+            }
         }
     }
 }
