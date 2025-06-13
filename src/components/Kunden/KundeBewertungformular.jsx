@@ -19,7 +19,9 @@ const KundeBewertungformular = () => {
     const { kundennummer } = useParams();
 
     const [formValues, setFormValues] = useState(() => {
-        const initial = {};
+        const initial = {
+            dienstleistung_id: '',
+        };
         BewertungFelder.forEach(feld => {
             initial[feld] = '';
             initial[`${feld}_rating`] = 0;
@@ -27,15 +29,30 @@ const KundeBewertungformular = () => {
         return initial;
     });
 
+    const [dienstleistungen, setDienstleistungen] = useState([]);
     const [bewertungVorhanden, setBewertungVorhanden] = useState(false);
     const [fehler, setFehler] = useState('');
+
+    useEffect(() => {
+        const loadDienstleistungen = async () => {
+            try {
+                const res = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistungen');
+                setDienstleistungen(res.data); // Annahme: res.data ist ein Array mit { id, title }
+            } catch (err) {
+                console.error('Dienstleistungen konnten nicht geladen werden.');
+            }
+        };
+        loadDienstleistungen();
+    }, []);
 
     useEffect(() => {
         const checkBewertung = async () => {
             try {
                 const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen');
                 const bewertungen = response.data.data;
-                const existingBewertung = bewertungen.find(b => b.kundennummer === kundennummer);
+                const existingBewertung = bewertungen.find(
+                    b => b.kundennummer === kundennummer && b.dienstleistung_id === formValues.dienstleistung_id
+                );
                 if (existingBewertung) {
                     setBewertungVorhanden(true);
                 }
@@ -43,8 +60,10 @@ const KundeBewertungformular = () => {
                 setFehler('Fehler beim Abrufen der Bewertungen. Bitte versuchen Sie es später erneut.');
             }
         };
-        checkBewertung();
-    }, [kundennummer]);
+        if (formValues.dienstleistung_id) {
+            checkBewertung();
+        }
+    }, [kundennummer, formValues.dienstleistung_id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,19 +76,29 @@ const KundeBewertungformular = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!bewertungVorhanden) {
-            try {
-                await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`, formValues);
-                alert('Bewertung erfolgreich erstellt.');
-                setBewertungVorhanden(true);
-            } catch (error) {
-                console.error(error);
-                setFehler('Fehler beim Erstellen der Bewertung. Bitte versuchen Sie es erneut.');
-            }
-        } else {
-            alert('Eine Bewertung für diesen Kunden ist bereits vorhanden.');
+    
+        if (!formValues.dienstleistung_id) {
+            setFehler('Bitte wählen Sie eine Dienstleistung aus.');
+            return;
+        }
+    
+        const allRatingsSet = BewertungFelder.every(feld => formValues[`${feld}_rating`] > 0);
+        if (!allRatingsSet) {
+            setFehler('Bitte geben Sie für alle Felder eine Bewertung ab.');
+            return;
+        }
+    
+        try {
+            await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`, formValues);
+            alert('Bewertung erfolgreich erstellt.');
+            setBewertungVorhanden(true);
+        } catch (error) {
+            console.error(error);
+            setFehler(error?.response?.data?.error || 'Fehler beim Erstellen der Bewertung. Bitte versuchen Sie es erneut.');
         }
     };
+    
+    const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
     return (
         <div className="bewertung-container">
@@ -80,6 +109,23 @@ const KundeBewertungformular = () => {
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="bewertung-form">
+                    <div className="bewertung-feld">
+                        <label htmlFor="dienstleistung_id">Dienstleistung wählen:</label>
+                        <select
+                            name="dienstleistung_id"
+                            value={formValues.dienstleistung_id}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">-- Bitte wählen --</option>
+                            {dienstleistungen.map(d => (
+                                <option key={d.id} value={d.id}>
+                                    {d.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     {BewertungFelder.map((feld) => (
                         <div className="bewertung-feld" key={feld}>
                             <div className="label-und-rating">
@@ -100,7 +146,7 @@ const KundeBewertungformular = () => {
                                 value={formValues[feld]}
                                 onChange={handleChange}
                                 placeholder={`Ihre Bewertung zu ${capitalizeFirstLetter(feld)}`}
-                                className="bewertung-input capitalized-input"
+                                className="bewertung-input"
                                 required
                             />
                         </div>
@@ -111,10 +157,6 @@ const KundeBewertungformular = () => {
             )}
         </div>
     );
-};
-
-const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 export default KundeBewertungformular;
