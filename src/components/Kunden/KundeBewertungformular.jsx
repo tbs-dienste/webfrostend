@@ -101,7 +101,6 @@ const KundeBewertungformular = () => {
 
     try {
       await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`, payload);
-      alert(`Bewertung für Dienstleistung "${aktuelleDienstleistung.name}" erfolgreich gespeichert.`);
 
       if (aktuelleDienstleistungIndex < dienstleistungen.length - 1) {
         setAktuelleDienstleistungIndex(prev => prev + 1);

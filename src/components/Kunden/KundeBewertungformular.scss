@@ -1,139 +1,140 @@
 .bewertung-container {
-    width: 100%;
-    padding: 4rem 2rem;
-    background: linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Segoe UI', Roboto, sans-serif;
-  
+  max-width: 960px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #2d2d2d;
+
+  h2 {
+    font-size: 1.9rem;
+    text-align: center;
+    color: #222f3e;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
     h2 {
-      font-size: 2.7rem;
-      color: #1a237e;
-      margin-bottom: 2.5rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-  
-    .danke-box {
-      background: #e0f7fa;
-      padding: 2.5rem 3.5rem;
-      border-radius: 1rem;
       font-size: 1.6rem;
-      font-weight: 600;
-      color: #00796b;
-      box-shadow: 0 4px 16px rgba(0, 121, 107, 0.2);
-      text-align: center;
-    }
-  
-    .bewertung-form {
-      width: 100%;
-      max-width: 1200px;
-      display: grid;
-      gap: 2.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      padding: 2.5rem;
-      background: #ffffff;
-      border-radius: 1.5rem;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
-      transition: all 0.3s ease;
-  
-      .bewertung-feld {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-  
-        .label-und-rating {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-  
-          label {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #0d47a1;
-            margin-bottom: 0.4rem;
-          }
-  
-          .bewertung-sterne {
-            margin-top: 0.4rem;
-          }
-        }
-  
-        .bewertung-input,
-        textarea {
-          padding: 1rem 1.2rem;
-          border: 1px solid #cfd8dc;
-          border-radius: 0.7rem;
-          font-size: 1rem;
-          background: #f9fbff;
-          transition: border 0.2s ease, box-shadow 0.2s ease;
-  
-          &:focus {
-            border-color: #42a5f5;
-            box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.2);
-            outline: none;
-          }
-        }
-  
-        textarea {
-          min-height: 120px;
-          resize: vertical;
-        }
-      }
-  
-      .submit-button {
-        grid-column: 1 / -1;
-        padding: 1.2rem 2rem;
-        background: linear-gradient(90deg, #1565c0, #1e88e5);
-        color: #ffffff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        border: none;
-        border-radius: 0.8rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-  
-        &:hover {
-          background: linear-gradient(90deg, #0d47a1, #1976d2);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
-        }
-  
-        &:active {
-          transform: translateY(0);
-          box-shadow: none;
-        }
-      }
-  
-      .fehler-nachricht {
-        grid-column: 1 / -1;
-        color: #d32f2f;
-        font-size: 1.1rem;
-        text-align: center;
-        margin-top: -1rem;
-      }
-    }
-  
-    // Mobile Optimierung
-    @media (max-width: 600px) {
-      padding: 2rem 1rem;
-  
-      h2 {
-        font-size: 2rem;
-      }
-  
-      .bewertung-form {
-        padding: 1.5rem;
-        grid-template-columns: 1fr;
-  
-        .submit-button,
-        .fehler-nachricht {
-          grid-column: 1;
-        }
-      }
     }
   }
-  
+}
+
+.bewertung-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.bewertung-feld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  label {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #34495e;
+  }
+
+  .label-und-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    label {
+      flex: 1 1 auto;
+    }
+
+    .react-stars {
+      margin-left: auto;
+    }
+  }
+
+  textarea {
+    padding: 1rem;
+    font-size: 1rem;
+    border: 1px solid #dcdde1;
+    border-radius: 12px;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.3s ease;
+    background-color: #f9f9f9;
+
+    &:focus {
+      outline: none;
+      border-color: #00a8ff;
+      background-color: #ffffff;
+    }
+  }
+}
+
+.submit-button {
+  padding: 1.1rem;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #00b894, #0984e3);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #00cec9, #74b9ff);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+.fehler-nachricht {
+  background-color: #ffe6e6;
+  border-left: 6px solid #e74c3c;
+  padding: 1rem 1.5rem;
+  color: #c0392b;
+  font-weight: 500;
+  border-radius: 10px;
+  margin-top: 1rem;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Optional: Erfolgreiche Bewertung abgeschlossen
+.bewertung-abgeschlossen {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: #eafaf1;
+  border-radius: 18px;
+  box-shadow: 0 6px 12px rgba(0, 184, 148, 0.15);
+
+  h2 {
+    color: #10ac84;
+    font-size: 1.8rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+    h2 {
+      font-size: 1.4rem;
+    }
+  }
+}
