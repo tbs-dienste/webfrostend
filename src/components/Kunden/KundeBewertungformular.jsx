@@ -4,16 +4,17 @@ import axios from 'axios';
 import ReactStars from 'react-rating-stars-component';
 import './KundeBewertungformular.scss';
 
-const BewertungFelder = [
-  'arbeitsqualität',
-  'tempo',
-  'freundlichkeit',
-  'zufriedenheit',
-  'kommunikation',
-  'zuverlässigkeit',
-  'professionalität',
-  'gesamt'
-];
+const BewertungFelderMapping = {
+  arbeitsqualitaet: "Arbeitsqualität",
+  tempo: "Tempo",
+  freundlichkeit: "Freundlichkeit",
+  zufriedenheit: "Zufriedenheit",
+  kommunikation: "Kommunikation",
+  zuverlaessigkeit: "Zuverlässigkeit",
+  professionalitaet: "Professionalität"
+};
+
+const BewertungFelder = Object.keys(BewertungFelderMapping);
 
 const KundeBewertungformular = () => {
   const { kundennummer } = useParams();
@@ -32,14 +33,14 @@ const KundeBewertungformular = () => {
 
         setDienstleistungen(dienstList);
 
-        // Init form values, auch gesamttext dabei
-        const initialFormValues = dienstList.map(dienst => {
+        const initialFormValues = dienstList.map(() => {
           const obj = {};
           BewertungFelder.forEach(feld => {
-            obj[feld] = dienst.bewertungen ? dienst.bewertungen[feld] || '' : '';
-            obj[`${feld}_rating`] = dienst.bewertungen ? dienst.bewertungen[`${feld}_rating`] || 0 : 0;
+            obj[feld] = '';
+            obj[`${feld}_rating`] = 0;
           });
-          obj['gesamttext'] = dienst.bewertungen ? dienst.bewertungen['gesamttext'] || '' : '';
+          obj['gesamttext'] = '';
+          obj['gesamtrating'] = 0;
           return obj;
         });
 
@@ -52,10 +53,6 @@ const KundeBewertungformular = () => {
 
     fetchDienstleistungen();
   }, [kundennummer]);
-
-  if (dienstleistungen.length === 0) {
-    return <div>Keine Dienstleistungen zum Bewerten gefunden.</div>;
-  }
 
   const aktuelleDienstleistung = dienstleistungen[aktuelleDienstleistungIndex];
   const formValues = formValuesList[aktuelleDienstleistungIndex] || {};
@@ -81,20 +78,22 @@ const KundeBewertungformular = () => {
     e.preventDefault();
     setFehler('');
 
-    // Alle Ratings prüfen
     const allRatingsSet = BewertungFelder.every(feld => formValues[`${feld}_rating`] > 0);
     if (!allRatingsSet) {
       setFehler('Bitte geben Sie für alle Felder eine Bewertung ab.');
       return;
     }
 
-    // gesamttext prüfen
+    if (!formValues.gesamtrating || formValues.gesamtrating <= 0) {
+      setFehler('Bitte geben Sie eine Gesamtbewertung ab.');
+      return;
+    }
+
     if (!formValues.gesamttext || formValues.gesamttext.trim() === '') {
       setFehler('Bitte geben Sie auch einen Gesamttext ein.');
       return;
     }
 
-    // Payload mit dienstleistung_id und allem aus formValues inklusive gesamttext
     const payload = {
       dienstleistung_id: aktuelleDienstleistung.id,
       ...formValues
@@ -115,7 +114,9 @@ const KundeBewertungformular = () => {
     }
   };
 
-  const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+  if (dienstleistungen.length === 0) {
+    return <div>Keine Dienstleistungen zum Bewerten gefunden.</div>;
+  }
 
   if (alleBewertungenAbgeschlossen) {
     return (
@@ -132,7 +133,7 @@ const KundeBewertungformular = () => {
         {BewertungFelder.map(feld => (
           <div className="bewertung-feld" key={feld}>
             <div className="label-und-rating">
-              <label htmlFor={feld}>{capitalizeFirstLetter(feld)}:</label>
+              <label htmlFor={feld}>{BewertungFelderMapping[feld]}:</label>
               <ReactStars
                 count={5}
                 value={formValues[`${feld}_rating`] || 0}
@@ -140,7 +141,6 @@ const KundeBewertungformular = () => {
                 size={30}
                 activeColor="#ffca2c"
                 isHalf={true}
-                classNames="bewertung-sterne"
               />
             </div>
             <textarea
@@ -148,14 +148,38 @@ const KundeBewertungformular = () => {
               name={feld}
               value={formValues[feld] || ''}
               onChange={handleChange}
-              placeholder={`Ihre Bewertung zu ${capitalizeFirstLetter(feld)}`}
+              placeholder={`Ihre Bewertung zu ${BewertungFelderMapping[feld]}`}
               className="bewertung-input"
               required
             />
           </div>
         ))}
 
-    
+        <div className="bewertung-feld">
+          <label>Gesamtbewertung:</label>
+          <ReactStars
+            count={5}
+            value={formValues.gesamtrating || 0}
+            onChange={(newRating) => handleRatingChange(newRating, 'gesamtrating')}
+            size={40}
+            activeColor="#ff5722"
+            isHalf={true}
+          />
+        </div>
+
+        <div className="bewertung-feld">
+          <label htmlFor="gesamttext">Zusätzlicher Kommentar:</label>
+          <textarea
+            id="gesamttext"
+            name="gesamttext"
+            value={formValues.gesamttext || ''}
+            onChange={handleChange}
+            placeholder="Ihr Gesamtfazit oder sonstige Anmerkungen"
+            className="bewertung-input"
+            required
+          />
+        </div>
+
         <button type="submit" className="submit-button">
           {aktuelleDienstleistungIndex < dienstleistungen.length - 1 ? 'Weiter zur nächsten Dienstleistung' : 'Absenden'}
         </button>
