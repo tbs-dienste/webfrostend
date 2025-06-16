@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { 
+  LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer 
+} from 'recharts';
 import './Bilanz.scss';
 
 const Bilanz = () => {
@@ -42,10 +44,12 @@ const Bilanz = () => {
       // Falls anders, muss hier umgewandelt werden
       // Du hast Beispiel "vergleich" mit feld, aktuell, vormonat, ...
       const chartFormatted = res.data.vergleich.map(item => ({
-        name: item.feld,
-        'Aktueller Monat': item.aktuell,
-        'Vormonat': item.vormonat,
-      }));
+  name: item.feld,
+  'Aktueller Monat': item.aktuell,
+  'Vormonat': item.vormonat,
+  'Differenz': item.differenz,   // <-- korrigiert
+}));
+
       setChartData(chartFormatted);
     } catch (err) {
       console.error('Fehler beim Laden der Chart-Daten', err);
@@ -191,20 +195,19 @@ const Bilanz = () => {
       ) : (
         <>
           <div className="vergleich-box">{renderComparison()}</div>
+          <ResponsiveContainer width="100%" height={300}>
+  <LineChart data={chartData}>
+    <XAxis dataKey="name" />
+    <YAxis />
+    <Tooltip />
+    <Legend />
+    <Line type="monotone" dataKey="Aktueller Monat" stroke="#4caf50" />
+    <Line type="monotone" dataKey="Vormonat" stroke="#f44336" />
+    <Line type="monotone" dataKey="Differenz" stroke="#2196f3" />
+  </LineChart>
+</ResponsiveContainer>
 
-          {/* Chart NUR im JSX anzeigen */}
-          <div className="chart-box" ref={chartRef} style={{ height: 300, width: '100%' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Aktueller Monat" fill="#4caf50" />
-                <Bar dataKey="Vormonat" fill="#f44336" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+
 
           <div className="table-box">
             <table className="bilanz-table">
