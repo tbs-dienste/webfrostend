@@ -108,50 +108,78 @@ const Bilanz = () => {
     }
   
     const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
   
-    // helvetica ist Standard, aber explizit setzen:
-    doc.setFont('helvetica');
+    const headerText = 'Bilanzübersicht';
+    const createdDate = `Erstellt am: ${new Date().toLocaleDateString()}`;
+    const headerFontSize = 14;
+    const contentFontSize = 9;
+    const lineHeight = 6;
   
-    doc.setFontSize(18);
-    doc.text('Bilanz Übersicht', 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Datum der aktuellen Bilanz: ${aktuelleBilanz.datum.slice(0, 10)}`, 14, 30);
+    doc.setFont('times', 'normal');
+    doc.setFontSize(headerFontSize);
+  
+    // Kopfzeile
+    doc.text(headerText, 14, 15);
+    doc.setFontSize(contentFontSize);
+    doc.text(createdDate, pageWidth - 60, 15);
+  
+    let currentY = 25;
+  
+    // Aktuelles Bilanzdatum
+    doc.setFontSize(10);
+    doc.text(`Bilanzdatum: ${aktuelleBilanz.datum.slice(0, 10)}`, 14, currentY);
+    currentY += lineHeight;
   
     if (vorMonatBilanz) {
-      doc.text(`Vormonatsbilanz Datum: ${vorMonatBilanz.datum.slice(0, 10)}`, 14, 38);
+      doc.text(`Vormonat: ${vorMonatBilanz.datum.slice(0, 10)}`, 14, currentY);
     } else {
-      doc.text('Keine Vormonatsbilanz zum Vergleich vorhanden.', 14, 38);
+      doc.text('Kein Vergleich mit Vormonat möglich.', 14, currentY);
     }
   
-    let currentY = 45;
+    currentY += 10;
   
+    // Chart einfügen
     try {
       if (chartRef.current) {
         const imgData = await htmlToImage.toPng(chartRef.current);
-        doc.addImage(imgData, 'PNG', 14, currentY, 180, 80);
-        currentY += 90;
+        doc.addImage(imgData, 'PNG', 14, currentY, 180, 70);
+        currentY += 80;
       }
     } catch (e) {
       console.warn('Chart-Bild konnte nicht eingefügt werden:', e);
     }
   
+    // Aktuelle Bilanz-Tabelle
     autoTable(doc, {
       startY: currentY,
-      head: [['Feld', 'Betrag (CHF)']],
+      head: [['Position', 'Betrag (CHF)']],
       body: [
         ['Einnahmen', Number(aktuelleBilanz.gesamt_einnahmen || 0).toFixed(2)],
         ['Ausgaben', Number(aktuelleBilanz.gesamt_ausgaben || 0).toFixed(2)],
         ['Lohnkosten', Number(aktuelleBilanz.gesamt_lohnkosten || 0).toFixed(2)],
         ['Gewinn', Number(aktuelleBilanz.gesamt_gewinn || 0).toFixed(2)],
       ],
-      theme: 'grid',
+      theme: 'plain',
       styles: {
-        font: 'helvetica',
+        font: 'times',
+        fontSize: contentFontSize,
+        lineColor: [0, 0, 0],
+        lineWidth: 0.1,
+        halign: 'center',
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
       },
     });
   
     currentY = doc.lastAutoTable.finalY + 10;
   
+    // Vergleich mit Vormonat
     if (vorMonatBilanz) {
       const props = ['gesamt_einnahmen', 'gesamt_ausgaben', 'gesamt_lohnkosten', 'gesamt_gewinn'];
       const labels = ['Einnahmen', 'Ausgaben', 'Lohnkosten', 'Gewinn'];
@@ -160,32 +188,44 @@ const Bilanz = () => {
         const aktuell = Number(aktuelleBilanz[prop] || 0);
         const vorher = Number(vorMonatBilanz[prop] || 0);
         const diff = aktuell - vorher;
-        const prozent = vorher === 0 ? '–' : ((diff / vorher) * 100).toFixed(1);
-        const besser = diff > 0 ? 'besser' : diff < 0 ? 'schlechter' : 'gleich';
+        const prozent = vorher === 0 ? '–' : ((diff / vorher) * 100).toFixed(1) + ' %';
+        const status = diff > 0 ? 'Positiv' : diff < 0 ? 'Negativ' : 'Unverändert';
   
-        return [labels[i], aktuell.toFixed(2), vorher.toFixed(2), `${prozent}%`, besser];
+        return [labels[i], aktuell.toFixed(2), vorher.toFixed(2), prozent, status];
       });
   
-      doc.text('Vergleich mit Vormonat:', 14, currentY);
+      doc.setFontSize(10);
+      doc.text('Vergleich zum Vormonat:', 14, currentY);
+  
       autoTable(doc, {
         startY: currentY + 5,
-        head: [['Feld', 'Aktueller Monat', 'Vormonat', 'Differenz (%)', 'Status']],
+        head: [['Position', 'Aktuell (CHF)', 'Vormonat (CHF)', 'Differenz', 'Bewertung']],
         body,
-        theme: 'striped',
+        theme: 'plain',
         styles: {
-          font: 'helvetica',
+          font: 'times',
+          fontSize: contentFontSize,
+          halign: 'center',
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [220, 220, 220],
+          textColor: [0, 0, 0],
+          fontStyle: 'bold',
         },
       });
   
       currentY = doc.lastAutoTable.finalY + 10;
     }
   
+    // Neue Seite mit Gesamttabelle
     doc.addPage();
-    doc.setFontSize(16);
-    doc.text('Alle Bilanzen', 14, 20);
+  
+    doc.setFontSize(11);
+    doc.text('Gesamte Bilanzhistorie', 14, 20);
   
     autoTable(doc, {
-      startY: 30,
+      startY: 26,
       head: [['Datum', 'Einnahmen', 'Ausgaben', 'Lohnkosten', 'Gewinn']],
       body: bilanzen.map(b => [
         b.datum.slice(0, 10),
@@ -194,14 +234,33 @@ const Bilanz = () => {
         Number(b.gesamt_lohnkosten || 0).toFixed(2),
         Number(b.gesamt_gewinn || 0).toFixed(2),
       ]),
-      theme: 'grid',
+      theme: 'plain',
       styles: {
-        font: 'helvetica',
+        font: 'times',
+        fontSize: contentFontSize,
+        halign: 'center',
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: [0, 0, 0],
+        fontStyle: 'bold',
       },
     });
   
+    // Fußzeile (auf jeder Seite)
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(100);
+      doc.text(`Seite ${i} von ${pageCount}`, pageWidth - 30, pageHeight - 10);
+      doc.text('© TBs Soltutions – Vertraulich', 14, pageHeight - 10);
+    }
+  
     doc.save(`Bilanz_Uebersicht_${aktuelleBilanz.datum.slice(0, 10)}.pdf`);
   };
+  
   
 
   return (
