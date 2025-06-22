@@ -13,11 +13,7 @@ const KundenBewertungen = () => {
       try {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen');
         const data = response.data.data || [];
-
-        // Filter nur mit Bewertungen
         const gefiltert = data.filter(d => d.anzahl_bewertungen > 0);
-
-        // Durchschnitt aller Bewertungen berechnen
         const gesamt = calculateDurchschnitt(gefiltert);
 
         setDienstleistungen(gefiltert);
@@ -41,19 +37,20 @@ const KundenBewertungen = () => {
   return (
     <div className="kunden-bewertungen">
       <section className="header">
-        <h1>Kundenbewertungen</h1>
-        <p>Erfahren Sie, wie Kunden unsere Leistungen im Durchschnitt bewerten</p>
+        <h1>⭐ Kundenbewertungen</h1>
+        <p>Wie unsere Kunden die Dienstleistungen erlebt haben</p>
       </section>
 
       <section className="gesamt-rating-box">
         <ReactStars 
           count={5} 
           value={parseFloat(gesamtDurchschnitt)} 
-          size={40} 
-          color2={'#FFD700'} 
+          size={42} 
+          color2={'#fbbf24'} 
           edit={false} 
         />
-        <div className="score">{gesamtDurchschnitt} / 5 Gesamt</div>
+        <div className="score">{gesamtDurchschnitt} / 5 Gesamtbewertung</div>
+        <p className="info">Durchschnitt aus allen bewerteten Dienstleistungen</p>
       </section>
 
       <section className="bewertungen-grid">
@@ -65,7 +62,7 @@ const KundenBewertungen = () => {
                 count={5} 
                 value={parseFloat(d.durchschnitt_rating_dienstleistung)} 
                 size={24} 
-                color2={'#FFD700'} 
+                color2={'#fbbf24'} 
                 edit={false} 
               />
               <div className="score">
@@ -75,7 +72,7 @@ const KundenBewertungen = () => {
                 {d.anzahl_bewertungen} Bewertung{d.anzahl_bewertungen !== 1 ? 'en' : ''}
               </div>
             </div>
-            <p className="mehr">➤ Bewertungen ansehen</p>
+            <p className="mehr">➤ Jetzt ansehen</p>
           </Link>
         ))}
       </section>
