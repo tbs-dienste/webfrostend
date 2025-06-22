@@ -1,135 +1,135 @@
+$product-blue: #2563eb;
+$product-green: #059669;
+$product-bg: #f3f4f6;
+$product-border: #d1d5db;
+$product-text: #1f2937;
+$product-light: #f9fafb;
+
 .product-form-wrapper {
-    margin: 3rem auto;
-    padding: 3rem;
-    background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.6s ease-out;
-  
-    h2 {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      font-size: 2.5rem;
-      color: #222;
-      font-weight: 700;
-    }
+  width: 100%;
+  padding: 4rem 6vw;
+  background: $product-light;
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $product-blue;
+    margin-bottom: 2rem;
+    text-align: left;
   }
-  
-  .product-form {
+}
+
+.product-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  background: white;
+  padding: 3rem;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+
+  .form-field {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-  
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      position: relative;
-  
-      label {
-        font-weight: 600;
-        margin-bottom: 0.8rem;
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        font-size: 1.1rem;
-        color: #555;
-      }
-  
-      input[type="text"],
-      input[type="number"] {
-        padding: 0.9rem 1.2rem;
-        border: 1px solid #ddd;
-        border-radius: 14px;
-        font-size: 1.05rem;
-        transition: all 0.3s ease;
-        background-color: #fafafa;
-  
-        &:focus {
-          border-color: #0077cc;
-          background: #fff;
-          box-shadow: 0 0 8px rgba(0, 119, 204, 0.3);
-        }
-      }
-  
-      input[readonly] {
-        background-color: #f0f0f0;
-        border-style: dashed;
-        color: #888;
-      }
-    }
-  
-    .form-inline {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1.5rem;
-    }
-  
-    .checkbox-field {
-      flex-direction: row;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1.2rem;
-      border: 1px dashed #ccc;
-      border-radius: 14px;
-      background: #f9f9f9;
-  
-      input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
-        accent-color: #00cc88;
-      }
-    }
-  
-    .message {
-      padding: 1rem;
-      border-radius: 14px;
+
+    label {
+      font-size: 1.05rem;
       font-weight: 600;
-      text-align: center;
-      font-size: 1.1rem;
-  
-      &.error {
-        background-color: #ffe5e5;
-        color: #d10000;
-        border: 1px solid #d10000;
-      }
-  
-      &.success {
-        background-color: #e5ffe5;
-        color: #008f00;
-        border: 1px solid #008f00;
+      color: $product-text;
+      margin-bottom: 0.6rem;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      padding: 1rem;
+      font-size: 1rem;
+      background: $product-bg;
+      border: 1px solid $product-border;
+      border-radius: 10px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+
+      &:focus {
+        background: white;
+        border-color: $product-blue;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        outline: none;
       }
     }
-  
-    .submit-btn {
-      padding: 1.2rem;
-      font-size: 1.4rem;
-      font-weight: bold;
-      background: linear-gradient(135deg, #0077cc, #00cc88);
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 1rem;
-      letter-spacing: 0.5px;
-  
-      &:hover {
-        background: linear-gradient(135deg, #005fa3, #009f6b);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 119, 204, 0.4);
-      }
+
+    input[readonly] {
+      background-color: #e5e7eb;
+      color: #6b7280;
+      border-style: dashed;
     }
   }
-  
-  /* kleine Animation */
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
+
+  .form-inline {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .checkbox-field {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: $product-bg;
+    border: 1px dashed $product-border;
+    border-radius: 12px;
+
+    label {
+      margin-bottom: 0;
+      font-weight: 600;
+      font-size: 1rem;
     }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
+
+    input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: $product-green;
     }
   }
-  
+
+  .submit-btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+    padding: 1.1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    background: $product-blue;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background: darken($product-blue, 8%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .message {
+    grid-column: 1 / -1;
+    padding: 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+
+    &.error {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #ef4444;
+    }
+
+    &.success {
+      background: #dcfce7;
+      color: #065f46;
+      border: 1px solid #34d399;
+    }
+  }
+}

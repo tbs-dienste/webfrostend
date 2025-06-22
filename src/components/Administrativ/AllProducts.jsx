@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FaPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'; // ← wichtig
 import './AllProducts.scss';
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate(); // ← Hook für Navigation
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,7 +30,13 @@ const AllProducts = () => {
 
   return (
     <div className="all-products-wrapper">
-      <h2 className="all-products-title">Produktübersicht</h2>
+      <div className="all-products-header">
+        <h2 className="all-products-title">📦 Produktübersicht</h2>
+        <button className="add-product-btn" onClick={() => navigate('/createProduct')}>
+          <FaPlus /> Produkt hinzufügen
+        </button>
+      </div>
+
       <div className="all-products-table-wrapper">
         <table className="all-products-table">
           <thead>

@@ -14,7 +14,7 @@ const KundenBewertungen = () => {
         const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen');
         const data = response.data.data || [];
 
-        // Nur mit Bewertungen anzeigen
+        // Filter nur mit Bewertungen
         const gefiltert = data.filter(d => d.anzahl_bewertungen > 0);
 
         // Durchschnitt aller Bewertungen berechnen

@@ -23,9 +23,9 @@ import GutscheinErstellung from './components/Gutschein/GutscheinErstellung';
 import AlleGutscheine from './components/Gutschein/AlleGutscheine';
 import Flyer from './components/Flyer/Flyer';
 import Team from './components/Team/Team';
-import KundenBewertungen from './components/Kunden/KundenBewertungen';
-import BewertungDetail from './components/Kunden/BewertungDetail';
-import KundeBewertungformular from './components/Kunden/KundeBewertungformular';
+import KundenBewertungen from './components/Bewertungen/KundenBewertungen';
+import BewertungDetail from './components/Bewertungen/BewertungDetail';
+import KundeBewertungformular from './components/Bewertungen/KundeBewertungformular';
 import Mitarbeiter from './components/Mitarbeiter/Mitarbeiter';
 import GutscheinScanner from './components/Gutschein/GutscheinScanner';
 import FAQ from './components/FAQ/FaqComponent';
@@ -102,6 +102,7 @@ import ProductDetails from './components/Administrativ/ProductDetails';
 import AddToBestandForm from './components/Administrativ/AddToBestandForm';
 import UmbuchungPDFExport from './components/Umbuchung/UmbuchungPDFExport';
 import Bilanz from './components/Administrativ/Bilanz';
+import DienstleistungsBewertungen from './components/Bewertungen/DienstleistungsBewertungen';
 
 
 
@@ -182,6 +183,7 @@ const App = () => {
       {!isKassenModus && <Navbar />}
       
         <Routes>
+
           <Route path="/" element={<Home />} />
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
@@ -199,7 +201,8 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
-          <Route path="/spin-wheel" element={<SpinWheel setFullscreenMode={setFullscreenMode} fullscreenMode={fullscreenMode} />} />          <Route path="/createProduct" element={<CreateProductForm />} />
+          <Route path="/spin-wheel" element={<SpinWheel setFullscreenMode={setFullscreenMode} fullscreenMode={fullscreenMode} />} />          
+          <Route path="/createProduct" element={<CreateProductForm />} />
 
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />
@@ -258,10 +261,14 @@ const App = () => {
           <Route path="/flyer" element={<Flyer />} />
           <Route path="/sign" element={<SignComponent />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/bewertungen" element={<KundenBewertungen />} />
-          <Route path="/bewertung/:id" element={<BewertungDetail />} />
           <Route path="/videocall" element={<VideoCall />} />
+
+
           <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />
+          <Route path="/bewertungen" element={<KundenBewertungen />} />
+        <Route path="/dienstleistung/:dienstleistungId" element={<DienstleistungsBewertungen />} />
+        <Route path="/bewertungen/:id" element={<BewertungDetail />} />
+
           <Route path="/faq" element={<FAQ />} />
           <Route path="/verification" element={<VerificationCode />} />
           <Route path="*" element={<NotFound />} />
