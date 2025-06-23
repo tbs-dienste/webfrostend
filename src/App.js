@@ -103,6 +103,9 @@ import AddToBestandForm from './components/Administrativ/AddToBestandForm';
 import UmbuchungPDFExport from './components/Umbuchung/UmbuchungPDFExport';
 import Bilanz from './components/Administrativ/Bilanz';
 import DienstleistungsBewertungen from './components/Bewertungen/DienstleistungsBewertungen';
+import AktionenListe from './components/Aktionen/AktionenListe';
+import AktionDetails from './components/Aktionen/AktionDetails';
+import AktionErstellen from './components/Aktionen/AktionErstellen';
 
 
 
@@ -262,7 +265,9 @@ const App = () => {
           <Route path="/sign" element={<SignComponent />} />
           <Route path="/team" element={<Team />} />
           <Route path="/videocall" element={<VideoCall />} />
-
+          <Route path="/aktionen" element={<AktionenListe />} />
+          <Route path="/aktionen/:id" element={<AktionDetails />} />
+          <Route path="/aktion-erstellen" element={<AktionErstellen />} />
 
           <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />
           <Route path="/bewertungen" element={<KundenBewertungen />} />

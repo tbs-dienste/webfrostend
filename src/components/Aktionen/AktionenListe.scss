@@ -1,0 +1,83 @@
+.aktionen-liste {
+    padding: 2rem;
+    background: linear-gradient(to bottom right, #f4f7fb, #e8f0fe);
+    min-height: 100vh;
+  
+    h2 {
+      font-size: 2.2rem;
+      color: #1f2937;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  
+    .aktionen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem;
+      align-items: stretch;
+      padding: 1rem;
+    }
+  
+    .aktion-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 1.6rem;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+  
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+  
+      h3 {
+        font-size: 1.4rem;
+        color: #111827;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+  
+      .rabatt {
+        display: flex;
+        align-items: center;
+        font-size: 1.1rem;
+        color: #059669;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+  
+        svg {
+          margin-right: 8px;
+          color: #10b981;
+        }
+      }
+  
+      .details-btn {
+        margin-top: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(to right, #3b82f6, #2563eb);
+        color: #ffffff;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background 0.3s ease;
+  
+        svg {
+          stroke-width: 2;
+        }
+  
+        &:hover {
+          background: linear-gradient(to right, #2563eb, #1d4ed8);
+        }
+      }
+    }
+  }
+  

@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSave, FaUndo, FaEdit, FaCopy } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
+import jsPDF from "jspdf";
+
 
 const KundenAnzeigen = () => {
   const { id } = useParams();
@@ -48,6 +50,124 @@ const KundenAnzeigen = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const exportToPDF = () => {
+    if (!selectedKunde) return;
+  
+    const doc = new jsPDF();
+  
+    doc.setFontSize(18);
+    doc.text("Kundendaten - Akte", 14, 20);
+  
+    doc.setFontSize(12);
+    doc.text(`Exportdatum: ${new Date().toLocaleDateString()}`, 14, 28);
+  
+    let y = 38;
+  
+    const addText = (label, value) => {
+      doc.setFont(undefined, "bold");
+      doc.text(`${label}:`, 14, y);
+      doc.setFont(undefined, "normal");
+      const splitText = doc.splitTextToSize(value || "-", 180);
+      doc.text(splitText, 50, y);
+      y += splitText.length * 7 + 4;
+    };
+  
+    // Grunddaten Kunde
+    addText("Kundennummer", selectedKunde.kundennummer);
+    addText("Firma", selectedKunde.firma);
+    addText("Vorname", selectedKunde.vorname);
+    addText("Nachname", selectedKunde.nachname);
+    addText("Email", selectedKunde.email);
+    addText("Mobil", selectedKunde.mobil);
+    addText("Adresse", selectedKunde.strasseHausnummer);
+    addText("PLZ", selectedKunde.postleitzahl);
+    addText("Ort", selectedKunde.ort);
+    addText("Status", selectedKunde.status);
+  
+    // Dienstleistungen
+    if (selectedKunde.dienstleistungen && selectedKunde.dienstleistungen.length > 0) {
+      if (y + 20 > 280) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont(undefined, "bold");
+      doc.text("Dienstleistungen:", 14, y);
+      y += 8;
+      doc.setFont(undefined, "normal");
+  
+      selectedKunde.dienstleistungen.forEach((d) => {
+        const title = `- ${d.title}: `;
+        const beschreibung = d.beschreibung || "-";
+        const fullText = title + beschreibung;
+        const splitText = doc.splitTextToSize(fullText, 180);
+        doc.text(splitText, 18, y);
+        y += splitText.length * 7 + 4;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+    }
+  
+    // Bewertungen (falls Status abgeschlossen)
+    if (selectedKunde.status === "abgeschlossen" && selectedKunde.bewertungen?.length > 0) {
+      if (y + 15 > 280) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont(undefined, "bold");
+      doc.text("Bewertungen:", 14, y);
+      y += 8;
+      doc.setFont(undefined, "normal");
+  
+      selectedKunde.bewertungen.forEach((bewertung, index) => {
+        const bewertungTexts = [
+          `Arbeitsqualität: ${bewertung.arbeitsqualität} (${bewertung.arbeitsqualität_rating})`,
+          `Tempo: ${bewertung.tempo} (${bewertung.tempo_rating})`,
+          `Gesamt: ${bewertung.gesamt} (${bewertung.gesamt_rating})`,
+          `Freundlichkeit: ${bewertung.freundlichkeit} (${bewertung.freundlichkeit_rating})`,
+          `Zufriedenheit: ${bewertung.zufriedenheit} (${bewertung.zufriedenheit_rating})`,
+          `Gesamtrating: ${bewertung.gesamtrating}`,
+          `Bewertungstext: ${bewertung.gesamttext || "-"}`,
+          `Erstellt am: ${new Date(bewertung.created_at).toLocaleDateString()}`,
+        ];
+  
+        bewertungTexts.forEach((text) => {
+          const splitText = doc.splitTextToSize(text, 180);
+          doc.text(splitText, 18, y);
+          y += splitText.length * 7 + 2;
+        });
+  
+        y += 6; // extra Abstand zwischen Bewertungen
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+    }
+  
+    // Unterschrift (falls vorhanden)
+    if (selectedKunde.unterschrift) {
+      if (y + 50 > 280) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont(undefined, "bold");
+      doc.text("Unterschrift:", 14, y);
+      y += 6;
+      doc.addImage(
+        `data:image/png;base64,${selectedKunde.unterschrift}`,
+        "PNG",
+        14,
+        y,
+        120,
+        40
+      );
+    }
+  
+    doc.save(`Kunde_${selectedKunde.kundennummer || "export"}.pdf`);
   };
 
   const handleSave = async () => {
@@ -147,6 +267,10 @@ const KundenAnzeigen = () => {
               <p><strong>Ort:</strong> {selectedKunde.ort}</p>
               <p><strong>Status:</strong> {selectedKunde.status}</p>
               <button onClick={handleEdit}><FaEdit /> Bearbeiten</button>
+              <button onClick={exportToPDF}>
+  <FaFilePdf /> PDF Export (für Akte)
+</button>
+
             </div>
           )}
 

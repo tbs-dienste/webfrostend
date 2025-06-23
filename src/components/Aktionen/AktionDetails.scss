@@ -1,0 +1,210 @@
+.aktionneu-container {
+  max-width: 650px;
+  margin: 3rem auto;
+  padding: 2rem 2.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #2c3e50;
+  user-select: none;
+  transition: box-shadow 0.3s ease;
+  &:hover {
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.aktionneu-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 1.6rem;
+  color: #1f2937;
+  text-align: center;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  user-select: text;
+}
+
+.aktionneu-fieldgroup {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    user-select: text;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='date'],
+  textarea {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1f2937;
+    background-color: #f9fafb;
+    border: 1.8px solid #d1d5db;
+    border-radius: 8px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    outline-offset: 2px;
+    resize: vertical;
+    min-height: 44px;
+
+    &:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 8px #2563ebaa;
+      background-color: #ffffff;
+    }
+  }
+
+  textarea {
+    min-height: 96px;
+    line-height: 1.5;
+  }
+}
+
+.aktionneu-rabatt {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #dc2626; /* kräftiges Rot */
+  text-align: center;
+  margin: 1.75rem 0 2rem 0;
+  letter-spacing: 0.02em;
+  user-select: text;
+}
+
+.aktionneu-description {
+  font-size: 1.125rem;
+  color: #4b5563;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 2rem;
+  user-select: text;
+  white-space: pre-line;
+}
+
+.aktionneu-dates {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 2.2rem;
+
+  svg {
+    stroke: #6b7280;
+    min-width: 24px;
+    min-height: 24px;
+  }
+}
+
+.aktionneu-error {
+  color: #b91c1c;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+  user-select: text;
+}
+
+.aktionneu-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+
+.aktionneu-button-save,
+.aktionneu-button-abbrechen,
+.aktionneu-button-edit,
+.aktionneu-button-delete {
+  padding: 0.7rem 1.8rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  user-select: none;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  min-width: 140px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aktionneu-button-save {
+  background-color: #22c55e; /* Grün */
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background-color: #16a34a;
+    box-shadow: 0 6px 10px rgb(22 163 74 / 0.35);
+  }
+
+  &:disabled {
+    background-color: #a7f3d0;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.aktionneu-button-abbrechen {
+  background-color: #6b7280; /* Grau */
+  color: #f9fafb;
+
+  &:hover:not(:disabled) {
+    background-color: #4b5563;
+    box-shadow: 0 6px 10px rgb(75 85 99 / 0.35);
+  }
+
+  &:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.aktionneu-button-edit {
+  background-color: #2563eb; /* Blau */
+  color: #f9fafb;
+
+  &:hover {
+    background-color: #1e40af;
+    box-shadow: 0 6px 10px rgb(30 64 175 / 0.35);
+  }
+}
+
+.aktionneu-button-delete {
+  background-color: #dc2626; /* Rot */
+  color: #fef2f2;
+
+  &:hover {
+    background-color: #991b1b;
+    box-shadow: 0 6px 10px rgb(153 27 27 / 0.35);
+  }
+}
+
+.aktionneu-link-back {
+  display: block;
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  user-select: text;
+
+  &:hover {
+    color: #1e40af;
+  }
+}
