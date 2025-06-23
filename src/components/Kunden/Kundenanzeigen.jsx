@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaSave, FaUndo, FaEdit, FaCopy } from 'react-icons/fa';
+import { FaSave, FaUndo, FaEdit, FaCopy, FaFilePdf } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
 import jsPDF from "jspdf";
 
