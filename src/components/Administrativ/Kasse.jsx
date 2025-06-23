@@ -1025,7 +1025,7 @@ const Kasse = ({ onKassenModusChange }) => {
                     onClick={() => addDiscount(discount.title)}
                     className="discount-button double-width"
                   >
-                    {discount.title}
+                    {discount.name}
                   </button>
                 ))}
               </div>
