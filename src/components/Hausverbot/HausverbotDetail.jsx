@@ -3,20 +3,38 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink, Font } from '@react-pdf/renderer';
 import './HausverbotDetail.scss';
+import corbel from '../../assets/fonts/CORBEL.TTF';
 
 Font.register({
-  family: 'Roboto',
-  fonts: [
-    { src: 'https://fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4mxP.ttf' }
-  ]
+  family: 'Corbel',
+  src: corbel,  // corbel ist hier der String-Pfad zur Schriftdatei
 });
 
+
 const pdfStyles = StyleSheet.create({
-  page: { fontFamily: 'Roboto', fontSize: 12, padding: 40, lineHeight: 1.6 },
-  bold: { fontWeight: 'bold' },
-  section: { marginBottom: 15 },
-  signatureBox: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 40 },
-  line: { width: '45%', textAlign: 'center', borderTop: '1px solid black', paddingTop: 5 }
+  page: {
+    fontFamily: 'Corbel', // Nutze Corbel hier
+    fontSize: 12,
+    padding: 40,
+    lineHeight: 1.6,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  section: {
+    marginBottom: 15,
+  },
+  signatureBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 40,
+  },
+  line: {
+    width: '45%',
+    textAlign: 'center',
+    borderTop: '1px solid black',
+    paddingTop: 5,
+  },
 });
 
 const HausverbotPDF = ({ data }) => {
@@ -54,7 +72,7 @@ const HausverbotPDF = ({ data }) => {
             Dieses Hausverbot tritt per <Text style={pdfStyles.bold}>{datumFormatted || '–'}</Text> in Kraft und gilt bis auf Widerruf durch die Geschäftsleitung.
           </Text>
           <Text>
-            <Text style={pdfStyles.bold}>Wichtiger Hinweis:</Text> Ein Verstoss gegen dieses Verbot kann gemäss <Text style={pdfStyles.bold}>Art. 186 StGB (Hausfriedensbruch)</Text> strafrechtlich verfolgt werden.
+            <Text style={pdfStyles.bold}>Wichtiger Hinweis:</Text> Ein Verstoß gegen dieses Verbot kann gemäss <Text style={pdfStyles.bold}>Art. 186 StGB (Hausfriedensbruch)</Text> strafrechtlich verfolgt werden.
           </Text>
         </View>
 
@@ -78,7 +96,6 @@ const HausverbotDetail = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  // Beispiel Fallback-Daten für "selected Hausverbot" falls API fehlschlägt
   const fallbackData = {
     vorname: 'Max',
     nachname: 'Mustermann',
@@ -88,11 +105,11 @@ const HausverbotDetail = () => {
     geburtsdatum: '1990-01-01',
     grund: 'Unbekannt',
     datum: new Date().toISOString(),
-    geschaeft: 'Muster GmbH'
+    geschaeft: 'Muster GmbH',
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Beispiel: Token aus localStorage
+    const token = localStorage.getItem('token');
 
     if (!token) {
       setError('Kein Zugriffstoken gefunden.');
@@ -102,8 +119,8 @@ const HausverbotDetail = () => {
 
     axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/hausverbot/${id}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then(res => {
         setData(res.data);
@@ -151,7 +168,7 @@ const HausverbotDetail = () => {
           document={<HausverbotPDF data={data} />}
           fileName={`Hausverbot_${nachname || 'unknown'}.pdf`}
         >
-          {({ loading }) => loading ? 'Erstelle PDF...' : '📄 Offizielle Mitteilung als PDF herunterladen'}
+          {({ loading }) => (loading ? 'Erstelle PDF...' : '📄 Offizielle Mitteilung als PDF herunterladen')}
         </PDFDownloadLink>
       </div>
     </div>
