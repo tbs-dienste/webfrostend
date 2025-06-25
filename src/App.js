@@ -108,6 +108,7 @@ import AktionDetails from './components/Aktionen/AktionDetails';
 import AktionErstellen from './components/Aktionen/AktionErstellen';
 import HausverbotForm from './components/Hausverbot/HausverbotForm';
 import HausverbotListe from './components/Hausverbot/HausverbotListe';
+import HausverbotDetail from './components/Hausverbot/HausverbotDetail';
 
 
 
@@ -210,6 +211,8 @@ const App = () => {
           <Route path="/createProduct" element={<CreateProductForm />} />
           <Route path="/hausverbotform" element={<HausverbotForm />} />
           <Route path="/hausverbote" element={<HausverbotListe />} />
+          <Route path="/hausverbote/:id" element={<HausverbotDetail />} />
+
 
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />

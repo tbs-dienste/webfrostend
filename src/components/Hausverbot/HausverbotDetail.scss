@@ -1,0 +1,66 @@
+.hausverbot-detail-container {
+    max-width: 850px;
+    margin: 2rem auto;
+    background: #fafafa;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+    color: #222;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #c62828;
+  }
+  
+  .detail-section {
+    margin-bottom: 2rem;
+    padding: 1.2rem;
+    background: #fff;
+    border-left: 5px solid #c62828;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+  
+    h2 {
+      margin-bottom: 0.8rem;
+      color: #333;
+    }
+  
+    p {
+      margin: 0.4rem 0;
+      font-size: 1.05rem;
+  
+      strong {
+        color: #555;
+      }
+    }
+  }
+  
+  .pdf-download {
+    text-align: center;
+    margin-top: 2rem;
+  
+    a {
+      background-color: #2e7d32;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+  
+      &:hover {
+        background-color: #1b5e20;
+      }
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 1.3rem;
+    padding: 2rem;
+  }
+  
