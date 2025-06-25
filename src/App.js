@@ -106,6 +106,8 @@ import DienstleistungsBewertungen from './components/Bewertungen/Dienstleistungs
 import AktionenListe from './components/Aktionen/AktionenListe';
 import AktionDetails from './components/Aktionen/AktionDetails';
 import AktionErstellen from './components/Aktionen/AktionErstellen';
+import HausverbotForm from './components/Hausverbot/HausverbotForm';
+import HausverbotListe from './components/Hausverbot/HausverbotListe';
 
 
 
@@ -206,6 +208,8 @@ const App = () => {
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
           <Route path="/spin-wheel" element={<SpinWheel setFullscreenMode={setFullscreenMode} fullscreenMode={fullscreenMode} />} />          
           <Route path="/createProduct" element={<CreateProductForm />} />
+          <Route path="/hausverbotform" element={<HausverbotForm />} />
+          <Route path="/hausverbote" element={<HausverbotListe />} />
 
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />
           <Route path="/stellen-detail/:stellenId" element={<StellenausschreibungDetail />} />

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FaSave, FaUndo, FaEdit, FaCopy, FaFilePdf } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
 import jsPDF from "jspdf";
+import { FaStar, FaRegStar, FaComments, FaUserCheck, FaClipboardCheck } from "react-icons/fa";
 
 
 const KundenAnzeigen = () => {
@@ -50,6 +51,12 @@ const KundenAnzeigen = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, i) =>
+      i < rating ? <FaStar key={i} color="#f5c518" /> : <FaRegStar key={i} color="#ccc" />
+    );
   };
 
   const exportToPDF = () => {
@@ -111,42 +118,48 @@ const KundenAnzeigen = () => {
       });
     }
   
-    // Bewertungen (falls Status abgeschlossen)
+    const renderStars = (rating) => '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
     if (selectedKunde.status === "abgeschlossen" && selectedKunde.bewertungen?.length > 0) {
       if (y + 15 > 280) {
         doc.addPage();
         y = 20;
       }
+    
       doc.setFont(undefined, "bold");
-      doc.text("Bewertungen:", 14, y);
+      doc.text("📝 Bewertungen:", 14, y);
       y += 8;
       doc.setFont(undefined, "normal");
-  
-      selectedKunde.bewertungen.forEach((bewertung, index) => {
+    
+      selectedKunde.bewertungen.forEach((bewertung, idx) => {
         const bewertungTexts = [
-          `Arbeitsqualität: ${bewertung.arbeitsqualität} (${bewertung.arbeitsqualität_rating})`,
-          `Tempo: ${bewertung.tempo} (${bewertung.tempo_rating})`,
-          `Gesamt: ${bewertung.gesamt} (${bewertung.gesamt_rating})`,
-          `Freundlichkeit: ${bewertung.freundlichkeit} (${bewertung.freundlichkeit_rating})`,
-          `Zufriedenheit: ${bewertung.zufriedenheit} (${bewertung.zufriedenheit_rating})`,
-          `Gesamtrating: ${bewertung.gesamtrating}`,
-          `Bewertungstext: ${bewertung.gesamttext || "-"}`,
-          `Erstellt am: ${new Date(bewertung.created_at).toLocaleDateString()}`,
+          `🛠️ Arbeitsqualität: ${bewertung.arbeitsqualität} (${renderStars(bewertung.arbeitsqualität_rating)})`,
+          `⚡ Tempo: ${bewertung.tempo} (${renderStars(bewertung.tempo_rating)})`,
+          `🎯 Gesamt: ${bewertung.gesamt} (${renderStars(bewertung.gesamt_rating)})`,
+          `😊 Freundlichkeit: ${bewertung.freundlichkeit} (${renderStars(bewertung.freundlichkeit_rating)})`,
+          `👍 Zufriedenheit: ${bewertung.zufriedenheit} (${renderStars(bewertung.zufriedenheit_rating)})`,
+          `💬 Kommunikation: ${bewertung.kommunikation} (${renderStars(bewertung.kommunikation_rating)})`,
+          `⏱️ Zuverlässigkeit: ${bewertung.zuverlaessigkeit} (${renderStars(bewertung.zuverlaessigkeit_rating)})`,
+          `🧑‍💼 Professionalität: ${bewertung.professionalitaet} (${renderStars(bewertung.professionalitaet_rating)})`,
+          `⭐ Gesamtrating: ${renderStars(bewertung.gesamtrating)}`,
+          `🗒️ Kommentar: ${bewertung.gesamttext || "-"}`,
+          `📅 Erstellt am: ${new Date(bewertung.created_at).toLocaleDateString()}`,
         ];
-  
+    
         bewertungTexts.forEach((text) => {
           const splitText = doc.splitTextToSize(text, 180);
           doc.text(splitText, 18, y);
           y += splitText.length * 7 + 2;
         });
-  
-        y += 6; // extra Abstand zwischen Bewertungen
-        if (y > 280) {
+    
+        y += 6;
+        if (y > 280 && idx < selectedKunde.bewertungen.length - 1) {
           doc.addPage();
           y = 20;
         }
       });
     }
+    
   
     // Unterschrift (falls vorhanden)
     if (selectedKunde.unterschrift) {
@@ -288,31 +301,33 @@ const KundenAnzeigen = () => {
           </div>
 
           {selectedKunde.status === 'abgeschlossen' && (
-            <>
-              {selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
-                <div>
-                  <h3>Bewertungen:</h3>
-                  {selectedKunde.bewertungen.map((bewertung, index) => (
-                    <div key={index} className="bewertung">
-                      <p><strong>Arbeitsqualität:</strong> {bewertung.arbeitsqualität} ({bewertung.arbeitsqualität_rating})</p>
-                      <p><strong>Tempo:</strong> {bewertung.tempo} ({bewertung.tempo_rating})</p>
-                      <p><strong>Gesamt:</strong> {bewertung.gesamt} ({bewertung.gesamt_rating})</p>
-                      <p><strong>Freundlichkeit:</strong> {bewertung.freundlichkeit} ({bewertung.freundlichkeit_rating})</p>
-                      <p><strong>Zufriedenheit:</strong> {bewertung.zufriedenheit} ({bewertung.zufriedenheit_rating})</p>
-                      <p><strong>Gesamtrating:</strong> {bewertung.gesamtrating}</p>
-                      <p><strong>Bewertungstext:</strong> {bewertung.gesamttext}</p>
-                      <p><small>Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <button onClick={copyLinkToClipboard} className="copy-link-button">
-                  <FaCopy /> Link zum Bewerten kopieren
-                </button>
-              )}
-            </>
-          )}
-
+  <>
+    {selectedKunde.bewertungen && selectedKunde.bewertungen.length > 0 ? (
+      <div className="bewertungen">
+        <h3><FaClipboardCheck /> Bewertungen</h3>
+        {selectedKunde.bewertungen.map((bewertung, index) => (
+          <div key={index} className="bewertung">
+            <p><strong><FaUserCheck /> Arbeitsqualität:</strong> {bewertung.arbeitsqualität} {renderStars(bewertung.arbeitsqualität_rating)}</p>
+            <p><strong>⚡ Tempo:</strong> {bewertung.tempo} {renderStars(bewertung.tempo_rating)}</p>
+            <p><strong>🎯 Gesamt:</strong> {bewertung.gesamt} {renderStars(bewertung.gesamt_rating)}</p>
+            <p><strong>😊 Freundlichkeit:</strong> {bewertung.freundlichkeit} {renderStars(bewertung.freundlichkeit_rating)}</p>
+            <p><strong>👍 Zufriedenheit:</strong> {bewertung.zufriedenheit} {renderStars(bewertung.zufriedenheit_rating)}</p>
+            <p><strong>💬 Kommunikation:</strong> {bewertung.kommunikation} {renderStars(bewertung.kommunikation_rating)}</p>
+            <p><strong>⏱️ Zuverlässigkeit:</strong> {bewertung.zuverlaessigkeit} {renderStars(bewertung.zuverlaessigkeit_rating)}</p>
+            <p><strong>🧑‍💼 Professionalität:</strong> {bewertung.professionalitaet} {renderStars(bewertung.professionalitaet_rating)}</p>
+            <p><strong>⭐ Gesamtrating:</strong> {renderStars(bewertung.gesamtrating)}</p>
+            <p><strong><FaComments /> Kommentar:</strong> {bewertung.gesamttext || "–"}</p>
+            <p><small>🗓️ Erstellt am: {new Date(bewertung.created_at).toLocaleDateString()}</small></p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <button onClick={copyLinkToClipboard} className="copy-link-button">
+        <FaComments /> Link zum Bewerten kopieren
+      </button>
+    )}
+  </>
+)}
           <div className="link-button-container">
             <Link to={`/arbeitszeiten/${id}`} className="link-button">
               Arbeitszeiten anzeigen

@@ -1,0 +1,156 @@
+/* hausverbote-liste.scss */
+
+.hausverbote-container {
+    width: 100%;
+    padding: 2rem 3rem;
+    background-color: #f7f9fc;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+    box-sizing: border-box;
+    user-select: none;
+  }
+  
+  .hausverbote-container h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #002a8a;
+    letter-spacing: 0.04em;
+    border-bottom: 3px solid #0052cc;
+    padding-bottom: 0.5rem;
+    font-feature-settings: "liga", "clig";
+  }
+  
+  .hausverbote-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    font-size: 1.05rem;
+  }
+  
+  .hausverbote-table thead {
+    background-color: #0041b3;
+    color: #f0f4ff;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  
+  .hausverbote-table thead th {
+    padding: 1rem 1.6rem;
+    text-align: left;
+    user-select: text;
+  }
+  
+  .hausverbote-table tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: default;
+  }
+  
+  .hausverbote-table tbody tr:hover {
+    box-shadow: 0 6px 18px rgba(0, 82, 204, 0.25);
+    transform: translateY(-3px);
+    background-color: #e9f0ff;
+  }
+  
+  .hausverbote-table tbody td {
+    padding: 1.2rem 1.6rem;
+    vertical-align: middle;
+    color: #333;
+    font-weight: 500;
+    user-select: text;
+    border-left: 1px solid #f0f2f5;
+  
+    &:first-child {
+      border-left: none;
+    }
+  }
+  
+  .hausverbote-button {
+    background: linear-gradient(135deg, #0052cc 0%, #003d99 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.4rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 82, 204, 0.35);
+    cursor: pointer;
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.15s ease;
+    user-select: none;
+    letter-spacing: 0.02em;
+  
+    &:hover,
+    &:focus {
+      background: linear-gradient(135deg, #003d99 0%, #002466 100%);
+      box-shadow: 0 6px 14px rgba(0, 61, 153, 0.6);
+      transform: translateY(-2px);
+      outline: none;
+    }
+  
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 7px rgba(0, 82, 204, 0.3);
+    }
+  }
+  
+  /* Kleine Animation beim Laden */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hausverbote-table tbody tr {
+    animation: fadeIn 0.4s ease forwards;
+  }
+  
+  /* Responsive */
+  @media (max-width: 720px) {
+    .hausverbote-container {
+      padding: 1.2rem 1.6rem;
+    }
+  
+    .hausverbote-table thead {
+      display: none;
+    }
+  
+    .hausverbote-table tbody tr {
+      display: block;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 4px 14px rgba(0, 82, 204, 0.1);
+    }
+  
+    .hausverbote-table tbody td {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid #e2e8f0;
+    }
+  
+    .hausverbote-table tbody td:last-child {
+      justify-content: center;
+      padding-top: 1rem;
+    }
+  }
+  
