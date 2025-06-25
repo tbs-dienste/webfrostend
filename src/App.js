@@ -211,7 +211,7 @@ const App = () => {
           <Route path="/createProduct" element={<CreateProductForm />} />
           <Route path="/hausverbotform" element={<HausverbotForm />} />
           <Route path="/hausverbote" element={<HausverbotListe />} />
-          <Route path="/hausverbote/:id" element={<HausverbotDetail />} />
+          <Route path="/hausverbot/:id" element={<HausverbotDetail />} />
 
 
           <Route path="/createstellenbeschreibung" element={<CreateStellenBeschreibung />} />

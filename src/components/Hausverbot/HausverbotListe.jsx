@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './HausverbotListe.scss'; // Einfach im selben Ordner speichern
+import { Link } from 'react-router-dom'; // HINZUFÜGEN
 
 function HausverbotListe() {
   const [hausverbote, setHausverbote] = useState([]);
@@ -47,13 +48,9 @@ function HausverbotListe() {
                 <td>{vorname} {nachname}</td>
                 <td>{grund}</td>
                 <td>
-                  <button
-                    className="hausverbote-button"
-                    onClick={() => alert(`Details für Hausverbot ID: ${id}`)}
-                    aria-label={`Details anzeigen für ${vorname} ${nachname}`}
-                  >
-                    Details
-                  </button>
+                <Link to={`/hausverbot/${id}`} className="hausverbote-button">
+    Details
+  </Link>
                 </td>
               </tr>
             ))}
