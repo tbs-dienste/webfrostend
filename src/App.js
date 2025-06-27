@@ -83,7 +83,6 @@ import DownloadZusammenfassung from './components/Administrativ/DownloadZusammen
 import GSKarteDetails from './components/Administrativ/GSKarteDetails';
 import ArtikelDetail from './components/Administrativ/ArtikelDetail';
 import VoucherBarcodes from './components/Administrativ/VouchersBarcodes';
-import PrinterManager from './components/Kasse/PrinterManager';
 import CustomerCards from './components/Administrativ/Kundenkarten/CustomerCards';
 import AddPoints from './components/Administrativ/Kundenkarten/AddPoints';
 import CreateCustomerCard from './components/Administrativ/Kundenkarten/CreateCustomerCard';
@@ -109,7 +108,7 @@ import AktionErstellen from './components/Aktionen/AktionErstellen';
 import HausverbotForm from './components/Hausverbot/HausverbotForm';
 import HausverbotListe from './components/Hausverbot/HausverbotListe';
 import HausverbotDetail from './components/Hausverbot/HausverbotDetail';
-
+import StrafantragForm from './components/Administrativ/Straftat/StrafantragForm';
 
 
 const App = () => {
@@ -222,6 +221,7 @@ const App = () => {
 
           <Route path="/kundensuche" element={<KundenSuche onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/artikelsuche" element={<ArtikelSuche onKassenModusChange={toggleKassenModus}/>} />
+          <Route path="/strafantragform" element={<StrafantragForm />} />
 
 
           <Route
@@ -233,7 +233,6 @@ const App = () => {
           <Route path="/einnahmeausgabe" element={<IncomeExpenseForm onKassenModusChange={toggleKassenModus}/>} />
           <Route path="/umbuchung" element={<UmbuchungPDFExport />} />
 
-          <Route path="/drucker" element={<PrinterManager onKassenModusChange={toggleKassenModus}/>} />
 
           <Route path="/download" element={<Download />} />
           <Route path="/arbeitszeit-erfassen/:kundenId/:dienstleistungId" element={<ArbeitszeitErfassen />} />
