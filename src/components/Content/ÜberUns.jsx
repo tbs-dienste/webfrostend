@@ -1,34 +1,20 @@
 import React from "react";
-import "./ÜberUns.scss";
+import "./UeberUns.scss";
 
-const ÜberUns = () => {
-
-
-  const farben = {
-    Platin: "platin",
-    Gold: "gold",
-    Silber: "silber",
-    Bronze: "bronze",
-  };
-
+const UeberUns = () => {
   return (
-    <div className="über-uns">
+    <div className="ueber-uns">
       <h1>Wer wir sind</h1>
       <p>
-        <strong>TBS Solutions</strong> ist ein Startup, das verschiedene Dienstleistungen anbietet.  
-        Unser Ziel ist es, Unternehmen und Privatpersonen in technischen und digitalen Bereichen zu unterstützen.
+        <strong>TBS Solutions</strong> ist ein Startup, das verschiedene Dienstleistungen anbietet. Unser Ziel ist es, Unternehmen und Privatpersonen in technischen und digitalen Bereichen zu unterstützen.
       </p>
 
       <h2>Wie alles begann</h2>
       <p>
-        Im Februar 2023 wurde ich von einer Kollegin gefragt, ob ich eine Diashow erstellen kann.  
-        Das brachte mich auf die Idee, mehrere Dienstleistungen anzubieten.  
-        Ich begann, die Website zu entwickeln – alles im Selbststudium.  
-        Heute ist daraus ein komplettes System entstanden, inklusive eines Kassensystems.
+        Im Februar 2023 wurde ich von einer Kollegin gefragt, ob ich eine Diashow erstellen kann. Das brachte mich auf die Idee, mehrere Dienstleistungen anzubieten. Ich begann, die Website zu entwickeln – alles im Selbststudium. Heute ist daraus ein komplettes System entstanden, inklusive eines Kassensystems.
       </p>
       <p>
-        Ich arbeite derzeit allein und habe keine vollständige Ausbildung. Alles, was hier steht,  
-        wurde von mir selbst aufgebaut – von der ersten Idee bis zum aktuellen System.
+        Ich arbeite derzeit allein und habe keine vollständige Ausbildung. Alles, was hier steht, wurde von mir selbst aufgebaut – von der ersten Idee bis zum aktuellen System.
       </p>
 
       <h2>Unsere Philosophie</h2>
@@ -38,47 +24,56 @@ const ÜberUns = () => {
 
       <h2>Unsere Mission</h2>
       <p>
-        Unsere Mission ist es, kleinen und mittelständischen Unternehmen sowie Privatpersonen durch maßgeschneiderte Softwarelösungen und IT-Services zu helfen, ihre Ziele effizienter zu erreichen. Wir streben danach, technologische Barrieren abzubauen und eine benutzerfreundliche, zugängliche Lösung für alle anzubieten.
+        Unsere Mission ist es, kleinen und mittelständischen Unternehmen sowie Privatpersonen durch maßgeschneiderte Softwarelösungen und IT-Services zu helfen, ihre Ziele effizienter zu erreichen.
       </p>
 
       <h2>Warum TBS Solutions?</h2>
       <p>
-        TBS Solutions steht für mehr als nur Technologie. Es geht uns darum, mit unseren Kunden auf Augenhöhe zu kommunizieren und maßgeschneiderte Lösungen zu entwickeln, die wirklich ihren Bedürfnissen entsprechen. Wir verstehen uns als Partner – nicht nur als Dienstleister.
+        TBS Solutions steht für mehr als nur Technologie. Es geht uns darum, mit unseren Kunden auf Augenhöhe zu kommunizieren und Lösungen zu entwickeln, die ihren Bedürfnissen entsprechen.
       </p>
 
       <h2>Unsere Werte im Detail</h2>
-      <p>
-        - **Innovation:** Wir entwickeln Lösungen, die den technologischen Fortschritt fördern.  
-        - **Zuverlässigkeit:** Auf uns kann man sich verlassen, sowohl in der Qualität unserer Produkte als auch in der Kommunikation mit unseren Kunden.  
-        - **Engagement:** Wir setzen uns voll und ganz für die Bedürfnisse unserer Kunden ein, um ihre Visionen zu verwirklichen.
-      </p>
+      <ul>
+        <li><strong>Innovation:</strong> Wir entwickeln Lösungen, die den Fortschritt fördern.</li>
+        <li><strong>Zuverlässigkeit:</strong> Auf uns kann man sich verlassen – in Technik und Kommunikation.</li>
+        <li><strong>Engagement:</strong> Wir setzen uns voll und ganz für die Visionen unserer Kunden ein.</li>
+      </ul>
 
       <h2>Partnerschaften und Kooperationen</h2>
       <p>
-        Wir sind stolz darauf, mit verschiedenen Unternehmen zusammenzuarbeiten, die unsere Werte teilen. Unsere Partnerschaften ermöglichen es uns, ein noch besseres Serviceangebot bereitzustellen und die bestmöglichen Lösungen für unsere Kunden zu entwickeln.
+        Wir arbeiten mit Unternehmen zusammen, die unsere Werte teilen. Diese Partnerschaften ermöglichen ein besseres Serviceangebot und innovative Lösungen.
       </p>
 
       <h2>Ein Blick in die Zukunft</h2>
       <p>
-        TBS Solutions befindet sich noch am Anfang einer aufregenden Reise. In der Zukunft planen wir, unser Portfolio zu erweitern, innovative Produkte zu entwickeln und ein starkes Netzwerk von Partnern und Kunden aufzubauen, das unsere Werte teilt.
+        TBS Solutions steht erst am Anfang. Wir planen, unser Portfolio zu erweitern, innovative Produkte zu entwickeln und ein starkes Netzwerk aufzubauen.
       </p>
 
- 
       <h2>Feedback unserer Kunden</h2>
-      <p>
-        "TBS Solutions hat uns mit einer maßgeschneiderten Softwarelösung unterstützt, die unsere Prozesse erheblich vereinfacht hat. Die Zusammenarbeit war professionell und transparent." - <em>Kundenzitat</em>
-      </p>
-      <p>
-        "Die Unterstützung von TBS Solutions war unersetzlich. Die individuelle Beratung und die schnelle Reaktionszeit haben uns beeindruckt." - <em>Kundenzitat</em>
-      </p>
+      <div className="feedback-section">
+        <div className="feedback-card">
+          <p>
+            "TBS Solutions hat uns mit einer maßgeschneiderten Softwarelösung unterstützt, die unsere Prozesse erheblich vereinfacht hat."
+            <em>– Kundenzitat</em>
+          </p>
+        </div>
+        <div className="feedback-card">
+          <p>
+            "Die individuelle Beratung und schnelle Reaktionszeit haben uns beeindruckt."
+            <em>– Kundenzitat</em>
+          </p>
+        </div>
+      </div>
 
       <h2>Werde ein Partner!</h2>
-      <p>
-        Wir suchen auch Influencer, Streamer oder andere Content-Creator, die unsere Vision teilen und uns bei der Verbreitung unserer Nachricht unterstützen möchten!  
-        Wenn du Interesse hast, uns zu unterstützen und Werbung zu machen, melde dich bitte per E-Mail an <strong>info@tbsolutions.ch</strong>.
-      </p>
+      <div className="partner-section">
+        <p>
+          Wir suchen Influencer, Streamer oder Content-Creator, die unsere Vision teilen!  
+          Interesse? Schreib uns an <strong>info@tbsolutions.ch</strong>
+        </p>
+      </div>
     </div>
   );
 };
 
-export default ÜberUns;
+export default UeberUns;
