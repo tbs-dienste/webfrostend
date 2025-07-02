@@ -1,0 +1,106 @@
+.newsletter-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', sans-serif;
+  
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+  
+      h2 {
+        font-size: 1.6rem;
+        font-weight: 600;
+      }
+    }
+  
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f1f1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      max-width: 400px;
+      margin-bottom: 1rem;
+  
+      .search-icon {
+        margin-right: 0.5rem;
+        color: #666;
+      }
+  
+      input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 1rem;
+        outline: none;
+      }
+    }
+  
+    .error {
+      background: #ffe0e0;
+      color: #b40000;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+  
+    .table-wrapper {
+      overflow-x: auto;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 10px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  
+      th, td {
+        padding: 0.85rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+  
+      th {
+        background-color: #fafafa;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+  
+      td {
+        font-size: 0.95rem;
+      }
+  
+      .status {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+  
+        &.aktiv {
+          color: green;
+  
+          .icon {
+            color: green;
+          }
+        }
+  
+        &.inaktiv {
+          color: red;
+  
+          .icon {
+            color: red;
+          }
+        }
+      }
+    }
+  
+    .no-results {
+      margin-top: 1rem;
+      color: #888;
+      font-style: italic;
+    }
+  }
+  

@@ -110,6 +110,7 @@ import HausverbotListe from './components/Hausverbot/HausverbotListe';
 import HausverbotDetail from './components/Hausverbot/HausverbotDetail';
 import StrafantragForm from './components/Administrativ/Straftat/StrafantragForm';
 import NewsletterSubscribeForm from './components/Content/NewsletterSubscribeForm';
+import NewsletterAbonnenten from './components/Content/Newsletter/NewsletterAbonnenten';
 
 
 const App = () => {
@@ -199,6 +200,7 @@ const App = () => {
           <Route path="/last" element={<LastReceiptViewer />} />
           <Route path="/products" element={<AllProducts />} />
           <Route path="/newsletter" element={<NewsletterSubscribeForm />} />
+          <Route path="/newsletter-subscribers" element={<NewsletterAbonnenten />} />
 
           <Route path="/receipts" element={<Receipts />} />
           <Route path="/gs-karte" element={<GSKarteAbfrage />} />

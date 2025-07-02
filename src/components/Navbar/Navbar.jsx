@@ -96,10 +96,13 @@ function Navbar() {
                 { to: "/allbewerbungen", text: "Bewerbungen" },
                 { to: "/products", text: "Produkte" },
                 { to: "/aktionen", text: "Aktionen" },
+                { to:   "/newsletter-subscribers", text: "Newsletter Abonennten" },
+
 
               ]}
             />
           )}
+        
 
           {isLoggedIn && userType === "mitarbeiter" && (
             <DropdownItem
