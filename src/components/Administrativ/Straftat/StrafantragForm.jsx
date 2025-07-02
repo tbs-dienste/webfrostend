@@ -166,7 +166,6 @@ export default function StrafantragForm() {
     nationalitaet: '',
     geschlecht: '',
     strasse: '',
-    hausnummer: '',
     plz: '',
     ort: '',
     land: '',
@@ -190,6 +189,11 @@ export default function StrafantragForm() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [loadingAdresse, setLoadingAdresse] = useState(false);
+  const [orte, setOrte] = useState([]);
+  const [loadingOrte, setLoadingOrte] = useState(false);
+
+
 
   const sigPadKunde = useRef(null);
   const sigPadFiliale = useRef(null);
@@ -255,6 +259,19 @@ export default function StrafantragForm() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  
+    if (name === 'plz' && value.length >= 4) {
+      fetchOrteByPlz(value);
+    }
+  };
+  
 // Formular absenden
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -270,7 +287,7 @@ const handleSubmit = async (e) => {
     }
 
     const response = await axios.post(
-      'https://tbsdigitalsolutionsbackend.onrender.com/api/strafantraege',
+      'https://tbsdigitalsolutionsbackend.onrender.com/api/strafantrag',
       formData,
       {
         headers: {
@@ -299,6 +316,63 @@ const handleSubmit = async (e) => {
   } finally {
     setLoading(false);
   }
+};
+const handleAdresseBlur = async () => {
+  if (!formData.strasse) return;  // statt formData.adresse, denn Adresse heißt bei dir strasse + hausnummer
+
+  setLoadingAdresse(true);
+  try {
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        street: `${formData.strasse} ${formData.hausnummer || ''}`.trim(),
+        country: 'Switzerland',
+        format: 'json',
+        addressdetails: 1,
+      },
+    });
+
+    if (response.data && response.data.length > 0) {
+      const firstResult = response.data[0];
+      const { postcode, city, town, village } = firstResult.address;
+
+      setFormData((prev) => ({
+        ...prev,
+        plz: postcode || prev.plz,
+        ort: city || town || village || prev.ort,
+      }));
+
+      if (postcode) {
+        await fetchOrteByPlz(postcode);
+      }
+    } else {
+      console.warn('Keine Adressdaten gefunden.');
+    }
+  } catch (error) {
+    console.error('Fehler bei der Adressabfrage:', error);
+  } finally {
+    setLoadingAdresse(false);
+  }
+};
+const fetchOrteByPlz = async (plz) => {
+  setLoadingOrte(true);
+  try {
+    const response = await axios.get(`https://api.zippopotam.us/ch/${plz}`);
+    const ortNamen = response.data.places.map((place) => place['place name']);
+    setOrte(ortNamen);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Orte:', error);
+    setOrte([]);
+  } finally {
+    setLoadingOrte(false);
+  }
+};
+
+const handleOrtSelect = (ort) => {
+  setFormData((prev) => ({
+    ...prev,
+    ort: ort,
+  }));
+  setOrte([]);
 };
 
 
@@ -348,26 +422,40 @@ const handleSubmit = async (e) => {
           value={formData.geschlecht}
           onChange={e => setFormData({ ...formData, geschlecht: e.target.value })}
         />
-        <input
-          placeholder="Strasse"
-          value={formData.strasse}
-          onChange={e => setFormData({ ...formData, strasse: e.target.value })}
-        />
-        <input
-          placeholder="Hausnummer"
-          value={formData.hausnummer}
-          onChange={e => setFormData({ ...formData, hausnummer: e.target.value })}
-        />
-        <input
-          placeholder="PLZ"
-          value={formData.plz}
-          onChange={e => setFormData({ ...formData, plz: e.target.value })}
-        />
-        <input
-          placeholder="Ort"
-          value={formData.ort}
-          onChange={e => setFormData({ ...formData, ort: e.target.value })}
-        />
+          <input
+            type="text"
+            name="adresse"
+            value={formData.adresse}
+            onChange={handleChange}
+            onBlur={handleAdresseBlur}
+            placeholder="Adresse eingeben (z.B. Musterstrasse 1)"
+          />
+          {loadingAdresse && <p>Suche PLZ und Ort...</p>}
+      
+          <input
+              type="text"
+              name="plz"
+              value={formData.plz}
+              onChange={handleChange}
+            />
+       <input
+              type="text"
+              name="ort"
+              value={formData.ort}
+              onChange={handleChange}
+              disabled
+            />
+
+            {loadingOrte && <p>Lade Orte...</p>}
+            {orte.length > 0 && (
+              <ul className="ort-dropdown">
+                {orte.map((ort, index) => (
+                  <li key={index} onClick={() => handleOrtSelect(ort)}>
+                    {ort}
+                  </li>
+                ))}
+              </ul>
+            )}
         <input
           placeholder="Land"
           value={formData.land}
