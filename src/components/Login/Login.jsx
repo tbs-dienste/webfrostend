@@ -1,61 +1,82 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './Login.scss';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+  const [benutzername, setBenutzername] = useState('');
+  const [passwort, setPasswort] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/login', {
-                benutzername: username,
-                passwort: password
-            });
-            const { token, userType } = response.data;
-            localStorage.setItem('token', token);
-            // Redirect or handle userType as needed
-            window.location.href = "/kunden";
-            console.log('Login erfolgreich, User Type:', userType);
-        } catch (error) {
-            setError('Fehler beim Login. Bitte überprüfen Sie Benutzername und Passwort.');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const response = await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/login',
+        { benutzername, passwort }
+      );
+
+      const { token, userType } = response.data;
+
+      // ✅ Wenn kein Fehler kommt → erfolgreich eingeloggt → weiter zu /kunden
+      localStorage.setItem('token', token);
+      localStorage.setItem('userType', userType);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      navigate('/kunden');
+
+    } catch (err) {
+      console.error('Login Fehler:', err);
+
+      if (err.response) {
+        if (err.response.status === 403) {
+          // ❌ User ist NICHT verifiziert → zu /verification
+          navigate('/verification');
+          return;
         }
-    };
+        if (err.response.status === 400) {
+          // ⚠️ Falsche Zugangsdaten
+          setError(err.response.data.error || 'Benutzername oder Passwort falsch.');
+          return;
+        }
+      }
 
-    return (
-        <div className="login-container">
-            
-            <form className="login-form" onSubmit={handleSubmit}>
-            <h2 className="login-title">Login</h2>
-                <div className="form-group">
-                    <label htmlFor="username" className="form-label">Benutzername</label>
-                    <input
-                        type="text"
-                        id="username"
-                        className="form-input"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password" className="form-label">Passwort</label>
-                    <input
-                        type="password"
-                        id="password"
-                        className="form-input"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                {error && <div className="error-message">{error}</div>}
-                <button type="submit" className="submit-button">Login</button>
-            </form>
-        </div>
-    );
+      // ⚠️ Alle anderen Fehler
+      setError('Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+
+        <label htmlFor="benutzername">Benutzername</label>
+        <input
+          type="text"
+          id="benutzername"
+          value={benutzername}
+          onChange={(e) => setBenutzername(e.target.value)}
+          required
+        />
+
+        <label htmlFor="passwort">Passwort</label>
+        <input
+          type="password"
+          id="passwort"
+          value={passwort}
+          onChange={(e) => setPasswort(e.target.value)}
+          required
+        />
+
+        {error && <div className="error">{error}</div>}
+
+        <button type="submit">Anmelden</button>
+      </form>
+    </div>
+  );
 };
 
 export default Login;
