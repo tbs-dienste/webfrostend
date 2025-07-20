@@ -42,7 +42,7 @@ const VerificationCode = () => {
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      alert('Zeit abgelaufen. Bitte erneut einloggen.');
+      alert('Zeit abgelaufen. Bitte erneut einloggen..');
       localStorage.removeItem('token');
       navigate('/login');
       return;
