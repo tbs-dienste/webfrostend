@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import { jwtDecode } from 'jwt-decode';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 import './Dienstleistungen.scss';
 import Loading from '../Loading/Loading';
 
@@ -17,21 +17,19 @@ const Dienstleistungen = () => {
     const fetchServices = async () => {
       try {
         const token = localStorage.getItem('token');
-
         if (token) {
           const decodedToken = jwtDecode(token);
           setIsAdmin(decodedToken.userType === 'admin');
         }
 
-        const response = await axios.get(
-          'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setServices(response.data.data);
       } catch (error) {
-        console.error('Fehler beim Laden der Dienstleistungen:', error);
+        console.error('Fehler beim Laden:', error);
         setError('Fehler beim Laden der Dienstleistungen.');
       } finally {
         setLoading(false);
@@ -45,15 +43,14 @@ const Dienstleistungen = () => {
     if (window.confirm('Bist du sicher, dass du diesen Service löschen möchtest?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(
-          `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setServices(services.filter((service) => service.id !== id));
+        await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setServices(services.filter(service => service.id !== id));
       } catch (error) {
-        console.error('Fehler beim Löschen des Service:', error);
+        console.error('Fehler beim Löschen:', error);
       }
     }
   };
@@ -67,7 +64,7 @@ const Dienstleistungen = () => {
         <title>Dienstleistungen | TBS Solutions</title>
         <meta
           name="description"
-          content="Entdecken Sie die professionellen Dienstleistungen von TBS Solutions: Von IT-Beratung über digitale Lösungen bis hin zu maßgeschneiderten Support-Angeboten."
+          content="Entdecken Sie die professionellen Dienstleistungen von TBS Solutions: individuelle Beratung, IT-Service, Support und mehr."
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.tbssolutions.ch/dienstleistungen" />
@@ -83,18 +80,18 @@ const Dienstleistungen = () => {
       </header>
 
       <section className="services-list">
-        {services.map((service) => (
+        {services.map(service => (
           <article className="service-card" key={service.id}>
             <div className="service-image-wrapper">
               {service.img ? (
                 <img
                   src={service.img}
-                  alt={`Abbildung zur Dienstleistung ${service.title}`}
+                  alt={`Dienstleistung ${service.title}`}
                   className="service-image"
                   loading="lazy"
                 />
               ) : (
-                <div className="fallback-image">Kein Bild verfügbar</div>
+                <div className="fallback-image">Kein Bild</div>
               )}
             </div>
 
@@ -105,7 +102,6 @@ const Dienstleistungen = () => {
                   ? `${service.description.substring(0, 150)}...`
                   : service.description || 'Keine Beschreibung verfügbar'}
               </p>
-
               <Link
                 to={`/service/${service.id}`}
                 className="btn-more"
