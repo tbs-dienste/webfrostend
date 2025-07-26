@@ -1,55 +1,62 @@
-// SCSS-Variablen
-$primary-color: #4a90e2;
-$secondary-color: #f5f5f5;
-$accent-color: #d9d9d9;
-$text-color: #333;
-$font-family: 'Arial, sans-serif';
-
-
-h1 {
-  font-size: 2.5rem;
-  color: $primary-color;
-  margin-bottom: 20px;
-}
-
-
-p {
-  margin: 10px 0;
-  text-align: justify;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-// Box-Styling für die AGB
 .agb-container {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 800px;
+  max-width: 1100px;
   margin: 0 auto;
+  padding: 4rem 2rem;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #1f1f1f;
+  background-color: #ffffff;
 
-  // Responsive Design
-  @media (max-width: 600px) {
-    padding: 15px;
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
   }
-}
 
-// Footer-Styling
-.footer {
-  text-align: center;
-  margin-top: 40px;
-  font-size: 0.9rem;
-  color: $text-color;
-  bottom: 0;
-}
+  h1 {
+    font-size: 2.4rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #1a1a1a;
+    font-weight: 600;
 
-// Links Styling
-a {
-  color: $primary-color;
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
+    &::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background-color: #0073e6;
+      margin: 1rem auto 0;
+      border-radius: 3px;
+    }
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #003366;
+    font-weight: 500;
+  }
+
+  p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    color: #2e2e2e;
+  }
+
+  .bold {
+    font-weight: 600;
+    margin-top: 2rem;
+  }
+
+  .footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+    text-align: center;
+
+    p {
+      font-size: 0.95rem;
+      color: #777;
+    }
   }
 }
