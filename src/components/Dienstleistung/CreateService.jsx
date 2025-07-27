@@ -25,17 +25,15 @@ const CreateService = () => {
         return;
       }
 
-      const response = await axios.post(
+      await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung',
         { title, description, img, preis },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setSuccess("Dienstleistung erfolgreich erstellt und E-Mail gesendet.");
+      setSuccess("Dienstleistung erfolgreich erstellt.");
       setTitle('');
       setDescription('');
       setImg('');
@@ -46,8 +44,7 @@ const CreateService = () => {
       }, 1500);
 
     } catch (error) {
-      console.error("Fehler beim Erstellen der Dienstleistung:", error);
-      setError("Fehler beim Erstellen der Dienstleistung oder E-Mail-Versand.");
+      setError("Fehler beim Erstellen der Dienstleistung.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +72,7 @@ const CreateService = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Beschreibung"
             required
-          ></textarea>
+          />
         </label>
 
         <label>
@@ -90,7 +87,7 @@ const CreateService = () => {
         </label>
 
         <label>
-          <span>Preis (€)</span>
+          <span>Preis (CHF)</span>
           <input
             type="number"
             value={preis}
@@ -108,6 +105,20 @@ const CreateService = () => {
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
       </form>
+
+      {(title || description || img || preis) && (
+        <div className="preview-section">
+          <h2>Vorschau</h2>
+          <div className="preview-card">
+            {img && <img src={img} alt="Dienstleistung" />}
+            <div className="preview-content">
+              <h3>{title || 'Titel fehlt'}</h3>
+              <p>{description || 'Keine Beschreibung vorhanden.'}</p>
+              <strong>{preis ? `${preis} €` : 'Kein Preis angegeben'}</strong>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
