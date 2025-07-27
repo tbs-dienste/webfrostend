@@ -10,6 +10,7 @@ const CreateService = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ const CreateService = () => {
       setDescription('');
       setImg('');
       setPreis('');
+      setShowPreview(false);
 
       setTimeout(() => {
         window.location.href = "/dienstleistungen";
@@ -98,15 +100,25 @@ const CreateService = () => {
           />
         </label>
 
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Wird erstellt...' : 'Erstellen'}
-        </button>
+        <div className="form-buttons">
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? 'Wird erstellt...' : 'Erstellen'}
+          </button>
+
+          <button
+            type="button"
+            className="preview-toggle-button"
+            onClick={() => setShowPreview(!showPreview)}
+          >
+            {showPreview ? 'Vorschau ausblenden' : 'Vorschau anzeigen'}
+          </button>
+        </div>
 
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
       </form>
 
-      {(title || description || img || preis) && (
+      {showPreview && (title || description || img || preis) && (
         <div className="preview-section">
           <h2>Vorschau</h2>
           <div className="preview-card">
