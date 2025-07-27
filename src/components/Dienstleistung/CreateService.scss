@@ -1,72 +1,180 @@
 .create-service-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-  
-    h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
-      color: #333;
-      text-align: center;
+  padding: 5vh 5vw;
+  background: linear-gradient(to right, #f4f7f9, #e9eef3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+}
+
+.create-service-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #2c3e50;
+
+    span {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
     }
-  
-    .create-service-form {
+
+    input,
+    textarea {
+      padding: 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: #fff;
+
+      &:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+  }
+
+  .submit-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      background-color: #0056b3;
+      transform: scale(1.03);
+    }
+
+    &:disabled {
+      background-color: #7aaed6;
+      cursor: not-allowed;
+    }
+  }
+
+  .error-message,
+  .success-message {
+    padding: 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+  }
+}
+
+.preview-section {
+  margin-top: 4rem;
+  animation: fadeIn 0.8s ease-in-out;
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #222;
+  }
+
+  .preview-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+
+    img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .preview-content {
       display: flex;
       flex-direction: column;
-      gap: 20px;
-  
-      label {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-  
-        span {
-          font-size: 16px;
-          color: #555;
-        }
-  
-        input, textarea {
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 16px;
-        }
-  
-        textarea {
-          min-height: 100px;
-          resize: vertical;
-        }
+      justify-content: center;
+      gap: 0.5rem;
+
+      h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
       }
-  
-      .submit-button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #0056b3;
-        }
-  
-        &:disabled {
-          background-color: #cccccc;
-          cursor: not-allowed;
-        }
+
+      p {
+        font-size: 1rem;
+        color: #555;
       }
-  
-      .error-message {
-        color: #d9534f;
-        font-size: 14px;
-        text-align: center;
+
+      strong {
+        font-size: 1.2rem;
+        color: #007bff;
       }
     }
   }
-  
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive Layout
+@media (max-width: 768px) {
+  .create-service-form {
+    label span {
+      font-size: 1rem;
+    }
+  }
+
+  .preview-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+    }
+
+    .preview-content {
+      align-items: center;
+    }
+  }
+}
