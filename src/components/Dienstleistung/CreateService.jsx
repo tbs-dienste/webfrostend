@@ -87,7 +87,7 @@ const CreateService = () => {
         </label>
 
         <label>
-          <span>Preis (CHF)</span>
+          <span>Preis (€)</span>
           <input
             type="number"
             value={preis}
