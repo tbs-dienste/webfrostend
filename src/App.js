@@ -187,8 +187,7 @@ const App = () => {
     <div className="App">
       <Router>
 
-      {!isKassenModus && <Navbar />}
-      
+      {!fullscreenMode && !isKassenModus && <Navbar />}      
         <Routes>
 
           <Route path="/" element={<Home />} />
@@ -210,7 +209,10 @@ const App = () => {
           <Route path="/add-points" element={<AddPoints />} />
           <Route path="/createKundenkarte" element={<CreateCustomerCard />} />
           <Route path="/printKundenkarte" element={<KundenkarteDruck />} />
-          <Route path="/spin-wheel" element={<SpinWheel setFullscreenMode={setFullscreenMode} fullscreenMode={fullscreenMode} />} />          
+          <Route
+            path="/spin-wheel"
+            element={<SpinWheel onKassenModusChange={toggleKassenModus} />}
+          />          
           <Route path="/createProduct" element={<CreateProductForm />} />
           <Route path="/hausverbotform" element={<HausverbotForm />} />
           <Route path="/hausverbote" element={<HausverbotListe />} />
