@@ -1,126 +1,106 @@
-.faq-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #111827;
+.create-faq-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9fafc;
+  padding: 80px clamp(1rem, 5vw, 80px);
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.4s ease-in;
 
   h1 {
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-weight: 700;
-    text-align: center;
-    margin-bottom: 2rem;
-    position: relative;
-
-    .add-button {
-      position: absolute;
-      right: 2rem;
-      top: 0;
-      font-size: 2rem;
-      color: #3b82f6;
-      text-decoration: none;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: scale(1.2);
-      }
-    }
+    color: #1e293b;
+    margin-bottom: 48px;
+    text-align: left;
+    border-left: 6px solid #2563eb;
+    padding-left: 16px;
   }
 
-  .faq-list {
+  .add-faq-form {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 48px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
 
-  .faq-card {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-    transition: all 0.3s ease;
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #334155;
 
-    .faq-header {
-      padding: 1.2rem 1.5rem;
+      span {
+        margin-bottom: 10px;
+        color: #64748b;
+        font-size: 0.95rem;
+      }
+
+      input,
+      textarea {
+        padding: 16px 20px;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        font-size: 1rem;
+        background-color: #f8fafc;
+        transition: 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+          background-color: #fff;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 160px;
+      }
+    }
+
+    .submit-button {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
       cursor: pointer;
-      background-color: #f1f5f9;
-      display: flex;
-      align-items: center;
+      transition: 0.3s ease;
 
-      h2 {
-        font-size: 1.1rem;
-        margin: 0;
-        flex: 1;
-        transition: color 0.3s ease;
+      &:hover {
+        background: linear-gradient(135deg, #1e40af, #1e3a8a);
+        box-shadow: 0 10px 20px rgba(30, 64, 175, 0.25);
       }
 
-      &:hover h2 {
-        color: #2563eb;
+      &:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        box-shadow: none;
       }
     }
 
-    .faq-answer {
-      padding: 1rem 1.5rem;
-      background-color: #ffffff;
-      animation: fadeIn 0.3s ease-in-out;
-
-      p {
-        margin: 0;
-        line-height: 1.6;
-        color: #374151;
-      }
-    }
-
-    .admin-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      border-top: 1px solid #e5e7eb;
-      background-color: #f9fafb;
-
-      .edit-button,
-      .delete-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        background: none;
-        color: #6b7280;
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: color 0.2s ease;
-
-        &:hover {
-          color: #1f2937;
-        }
-      }
-
-      .delete-button {
-        color: #ef4444;
-
-        &:hover {
-          color: #b91c1c;
-        }
-      }
-
-      .edit-button {
-        color: #3b82f6;
-
-        &:hover {
-          color: #1d4ed8;
-        }
-      }
+    .error-message {
+      padding: 14px 20px;
+      background-color: #ffe4e6;
+      color: #b91c1c;
+      border-left: 5px solid #ef4444;
+      border-radius: 10px;
+      font-size: 0.95rem;
     }
   }
 }
 
-// Animation
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -128,22 +108,46 @@
   }
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .faq-container {
-    padding: 2rem 1rem;
+@media (max-width: 1024px) {
+  .create-faq-container {
+    padding: 60px 40px;
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 2.4rem;
+    }
 
-      .add-button {
-        font-size: 1.6rem;
-        right: 1rem;
-      }
+    .add-faq-form {
+      padding: 36px;
     }
   }
+}
 
-  .faq-card .faq-header h2 {
-    font-size: 1rem;
+@media (max-width: 600px) {
+  .create-faq-container {
+    padding: 40px 20px;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .add-faq-form {
+      padding: 28px;
+      gap: 24px;
+
+      label {
+        font-size: 1rem;
+
+        input,
+        textarea {
+          padding: 12px 16px;
+          font-size: 0.95rem;
+        }
+      }
+
+      .submit-button {
+        font-size: 1rem;
+        padding: 14px;
+      }
+    }
   }
 }
