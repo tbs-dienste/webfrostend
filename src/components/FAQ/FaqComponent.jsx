@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Icons importieren
-import { jwtDecode } from 'jwt-decode'; // jwt-decode importieren
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import { jwtDecode } from 'jwt-decode';
 import './FaqComponent.scss';
 import Loading from '../Loading/Loading';
 
@@ -10,8 +10,8 @@ const FaqComponent = () => {
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false); // State für Admin-Status
-  const [activeFaq, setActiveFaq] = useState(null); // State für die aktivierte FAQ
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [activeFaq, setActiveFaq] = useState(null);
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -56,41 +56,41 @@ const FaqComponent = () => {
   };
 
   const toggleFaq = (id) => {
-    setActiveFaq(activeFaq === id ? null : id); // Wenn die FAQ bereits geöffnet ist, schließen
+    setActiveFaq(activeFaq === id ? null : id);
   };
 
   if (loading) return <Loading />;
-  if (error) return <div className="error">{error}</div>;
+  if (error) return <div className="faq-error">{error}</div>;
 
   return (
     <div className="faq-container">
-      <h1>
-        Häufig gestellte Fragen
+      <div className="faq-header-row">
+        <h1>Häufig gestellte Fragen</h1>
         {isAdmin && (
-          <Link to="/createfaq" className="add-button">+</Link>
+          <Link to="/createfaq" className="add-faq-button">+ FAQ hinzufügen</Link>
         )}
-      </h1>
+      </div>
 
       <div className="faq-list">
         {faqs.map(faq => (
-          <div className="faq-card" key={faq.id}>
-            <div className="faq-header" onClick={() => toggleFaq(faq.id)}>
+          <div className={`faq-card ${activeFaq === faq.id ? 'active' : ''}`} key={faq.id}>
+            <div className="faq-question" onClick={() => toggleFaq(faq.id)}>
               <h2>{faq.question}</h2>
+              <span>{activeFaq === faq.id ? '−' : '+'}</span>
             </div>
+
             {activeFaq === faq.id && (
               <div className="faq-answer">
-                <p>
-                  {faq.answer || "Keine Antwort verfügbar"}
-                </p>
+                <p>{faq.answer || "Keine Antwort verfügbar."}</p>
               </div>
             )}
 
-            {isAdmin && ( // Admin-Schaltflächen nur für Admins anzeigen
-              <div className="admin-buttons">
-                <Link to={`/faq-edit/${faq.id}`} className="edit-button">
+            {isAdmin && (
+              <div className="faq-admin-buttons">
+                <Link to={`/faq-edit/${faq.id}`} className="edit-button" title="Bearbeiten">
                   <FaEdit />
                 </Link>
-                <button className="delete-button" onClick={() => handleDelete(faq.id)}>
+                <button className="delete-button" onClick={() => handleDelete(faq.id)} title="Löschen">
                   <FaTrash />
                 </button>
               </div>
