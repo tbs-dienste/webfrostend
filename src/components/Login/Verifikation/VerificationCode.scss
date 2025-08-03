@@ -1,104 +1,152 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', sans-serif;
-}
-
-$primary-color: #007bff;
-$secondary-color: #0056b3;
-$error-color: #d9534f;
-$background-color: rgba(255, 255, 255, 0.7);
-$input-border-color: #ddd;
-$input-border-radius: 0; /* Keine abgerundeten Ecken */
-$button-border-radius: 6px;
-$box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-$transition: all 0.3s ease;
-
-.background-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: url('./verification.jpg'); /* Pfad zu deinem Hintergrundbild */
-  background-size: cover;
-  background-position: center;
-  width: 100vw;
-  height: 100vh;
-}
-
-.form-container {
+.verification-container {
+  min-height: 100vh;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 15px;
-  background-color: $background-color;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: $box-shadow;
+  background-color: #f5f7fa;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222222;
+  text-align: center;
+  user-select: none;
 
-  h1 {
-    margin-bottom: 10px;
-    color: $primary-color;
-    font-size: 2rem;
-    font-weight: 500;
+  h2 {
+    font-weight: 900;
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.03em;
   }
 
   p {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    color: #333;
-  }
-
-  .input-wrapper {
-    display: flex;
-    gap: 10px;
-
-    .verification-code-input {
-      width: 50px;
-      height: 50px;
-      font-size: 1.5rem;
-      text-align: center;
-      border: none; /* Keine Rahmenlinie */
-      border-bottom: 2px solid $input-border-color; /* Nur untere Linie */
-      background-color: transparent; /* Hintergrund transparent */
-      outline: none;
-      transition: border-color $transition;
-
-      &:focus {
-        border-bottom-color: $primary-color; /* Farbe der unteren Linie bei Fokus */
-      }
-    }
-  }
-
-  .countdown-timer, .attempts-info {
-    font-size: 1rem;
-    color: #333;
+    font-size: 1.15rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #555555;
+    width: 100%;
+    max-width: none;
   }
 
   .error-message {
-    color: $error-color;
-    font-size: 14px;
+    background-color: #f9d6d6;
+    border: 2px solid #c53030;
+    color: #c53030;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-bottom: 1.8rem;
+    width: 100%;
+    box-shadow: 0 3px 8px rgba(197, 48, 48, 0.25);
+    letter-spacing: 0.02em;
+  }
+
+  .code-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+    width: 100%;
+
+    input {
+      flex: 1;
+      min-width: 3.6rem;
+      height: 3.6rem;
+      font-size: 2.4rem;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 10px;
+      border: 2.5px solid #cccccc;
+      background-color: #ffffff;
+      color: #222222;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      caret-color: #0047ab;
+      user-select: text;
+
+      &:focus {
+        outline: none;
+        border-color: #0047ab;
+        box-shadow: 0 0 12px rgba(0, 71, 171, 0.5);
+        background-color: #ffffff;
+      }
+
+      /* Entfernt Pfeile bei Nummerneingabe */
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      -moz-appearance: textfield;
+    }
   }
 
   .verify-button {
-    padding: 12px 24px;
+    background: linear-gradient(45deg, #0047ab 0%, #003680 100%);
     border: none;
-    border-radius: $button-border-radius;
-    background-color: $primary-color;
-    color: #fff;
-    font-size: 1.2rem;
+    border-radius: 10px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.3rem;
+    padding: 0.85rem 3rem;
     cursor: pointer;
-    transition: background-color $transition, transform $transition;
+    box-shadow: 0 10px 20px rgba(0, 71, 171, 0.3);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
 
-    &:hover {
-      background-color: $secondary-color;
+    &:hover,
+    &:focus {
+      background: linear-gradient(45deg, #003680 0%, #002a55 100%);
+      box-shadow: 0 14px 30px rgba(0, 54, 128, 0.5);
+      outline: none;
       transform: translateY(-2px);
     }
 
     &:active {
       transform: translateY(1px);
+      box-shadow: 0 6px 15px rgba(0, 54, 128, 0.5);
+    }
+  }
+
+  > p:last-child {
+    margin-top: 2rem;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #111111;
+    letter-spacing: 0.015em;
+  }
+}
+
+/* Responsive */
+@media (max-width: 460px) {
+  .verification-container {
+    padding: 2rem 1.2rem;
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .error-message {
+      padding: 0.8rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .code-inputs {
+      gap: 0.9rem;
+
+      input {
+        min-width: 2.8rem;
+        height: 2.8rem;
+        font-size: 1.8rem;
+      }
+    }
+
+    .verify-button {
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
     }
   }
 }
