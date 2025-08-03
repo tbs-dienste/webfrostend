@@ -1,137 +1,190 @@
+/* MitarbeiterErfassen.scss */
+
 .mitarbeiter-erfassen {
-  max-width: 960px;
-  margin: 50px auto;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  padding: 2rem 3rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #222;
+  background-color: #fff;
 
   h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 30px;
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      width: 50px;
-      height: 3px;
-      background-color: #4e73df;
-      border-radius: 5px;
-      transform: translateX(-50%);
-    }
+    font-weight: 700;
+    font-size: 2.25rem;
+    margin-bottom: 2rem;
+    color: #1e3a8a; /* ein kräftiges Blau */
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
   }
 
-  .formular {
+  form.formular {
     display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: space-between;
-    
+    flex-direction: column;
+    gap: 1.75rem;
+
     .formular-gruppe {
-      width: 48%; // Für 2 Spalten
       display: flex;
       flex-direction: column;
-      gap: 12px;
 
       label {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #555;
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 0.4rem;
+        color: #334155; /* ein kühles Dunkelgrau-Blau */
         display: flex;
         align-items: center;
-        
-        svg {
-          margin-right: 10px;
-          color: #4e73df;
-        }
+        gap: 0.5rem;
+        user-select: none;
       }
 
-      input,
+      input[type='text'],
+      input[type='email'],
+      input[type='tel'],
+      input[type='password'],
+      input[type='date'],
+      input[type='number'],
       select,
       textarea {
-        padding: 14px;
         font-size: 1rem;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        background: #fafafa;
-        transition: all 0.3s ease;
-        
-        &:focus {
-          border-color: #4e73df;
-          background-color: #fff;
-          outline: none;
-        }
+        padding: 0.65rem 1rem;
+        border: 1.5px solid #cbd5e1; /* helles Grau-Blau */
+        border-radius: 6px;
+        color: #1e293b;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        font-family: inherit;
+        background-color: #f9fafb;
 
-        &::placeholder {
-          color: #bbb;
+        &:focus {
+          outline: none;
+          border-color: #1e40af; /* Blau beim Fokus */
+          box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
+          background-color: #fff;
         }
       }
 
       textarea {
-        resize: vertical;
         min-height: 100px;
+        resize: vertical;
       }
+    }
 
-      .teilzeit-section {
-        background: #f4f9ff;
-        padding: 20px;
-        border-radius: 8px;
-        border: 2px dashed #4e73df;
+    .dienstleistungs-checkboxen {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .dienstleistung-checkbox {
         display: flex;
-        flex-direction: column;
-        gap: 15px;
-
-        label {
-          color: #333;
-          font-weight: 600;
-        }
-
-        input {
-          background: #fff;
-        }
-      }
-
-      button {
-        padding: 14px 25px;
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #fff;
-        background-color: #4e73df;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        justify-content: center;
         align-items: center;
-        margin-top: 15px;
+        gap: 0.4rem;
+        font-size: 0.95rem;
+        color: #475569;
+        cursor: pointer;
+        user-select: none;
 
-        &:hover {
-          background-color: #3558c7;
+        input[type='checkbox'] {
+          width: 18px;
+          height: 18px;
+          border: 1.5px solid #94a3b8;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s ease, border-color 0.3s ease;
+
+          &:checked {
+            background-color: #1e40af;
+            border-color: #1e40af;
+          }
         }
+      }
+    }
 
-        &:focus {
-          outline: none;
+    button[type='submit'] {
+      align-self: flex-start;
+      padding: 0.75rem 2.25rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      background-color: #1e40af;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover,
+      &:focus {
+        background-color: #1e3a8a;
+        box-shadow: 0 4px 10px rgba(30, 64, 175, 0.4);
+        outline: none;
+      }
+    }
+  }
+}
+
+/* Responsive Anpassungen */
+
+@media (max-width: 900px) {
+  .mitarbeiter-erfassen {
+    padding: 1.5rem 1.5rem;
+
+    form.formular {
+      gap: 1.25rem;
+
+      .dienstleistungs-checkboxen {
+        gap: 0.75rem;
+
+        .dienstleistung-checkbox {
+          font-size: 0.9rem;
         }
       }
     }
   }
+}
 
-  @media (max-width: 768px) {
-    .formular {
-      flex-direction: column;
-      gap: 20px;
+@media (max-width: 480px) {
+  .mitarbeiter-erfassen {
+    padding: 1rem 1rem;
+
+    h2 {
+      font-size: 1.8rem;
+      gap: 0.6rem;
     }
 
-    .formular-gruppe {
-      width: 100%;
+    form.formular {
+      gap: 1rem;
+
+      .formular-gruppe {
+        label {
+          font-size: 1rem;
+        }
+
+        input[type='text'],
+        input[type='email'],
+        input[type='tel'],
+        input[type='password'],
+        input[type='date'],
+        input[type='number'],
+        select,
+        textarea {
+          font-size: 0.95rem;
+          padding: 0.5rem 0.75rem;
+        }
+      }
+
+      .dienstleistungs-checkboxen {
+        gap: 0.5rem;
+        flex-direction: column;
+
+        .dienstleistung-checkbox {
+          font-size: 0.9rem;
+        }
+      }
+
+      button[type='submit'] {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+      }
     }
   }
 }

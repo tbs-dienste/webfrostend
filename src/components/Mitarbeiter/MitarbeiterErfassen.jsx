@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaLock, FaBuilding, FaGlobe, FaClipboardList } from 'react-icons/fa';
+import {
+  FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt,
+  FaCalendarAlt, FaLock, FaBuilding, FaGlobe, FaClipboardList
+} from 'react-icons/fa';
 import './MitarbeiterErfassen.scss';
 
 const MitarbeiterErfassen = () => {
@@ -20,50 +23,83 @@ const MitarbeiterErfassen = () => {
     land: 'DE',
     verfügbarkeit: '',
     teilzeit_prozent: '',
-    fähigkeiten: ''
+    fähigkeiten: '',
+    dienstleistungen: {} // Objekt für Checkboxen
   });
+
+  const [dienstleistungen, setDienstleistungen] = useState([]);
+
+  useEffect(() => {
+    const fetchDienstleistungen = async () => {
+      try {
+        const response = await axios.get(
+          'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung'
+        );
+        setDienstleistungen(response.data.data);
+      } catch (error) {
+        console.error('Fehler beim Laden der Dienstleistungen:', error);
+      }
+    };
+  
+    fetchDienstleistungen();
+  }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleDienstleistungChange = (id) => {
+    setFormData(prevData => ({
+      ...prevData,
+      dienstleistungen: {
+        ...prevData.dienstleistungen,
+        [id]: !prevData.dienstleistungen[id]
+      }
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Wenn "Vollzeit" gewählt wurde, setze teilzeit_prozent auf null
+
+    // Extrahiere aktivierte Dienstleistungs-IDs
+    const dienstleistung_ids = Object.entries(formData.dienstleistungen)
+      .filter(([_, checked]) => checked)
+      .map(([id]) => parseInt(id));
+
     const formDataToSubmit = {
       ...formData,
-      teilzeit_prozent: formData.verfügbarkeit === 'teilzeit' ? formData.teilzeit_prozent : null, // Null setzen, wenn nicht Teilzeit
+      teilzeit_prozent: formData.verfügbarkeit === 'teilzeit' ? formData.teilzeit_prozent : null,
+      dienstleistung_ids
     };
-  
+
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(
+      await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter',
         formDataToSubmit,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
-      console.log('Mitarbeiter erfolgreich hinzugefügt:', response.data);
       alert('Mitarbeiter erfolgreich hinzugefügt');
       window.location = "/mitarbeiter";
     } catch (error) {
       console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
-      alert('Fehler beim Hinzufügen des Mitarbeiters. Bitte überprüfe die Daten.');
+      alert('Fehler beim Hinzufügen des Mitarbeiters.');
     }
   };
-  
+
 
   return (
     <div className="mitarbeiter-erfassen">
       <h2><FaBuilding /> Mitarbeiter erfassen</h2>
       <form className="formular" onSubmit={handleSubmit}>
-        <div className="formular-gruppe">
+      <div className="formular-gruppe">
           <label htmlFor="geschlecht">Geschlecht:</label>
           <select
             id="geschlecht"
@@ -254,6 +290,26 @@ const MitarbeiterErfassen = () => {
             onChange={handleChange}
           />
         </div>
+        <div className="formular-gruppe">
+        <label><FaClipboardList /> Zuständige Dienstleistungen:</label>
+        <div className="dienstleistungs-checkboxen">
+          {dienstleistungen.length === 0 ? (
+            <p>Lade Dienstleistungen...</p>
+          ) : (
+            dienstleistungen.map((dienstleistung) => (
+              <label key={dienstleistung.id} className="dienstleistung-checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!formData.dienstleistungen[dienstleistung.id]}
+                  onChange={() => handleDienstleistungChange(dienstleistung.id)}
+                />
+                {dienstleistung.title}
+              </label>
+            ))
+          )}
+        </div>
+      </div>
+
 
         <button type="submit">Mitarbeiter hinzufügen</button>
       </form>
