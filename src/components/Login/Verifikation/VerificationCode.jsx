@@ -6,43 +6,26 @@ import './VerificationCode.scss';
 const VerificationCode = () => {
   const inputs = useRef([]);
   const [error, setError] = useState('');
-  const [userCode, setUserCode] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [timeLeft, setTimeLeft] = useState(120);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-
     if (!token) {
-      setError('Kein Token gefunden, zurück zum Login!');
-      // Hier NICHT sofort navigieren, sondern Fehler anzeigen
-      // Navigation erfolgt erst, wenn Benutzer selbst reagiert (z.B. Button)
+      setError('Kein Token gefunden. Bitte erneut einloggen.');
       return;
     }
-
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-    axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/me')
-      .then(res => {
-        if (!res.data.verificationcode) {
-          setError('Kein Verifizierungscode gefunden. Bitte erneut anmelden.');
-          localStorage.removeItem('token');
-          return;
-        }
-        setUserCode(res.data.verificationcode);
+    // Fokus auf erstes Eingabefeld setzen
+    if (inputs.current[0]) inputs.current[0].focus();
 
-        if (inputs.current[0]) inputs.current[0].focus();
-      })
-      .catch(() => {
-        setError('Fehler beim Laden der Verifizierungsdaten.');
-        localStorage.removeItem('token');
-      });
   }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      alert('Zeit abgelaufen. Bitte erneut einloggen..');
+      alert('Zeit abgelaufen. Bitte erneut einloggen.');
       localStorage.removeItem('token');
       navigate('/login');
       return;
@@ -56,7 +39,6 @@ const VerificationCode = () => {
     if (value.length > 1) return;
 
     inputs.current[index].value = value;
-
     if (value && index < 5) {
       inputs.current[index + 1].focus();
     }
@@ -68,25 +50,34 @@ const VerificationCode = () => {
     }
   };
 
-  const verifyCode = () => {
+  const verifyCode = async () => {
     const enteredCode = inputs.current.map(i => i?.value || '').join('');
     if (enteredCode.length < 6) {
       setError('Bitte den vollständigen 6-stelligen Code eingeben.');
       return;
     }
-    if (enteredCode === userCode) {
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        'https://tbsdigitalsolutionsbackend.onrender.com/api/login/verify',
+        { code: enteredCode },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
       alert('Verifizierung erfolgreich!');
       navigate('/kunden');
-    } else {
+    } catch (err) {
       const tries = attempts + 1;
       setAttempts(tries);
+
       if (tries >= 3) {
         alert('Zu viele Fehlversuche. Bitte erneut anmelden.');
         localStorage.removeItem('token');
         navigate('/login');
       } else {
-        setError(`Falscher Code. Noch ${3 - tries} Versuch(e).`);
-        inputs.current.forEach(i => { if(i) i.value = ''; });
+        setError(err.response?.data?.error || 'Verifizierung fehlgeschlagen.');
+        inputs.current.forEach(i => { if (i) i.value = ''; });
         if (inputs.current[0]) inputs.current[0].focus();
       }
     }
