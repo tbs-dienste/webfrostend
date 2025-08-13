@@ -11,21 +11,15 @@ const VerificationCode = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setError('Kein Token gefunden. Bitte erneut einloggen.');
-      return;
+    if (inputs.current.length !== 6) {
+      inputs.current = Array(6).fill(null);
     }
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-    // Fokus auf erstes Eingabefeld setzen
     if (inputs.current[0]) inputs.current[0].focus();
-
   }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      alert('Zeit abgelaufen. Bitte erneut einloggen.');
+      alert('⏰ Zeit abgelaufen. Bitte erneut einloggen.');
       localStorage.removeItem('token');
       navigate('/login');
       return;
@@ -37,11 +31,8 @@ const VerificationCode = () => {
   const handleChange = (e, index) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length > 1) return;
-
     inputs.current[index].value = value;
-    if (value && index < 5) {
-      inputs.current[index + 1].focus();
-    }
+    if (value && index < 5) inputs.current[index + 1].focus();
   };
 
   const handleKeyDown = (e, index) => {
@@ -57,27 +48,34 @@ const VerificationCode = () => {
       return;
     }
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Kein gültiger Token gefunden. Bitte erneut einloggen.');
+      navigate('/login');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post(
+      const response = await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/login/verify',
         { code: enteredCode },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert('Verifizierung erfolgreich!');
+      alert('✅ Verifizierung erfolgreich!');
       navigate('/kunden');
     } catch (err) {
-      const tries = attempts + 1;
-      setAttempts(tries);
-
-      if (tries >= 3) {
-        alert('Zu viele Fehlversuche. Bitte erneut anmelden.');
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      if (newAttempts >= 3) {
+        alert('❌ Zu viele Fehlversuche. Bitte erneut einloggen.');
         localStorage.removeItem('token');
         navigate('/login');
       } else {
         setError(err.response?.data?.error || 'Verifizierung fehlgeschlagen.');
-        inputs.current.forEach(i => { if (i) i.value = ''; });
+        inputs.current.forEach(input => {
+          if (input) input.value = '';
+        });
         if (inputs.current[0]) inputs.current[0].focus();
       }
     }
@@ -86,7 +84,7 @@ const VerificationCode = () => {
   return (
     <div className="verification-container">
       <h2>Verifizierung erforderlich</h2>
-      <p>Bitte geben Sie den 6-stelligen Code ein, den Sie per E-Mail erhalten haben.</p>
+      <p>Geben Sie den 6-stelligen Code ein, den Sie per E-Mail erhalten haben.</p>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -97,8 +95,8 @@ const VerificationCode = () => {
             type="text"
             maxLength={1}
             ref={el => inputs.current[i] = el}
-            onChange={(e) => handleChange(e, i)}
-            onKeyDown={(e) => handleKeyDown(e, i)}
+            onChange={e => handleChange(e, i)}
+            onKeyDown={e => handleKeyDown(e, i)}
             inputMode="numeric"
             autoComplete="one-time-code"
           />

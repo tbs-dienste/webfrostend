@@ -1,98 +1,187 @@
-// arbeitszeitErfassen.scss
+/* ArbeitszeitErfassen.scss – Breite & Professionelle Light-Version */
 
+/* ===== Farb- & Typo-Setup ===== */
+$bg: #f4f6f9;
+$card: #ffffff;
+$border: rgba(0, 0, 0, 0.08);
+$accent: #3f82ff;
+$accent-light: #6ea8fe;
+$text: #1f1f1f;
+$text-dim: #5a5f69;
+$danger: #e63946;
+$success: #28a745;
+$shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+$radius-xl: 20px;
+$radius-lg: 14px;
+$radius-md: 10px;
+
+$gap-xl: 28px;
+$gap-lg: 20px;
+$gap-md: 14px;
+
+$pad-xxl: 40px;
+$pad-xl: 28px;
+$pad-lg: 20px;
+$pad-md: 14px;
+
+/* ===== Root Container ===== */
 .arbeitszeit-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #f5f5f5;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
-    h2 {
-        text-align: center;
-        margin-bottom: 1.5rem;
-        color: #333;
-    }
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(180deg, lighten($bg, 1%) 0%, $bg 100%);
+  padding: $pad-xxl;
+  display: flex;
+  flex-direction: column;
+  gap: $gap-xl;
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+  h2 {
+    font-size: clamp(26px, 2.6vw, 36px);
+    font-weight: 700;
+    color: $text;
+    padding: $pad-md $pad-xl;
+    border-radius: $radius-xl;
+    background: $card;
+    border: 1px solid $border;
+    box-shadow: $shadow;
+  }
 
-        label {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 0.5rem;
+  form {
+    background: $card;
+    padding: $pad-xxl;
+    border-radius: $radius-xl;
+    border: 1px solid $border;
+    box-shadow: $shadow;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* breite Felder */
+    gap: $gap-xl;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: $gap-md;
+
+      label {
+        font-weight: 600;
+        font-size: 15px;
+        color: $text-dim;
+      }
+
+      input {
+        padding: $pad-md $pad-lg;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        font-size: 16px;
+        background: #fff;
+        color: $text;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        &:focus-visible {
+          outline: 3px solid rgba($accent, 0.4);
+          outline-offset: 2px;
         }
+      }
 
-        input[type="text"],
-        input[type="datetime-local"] {
-            padding: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
-
-            &:focus {
-                border-color: #007bff;
-                outline: none;
-            }
-        }
-
-        button[type="submit"] {
-            padding: 0.8rem;
-            background-color: #007bff;
-            color: #fff;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 1rem;
-
-            &:hover {
-                background-color: #0056b3;
-            }
-        }
-    }
-
-    p {
-        text-align: center;
-        margin-top: 1rem;
-        color: #28a745;
-    }
-
-    // Styling für die Suchvorschläge
-    ul {
-        list-style-type: none;
+      ul {
+        list-style: none;
+        margin: 0;
         padding: 0;
-        margin-top: 0.5rem;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        max-height: 200px;
-        overflow-y: auto;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        box-shadow: $shadow;
 
         li {
-            padding: 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
+          padding: $pad-md;
+          border-bottom: 1px solid $border;
+          font-size: 15px;
+          color: $text;
+          cursor: pointer;
 
-            &:hover {
-                background-color: #f0f0f0;
-            }
+          &:last-child {
+            border-bottom: none;
+          }
         }
+      }
     }
 
-    // Fehlernachricht
-    .error-message {
-        color: #dc3545;
-        font-size: 0.9rem;
-        margin-top: -1rem;
-        margin-bottom: 1rem;
-        text-align: center;
+    button {
+      grid-column: 1 / -1; /* Button nimmt ganze Breite der Grid-Zeile */
+      padding: $pad-md $pad-lg;
+      background: linear-gradient(180deg, $accent-light 0%, $accent 100%);
+      color: #fff;
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      border-radius: $radius-md;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(63, 130, 255, 0.25);
+
+      &:focus-visible {
+        outline: 3px solid rgba($accent, 0.4);
+        outline-offset: 2px;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
     }
+  }
+
+  p {
+    font-size: 15px;
+    padding: $pad-md;
+    border-radius: $radius-md;
+    text-align: center;
+    background: #fff;
+    border: 1px solid $border;
+    box-shadow: $shadow;
+
+    &.success {
+      color: $success;
+    }
+    &.error {
+      color: $danger;
+    }
+  }
+}
+
+/* ===== Responsive Optimierungen ===== */
+@media (max-width: 1024px) {
+  .arbeitszeit-form {
+    padding: $pad-xl;
+    form {
+      padding: $pad-xl;
+      gap: $gap-lg;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .arbeitszeit-form {
+    padding: $pad-lg;
+    form {
+      padding: $pad-lg;
+      grid-template-columns: 1fr;
+      gap: $gap-md;
+    }
+  }
+}
+
+/* ===== Scrollbar Styling ===== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
 }

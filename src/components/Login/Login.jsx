@@ -18,32 +18,38 @@ const Login = () => {
         'https://tbsdigitalsolutionsbackend.onrender.com/api/login',
         { benutzername, passwort }
       );
-
+    
       const { token, userType } = response.data;
-
-      // ✅ Wenn kein Fehler kommt → erfolgreich eingeloggt → weiter zu /kunden
+    
+      // Token speichern, egal was passiert
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
+    
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      navigate('/kunden');
+    
+      navigate('/kunden'); // normaler Login
 
     } catch (err) {
-      console.error('Login Fehler:', err);
-
       if (err.response) {
-        if (err.response.status === 403) {
-          // ❌ User ist NICHT verifiziert → zu /verification
+        const { status, data } = err.response;
+    
+        // Falls 403, aber Token im Header / Body? -> speichern und weiterleiten
+        if (status === 403) {
+          // Versuch Token aus Fehlerantwort zu lesen
+          const token = data.token || null;
+          if (token) {
+            localStorage.setItem('token', token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          }
           navigate('/verification');
           return;
         }
-        if (err.response.status === 400) {
-          // ⚠️ Falsche Zugangsdaten
-          setError(err.response.data.error || 'Benutzername oder Passwort falsch.');
+    
+        if (status === 400) {
+          setError(data.error || 'Benutzername oder Passwort falsch.');
           return;
         }
       }
-
-      // ⚠️ Alle anderen Fehler
       setError('Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
     }
   };
@@ -60,6 +66,7 @@ const Login = () => {
           value={benutzername}
           onChange={(e) => setBenutzername(e.target.value)}
           required
+          autoComplete="username"
         />
 
         <label htmlFor="passwort">Passwort</label>
@@ -69,6 +76,7 @@ const Login = () => {
           value={passwort}
           onChange={(e) => setPasswort(e.target.value)}
           required
+          autoComplete="current-password"
         />
 
         {error && <div className="error">{error}</div>}
