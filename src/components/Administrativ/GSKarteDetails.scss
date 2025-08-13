@@ -1,107 +1,115 @@
-// GSKarteDetails.scss
+/* GSKarteDetails.scss */
 .gskarte-details {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 500px;
-  margin: 40px auto;
+  gap: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
-  font-family: "Arial", sans-serif;
-  text-align: center;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  padding: 2rem;
+}
 
-  h1 {
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 20px;
+/* Header */
+.gskarte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0052cc;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+
+  .logo img {
+    height: 50px;
+    object-fit: contain;
   }
 
-  .details-container {
-    background: #f8f8f8;
-    padding: 15px;
-    border-radius: 10px;
-    width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  .device-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Fehler-Message */
+.error-message {
+  color: #d8000c;
+  background-color: #ffd2d2;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Nebeneinander-Anzeige */
+.details-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+
+  .personendaten, .gutschein-info {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    flex: 1;
+
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      color: #0052cc;
+    }
 
     p {
-      font-size: 16px;
-      margin: 10px 0;
-      font-weight: 500;
-
-      strong {
-        font-weight: bold;
-      }
+      font-size: 1rem;
+      line-height: 1.5;
     }
   }
+}
 
-  .scan-input {
-    margin-top: 15px;
+/* Button-Leiste */
+.button-bar {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 1rem;
 
-    .toggle-btn {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background 0.3s;
-
-      &:hover {
-        background: #0056b3;
-      }
-    }
-
-    .input-field {
-      margin-top: 10px;
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      outline: none;
-    }
-  }
-
-  .button-bar {
+  .btn {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 20px;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
 
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
-      transition: all 0.3s;
-      flex: 1;
-      font-weight: bold;
-
-      &.home-btn {
-        background: #28a745;
-
-        &:hover {
-          background: #218838;
-        }
-      }
-
-      &.btn-danger {
-        background: #dc3545;
-
-        &:hover {
-          background: #c82333;
-        }
-      }
+    &.home-btn {
+      background-color: #28a745;
     }
+
+    &.btn-danger {
+      background-color: #dc3545;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+/* Mobile-Anpassung */
+@media (max-width: 900px) {
+  .details-container {
+    flex-direction: column;
+  }
+  .device-info {
+    font-size: 0.8rem;
+  }
+  .button-bar {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }

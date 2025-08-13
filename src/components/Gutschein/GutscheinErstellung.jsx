@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './GutscheinErstellung.scss';
+import { FaGift, FaPlusCircle, FaCheckCircle } from 'react-icons/fa';
 
 const GutscheinErstellung = () => {
   const [anzahl, setAnzahl] = useState(1);
@@ -19,7 +20,7 @@ const GutscheinErstellung = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setMessage(`Gutscheine erfolgreich erstellt.`);
+      setMessage('Gutscheine erfolgreich erstellt.');
       setMessageType('success');
       setGenerierteCodes(response.data.data);
       setAnzahl(1);
@@ -58,12 +59,23 @@ const GutscheinErstellung = () => {
   };
 
   return (
-    <div className="gutschein-erstellung">
-      <h2>Gutscheine erstellen / aktivieren</h2>
+    <div className="gutschein-erstellung-container">
+      <div className="header">
+        <h1>
+          <FaGift style={{ marginRight: '8px', color: '#2d89ff' }} />
+          Gutscheine erstellen & aktivieren
+        </h1>
+      </div>
 
-      {message && <div className={`message ${messageType}`}>{message}</div>}
+      {message && (
+        <div className={`message ${messageType}`}>
+          {messageType === 'success' && <FaCheckCircle style={{ marginRight: '5px' }} />}
+          {message}
+        </div>
+      )}
 
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="form-section">
+        {/* Erstellung */}
         <div className="form-group">
           <label htmlFor="anzahl">Anzahl Gutscheine</label>
           <input
@@ -72,23 +84,21 @@ const GutscheinErstellung = () => {
             value={anzahl}
             onChange={(e) => setAnzahl(e.target.value)}
             min="1"
-            placeholder="Anzahl der Gutscheine"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="guthaben">Guthaben pro Gutschein (€)</label>
+          <label htmlFor="guthaben">Guthaben pro Gutschein (CHF)</label>
           <input
             type="number"
             id="guthaben"
             value={guthaben}
             onChange={(e) => setGuthaben(e.target.value)}
-            placeholder="Guthaben eingeben"
           />
         </div>
 
-        <button type="button" onClick={handleCreateGutscheine}>
-          Gutscheine erstellen
+        <button type="button" className="btn-primary" onClick={handleCreateGutscheine}>
+          <FaPlusCircle /> Gutscheine erstellen
         </button>
 
         {generierteCodes.length > 0 && (
@@ -96,14 +106,17 @@ const GutscheinErstellung = () => {
             <h3>Generierte Gutscheincodes:</h3>
             <ul>
               {generierteCodes.map((gutschein, index) => (
-                <li key={index}>{gutschein.gutscheincode} - {gutschein.guthaben}€</li>
+                <li key={index}>
+                  {gutschein.gutscheincode} – {gutschein.guthaben} CHF
+                </li>
               ))}
             </ul>
           </div>
         )}
 
-        <hr />
+        <div className="divider"></div>
 
+        {/* Aktivierung */}
         <div className="form-group">
           <label htmlFor="gutscheincode">Gutscheincode</label>
           <input
@@ -111,12 +124,11 @@ const GutscheinErstellung = () => {
             id="gutscheincode"
             value={gutscheincode}
             onChange={(e) => setGutscheincode(e.target.value)}
-            placeholder="Gutscheincode eingeben"
           />
         </div>
 
-        <button type="button" onClick={handleActivateGutschein}>
-          Gutschein aktivieren
+        <button type="button" className="btn-primary" onClick={handleActivateGutschein}>
+          <FaCheckCircle /> Gutschein aktivieren
         </button>
       </form>
     </div>

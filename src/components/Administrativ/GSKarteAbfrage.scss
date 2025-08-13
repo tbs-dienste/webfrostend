@@ -1,96 +1,36 @@
 .gskarte-abfrage {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #f8fafc;
-  padding: 1.5rem;
+  align-items: center;
+  background-color: #ffffff; // Weißer Hintergrund
+  color: #1e3c72; // Dunkles Blau für Schrift
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
 
-  .logo-container {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 1rem;
-    border-radius: 0.75rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .logo {
-      width: 120px;
-      height: auto;
-      filter: brightness(1.2);
-    }
-  }
-
-  .content {
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
     text-align: center;
-    margin-top: -50px;
-
-    .title {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #2d3748;
-    }
-
-    .subtitle {
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-      color: #4a5568;
-    }
   }
 
-  .button-bar {
-    position: absolute;
-    bottom: 2rem;
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    justify-content: center;
+  p {
+    font-size: 1.3rem;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
 
-    .btn {
-      padding: 12px 18px;
-      font-size: 1rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-        background: linear-gradient(135deg, #4338ca, #7e22ce);
-      }
-
-      &.disabled {
-        background: #e2e8f0;
-        color: #94a3b8;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-
-      &.btn-danger {
-        background: linear-gradient(135deg, #dc2626, #b91c1c);
-        
-        &:hover {
-          background: linear-gradient(135deg, #b91c1c, #991b1b);
-        }
-      }
-
-      .icon {
-        margin-right: 8px;
-      }
-    }
+  .status-text {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ff6600; // Orange für Statusmeldungen
+    text-align: center;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    background-color: rgba(30, 60, 114, 0.1); // Leichtes Blau als Status-Hintergrund
   }
 }
