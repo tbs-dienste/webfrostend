@@ -53,12 +53,20 @@ export default function SpinWheel({ onKassenModusChange }) {
   };
 
   const spin = () => {
-    const newPrizeNumber = Math.floor(Math.random() * data.length);
+    // Filtere nur die aktivierten Preise
+    const enabledData = data.filter(item => item.enabled);
+    
+    // Wähle zufällig einen Index innerhalb der aktivierten Preise
+    const enabledIndex = Math.floor(Math.random() * enabledData.length);
+    
+    // Finde den Index dieses Preises im Originalarray
+    const newPrizeNumber = data.findIndex(item => item.option === enabledData[enabledIndex].option);
+    
     setPrizeNumber(newPrizeNumber);
     setSelectedPrize(null);
     setMustSpin(true);
   };
-
+  
   return (
     <div className="spin-wrapper">
       <Wheel
