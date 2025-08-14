@@ -1,27 +1,25 @@
 // GSKarteDetails.jsx
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
 import "./GSKarteDetails.scss";
 
 const GSKarteDetails = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [kartennummer, setKartennummer] = useState(location.state?.gutschein?.kartennummer || "");
+  const [kartennummer, setKartennummer] = useState(location.state?.karte?.kartennummer || "");
   const [error, setError] = useState("");
-  const [gutschein, setGutschein] = useState(location.state?.gutschein || null);
+  const [gutschein, setGutschein] = useState(null);
+  const [person, setPerson] = useState(null);
   const [deviceID] = useState(() => Math.floor(Math.random() * 1e19));
-  const [person] = useState(""); // bleibt leer
 
-  // Auto-Abfrage bei Kartennummer
   useEffect(() => {
     if (kartennummer.length >= 16) {
-      fetchGutschein();
+      fetchCardOrVoucher();
     }
   }, [kartennummer]);
 
-  const fetchGutschein = async () => {
+  const fetchCardOrVoucher = async () => {
     setError("");
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,18 +29,25 @@ const GSKarteDetails = () => {
 
     try {
       const response = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/kartennummer/${kartennummer}`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten/karten-oder-gutschein/${kartennummer}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setGutschein(response.data);
+
+      if (response.data.typ === "kundenkarte") {
+        setPerson(response.data);
+        setGutschein(null);
+      } else if (response.data.typ === "gutschein") {
+        setGutschein(response.data);
+        setPerson(null);
+      }
     } catch (err) {
-      setError(err.response?.data?.error || "Gutschein nicht gefunden oder ungültig.");
+      setError(err.response?.data?.error || "Karte nicht gefunden oder ungültig.");
       setKartennummer("");
       setGutschein(null);
+      setPerson(null);
     }
   };
 
-  // Paste-Event abfangen
   useEffect(() => {
     const handlePaste = (e) => {
       const pastedData = e.clipboardData.getData("text").trim();
@@ -66,33 +71,104 @@ const GSKarteDetails = () => {
       </header>
 
       {error && <p className="error-message">{error}</p>}
-      {!gutschein && !error && <p>Bitte Karte scannen...</p>}
+      {!gutschein && !person && !error && <p>Bitte Karte scannen...</p>}
 
-      {/* Nebeneinander-Anzeige */}
       <div className="details-container">
-        <div className="personendaten">
-          <h2>Personendaten</h2>
-          <p>Name: {person || ""}</p>
-          <p>Strasse: {person || ""}</p>
-          <p>PLZ/Ort: {person || ""}</p>
-          <p>E-Mail: {person || ""}</p>
-          <p>Geburtstag: {person || ""}</p>
-        </div>
+  {/* Personendaten immer anzeigen */}
+  <div className="personendaten">
+    <h2>Personendaten</h2>
+    <p>Name: {person?.vorname || ""} {person?.nachname || ""}</p>
+    <p>Strasse: {person?.adresse || ""}</p>
+    <p>PLZ/Ort: {person?.plz || ""} {person?.ort || ""}</p>
+    <p>E-Mail: {person?.email || ""}</p>
+    <p>Geburtstag: {person?.geburtsdatum || ""}</p>
+    <p>Punkte: {person?.punkte || ""}</p>
+    <p>Umsatz: {person?.umsatz || ""}</p>
+    <p>Status: {person?.status || ""}</p>
+  </div>
 
-        {gutschein && (
-          <div className="gutschein-info">
-            <h2>Karte Info & Status</h2>
-            <p>Kartentyp: {gutschein.kartentyp}</p>
-            <p>Kartennummer: {gutschein.kartennummer}</p>
-            <p>Saldo: CHF {gutschein.guthaben}</p>
-            <p>Status: {gutschein.status}</p>
-            <p>Gültig bis: {gutschein.gueltigBis}</p>
-          </div>
-        )}
-      </div>
+  {/* Gutschein immer anzeigen */}
+  <div className="gutschein-info">
+    <h2>Karte Info & Status</h2>
+    <p>Kartentyp: {gutschein?.kartentyp || ""}</p>
+    <p>Kartennummer: {gutschein?.kartennummer || ""}</p>
+    <p>Saldo: {gutschein?.guthaben != null ? `CHF ${gutschein.guthaben}` : ""}</p>
+    <p>Status: {gutschein?.status || ""}</p>
+    <p>
+  Gültig bis: {gutschein?.gueltigBis 
+    ? new Date(gutschein.gueltigBis).toLocaleDateString("de-DE") 
+    : ""}
+</p>
+  </div>
+</div>
+
 
       <div className="button-bar">
         <Link to="/" className="btn home-btn">🏠 Home</Link>
+
+        <Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+Vollbild
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+Übernehmen
+</Link>
         <Link to="/kasse" className="btn btn-danger">
           <FaSignOutAlt className="icon" /> Exit
         </Link>

@@ -1,3 +1,4 @@
+// GSKarteAbfrage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -15,12 +16,14 @@ const GSKarteAbfrage = () => {
           setStatusText("Daten werden abgerufen…");
           const token = localStorage.getItem("token");
           const response = await axios.get(
-            `https://tbsdigitalsolutionsbackend.onrender.com/api/gutscheine/kartennummer/${kartennummer}`,
+            `https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten/karten-oder-gutschein/${kartennummer}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          navigate("/gskarte-details", { state: { gutschein: response.data } });
+
+          // Je nach Typ navigieren
+          navigate("/gskarte-details", { state: { karte: response.data } });
         } catch {
-          setStatusText("Gutschein nicht gefunden, bitte erneut scannen.");
+          setStatusText("Karte nicht gefunden, bitte erneut scannen.");
           setKartennummer("");
         }
       } else {
@@ -36,7 +39,6 @@ const GSKarteAbfrage = () => {
       const pastedData = e.clipboardData.getData("text");
       setKartennummer(pastedData.trim());
     };
-
     window.addEventListener("paste", handlePaste);
     return () => window.removeEventListener("paste", handlePaste);
   }, []);
@@ -47,7 +49,6 @@ const GSKarteAbfrage = () => {
       <p>Bitte scannen Sie eine Karte</p>
       <p>Veuillez scanner une carte</p>
       <p>Si prega di scansionare una carta</p>
-
     </div>
   );
 };
