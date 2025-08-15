@@ -1413,44 +1413,60 @@ const Kasse = ({ onKassenModusChange }) => {
                   const showQuantity = parseFloat(quantity) > 1;
             
                   return (
-                    <div
-                      key={product.article_number}
-                      className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
-                      onClick={() => toggleSelectProduct(product.article_number)}
-                    >
-                      {/* Preis oben rechts */}
-                      <div className="product-price-top">
-                        <span>
-                          {showQuantity
-                            ? `${quantity} × ${parseFloat(product.price).toFixed(2)} CHF`
-                            : `${parseFloat(product.price).toFixed(2)} CHF`}
-                        </span>
-                        <span className="total-price">
-                          {product.finalPrice}
-                        </span>
-                      </div>
-            
-                      {/* Artikelnummer */}
-                      <div className="product-article-number">
-                        {product.article_number}
-                      </div>
-            
-                      {/* Artikelname */}
-                      <div className="product-name">
-                        {product.article_short_text}
-                      </div>
-            
-                      {/* Rabatte */}
-                      {product.discounts?.length > 0 && (
-                        <div className="product-discounts">
-                          {product.discounts.map((discount, index) => (
-                            <span key={index} className="discount">
-                              {discount.title} ({discount.amount} CHF)
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <div className="product-list">
+                    {scannedProducts.length === 0 ? (
+                      <div className="empty">Noch keine Artikel gescannt.</div>
+                    ) : (
+                      scannedProducts.map((product) => {
+                        const quantity = Number(product.quantity).toFixed(2);
+                        const showQuantity = parseFloat(quantity) > 1;
+                  
+                        return (
+                          <div
+                            key={product.article_number}
+                            className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
+                            onClick={() => toggleSelectProduct(product.article_number)}
+                          >
+                            {/* Preis oben rechts */}
+                            <div className="product-price-top">
+                              {/* Wenn mehr als 1 → Menge × Preis anzeigen */}
+                              {showQuantity && (
+                                <span className="product-quantity-price">
+                                  {quantity} × {parseFloat(product.price).toFixed(2)} CHF
+                                </span>
+                              )}
+                              {/* Gesamtpreis immer anzeigen */}
+                              <span className="total-price">
+                                {product.finalPrice}
+                              </span>
+                            </div>
+                  
+                            {/* Artikelnummer */}
+                            <div className="product-article-number">
+                              {product.article_number}
+                            </div>
+                  
+                            {/* Artikelname */}
+                            <div className="product-name">
+                              {product.article_short_text}
+                            </div>
+                  
+                            {/* Rabatte */}
+                            {product.discounts?.length > 0 && (
+                              <div className="product-discounts">
+                                {product.discounts.map((discount, index) => (
+                                  <span key={index} className="discount">
+                                    {discount.title} ({discount.amount} CHF)
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                  
                   );
                 })
               )}
