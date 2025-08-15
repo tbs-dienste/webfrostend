@@ -82,7 +82,7 @@ $button-size: 90px; // Einheitliche Button-Größe
  // Container-Stil für die Buttons
 .left-buttons {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Spalten Layout */
+  grid-template-columns: repeat(5, 1fr); /* 4 Spalten Layout */
   gap: 5px; /* Abstand zwischen den Buttons */
   padding: 20px;
   background-color: $secondary-color;
@@ -214,16 +214,20 @@ $button-size: 90px; // Einheitliche Button-Größe
   }
 }
 
+.product-list {
+  width: 100%;
+}
+
 .product-item {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  margin: 5px;
+  padding: 12px;
   border: 2px solid transparent;
   border-radius: 8px;
   background-color: #f8f8f8;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  width: 100%; /* jetzt bis an Container-Rand */
 }
 
 .product-item:hover {
@@ -236,19 +240,29 @@ $button-size: 90px; // Einheitliche Button-Größe
   background-color: #d4edda;
 }
 
-.product-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
+
+.product-article-number {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #555;
 }
 
 .product-name {
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
-.product-price {
-  color: #dc3545;
-  font-weight: bold;
+.total-price {
+  color: black;
+  font-size: 1.1rem;
+}
+
+.product-discounts {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #888;
 }
 
 

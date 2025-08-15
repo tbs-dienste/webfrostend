@@ -1068,6 +1068,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button className="btn"></button>
               <button className="btn"></button>
               <button className="btn"></button>
+              
               <button className="btn"></button>
               <button className="btn"></button>
               <button className="btn"></button>
@@ -1187,8 +1188,6 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>An-/Verkauf PS</button>
               {/* Kunden- und Transaktionsbuttons */}
-              <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
-
               <button className='btn' onClick={handleCustomerCardClick}>Kundenkarte</button>
               <button className='btn' onClick={toggleScanInput}>Artikel scannen</button>
 
@@ -1196,9 +1195,7 @@ const Kasse = ({ onKassenModusChange }) => {
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Auszahlung Dividende</button>
 
               <button className='btn'>GS-Karte</button>
-              <button className='btn' onClick={toggleBonParkieren}>
-                Bon Parkieren
-              </button>
+             
               <button className='btn btn-storno' onClick={addStornoCost}>
                 Storno-Kosten hinzufügen
               </button>
@@ -1206,54 +1203,91 @@ const Kasse = ({ onKassenModusChange }) => {
 
               <button className='btn' onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
-              <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
 
 
               {/* Unbenutzte Buttons */}
               <button className='btn'>Anzahlung</button>
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>n. scannbare Artikel</button>
 
-              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
-                Pos. löschen
-              </button>
+
               <button className='btn'></button>
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+
+
+
+              <button className="btn"></button>
+
+
 
               <button className='btn'></button>
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
 
               <button className='btn'></button>              
 
+      
 
-              <button className='btn'></button>
-
-              <button className='btn'></button>
 
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
 
            
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Karten Ladung</button>
+              <button className='btn' onClick={toggleBonParkieren}>
+                Bon Parkieren
+              </button>
+              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
+                Pos. löschen
+              </button>
+              <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
+
+              <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
 
 
 
+            
+
+
+              <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
               <button onClick={toggleLastReciepts} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faPrint} />
               </button>
 
+              <button disabled className='btn'>
+                Pos. Rücknahme
+              </button>
               <button className='btn' onClick={goToProductDetails} >Artikel Detail</button>
 
               <button className='btn'>Kunden Detail</button>
 
-              <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
-
-
+              <button disabled className='btn'>
+                Bon Rabatt
+              </button>
               <button className='btn' onClick={handleCashierSwitch}>Kassierer wechseln</button>
               <button className='btn' onClick={handleDailyOverview}>Tagesübersicht</button>
-              <button className='btn' onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
+              <button disabled className='btn'>
+                Schublade öffnen
+              </button>
               <button className='btn' onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+              <button className='btn' onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
 
               <button className='btn'>Kundenkarte</button>
-              <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte abfrage</button>
+              <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte Saldo</button>
 
+              <button className='btn'></button>
+
+              <button disabled className='btn'>
+                Liferant suchen
+              </button>
               {/* Abmelden und Wechseln */}
               <button onClick={handleSignOut} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} />
@@ -1368,69 +1402,60 @@ const Kasse = ({ onKassenModusChange }) => {
 
 
             {scannedProducts.length === 0 ? (
-              <p>Keine Produkte gescannt.</p>
+              <p></p>
             ) : (
               <div className="product-list">
-                {scannedProducts.length === 0 ? (
-                  <div className="empty">Noch keine Artikel gescannt.</div>
-                ) : (
-                  scannedProducts.map((product) => {
-                    const quantity = Number(product.quantity).toFixed(2);
-                    const showQuantity = parseFloat(quantity) > 1;
-
-                    return (
-                      <div
-                        key={product.article_number}
-                        className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
-                        onClick={() => toggleSelectProduct(product.article_number)}
-                      >
-                        <div className="product-details">
-
-                          {/* Artikelnummer separat */}
-                          <div className="product-article-number">
-                            {product.article_number}
-                          </div>
-
-                          {/* Artikelnamen separat */}
-                          <div className="product-name">
-                            {product.article_short_text}
-                          </div>
-
-                          <div className="product-info-row">
-
-                            {/* Menge x Preis anzeigen, wenn Menge > 1 */}
-                            {showQuantity ? (
-                              <span className="product-quantity-price">
-                                {quantity} x {parseFloat(product.price).toFixed(2)} CHF
-                              </span>
-                            ) : (
-                              <span className="product-price">
-                                {parseFloat(product.price).toFixed(2)} CHF
-                              </span>
-                            )}
-
-                            {/* Gesamtpreis */}
-                            <span className="total-price">
-                              {product.finalPrice}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Rabatte separat */}
-                        {product.discounts?.length > 0 && (
-                          <div className="product-discounts">
-                            {product.discounts.map((discount, index) => (
-                              <span key={index} className="discount">
-                                {discount.title} ({discount.amount} CHF)
-                              </span>
-                            ))}
-                          </div>
-                        )}
+              {scannedProducts.length === 0 ? (
+                <div className="empty">Noch keine Artikel gescannt.</div>
+              ) : (
+                scannedProducts.map((product) => {
+                  const quantity = Number(product.quantity).toFixed(2);
+                  const showQuantity = parseFloat(quantity) > 1;
+            
+                  return (
+                    <div
+                      key={product.article_number}
+                      className={`product-item ${selectedProducts.includes(product.article_number) ? 'selected' : ''}`}
+                      onClick={() => toggleSelectProduct(product.article_number)}
+                    >
+                      {/* Preis oben rechts */}
+                      <div className="product-price-top">
+                        <span>
+                          {showQuantity
+                            ? `${quantity} × ${parseFloat(product.price).toFixed(2)} CHF`
+                            : `${parseFloat(product.price).toFixed(2)} CHF`}
+                        </span>
+                        <span className="total-price">
+                          {product.finalPrice}
+                        </span>
                       </div>
-                    );
-                  })
-                )}
-              </div>
+            
+                      {/* Artikelnummer */}
+                      <div className="product-article-number">
+                        {product.article_number}
+                      </div>
+            
+                      {/* Artikelname */}
+                      <div className="product-name">
+                        {product.article_short_text}
+                      </div>
+            
+                      {/* Rabatte */}
+                      {product.discounts?.length > 0 && (
+                        <div className="product-discounts">
+                          {product.discounts.map((discount, index) => (
+                            <span key={index} className="discount">
+                              {discount.title} ({discount.amount} CHF)
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            
 
 
 
