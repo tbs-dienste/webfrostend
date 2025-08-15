@@ -1,36 +1,101 @@
 .gskarte-abfrage {
-  width: 100%;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f4f6f8, #e8ebef);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: #ffffff; // Weißer Hintergrund
-  color: #1e3c72; // Dunkles Blau für Schrift
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  padding: 2rem;
+  color: #222;
+  padding-top: 3rem;
+  position: relative;
 
-  h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
+  /* Oberer Textbereich */
+  .info-section {
     text-align: center;
+    margin-bottom: 3rem;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+
+    .status {
+      font-size: 1.4rem;
+      font-weight: 600;
+      padding: 0.8rem 1.5rem;
+      border-radius: 0.4rem;
+      display: inline-block;
+      margin-top: 1rem;
+      background: #eef1f5;
+      color: #222;
+
+      &.loading {
+        background: #e6f0ff;
+        color: #004085;
+      }
+
+      &.error {
+        background: #fdecea;
+        color: #721c24;
+      }
+
+      &.success {
+        background: #e8f5e9;
+        color: #155724;
+      }
+    }
   }
 
-  p {
-    font-size: 1.3rem;
-    margin: 0.5rem 0;
-    text-align: center;
-  }
+  /* Button-Bar als Footer */
+  .button-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+    padding: 0.8rem 1rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0.5rem;
 
-  .status-text {
-    margin-top: 2rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #ff6600; // Orange für Statusmeldungen
-    text-align: center;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    background-color: rgba(30, 60, 114, 0.1); // Leichtes Blau als Status-Hintergrund
+    .btn {
+      flex: 1;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 0.9rem 0;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 0.4rem;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: none;
+
+      &.btn-danger {
+        background: #d9534f;
+      }
+
+      &.disabled {
+        background: #c0c4c7;
+        color: #fff;
+        cursor: default;
+      }
+
+      .icon {
+        margin-right: 0.5rem;
+      }
+    }
   }
 }

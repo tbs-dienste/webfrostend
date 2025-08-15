@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { FaSignOutAlt } from "react-icons/fa";
 import "./GSKarteAbfrage.scss";
 
 const GSKarteAbfrage = () => {
@@ -67,11 +68,84 @@ const GSKarteAbfrage = () => {
         }}
       />
 
-      <h1>💳 Kontostand abfragen</h1>
-      <p>{statusText}</p>
+      <h1>Kontostand abfragen</h1>
       <p>Bitte scannen Sie eine Karte</p>
-      <p>Veuillez scanner une carte</p>
-      <p>Si prega di scansionare una carta</p>
+      <h1>Vérifiez le solde du compte</h1>
+      <p>Se il vous plaît balayant une carte</p>
+      <h1>Controllare saldo del conto</h1>
+      <p>Si prega di scansione di una carta</p>
+
+
+      <div className="button-bar">
+        <Link to="/" className="btn home-btn">🏠 Home</Link>
+
+        <Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+X
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+Vollbild
+</Link>
+<Link 
+  to="/" 
+  className="btn disabled"  // Klasse "disabled" hinzufügen
+  onClick={(e) => e.preventDefault()} // Klick verhindern
+>
+Übernehmen
+</Link>
+        <Link to="/kasse" className="btn btn-danger">
+          <FaSignOutAlt className="icon" /> Exit
+        </Link>
+      </div>
     </div>
   );
 };
