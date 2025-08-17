@@ -1065,7 +1065,18 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
               <button className='btn'></button>
 
               <button className='btn'></button>
+              <button className="btn"></button>
 
+<button className="btn"></button>
+
+<button className="btn"></button>
+
+<button className="btn"></button>
+
+
+
+
+<button className="btn"></button>
 
               <button
       onClick={() => setSelectedPayment('Barzahlung')}
@@ -1709,7 +1720,7 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
           </div>
         )}
         <div className="numeric-keypad-container">
-          <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
             <button className='btn' style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button className='btn' style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
             <button className='btn' onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
@@ -1741,8 +1752,8 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
           <div className="action-buttons" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '10px',
-            marginTop: '10px',
+            gap: '5px',
+            marginTop: '5px',
             width: '100%'  // GANZE Breite nutzen
           }}>
             <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={handleConfirm} className="btn-confirm">
@@ -1775,6 +1786,14 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
 
             <button className="btn-20" style={{ backgroundColor: '#DC241F', color: 'white' }} onClick={() => handleAmountClick(20)}>
               20
+            </button>
+
+            <button className="btn-2" onClick={() => handleAmountClick(2)}>
+              2
+            </button>
+
+            <button className="btn-5" onClick={() => handleAmountClick(5)}>
+              5
             </button>
 
             <button className="btn-2" onClick={() => handleAmountClick(2)}>

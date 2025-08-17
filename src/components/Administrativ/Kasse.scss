@@ -185,6 +185,8 @@ $button-size: 90px; // Einheitliche Button-Größe
       display: grid;
       grid-template-columns: repeat(3, $button-size);
       gap: 5px;
+      margin: 0;
+
     }
 
     .action-buttons {
@@ -330,7 +332,7 @@ $button-size: 90px; // Einheitliche Button-Größe
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding: 15px;
   background-color: white;
   border-radius: $border-radius;
