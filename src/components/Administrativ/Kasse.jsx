@@ -14,7 +14,12 @@ const Kasse = ({ onKassenModusChange }) => {
   const [bonNumber, setBonNumber] = useState(null); // bonNumber im State definieren
   const [currentKundenkarte, setCurrentKundenkarte] = useState(""); // Setzt die Kundenkartennummer im State
   const [currentBonNumber, setCurrentBonNumber] = useState("");
-  const [isPaying, setIsPaying] = useState(false);
+// steuert, ob man im Zahl-Modus ist
+const [isPaying, setIsPaying] = useState(false);
+
+// speichert, welche Zahlart gewählt ist
+const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
+
   const [step, setStep] = useState("quantity"); // "quantity" | "article"
   const [quantityInput, setQuantityInput] = useState(""); // Neue Menge!
   const [rueckgeld, setRueckgeld] = useState(0);
@@ -1056,120 +1061,160 @@ const Kasse = ({ onKassenModusChange }) => {
               <button onClick={toggleBezahlen} className="btn">
                 Zurück
               </button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+              <button className='btn'></button>
+
+              <button className='btn'></button>
+              {/* Kunden- und Transaktionsbuttons */}
+              <button className='btn'></button>
+              <button className='btn'></button>
+
+              {/* Weitere Funktionen */}
+              <button className='btn'></button>
+
+              <button className='btn'></button>
+             
+              <button className='btn'></button>
+
+              <button className='btn'></button>
+
+              <button className='btn'></button>
+
+
+              <button
+      onClick={() => setSelectedPayment('Barzahlung')}
+      className="btn"
+      style={{
+        backgroundColor: selectedPayment === 'Barzahlung' ? '#f3ff73' : '#85ff63',
+        color: 'black',
+      }}
+    >
+      Barzahlung
+    </button>
+
+    <button
+      onClick={() => setSelectedPayment('Kartenzahlung')}
+      className="btn"
+      style={{
+        backgroundColor: selectedPayment === 'Kartenzahlung' ? '#f3ff73' : '#85ff63',
+        color: 'black',
+      }}
+    >
+      Kartenzahlung
+    </button>
+
+    <button
+      onClick={() => setSelectedPayment('Einzelrechnung')}
+      className="btn"
+      style={{
+        backgroundColor: selectedPayment === 'Einzelrechnung' ? '#f3ff73' : '#85ff63',
+        color: 'black',
+      }}
+    >
+      Einzelrechnung
+    </button>
+
+    <button
+      onClick={() => setSelectedPayment('Überweisung')}
+      className="btn"
+      style={{
+        backgroundColor: selectedPayment === 'Überweisung' ? '#f3ff73' : '#85ff63',
+        color: 'black',
+      }}
+    >
+      Überweisung
+    </button>
+
+    <button
+      onClick={() => setSelectedPayment('Anzahlung')}
+      className="btn"
+      style={{
+        backgroundColor: selectedPayment === 'Anzahlung' ? '#f3ff73' : '#85ff63',
+        color: 'black',
+      }}
+    >
+      Anzahlung
+    </button>
+
               <button className="btn"></button>
 
               <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
+
               <button className="btn"></button>
 
-      <button
-        onClick={() => setIsPaying('Barzahlung')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Barzahlung' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Barzahlung
-      </button>
-      <button
-        onClick={() => setIsPaying('Kartenzahlung')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Kartenzahlung' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Kartenzahlung
-      </button>
-      <button
-        onClick={() => setIsPaying('Anzahlung')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Anzahlung' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Anzahlung
-      </button>
-      <button
-        onClick={() => setIsPaying('TBs Batzen')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'TBs Batzen' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        TBs Batzen
-      </button>
-      <button
-        onClick={() => setIsPaying('Gutschein alt')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Gutschein alt' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Gutschein alt
-      </button>
-      <button
-        onClick={() => setIsPaying('Gutschein neu')}
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Gutschein neu' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Gutschein neu
-      </button>
-     
-      <button
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Split Payment' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Split Payment
-      </button>
-      <button
-        className="btn"
-        style={{
-          backgroundColor: isPaying === 'Einzelrechnung' ? '#f3ff73' : '#85ff63',
-          color: 'black',
-        }}
-      >
-        Einzel Rechnung
-      </button>
+              <button className="btn"></button>
+
+
 
 
               <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
-              <button className="btn"></button>
+
+
+
+              <button className='btn'></button>
+              <button className='btn'></button>
+
+              <button className='btn'></button>              
+
+      
+
+
+              <button className='btn'></button>
+
+           
+              <button className='btn'></button>
+
+              <button className='btn' onClick={toggleBonParkieren}>
+                Bon Parkieren
+              </button>
+              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
+                Pos. löschen
+              </button>
+              <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
+
+              <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
+
+
+
+            
+
+
+              <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
+              <button onClick={toggleLastReciepts} className="btn sign-out-button">
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
+
+              <button disabled className='btn'>
+                Pos. Rücknahme
+              </button>
+              <button className='btn' onClick={goToProductDetails} >Artikel Detail</button>
+
+              <button className='btn'>Kunden Detail</button>
+
+              <button disabled className='btn'>
+                Bon Rabatt
+              </button>
+              <button className='btn' onClick={handleCashierSwitch}>Kassierer wechseln</button>
+              <button className='btn' onClick={handleDailyOverview}>Tagesübersicht</button>
+              <button disabled className='btn'>
+                Schublade öffnen
+              </button>
+              <button className='btn' onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+              <button className='btn' onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
+
+              <button className='btn'>Kundenkarte</button>
+              <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte Saldo</button>
+
+              <button className='btn'></button>
+
+              <button disabled className='btn'>
+                Liferant suchen
+              </button>
               {/* Abmelden und Wechseln */}
               <button onClick={handleSignOut} className="btn sign-out-button">
                 <FontAwesomeIcon icon={faSignOutAlt} />
@@ -1429,18 +1474,13 @@ const Kasse = ({ onKassenModusChange }) => {
                           >
                             {/* Preis oben rechts */}
                             <div className="product-price-top">
-                              {/* Wenn mehr als 1 → Menge × Preis anzeigen */}
-                              {showQuantity && (
-                                <span className="product-quantity-price">
-                                  {quantity} × {parseFloat(product.price).toFixed(2)} CHF
-                                </span>
-                              )}
-                              {/* Gesamtpreis immer anzeigen */}
-                              <span className="total-price">
+                             
+                            
+                            </div>
+                    {/* Gesamtpreis immer anzeigen */}
+                    <span className="total-price">
                                 {product.finalPrice}
                               </span>
-                            </div>
-                  
                             {/* Artikelnummer */}
                             <div className="product-article-number">
                               {product.article_number}
@@ -1451,6 +1491,12 @@ const Kasse = ({ onKassenModusChange }) => {
                               {product.article_short_text}
                             </div>
                   
+                   {/* Wenn mehr als 1 → Menge × Preis anzeigen */}
+                   {showQuantity && (
+                                <span className="product-quantity-price">
+                                  {quantity} × {parseFloat(product.price).toFixed(2)} CHF
+                                </span>
+                              )}
                             {/* Rabatte */}
                             {product.discounts?.length > 0 && (
                               <div className="product-discounts">
