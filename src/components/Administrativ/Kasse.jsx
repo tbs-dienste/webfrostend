@@ -232,25 +232,6 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
       setLoading(false); // Ladeanimation stoppen
     }
   };
-  const handleDailyClose = () => {
-    setShowPopup(true);
-    setPopupText('Tagesabschluss wird generiert...');
-    setLoadingProgress(0); // Startwert des Ladefortschritts
-    setDailyCloseCompleted(false);
-
-    // Simuliere Ladeprozess für 15 Sekunden
-    let progress = 0;
-    const interval = setInterval(() => {
-      if (progress >= 100) {
-        clearInterval(interval);
-        setPopupText('Tagesabschluss abgeschlossen.');
-        setDailyCloseCompleted(true);
-      } else {
-        progress += 100 / 15; // Ladefortschritt in 15 Sekunden
-        setLoadingProgress(progress);
-      }
-    }, 1000); // Alle 1 Sekunde den Fortschritt erhöhen
-  };
 
 
 
@@ -1224,69 +1205,91 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
             <>
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Verkauf</button>
               <button className='btn'></button>
-              <button className='btn' onClick={goToSettings}>Einstellungen</button>
+              <button className='btn'></button>
 
-              <button className='btn' onClick={handleDailyClose}>Tagesabschluss</button>
+              <button className='btn'></button>
+              <button className='btn'>weitere</button>
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Gutschein Verkauf</button>
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Mietpartner</button>
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Kulanz</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Miet-partner</button>
 
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>An-/Verkauf PS</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Mercerie</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Kulanz</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>An- /Verkauf PS</button>
+
               {/* Kunden- und Transaktionsbuttons */}
               <button className='btn' onClick={handleCustomerCardClick}>Kundenkarte</button>
-              <button className='btn' onClick={toggleScanInput}>Artikel scannen</button>
 
               {/* Weitere Funktionen */}
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Auszahlung Dividende</button>
 
               <button className='btn'>GS-Karte</button>
              
               <button className='btn btn-storno' onClick={addStornoCost}>
                 Storno-Kosten hinzufügen
               </button>
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Tickets</button>
+
+
+
+
+
 
               <button className='btn' onClick={toggleBonAbbruch}>Bon Abbruch</button>
 
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Auszahlung Dividende</button>
 
 
               {/* Unbenutzte Buttons */}
               <button className='btn'>Anzahlung</button>
+
+
+              <button className='btn'></button>
+              <button className="btn"></button>
+
+
+              <button className="btn"></button>
+
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Tickets</button>
+
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+              <button className="btn"></button>
+
+
+
+              <button className="btn"></button>
               <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>n. scannbare Artikel</button>
 
-
-              <button className='btn'></button>
-              <button className="btn"></button>
-
-              <button className="btn"></button>
-
-              <button className="btn"></button>
-
-              <button className="btn"></button>
-
               <button className="btn"></button>
 
               <button className="btn"></button>
 
 
+<button className="btn"></button>
+
+<button className="btn"></button>
 
 
-              <button className="btn"></button>
+<button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Subtotal Rabatt</button>
+
+
+<button className="btn"></button>
 
 
 
               <button className='btn'></button>
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
 
               <button className='btn'></button>              
 
       
 
 
-              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
 
            
               <button style={{ backgroundColor: ' #FDFF00', color: 'black' }} className='btn'>Karten Ladung</button>
+              <button style={{ backgroundColor: '#c32826', color: 'black' }} className='btn'>Depot</button>
+
               <button className='btn' onClick={toggleBonParkieren}>
                 Bon Parkieren
               </button>

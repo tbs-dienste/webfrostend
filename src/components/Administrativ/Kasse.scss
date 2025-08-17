@@ -14,7 +14,7 @@ $button-size: 90px; // Einheitliche Button-Größe
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 30px;
+  padding: 5px;
   background-color: $secondary-color;
   border-radius: $border-radius;
 }
@@ -51,6 +51,8 @@ $button-size: 90px; // Einheitliche Button-Größe
   &.btn-delete {
     background-color: $danger-color;
     width: 100%;
+    height: $button-size;
+
   }
 
   &.btn-confirm,
@@ -65,6 +67,7 @@ $button-size: 90px; // Einheitliche Button-Größe
   &.btn-pay {
     font-weight: bold;
     width: 100%;
+    height: $button-size;
   }
 
   &.btn-pay {
@@ -84,7 +87,6 @@ $button-size: 90px; // Einheitliche Button-Größe
   display: grid;
   grid-template-columns: repeat(5, 1fr); /* 4 Spalten Layout */
   gap: 5px; /* Abstand zwischen den Buttons */
-  padding: 20px;
   background-color: $secondary-color;
   border-radius: $border-radius;
   align-items: center;
@@ -303,7 +305,7 @@ $button-size: 90px; // Einheitliche Button-Größe
   justify-content: center;
   align-items: center;
   background-color: white;
-  padding: 10px;
+  padding: 5px;
   border-radius: $border-radius;
   border: 1px solid $light-gray;
   width: 160px;
@@ -354,7 +356,7 @@ $button-size: 90px; // Einheitliche Button-Größe
     justify-content: center;
     align-items: center;
     background-color: white;
-    padding: 10px;
+    padding: 5px;
     border-radius: $border-radius;
     border: 1px solid $light-gray;
     width: 160px;

@@ -1,222 +1,268 @@
+/*
+  Professionelles SCSS für IncomeExpenseForm
+  Anforderungen: Keine max-width, keine Hover-Effekte
+  Stil: klare Typografie, hohe Lesbarkeit, großzügige Spacing, konsistente Abstände
+*/
+
+/* Design Tokens */
+$font-family: 'Inter', 'Segoe UI', 'Corbel', system-ui, -apple-system, Arial, sans-serif;
+$bg-app: linear-gradient(to bottom right, #f3f6fb, #e7eefc);
+$surface: #ffffff;
+$surface-2: #f5f7fb;
+$ink: #1f2937;           // text
+$muted: #6b7280;         // secondary text
+$primary: #2563eb;       // blue 600
+$primary-press: #1d4ed8; // blue 700
+$destructive: #ef4444;   // red 500
+$border: #e5e7eb;        // gray 200
+$border-strong: #d1d5db; // gray 300
+$shadow-1: 0 4px 12px rgba(17, 24, 39, 0.08);
+$shadow-2: 0 8px 24px rgba(17, 24, 39, 0.10);
+$radius-sm: 10px;
+$radius-md: 14px;
+$radius-lg: 18px;
+
 .income-expense-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  font-family: 'Corbel', sans-serif;  // Schriftart geändert
-  background: linear-gradient(to bottom right, #f1f4f9, #d7e3fc);
-  height: 100vh;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  .top-section {
-    position: absolute;  // Position auf absolute setzen
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    margin-bottom: 2rem;
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-    .form-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-
-      label {
-        font-size: 0.9rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        color: #555;
-      }
-
-      input,
-      select {
-        width: 100%;
-        padding: 0.9rem;
-        font-size: 1rem;
-        border: 1px solid #dfe3e8;
-        border-radius: 6px;
-        background: #ffffff;
-        color: #333;
-        appearance: none;
-        position: relative;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23333' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        transition: all 0.3s;
-
-        &:focus {
-          border-color: #3b82f6;
-          outline: none;
-          box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
-        }
-      }
-
-      select {
-        cursor: pointer;
-
-        &:disabled {
-          background-color: #f9fafb;
-          border-color: #d1d5db;
-          cursor: not-allowed;
-        }
-      }
-    }
-  }
-
-  .entry-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 6rem;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-    th,
-    td {
-      text-align: left;
-      padding: 0.8rem;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background: #f3f4f6;
-      font-weight: bold;
-      color: #333;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    td {
-      font-size: 0.95rem;
-      color: #555;
-    }
-
-    .selected {
-      background-color: #f0f8ff;
-    }
-  }
-
-  .keypad-section {
-    position: fixed;
-    top: 50%;
-    left: 87%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-
-    .number-pad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.8rem;
-      margin-bottom: 1.2rem;
-
-      button {
-        padding: 1.2rem;
-        font-size: 1.5rem;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        background: #f3f4f6;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        color: #333;
-        cursor: pointer;
-        transition: transform 0.2s, background-color 0.3s;
-
-        &:hover {
-          background-color: #3b82f6;
-          color: white;
-          transform: scale(1.05);
-        }
-
-        &:active {
-          transform: scale(1);
-        }
-      }
-    }
-
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-
-      button {
-        flex: 1;
-        padding: 1rem;
-        font-size: 1rem;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        background-color: #3b82f6;
-        color: white;
-        transition: background-color 0.3s, opacity 0.3s;
-
-        &:first-child {
-          background-color: #ef4444;
-          margin-right: 0.5rem;
-        }
-
-        &:hover {
-          opacity: 0.9;
-        }
-      }
-    }
-  }
-
-  .bottom-buttons {
-    position: absolute; /* Positioniere die Buttons am unteren Rand */
-    bottom: 0; /* Setze sie am unteren Rand des Containers */
-    display: flex;
-    justify-content: space-between; /* Verteile die Buttons gleichmäßig */
-    align-items: stretch; /* Sorgt dafür, dass die Buttons die gleiche Höhe haben */
-    gap: 1rem; /* Füge Abstand zwischen den Buttons hinzu */
-    flex-wrap: wrap; /* Wenn der Platz nicht ausreicht, können die Buttons umbrochen werden */
-    padding: 1rem;
-    width: 100%;
-    
-    button {
-      flex-grow: 1; /* Damit die Buttons den verfügbaren Platz gleichmäßig einnehmen */
-      padding: 1.5rem; /* Erhöht das Padding für breitere und höhere Buttons */
-      font-size: 1.2rem; /* Erhöht die Schriftgröße für mehr Textfluss */
-      border-radius: 6px;
-      border: 1px solid #dfe3e8;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      height: 60px; /* Setzt eine feste Höhe für die Buttons */
-      
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-      
-      &:not(:disabled):hover {
-        background-color: #0056b3;
-      }
-
-      &.active {
-        background-color: yellow; /* Gelber Hintergrund für aktiven Button */
-        color: #333; /* Dunklere Schriftfarbe für bessere Lesbarkeit */
-      }
-    }
-
-    .bottom-buttons button:first-child,
-    .bottom-buttons button:last-child {
-      background-color: transparent;
-      border: none;
-    }
-  }
+  align-items: stretch;
+  min-height: 100vh; /* volle Höhe, aber flexibel */
+  padding: 24px 24px 96px; /* Platz für Bottom-Bar */
+  font-family: $font-family;
+  background: $bg-app;
+  color: $ink;
 }
+
+/* ===== Top Section ===== */
+.top-section {
+  position: sticky; /* bleibt oben sichtbar, ohne hover/max-width */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.6fr;
+  gap: 16px;
+  padding: 18px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-1;
+}
+
+.top-section .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.top-section .form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $muted;
+  letter-spacing: 0.2px;
+}
+
+.top-section .form-group input,
+.top-section .form-group select {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  font-size: 16px;
+  border: 1px solid $border-strong;
+  border-radius: $radius-sm;
+  background: $surface;
+  color: $ink;
+  outline: none;
+}
+
+.top-section .form-group input:disabled,
+.top-section .form-group select:disabled {
+  background: $surface-2;
+  color: $muted;
+}
+
+/* ===== Tabelle ===== */
+.entry-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 18px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-1;
+}
+
+.entry-table thead th {
+  position: sticky;
+  top: calc(18px + 18px + 48px); /* Offset für sticky Top-Section grob abgedeckt */
+  background: $surface-2;
+  color: $muted;
+  text-align: left;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 14px 16px;
+  border-bottom: 1px solid $border;
+}
+
+.entry-table tbody td {
+  padding: 14px 16px;
+  font-size: 15px;
+  color: $ink;
+  border-bottom: 1px solid $border;
+}
+
+.entry-table tbody tr:nth-child(odd) td {
+  background: #fafbff;
+}
+
+.entry-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.entry-table tbody tr.selected td {
+  background: #e6f0ff; /* klare Selektion */
+}
+
+.no-data {
+  text-align: center;
+  color: $muted;
+  padding: 20px !important;
+}
+
+/* ===== Keypad / Numpad ===== */
+.keypad-section {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 320px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-2;
+  padding: 18px;
+  z-index: 1000;
+}
+
+.number-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.number-pad button {
+  height: 64px;
+  font-size: 22px;
+  font-weight: 700;
+  border: 1px solid $border-strong;
+  border-radius: $radius-sm;
+  background: $surface-2;
+  color: $ink;
+  cursor: pointer;
+}
+
+/* Keine Hover-Effekte – nur aktiver Druckzustand */
+.number-pad button:active {
+  background: #e9eefb;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.action-buttons button {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+}
+
+.action-buttons button:first-child {
+  background: $destructive;
+  color: #fff;
+}
+
+.action-buttons button:last-child {
+  background: $primary;
+  color: #fff;
+}
+
+.action-buttons button:active {
+  filter: brightness(0.95);
+}
+
+/* ===== Bottom Button-Bar ===== */
+.bottom-buttons {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr); /* gleichmäßige Verteilung */
+  gap: 10px;
+  padding: 14px 24px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: saturate(140%) blur(6px);
+  border-top: 1px solid $border;
+}
+
+.bottom-buttons button {
+  height: 56px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: $radius-sm;
+  border: 1px solid $border-strong;
+  background: $surface-2;
+  color: $ink;
+  cursor: pointer;
+}
+
+.bottom-buttons button:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.bottom-buttons button[data-variant="primary"],
+.bottom-buttons button:nth-child(2), /* Einnahmen */
+.bottom-buttons button:nth-child(3), /* Ausgaben */
+.bottom-buttons button:nth-child(7), /* Drucken */
+.bottom-buttons button:nth-child(8), /* Löschen */
+.bottom-buttons button:nth-child(9)  /* Übernehmen */ {
+  background: $primary;
+  color: #fff;
+  border-color: transparent;
+}
+
+.bottom-buttons button.is-active {
+  background: $primary-press;
+  color: #fff;
+}
+
+.bottom-buttons button:active {
+  filter: brightness(0.96);
+}
+
+/* Platzhalter-Buttons X durchsichtig lassen */
+.bottom-buttons button:first-child,
+.bottom-buttons button:nth-child(4),
+.bottom-buttons button:last-child {
+  background: transparent;
+  border: 1px dashed $border-strong;
+  color: $muted;
+}
+
+/* ===== Utility ===== */
+.horizontal-layout { /* erhalten für Kompatibilität */ }
+.custom-dropdown { /* erhalten für Kompatibilität */ }
+.dropdown-reason { /* Hook für JS falls nötig */ }
+.dropdown-currency { /* Hook für JS falls nötig */ }
