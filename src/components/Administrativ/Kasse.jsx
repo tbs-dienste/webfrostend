@@ -1115,7 +1115,15 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
               <button className='btn'></button>
 
               <button className='btn'></button>
+              <button className='btn'></button>
 
+<button className='btn'></button>
+
+<button className='btn'></button>
+
+<button className='btn'></button>
+
+<button className='btn'></button>
 
               <button
       onClick={() => setSelectedPayment('Barzahlung')}
