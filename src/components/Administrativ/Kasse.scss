@@ -92,37 +92,8 @@ $button-size: 90px; // Einheitliche Button-Größe
   align-items: center;
 }
 
-// Stil für die Rabatt-Buttons
-.discount-buttons {
-  grid-template-columns: repeat(4, 1fr); /* 4 Spalten Layout für Rabatte */
-  gap: 5px;
-}
-
-.discount-button {
-  width: 100%;
-  padding: 15px 20px;
-  font-size: 1.1rem;
-  color: white;
-  background-color: $primary-color;
-  border: none;
-  border-radius: $border-radius;
-  cursor: pointer;
-  transition: all $transition;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &:hover {
-    background-color: darken($primary-color, 10%);
-  }
 
 
-  &.back-button {
-    background-color: $danger-color; /* Zurück-Button speziell */
-    color: white;
-    font-weight: bold;
-  }
-}
 
 
   .scanned-products-container {
@@ -268,6 +239,43 @@ $button-size: 90px; // Einheitliche Button-Größe
   font-size: 0.9rem;
   color: #888;
 }
+.discount-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 2.5 * $button-size); // 2 Spalten, 2,5x breite Buttons
+  gap: 10px;
+  justify-content: center;
+
+  .discount-btn {
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    width: 2.5 * $button-size;
+    height: $button-size;
+
+    &:hover {
+      background-color: darken(#4caf50, 10%);
+    }
+  }
+
+  .back-button {
+    grid-column: span 2;
+    background-color: #dc3545;
+
+    &:hover {
+      background-color: darken(#dc3545, 10%);
+    }
+  }
+
+  .next-button {
+    grid-column: span 2;
+    background-color: #007bff;
+
+    &:hover {
+      background-color: darken(#007bff, 10%);
+    }
+  }
+}
+
 
 
 // Currency Buttons

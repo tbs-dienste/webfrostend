@@ -16,6 +16,7 @@ const Kasse = ({ onKassenModusChange }) => {
   const [currentBonNumber, setCurrentBonNumber] = useState("");
 // steuert, ob man im Zahl-Modus ist
 const [isPaying, setIsPaying] = useState(false);
+const [currentPage, setCurrentPage] = useState(0);
 
 // speichert, welche Zahlart gewählt ist
 const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
@@ -999,43 +1000,92 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
       <div className="kasse-layout">
         <div className="left-buttons">
           {showDiscounts ? (
-            <div className="discount-buttons">
-              <button onClick={toggleDiscounts} className="back-button">
-                Zurück
+           <div className="discount-buttons">
+           <button onClick={toggleDiscounts} className="btn back-button">
+             Zurück
+           </button>
+     
+           {availableDiscounts
+             .slice(currentPage * 10, currentPage * 10 + 10)
+             .map((discount) => (
+               <button
+                 key={discount.id}
+                 onClick={() => addDiscount(discount.name)}
+                 className="btn discount-btn"
+               >
+                 {discount.name} {discount.rabatt * 100}%
+               </button>
+             ))}
+     
+           <div className="discount-nav">
+             {currentPage > 0 && (
+               <button
+                 onClick={() => setCurrentPage(currentPage - 1)}
+                 className="btn prev-button"
+               >
+                 ◀ Zurück
+               </button>
+             )}
+             {availableDiscounts.length > (currentPage + 1) * 10 && (
+               <button
+                 onClick={() => setCurrentPage(currentPage + 1)}
+                 className="btn next-button"
+               >
+                 Weiter ▶
+               </button>
+             )}
+             <button className='btn' onClick={toggleBonParkieren}>
+                Bon Parkieren
               </button>
-              {/* Buttons in zwei Boxen unterteilen */}
-              <div className="button-group">
-                {availableDiscounts.slice(0, 2).map((discount) => (
-                  <button
-                    key={discount.title}
-                    onClick={() => addDiscount(discount.title)}
-                    className="discount-button double-width"
-                  >
-                    {discount.title}
-                  </button>
-                ))}
-              </div>
-              <div className="button-group">
-                {availableDiscounts.slice(2, 4).map((discount) => (
-                  <button
-                    key={discount.title}
-                    onClick={() => addDiscount(discount.title)}
-                    className="discount-button double-width"
-                  >
-                    {discount.title}
-                  </button>
-                ))}
-              </div>
-              {availableDiscounts.slice(4).map((discount) => (
-                <button
-                  key={discount.title}
-                  onClick={() => addDiscount(discount.title)}
-                  className="discount-button"
-                >
-                  {discount.title}
-                </button>
-              ))}
-            </div>
+              <button onClick={() => deleteSelectedProducts()} disabled={selectedProducts.length === 0} className='btn'>
+                Pos. löschen
+              </button>
+              <button className='btn' onClick={handleArtikelsuche}>Artikel suchen</button>
+
+              <button className='btn' onClick={goToKundenSuche}>Kunden suchen</button>
+
+
+
+            
+
+
+              <button className='btn' onClick={toggleDiscounts} disabled={selectedProducts.length === 0}>Pos. Rabatt</button>
+              <button onClick={toggleLastReciepts} className="btn sign-out-button">
+                <FontAwesomeIcon icon={faPrint} />
+              </button>
+
+              <button disabled className='btn'>
+                Pos. Rücknahme
+              </button>
+              <button className='btn' onClick={goToProductDetails} >Artikel Detail</button>
+
+              <button className='btn'>Kunden Detail</button>
+
+              <button disabled className='btn'>
+                Bon Rabatt
+              </button>
+              <button className='btn' onClick={handleCashierSwitch}>Kassierer wechseln</button>
+              <button className='btn' onClick={handleDailyOverview}>Tagesübersicht</button>
+              <button disabled className='btn'>
+                Schublade öffnen
+              </button>
+              <button className='btn' onClick={() => setIsChangingQuantity(true)}>Menge ändern</button>
+              <button className='btn' onClick={() => setIsChangingPrice(true)}>Preis ändern</button>
+
+              <button className='btn'>Kundenkarte</button>
+              <button className='btn' onClick={handleGSKarteSaldo}>GS-Karte Saldo</button>
+
+              <button className='btn'></button>
+
+              <button disabled className='btn'>
+                Liferant suchen
+              </button>
+              {/* Abmelden und Wechseln */}
+              <button onClick={handleSignOut} className="btn sign-out-button">
+                <FontAwesomeIcon icon={faSignOutAlt} />
+              </button>
+           </div>
+         </div>
           ) : isPaying ? (
             // Wenn isPaying true ist, alle Buttons leer machen
             <>
@@ -1065,18 +1115,7 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
               <button className='btn'></button>
 
               <button className='btn'></button>
-              <button className="btn"></button>
 
-<button className="btn"></button>
-
-<button className="btn"></button>
-
-<button className="btn"></button>
-
-
-
-
-<button className="btn"></button>
 
               <button
       onClick={() => setSelectedPayment('Barzahlung')}
@@ -1720,7 +1759,7 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
           </div>
         )}
         <div className="numeric-keypad-container">
-          <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+          <div className="currency-buttons" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
             <button className='btn' style={{ width: '100px', padding: '10px', fontSize: '14px' }}>CHF</button>
             <button className='btn' style={{ width: '32%', padding: '10px', fontSize: '14px' }}>EUR</button>
             <button className='btn' onClick={handleShowPopup} style={{ width: '32%', padding: '10px', fontSize: '14px', backgroundColor: '#4CAF50', color: 'white', border: 'none' }}>
@@ -1753,7 +1792,7 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '5px',
-            marginTop: '5px',
+            marginTop: '3px',
             width: '100%'  // GANZE Breite nutzen
           }}>
             <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={handleConfirm} className="btn-confirm">
