@@ -202,8 +202,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 <option value="stockeinlage">Stockeinlage</option>
                 <option value="gebuehrtoilette">Gebühr Toilette</option>
                 <option value="umtriebsentschaedigung">Umtriebsentschädigung</option>
-                <option value="verpflegung">Verpflegung</option> {/* Neuer Grund */}
-                <option value="gewinnbeteiligung">Gewinnbeteiligung</option> {/* Neuer Grund */}
+                <option value="verpflegung">Verpflegung</option>
+                <option value="gewinnbeteiligung">Gewinnbeteiligung</option>
               </>
             )}
             {activeMode === "expense" && (
@@ -212,16 +212,15 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                 <option value="mwstruckestattung">MWST-Rückerst. 0%</option>
                 <option value="porto">Porto 8.1%</option>
                 <option value="kundenbestellung">Kundenbestellung</option>
-                <option value="transportkosten">Transportkosten</option> {/* Neuer Grund */}
-                <option value="verpflegungskosten">Verpflegungskosten</option> {/* Neuer Grund */}
-                <option value="kommunikationskosten">Kommunikationskosten</option> {/* Neuer Grund */}
-                <option value="arbeitsmaterial">Arbeitsmaterial</option> {/* Neuer Grund */}
+                <option value="transportkosten">Transportkosten</option>
+                <option value="verpflegungskosten">Verpflegungskosten</option>
+                <option value="kommunikationskosten">Kommunikationskosten</option>
+                <option value="arbeitsmaterial">Arbeitsmaterial</option>
               </>
             )}
-
           </select>
         </div>
-
+  
         <div className="form-group custom-dropdown dropdown-currency">
           <label>Währung</label>
           <select
@@ -234,7 +233,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           </select>
         </div>
       </div>
-
+  
       <table className="entry-table">
         <thead>
           <tr>
@@ -248,7 +247,6 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           </tr>
         </thead>
         <tbody>
-          {/* Einnahmen anzeigen */}
           {entries.einnahmen.length === 0 ? (
             <tr>
               <td colSpan="7" className="no-data">Keine Einnahmen vorhanden</td>
@@ -270,8 +268,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
               </tr>
             ))
           )}
-
-          {/* Ausgaben anzeigen */}
+  
           {entries.ausgaben.length === 0 ? (
             <tr>
               <td colSpan="7" className="no-data">Keine Ausgaben vorhanden</td>
@@ -295,7 +292,7 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           )}
         </tbody>
       </table>
-
+  
       {showKeypad && (
         <div className="keypad-section">
           <div className="number-pad">
@@ -306,8 +303,8 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
                   key === "."
                     ? () => handleNumberClick(".")
                     : key === "+/-"
-                      ? toggleSign
-                      : () => handleNumberClick(key.toString())
+                    ? toggleSign
+                    : () => handleNumberClick(key.toString())
                 }
               >
                 {key}
@@ -320,42 +317,41 @@ const IncomeExpenseForm = ({ onKassenModusChange }) => {
           </div>
         </div>
       )}
-
+  
       <div className="bottom-buttons">
-        <button disabled>
-          X
-        </button>
+        <button disabled>X</button>
         <button onClick={() => handleModeChange("income")} disabled={activeMode === "income"}>
           Einnahmen
         </button>
         <button onClick={() => handleModeChange("expense")} disabled={activeMode === "expense"}>
           Ausgaben
         </button>
-        <button disabled>
-          X
-        </button>
-        <button>
-          Heute
-        </button>
-        <button>
-          Alle
-        </button>
-        <button
-          onClick={handlePrint}
-          disabled={selectedRow === null} // Disable the button if no row is selected
-        >
-          {handlePrint()}
-        </button>
+        <button disabled>X</button>
+        <button>Heute</button>
+        <button>Alle</button>
+  
+        {selectedRow !== null && entries.einnahmen[selectedRow] ? (
+          <PDFDownloadLink
+            document={<PrintTemplate entry={entries.einnahmen[selectedRow]} />}
+            fileName="entry.pdf"
+          >
+            {({ loading }) => (
+              <button>{loading ? "Generiere PDF..." : "Drucken"}</button>
+            )}
+          </PDFDownloadLink>
+        ) : (
+          <button>Drucken</button>
+        )}
+  
         <button onClick={handleCancel} disabled={selectedRow === null}>
           Löschen
         </button>
         <button onClick={handleSubmit}>Übernehmen</button>
-        <button>
-          Exit
-        </button>
+        <button>Exit</button>
       </div>
     </div>
   );
+  
 };
 
 export default IncomeExpenseForm;

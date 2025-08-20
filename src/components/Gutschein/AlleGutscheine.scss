@@ -1,89 +1,80 @@
-/* AlleGutscheine.scss */
-
-.gutscheine-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  background: #f5f7fa;
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+.alle-gutscheine {
+  padding: 16px;
+  font-family: 'Helvetica', sans-serif;
 
   h1 {
-    font-size: 1.6rem;
-    color: #2c3e50;
-    margin: 0;
+    margin-bottom: 12px;
+    color: #003366;
   }
 
-  .btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, #2d89ff, #0a5ed7);
+  .btn {
+    background-color: #003366;
     color: #fff;
     border: none;
-    border-radius: 0.5rem;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    margin-bottom: 20px;
+    font-weight: bold;
 
-    svg {
-      font-size: 1rem;
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   }
-}
 
-.gutscheine-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
-}
+  .gutschein-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
 
-.gutschein-card {
-  background: #ffffff;
-  border-radius: 0.75rem;
-  padding: 1rem 1.2rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.5rem;
+  .gutschein-card-preview {
+    width: 180px;
+    height: 110px;
+    border-radius: 8px;
+    background-color: #003366;
+    color: #fff;
+    padding: 8px;
+    position: relative;
+    font-family: 'Helvetica', sans-serif;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
 
-  .gutschein-info {
-    p {
-      margin: 0.2rem 0;
-      font-size: 0.95rem;
-      color: #34495e;
+    &:hover {
+      transform: scale(1.03);
+    }
 
-      span {
-        font-weight: 600;
-        color: #2d89ff;
-        margin-right: 0.25rem;
-      }
+    .card-header {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .card-guthaben {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 10px;
+    }
+
+    .card-number {
+      font-size: 12px;
+      margin-top: 40px;
+    }
+
+    .card-firma {
+      position: absolute;
+      bottom: 6px;
+      left: 6px;
+      font-size: 8px;
+    }
+
+    .card-barcode {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 60px;
+      height: 16px;
     }
   }
-}
-
-.empty-state {
-  grid-column: 1 / -1;
-  background: #ffffff;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  text-align: center;
-  font-size: 1rem;
-  color: #7f8c8d;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }

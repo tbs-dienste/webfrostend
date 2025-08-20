@@ -1004,7 +1004,10 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
            <button onClick={toggleDiscounts} className="btn back-button">
              Zurück
            </button>
-     
+           <button className='btn'></button>
+              <button className='btn'></button>
+
+              <button className='btn'></button>
            {availableDiscounts
              .slice(currentPage * 10, currentPage * 10 + 10)
              .map((discount) => (
