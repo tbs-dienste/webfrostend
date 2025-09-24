@@ -111,6 +111,8 @@ import HausverbotDetail from './components/Hausverbot/HausverbotDetail';
 import StrafantragForm from './components/Administrativ/Straftat/StrafantragForm';
 import NewsletterSubscribeForm from './components/Content/NewsletterSubscribeForm';
 import NewsletterAbonnenten from './components/Content/Newsletter/NewsletterAbonnenten';
+import InventurErstellen from './components/Administrativ/Inventur/InventurErstellen';
+import InventurScan from './components/Administrativ/Inventur/InventurScan';
 
 
 const App = () => {
@@ -191,6 +193,9 @@ const App = () => {
         <Routes>
 
           <Route path="/" element={<Home />} />
+          <Route path="/inventur-create" element={<InventurErstellen />} />
+          <Route path="/inventur-scan/:inventurId/:lagerregalplatznr" element={<InventurScan />} />
+
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
           <Route path="/statistiken" element={<Statistik />} />

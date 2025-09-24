@@ -61,6 +61,8 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
   const [showLastReceipt, setShowLastReceipt] = useState(false); // Zustand, um die Quittung anzuzeigen
   const [kundeNummer, setKundeNummer] = useState(generateRandomNumber());
   const [kundenkarte, setKundenkarte] = useState(null);
+  const [nummer, setNummer] = useState("");
+  const [scannedItems, setScannedItems] = useState([]);
 
   const API_BASE_URL = 'https://tbsdigitalsolutionsbackend.onrender.com/api/kasse';
 
@@ -188,7 +190,37 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
   }, []);
 
 
+  const handleChange = async (e) => {
+    const value = e.target.value;
+    setNummer(value);
 
+    // Sobald 19 Zeichen erreicht -> automatisch Request
+    if (value.length === 19) {
+      try {
+        const token = localStorage.getItem("token"); // <-- JWT vom Login gespeichert?
+
+        const response = await axios.post(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan", 
+          { nummer: value },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Token anhängen
+            },
+          }
+        );
+
+        // Ergebnis in Liste pushen
+        setScannedItems((prev) => [...prev, response.data]);
+
+        // Feld leeren für den nächsten Scan
+        setNummer("");
+      } catch (error) {
+        console.error("Scan Fehler:", error.response?.data || error.message);
+        alert(error.response?.data?.error || "Fehler beim Scannen");
+        setNummer("");
+      }
+    }
+  };
 
   const toggleLastReciepts = async () => {
     await fetchLastReceipt(); // Holt die letzte Quittung
@@ -1523,6 +1555,20 @@ const [selectedPayment, setSelectedPayment] = useState('Barzahlung');
             
                   return (
                     <div className="product-list">
+                      <input
+  type="text"
+  value={nummer}
+  onChange={handleChange}
+  autoFocus
+  style={{
+    position: "absolute",
+    opacity: 0,
+    pointerEvents: "none",
+    height: 0,
+    width: 0,
+  }}
+/>
+
                     {scannedProducts.length === 0 ? (
                       <div className="empty">Noch keine Artikel gescannt.</div>
                     ) : (

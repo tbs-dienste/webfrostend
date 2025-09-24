@@ -75,6 +75,7 @@ function Navbar() {
           <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} setBurgerMenuActive={setBurgerMenuActive} />
           <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} setBurgerMenuActive={setBurgerMenuActive} />
+          <NavItem to="/gutscheinbestellung" text="Gutscheinbestellung" icon={faInfoCircle} setBurgerMenuActive={setBurgerMenuActive} />
 
 
 
@@ -96,6 +97,8 @@ function Navbar() {
                 { to: "/allbewerbungen", text: "Bewerbungen" },
                 { to: "/products", text: "Produkte" },
                 { to: "/aktionen", text: "Aktionen" },
+                { to: "/inventur", text: "Inventur" },
+
                 { to:   "/newsletter-subscribers", text: "Newsletter Abonennten" },
 
 
