@@ -194,10 +194,15 @@ const App = () => {
         <Routes>
 
           <Route path="/" element={<Home />} />
- <Route path="/inventur/start" element={<InventurStartForm />} />
 
-{/* Inventur Scan Seite mit Parametern */}
-<Route path="/inventur/:inventurnummer/:lagerregalplatznr" element={<InventurScan />} />
+    {/* Route zum Erstellen einer neuen Inventur */}
+    <Route path="/inventur/start" element={<InventurStartForm />} />
+
+{/* Route zum Scannen der Inventur mit Parametern */}
+<Route
+  path="/inventur/:inventurnummer/:lagerregalplatznr/scan"
+  element={<InventurScan />}
+/>
           <Route path="/antrag" element={<AntragStellen />} />
           <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
           <Route path="/statistiken" element={<Statistik />} />

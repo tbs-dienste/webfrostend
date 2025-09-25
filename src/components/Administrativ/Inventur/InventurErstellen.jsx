@@ -18,9 +18,11 @@ const InventurErstellen = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const inventurNummer = res.data.nummer;
+      // Inventur-ID und erster Regalplatz
+      const inventurId = res.data.inventur_id;
       const ersterPlatz = regalplaetze[0];
-      navigate(`/inventur/${inventurNummer}/scan/${ersterPlatz}`);
+
+      navigate(`/inventur/${inventurId}/${ersterPlatz}/scan`);
     } catch (err) {
       console.error(err);
       alert("Fehler beim Erstellen der Inventur");

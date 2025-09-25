@@ -5,7 +5,7 @@ import { FaBarcode } from "react-icons/fa";
 import "./InventurScan.scss";
 
 const InventurScan = () => {
-  const { nummer, lagerregalplatznr } = useParams(); // ⚡ Router erwartet "nummer"
+  const { inventurnummer, lagerregalplatznr } = useParams();
   const [artikel, setArtikel] = useState("");
   const [menge, setMenge] = useState(1);
   const [scans, setScans] = useState([]);
@@ -18,21 +18,21 @@ const InventurScan = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${nummer}/scans/${lagerregalplatznr}`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${inventurnummer}/scans/${lagerregalplatznr}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setScans(res.data.data || []);
+      setScans(res.data.data || []); // ⚡ leer, wenn nichts vorhanden
     } catch (err) {
       console.error(err);
-      alert("Fehler beim Laden der gescannten Artikel");
+      setScans([]); // einfach nichts anzeigen
     }
   };
 
   useEffect(() => {
     loadScans();
-  }, [nummer, lagerregalplatznr]);
+  }, [inventurnummer, lagerregalplatznr]);
 
-  // Fokus immer auf das Eingabefeld setzen
+  // Fokus auf das Eingabefeld
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
   }, [artikel, showScans]);
@@ -51,7 +51,7 @@ const InventurScan = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${nummer}/scan/${lagerregalplatznr}`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${inventurnummer}/scan/${lagerregalplatznr}`,
         { barcode: artikel, menge },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -71,7 +71,7 @@ const InventurScan = () => {
     <div className="inventur-scan-container">
       <h2>Inventur Scannen</h2>
       <p>
-        Inventurnummer: <strong>{nummer}</strong> | Lagerplatz:{" "}
+        Inventurnummer: <strong>{inventurnummer}</strong> | Lagerplatz:{" "}
         <strong>{lagerregalplatznr}</strong>
       </p>
 
@@ -82,7 +82,6 @@ const InventurScan = () => {
         {showScans ? "Scanformular anzeigen" : "Gescannte Artikel anzeigen"}
       </button>
 
-      {/* Scanformular */}
       {!showScans && (
         <form className="scan-form" onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
@@ -110,38 +109,33 @@ const InventurScan = () => {
         </form>
       )}
 
-      {/* Gescannte Artikel */}
-      {showScans && (
+      {showScans && scans.length > 0 && (
         <div className="scan-list">
           <h3>Gescannte Artikel (letzte Stunde)</h3>
-          {scans.length === 0 ? (
-            <p>Keine Artikel gescannt.</p>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Artikelnummer</th>
-                  <th>Name</th>
-                  <th>Barcode</th>
-                  <th>Menge</th>
-                  <th>Gescannt um</th>
+          <table>
+            <thead>
+              <tr>
+                <th>Artikelnummer</th>
+                <th>Name</th>
+                <th>Barcode</th>
+                <th>Menge</th>
+                <th>Gescannt um</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scans.map((s, idx) => (
+                <tr key={idx}>
+                  <td>{s.artikelnummer}</td>
+                  <td>{s.name}</td>
+                  <td>
+                    <FaBarcode /> {s.barcode}
+                  </td>
+                  <td>{s.menge}</td>
+                  <td>{new Date(s.created_at).toLocaleTimeString()}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {scans.map((s, idx) => (
-                  <tr key={idx}>
-                    <td>{s.artikelnummer}</td>
-                    <td>{s.name}</td>
-                    <td>
-                      <FaBarcode /> {s.barcode}
-                    </td>
-                    <td>{s.menge}</td>
-                    <td>{new Date(s.created_at).toLocaleTimeString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
