@@ -18,6 +18,7 @@ import {
   faInfoCircle,
   faChevronDown,
   faPerson,
+  faSprayCan,
 } from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
@@ -125,6 +126,8 @@ function Navbar() {
           {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
             <>
               <NavItem to="/kunden" text="Kunden" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+              <NavItem to="/inventur/start" text="Inventur" icon={faSprayCan} setBurgerMenuActive={setBurgerMenuActive} />
+
               <NavItem to="/profile" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
             </>
           )}
