@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./InventurErstellen.scss"; // SCSS importieren
+import "./InventurErstellen.scss";
 
 const InventurErstellen = () => {
   const [lagerort, setLagerort] = useState("");
@@ -17,7 +17,10 @@ const InventurErstellen = () => {
         { lagerort_name: lagerort, lagerregalplaetze: regalplaetze },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      navigate(`/inventur/${res.data.inventur_id}/scan`);
+
+      const inventurNummer = res.data.nummer;
+      const ersterPlatz = regalplaetze[0];
+      navigate(`/inventur/${inventurNummer}/scan/${ersterPlatz}`);
     } catch (err) {
       console.error(err);
       alert("Fehler beim Erstellen der Inventur");

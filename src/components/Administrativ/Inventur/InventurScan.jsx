@@ -5,7 +5,7 @@ import { FaBarcode } from "react-icons/fa";
 import "./InventurScan.scss";
 
 const InventurScan = () => {
-  const { inventurnummer, lagerregalplatznr } = useParams();
+  const { nummer, lagerregalplatznr } = useParams(); // ⚡ Router erwartet "nummer"
   const [artikel, setArtikel] = useState("");
   const [menge, setMenge] = useState(1);
   const [scans, setScans] = useState([]);
@@ -13,15 +13,15 @@ const InventurScan = () => {
   const [isScanning, setIsScanning] = useState(false);
   const inputRef = useRef(null);
 
-  // Alle Artikel der letzten Stunde laden
+  // Scans der letzten Stunde laden
   const loadScans = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${inventurnummer}/${lagerregalplatznr}/last-hour`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${nummer}/scans/${lagerregalplatznr}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setScans(res.data.data);
+      setScans(res.data.data || []);
     } catch (err) {
       console.error(err);
       alert("Fehler beim Laden der gescannten Artikel");
@@ -30,9 +30,14 @@ const InventurScan = () => {
 
   useEffect(() => {
     loadScans();
-  }, []);
+  }, [nummer, lagerregalplatznr]);
 
-  // Automatisches Scannen bei Enter
+  // Fokus immer auf das Eingabefeld setzen
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, [artikel, showScans]);
+
+  // Enter löst Scan aus
   const handleKeyDown = async (e) => {
     if (e.key === "Enter" && artikel) {
       e.preventDefault();
@@ -46,27 +51,30 @@ const InventurScan = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/scan/${inventurnummer}/${lagerregalplatznr}`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${nummer}/scan/${lagerregalplatznr}`,
         { barcode: artikel, menge },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setArtikel("");
       setMenge(1);
-      loadScans(); // Liste aktualisieren
+      loadScans();
     } catch (err) {
       console.error(err);
       alert("Fehler beim Scannen");
     } finally {
       setIsScanning(false);
+      if (inputRef.current) inputRef.current.focus();
     }
   };
 
   return (
     <div className="inventur-scan-container">
       <h2>Inventur Scannen</h2>
-      <p>Lagerplatz: <strong>{lagerregalplatznr}</strong></p>
+      <p>
+        Inventurnummer: <strong>{nummer}</strong> | Lagerplatz:{" "}
+        <strong>{lagerregalplatznr}</strong>
+      </p>
 
-      {/* Toggle Button */}
       <button
         className={`toggle-scan-view ${showScans ? "active" : ""}`}
         onClick={() => setShowScans(!showScans)}
@@ -74,7 +82,7 @@ const InventurScan = () => {
         {showScans ? "Scanformular anzeigen" : "Gescannte Artikel anzeigen"}
       </button>
 
-      {/* Scan-Formular */}
+      {/* Scanformular */}
       {!showScans && (
         <form className="scan-form" onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
@@ -85,8 +93,8 @@ const InventurScan = () => {
               value={artikel}
               onChange={(e) => setArtikel(e.target.value)}
               onKeyDown={handleKeyDown}
-              autoFocus
               ref={inputRef}
+              disabled={isScanning}
             />
           </div>
           <div className="form-group">
@@ -96,12 +104,13 @@ const InventurScan = () => {
               min="1"
               value={menge}
               onChange={(e) => setMenge(Number(e.target.value))}
+              disabled={isScanning}
             />
           </div>
         </form>
       )}
 
-      {/* Gescannte Artikel der letzten Stunde */}
+      {/* Gescannte Artikel */}
       {showScans && (
         <div className="scan-list">
           <h3>Gescannte Artikel (letzte Stunde)</h3>
@@ -112,8 +121,9 @@ const InventurScan = () => {
               <thead>
                 <tr>
                   <th>Artikelnummer</th>
-                  <th>Menge</th>
+                  <th>Name</th>
                   <th>Barcode</th>
+                  <th>Menge</th>
                   <th>Gescannt um</th>
                 </tr>
               </thead>
@@ -121,8 +131,11 @@ const InventurScan = () => {
                 {scans.map((s, idx) => (
                   <tr key={idx}>
                     <td>{s.artikelnummer}</td>
+                    <td>{s.name}</td>
+                    <td>
+                      <FaBarcode /> {s.barcode}
+                    </td>
                     <td>{s.menge}</td>
-                    <td><FaBarcode /></td>
                     <td>{new Date(s.created_at).toLocaleTimeString()}</td>
                   </tr>
                 ))}
