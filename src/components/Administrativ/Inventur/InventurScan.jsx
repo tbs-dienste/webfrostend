@@ -5,7 +5,7 @@ import { FaBarcode } from "react-icons/fa";
 import "./InventurScan.scss";
 
 const InventurScan = () => {
-  const { inventurId, lagerregalplatznr } = useParams();
+  const { inventurnummer, lagerregalplatznr } = useParams();
   const [artikel, setArtikel] = useState("");
   const [menge, setMenge] = useState(1);
   const [scans, setScans] = useState([]);
@@ -18,10 +18,10 @@ const InventurScan = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${inventurId}/${lagerregalplatznr}/last-hour`,
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/${inventurnummer}/${lagerregalplatznr}/last-hour`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setScans(res.data.data); // <- data enthält die Rows
+      setScans(res.data.data);
     } catch (err) {
       console.error(err);
       alert("Fehler beim Laden der gescannten Artikel");
@@ -32,7 +32,7 @@ const InventurScan = () => {
     loadScans();
   }, []);
 
-  // Automatisches Scannen bei Barcode (Enter)
+  // Automatisches Scannen bei Enter
   const handleKeyDown = async (e) => {
     if (e.key === "Enter" && artikel) {
       e.preventDefault();
@@ -46,8 +46,8 @@ const InventurScan = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/scan/${inventurId}/${lagerregalplatznr}`,
-        { artikelnummer: artikel, menge },
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/inventur/scan/${inventurnummer}/${lagerregalplatznr}`,
+        { barcode: artikel, menge },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setArtikel("");
@@ -78,7 +78,7 @@ const InventurScan = () => {
       {!showScans && (
         <form className="scan-form" onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
-            <label>Artikelnummer</label>
+            <label>Barcode / Artikelnummer</label>
             <input
               type="text"
               placeholder="Artikelnummer scannen"
