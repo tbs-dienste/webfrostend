@@ -1,84 +1,132 @@
 .inventur-scan-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    background: #f7f8fa;
-    min-height: 100vh;
-    box-sizing: border-box;
-  
-    h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #222;
-      margin-bottom: 2rem;
-      text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    text-align: center;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+
+    strong {
+      color: #0f172a;
     }
-  
-    form {
+  }
+
+  .toggle-scan-view {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+
+    &.active {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  .scan-form {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    .form-group {
       display: flex;
       flex-direction: column;
-      width: 100%;
-      max-width: 100%;
-      gap: 1rem;
-  
+      flex: 1 1 200px;
+
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
       input {
         padding: 0.75rem 1rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
+        border-radius: 0.5rem;
+        border: 1px solid #cbd5e1;
         font-size: 1rem;
-        color: #333;
-  
+        transition: all 0.2s ease;
+
         &:focus {
-          outline: 2px solid #007bff;
-        }
-      }
-  
-      .button-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-  
-        button {
-          flex: 1 1 auto;
-          padding: 0.75rem 1rem;
-          border-radius: 8px;
-          border: none;
-          font-size: 1rem;
-          font-weight: 600;
-          cursor: pointer;
-          color: #fff;
-  
-          &.btn-add {
-            background-color: #28a745;
-          }
-  
-          &.btn-end {
-            background-color: #dc3545;
-          }
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
       }
     }
   }
-  
-  // ======================
-  // Mobile Anpassungen
-  // ======================
+
+  // Responsive: Handy / kleine Bildschirme
   @media (max-width: 600px) {
-    .inventur-scan-container {
-      padding: 1.5rem;
-  
-      form {
-        gap: 0.75rem;
-  
-        .button-group {
-          flex-direction: column;
-  
-          button {
-            width: 100%;
+    .scan-form {
+      flex-direction: column; // Inputs untereinander
+      .form-group {
+        width: 100%;
+      }
+    }
+  }
+
+  .scan-list {
+    width: 100%;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background: #ffffff;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+
+      thead {
+        background: #f1f5f9;
+
+        th {
+          text-align: left;
+          padding: 0.75rem 1rem;
+          font-weight: 600;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #e2e8f0;
+          transition: background 0.2s ease;
+
+          &:hover {
+            background: #f0f9ff;
+          }
+
+          td {
+            padding: 0.75rem 1rem;
           }
         }
       }
     }
   }
-  
+}

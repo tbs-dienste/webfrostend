@@ -113,6 +113,7 @@ import NewsletterSubscribeForm from './components/Content/NewsletterSubscribeFor
 import NewsletterAbonnenten from './components/Content/Newsletter/NewsletterAbonnenten';
 import InventurErstellen from './components/Administrativ/Inventur/InventurErstellen';
 import InventurScan from './components/Administrativ/Inventur/InventurScan';
+import InventurStartForm from './components/Administrativ/Inventur/InventurStartForm';
 
 
 const App = () => {
@@ -193,7 +194,6 @@ const App = () => {
         <Routes>
 
           <Route path="/" element={<Home />} />
- {/* Inventur Startseite */}
  <Route path="/inventur/start" element={<InventurStartForm />} />
 
 {/* Inventur Scan Seite mit Parametern */}
