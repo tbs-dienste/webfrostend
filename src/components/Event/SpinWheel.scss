@@ -2,50 +2,127 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
+  padding: 50px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
+  position: relative;
+}
 
-  .spin-button {
-    margin-top: 2rem;
-    background: linear-gradient(to right, #8e2de2, #4a00e0);
-    color: white;
-    padding: 1rem 3rem;
-    font-size: 1.4rem;
-    font-weight: bold;
+.email-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+  z-index: 10;
+  width: 90%;
+  max-width: 400px;
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #333;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+
+    &:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 10px rgba(52,152,219,0.3);
+    }
+  }
+
+  button {
+    padding: 12px 25px;
+    font-size: 16px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
     border: none;
-    border-radius: 50px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.3s ease;
-    box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
+    transition: all 0.3s;
+    font-weight: bold;
 
     &:hover {
-      transform: scale(1.1);
-      box-shadow: 0 10px 25px rgba(142, 45, 226, 0.5);
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     &:disabled {
-      background: #ccc;
+      background: #bbb;
       cursor: not-allowed;
-      box-shadow: none;
     }
-  }
-
-  .prize-message {
-    margin-top: 2rem;
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #27ae60;
-    text-align: center;
-    animation: pop 0.5s ease-in-out;
   }
 }
 
-@keyframes pop {
+.spin-button {
+  margin-top: 40px;
+  padding: 15px 40px;
+  font-size: 18px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.prize-message {
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  padding: 15px 25px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  text-align: center;
+  animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
   0% {
-    transform: scale(0.9);
+    transform: scale(0.3);
     opacity: 0;
   }
-  100% {
+  80% {
     transform: scale(1.1);
     opacity: 1;
   }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Wheel Container Styling */
+.react-custom-roulette {
+  max-width: 450px;
+  width: 90%;
+  margin: 0 auto;
 }

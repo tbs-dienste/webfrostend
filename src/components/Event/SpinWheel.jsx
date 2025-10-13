@@ -1,29 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Wheel } from "react-custom-roulette";
 import axios from "axios";
 import "./SpinWheel.scss";
 
-const data = [
-  { option: "10% Rabatt", style: { backgroundColor: "#8e44ad" }, maxCount: 3, enabled: true },
-  { option: "Niete", style: { backgroundColor: "#c0392b" }, maxCount: 4, enabled: true },
-  { option: "5€ Gutschein", style: { backgroundColor: "#27ae60" }, maxCount: 2, enabled: true },
-  { option: "20% Rabatt", style: { backgroundColor: "#f39c12" }, maxCount: 2, enabled: true },
-  { option: "Freies Getränk", style: { backgroundColor: "#1abc9c" }, maxCount: 2, enabled: true },
-  { option: "Gratis Produkt", style: { backgroundColor: "#3498db" }, maxCount: 2, enabled: true },
-  { option: "5% Rabatt", style: { backgroundColor: "#9b59b6" }, maxCount: 2, enabled: true },
-  { option: "15% Rabatt", style: { backgroundColor: "#e67e22" }, maxCount: 2, enabled: true },
-  { option: "Europapark Ticket", style: { backgroundColor: "#e84393" }, maxCount: 1, enabled: false },
-  { option: "VIP Europapark Paket", style: { backgroundColor: "#d35400" }, maxCount: 1, enabled: false },
-  { option: "Luxus-Wochenende", style: { backgroundColor: "#2c3e50" }, maxCount: 1, enabled: false },
-  { option: "Apple iPhone", style: { backgroundColor: "#f1c40f" }, maxCount: 1, enabled: false },
-  { option: "Helikopterflug Erlebnis", style: { backgroundColor: "#16a085" }, maxCount: 1, enabled: false },
+export const data = [
+  { option: "Europapark Ticket", style: { backgroundColor: "#e84393" }, enabled: true, expensive: true },
+  { option: "VIP Europapark Paket", style: { backgroundColor: "#d35400" }, enabled: true, expensive: true },
+  { option: "Luxus-Wochenende", style: { backgroundColor: "#2c3e50" }, enabled: true, expensive: true },
+  { option: "Apple iPhone", style: { backgroundColor: "#f1c40f" }, enabled: true, expensive: true },
+  { option: "Helikopterflug Erlebnis", style: { backgroundColor: "#16a085" }, enabled: true, expensive: true },
+  { option: "10% Rabatt", style: { backgroundColor: "#8e44ad" }, enabled: true },
+  { option: "5€ Gutschein", style: { backgroundColor: "#27ae60" }, enabled: true },
+  { option: "20% Rabatt", style: { backgroundColor: "#f39c12" }, enabled: true },
+  { option: "Freies Getränk", style: { backgroundColor: "#1abc9c" }, enabled: true },
+  { option: "Gratis Produkt", style: { backgroundColor: "#3498db" }, enabled: true },
+  { option: "5% Rabatt", style: { backgroundColor: "#9b59b6" }, enabled: true },
+  { option: "15% Rabatt", style: { backgroundColor: "#e67e22" }, enabled: true },
+  { option: "Niete", style: { backgroundColor: "#c0392b" }, enabled: true },
 ];
 
 export default function SpinWheel({ onKassenModusChange }) {
-  const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
   const [selectedPrize, setSelectedPrize] = useState(null);
   const [alreadySpun, setAlreadySpun] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailPopup, setEmailPopup] = useState(true);
+  const spinningRef = useRef(false);
 
   useEffect(() => {
     onKassenModusChange?.(true);
@@ -33,10 +35,11 @@ export default function SpinWheel({ onKassenModusChange }) {
 
   const checkIfAlreadySpun = async () => {
     try {
-      const res = await axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/spin/check-ip");
+      const res = await axios.get("/api/spin/check-ip");
       if (res.data.alreadySpun) {
         setAlreadySpun(true);
-        setSelectedPrize(res.data.gewinn);
+        setSelectedPrize(res.data.gewinn || "Leider verloren");
+        setEmailPopup(false);
       }
     } catch (err) {
       console.error("Fehler beim Prüfen:", err);
@@ -45,32 +48,73 @@ export default function SpinWheel({ onKassenModusChange }) {
 
   const saveGewinn = async (gewinn) => {
     try {
-      await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/spin/save-ip", { gewinn });
+      await axios.post("/api/spin/save-ip", { gewinn, email });
     } catch (err) {
       console.error("Fehler beim Speichern:", err);
-      alert("Fehler: Du hast schon einmal gedreht oder es gab ein Serverproblem.");
+      alert("Fehler beim Speichern. Versuche es später erneut.");
     }
   };
 
   const spin = () => {
-    // Filtere nur die aktivierten Preise
-    const enabledData = data.filter(item => item.enabled);
-    
-    // Wähle zufällig einen Index innerhalb der aktivierten Preise
-    const enabledIndex = Math.floor(Math.random() * enabledData.length);
-    
-    // Finde den Index dieses Preises im Originalarray
-    const newPrizeNumber = data.findIndex(item => item.option === enabledData[enabledIndex].option);
-    
-    setPrizeNumber(newPrizeNumber);
+    if (!email) {
+      alert("Bitte zuerst deine E-Mail eingeben!");
+      return;
+    }
+
+    setEmailPopup(false);
     setSelectedPrize(null);
-    setMustSpin(true);
+    spinningRef.current = true;
+
+    let index = 0;
+    let slowCounter = 0;
+    const expensiveIndexes = data.map((d,i) => d.expensive ? i : -1).filter(i => i >= 0);
+
+    // finale "echte" Gewinn-Preise auswählen
+    const enabledIndexes = data.map((d,i) => d.enabled && !d.expensive ? i : -1).filter(i => i >= 0);
+    const finalPrizeIndex = enabledIndexes[Math.floor(Math.random() * enabledIndexes.length)];
+
+    const interval = setInterval(() => {
+      if (!spinningRef.current) return clearInterval(interval);
+
+      // langsame Phase für teure Preise
+      if (expensiveIndexes.includes(index) && slowCounter < 4) {
+        slowCounter++;
+        setPrizeNumber(index);
+        // zusätzliche Verzögerung
+        setTimeout(()=>{}, 200);
+      }
+
+      setPrizeNumber(index);
+      index = (index + 1) % data.length;
+
+      // Stop wenn finalPrize erreicht & langsame Phasen vorbei
+      if (index === finalPrizeIndex && slowCounter >= 4) {
+        clearInterval(interval);
+        spinningRef.current = false;
+        setSelectedPrize(data[finalPrizeIndex].option);
+        setAlreadySpun(true);
+        saveGewinn(data[finalPrizeIndex].option);
+      }
+    }, 100);
   };
-  
+
   return (
     <div className="spin-wrapper">
+      {emailPopup && !alreadySpun && (
+        <div className="email-popup">
+          <h2>Deine E-Mail eingeben</h2>
+          <input
+            type="email"
+            placeholder="E-Mail Adresse"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button onClick={() => { if(email) setEmailPopup(false); }}>Bestätigen</button>
+        </div>
+      )}
+
       <Wheel
-        mustStartSpinning={mustSpin}
+        mustStartSpinning={spinningRef.current}
         prizeNumber={prizeNumber}
         data={data}
         outerBorderColor={"#ddd"}
@@ -80,21 +124,15 @@ export default function SpinWheel({ onKassenModusChange }) {
         radiusLineWidth={2}
         textDistance={65}
         fontSize={14}
-        onStopSpinning={() => {
-          const prize = data[prizeNumber].option;
-          setMustSpin(false);
-          setSelectedPrize(prize === "Niete" ? "Leider verloren" : prize);
-          setAlreadySpun(true);
-          saveGewinn(prize);
-        }}
+        onStopSpinning={() => {}}
       />
 
       <button
         className="spin-button"
         onClick={spin}
-        disabled={mustSpin || alreadySpun}
+        disabled={spinningRef.current || alreadySpun || emailPopup}
       >
-        {mustSpin
+        {spinningRef.current
           ? "Dreht..."
           : alreadySpun
           ? "Du hast schon gedreht"
