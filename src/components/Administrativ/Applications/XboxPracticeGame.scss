@@ -1,0 +1,77 @@
+$primary-color: #00ff99;
+$secondary-color: #ff4d4d;
+$bg-color: #1a1a1a;
+$button-bg: #333;
+$button-hover: #444;
+$text-color: #ffffff;
+$shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: $bg-color;
+  color: $text-color;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+
+  .game-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: $primary-color;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  .game-message {
+    font-size: 1.5rem;
+    margin: 15px 0;
+    transition: color 0.3s ease;
+  }
+
+  .game-score {
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: $secondary-color;
+  }
+
+  .combo-container {
+    display: flex;
+    gap: 15px;
+
+    .combo-button {
+      background: $button-bg;
+      padding: 25px 35px;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: $text-color;
+      box-shadow: $shadow;
+      transition: transform 0.2s ease, background 0.2s ease;
+      cursor: default;
+      position: relative;
+
+      &:hover {
+        transform: scale(1.1);
+        background: $button-hover;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        box-shadow: 0 0 15px $primary-color;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+    }
+  }
+}

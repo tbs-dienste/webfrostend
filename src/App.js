@@ -116,6 +116,7 @@ import InventurScan from './components/Administrativ/Inventur/InventurScan';
 import InventurStartForm from './components/Administrativ/Inventur/InventurStartForm';
 
 import "./App.css";
+import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -188,7 +189,8 @@ const App = () => {
               {/* Hauptdomain Routen */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/antrag" element={<AntragStellen />} />
+              <Route path="/game" element={<XboxPracticeGame />} />              <Route path="/antrag" element={<AntragStellen />} />
+
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
               <Route path="/statistiken" element={<Statistik />} />
               <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
