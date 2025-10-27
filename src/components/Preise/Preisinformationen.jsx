@@ -128,8 +128,8 @@ const Preisinformationen = ({ isAdmin }) => {
                     </td>
                     <td>{paket.ram}</td>
                     <td>{paket.cpu} CPU</td>
-                    <td>{formatPreis(paket.preis)} CHF</td>
-                    <td>{formatPreis(parseFloat(paket.preis) * 12)} CHF</td>
+                    <td>{formatPreis(paket.vk_preis)} CHF</td>
+                    <td>{formatPreis(parseFloat(paket.vk_preis) * 12)} CHF</td>
                   </tr>
                 ))
               ) : (
@@ -162,8 +162,8 @@ const Preisinformationen = ({ isAdmin }) => {
                     </td>
                     <td>{paket.maxDBSize} GB</td>
                     <td>{paket.memory} GB</td>
-                    <td>{formatPreis(paket.preis)} CHF</td>
-                    <td>{formatPreis(parseFloat(paket.preis) * 12)} CHF</td>
+                    <td>{formatPreis(paket.vk_preis)} CHF</td>
+                    <td>{formatPreis(parseFloat(paket.vk_preis) * 12)} CHF</td>
                   </tr>
                 ))
               ) : (
