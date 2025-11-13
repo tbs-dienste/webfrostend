@@ -1,0 +1,161 @@
+/* VertragsVorlageForm.scss */
+
+.vertrag-form-container {
+    padding: 30px;
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    min-height: 100vh;
+  
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #004aad;
+    }
+  
+    .message {
+      background-color: #e6f4ea;
+      color: #0b5132;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border: 1px solid #c1e3c0;
+    }
+  
+    .variable-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+  
+      .variable-btn {
+        background-color: #004aad;
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+  
+        &:hover {
+          background-color: #003080;
+        }
+      }
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+  
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+  
+        label {
+          font-weight: 600;
+          color: #004aad;
+        }
+  
+        input,
+        select,
+        textarea {
+          padding: 10px 12px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          font-size: 15px;
+          transition: border-color 0.2s;
+  
+          &:focus {
+            outline: none;
+            border-color: #004aad;
+            box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.2);
+          }
+        }
+  
+        textarea {
+          min-height: 100px;
+          resize: vertical;
+        }
+      }
+  
+      h3 {
+        font-size: 20px;
+        color: #004aad;
+        margin-bottom: 10px;
+      }
+  
+      .abschnitt {
+        background-color: #fff;
+        padding: 15px 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+  
+        .remove-btn {
+          align-self: flex-start;
+          background-color: #e63946;
+          color: #fff;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: all 0.2s;
+  
+          &:hover {
+            background-color: #b12b36;
+          }
+        }
+      }
+  
+      .add-btn {
+        background-color: #2a9d8f;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: all 0.2s;
+  
+        &:hover {
+          background-color: #21706f;
+        }
+      }
+  
+      .submit-btn {
+        background-color: #004aad;
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+  
+        &:hover {
+          background-color: #003080;
+        }
+      }
+    }
+  }
+  
+  /* Mobile Anpassungen */
+  @media (max-width: 768px) {
+    .vertrag-form-container {
+      padding: 20px;
+  
+      .variable-buttons {
+        justify-content: flex-start;
+      }
+    }
+  }
+  

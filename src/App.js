@@ -117,6 +117,7 @@ import InventurStartForm from './components/Administrativ/Inventur/InventurStart
 
 import "./App.css";
 import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
+import VertragsVorlageForm from './components/Kunden/VertragsVorlageForm';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -277,6 +278,8 @@ const App = () => {
               <Route path="/rechnungen/:id" element={<RechnungDetails />} />
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/pdfmerger" element={<PdfMerger />} />
+              <Route path="/vertragsvorlage-create" element={<VertragsVorlageForm />} />
+
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
               <Route path="/createfaq" element={<CreateFaq />} />

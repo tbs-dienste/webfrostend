@@ -65,38 +65,34 @@ const Artikelsuche = ({ onKassenModusChange }) => {
       alert("Bitte wählen Sie einen Artikel aus.");
       return;
     }
-
+  
     const selectedArticle = searchResults[selectedRow];
     const token = localStorage.getItem("token");
-
+  
     if (!token) {
       alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
       return;
     }
-
+  
     try {
       const response = await axios.post(
         "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
-        { article_number: selectedArticle.article_number },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { nummer: selectedArticle.article_number, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Artikel erfolgreich übernommen und gescannt:", response.data);
-
-      onKassenModusChange({
-        article_number: selectedArticle.article_number,
-        article_short_text: selectedArticle.article_short_text,
-        price: selectedArticle.price,
-      });
-
+  
+      console.log("Artikel erfolgreich übernommen:", response.data);
+  
+      // Sende die gescannten Produkte an die Kasse
+      onKassenModusChange(response.data.products);
+  
       navigate('/kasse');
     } catch (error) {
       console.error("Fehler beim Übernehmen des Artikels:", error);
       alert("Fehler beim Übernehmen des Artikels.");
     }
   };
+  
 
   
   const handleSearch = async () => {

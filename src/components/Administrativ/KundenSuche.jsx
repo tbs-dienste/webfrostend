@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Keyboard from '../Kasse/Keyboard'; // Importiere hier deine Tastatur-Komponente!
-import './KundenSuche.scss'; // Optional für dein Styling
-import { useNavigate } from 'react-router-dom'; // Importiere useNavigate
+import Keyboard from '../Kasse/Keyboard';
+import './KundenSuche.scss';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const KundenSuche = ({ onKassenModusChange }) => {
-  const [activeField, setActiveField] = useState('name'); // Standardmäßig ist 'name' aktiv
+  const [activeField, setActiveField] = useState('name');
   const [formData, setFormData] = useState({
     kundennr: '',
     name: '',
@@ -14,131 +14,103 @@ const KundenSuche = ({ onKassenModusChange }) => {
     strasse: '',
     telnr: '',
   });
-  const [searchResults, setSearchResults] = useState([]); // Hier werden die Suchergebnisse gespeichert
-  const [selectedRow, setSelectedRow] = useState(null); // Zustand für die markierte Zeile
-  const navigate = useNavigate(); // Um zu Kasse zu navigieren
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const navigate = useNavigate();
 
-  // Kassenmodus aktivieren
   useEffect(() => {
     onKassenModusChange(true);
-    return () => {
-      onKassenModusChange(false); // Kassenmodus zurücksetzen
-    };
+    return () => onKassenModusChange(false);
   }, [onKassenModusChange]);
 
-  // Fokus auf das 'name' Feld setzen, wenn die Komponente geladen wird
   useEffect(() => {
-    document.getElementById('name').focus();
+    document.getElementById('name')?.focus();
   }, []);
 
-  // Handhabung der Tastenanschläge
   const handleKeyPress = (key) => {
     if (!activeField) return;
-
     let value = formData[activeField];
 
-    if (key === 'DELETE') {
-      value = value.slice(0, -1); // Löscht das letzte Zeichen
-    } else if (key === 'SPACE') {
-      value += ' '; // Fügt ein Leerzeichen hinzu
-    } else if (key === 'ENTER') {
-      // Optional: Handle Enter
-    } else if (key === 'TAB') {
-      // Optional: Wechsel zum nächsten Feld
-    } else {
-      value += key; // Fügt den gedrückten Key hinzu
+    switch (key) {
+      case 'DELETE':
+        value = value.slice(0, -1);
+        break;
+      case 'SPACE':
+        value += ' ';
+        break;
+      case 'TAB':
+        focusNextField();
+        return;
+      case 'ENTER':
+        handleSearch();
+        return;
+      default:
+        value += key;
     }
 
-    setFormData({
-      ...formData,
-      [activeField]: value,
-    });
+    setFormData({ ...formData, [activeField]: value });
   };
 
-  const goToKasse = () => {
-    navigate('/kasse');
+  const focusNextField = () => {
+    const fields = ['kundennr', 'name', 'plz', 'ort', 'strasse', 'telnr'];
+    const currentIndex = fields.indexOf(activeField);
+    const nextIndex = (currentIndex + 1) % fields.length;
+    setActiveField(fields[nextIndex]);
+    document.getElementById(fields[nextIndex])?.focus();
   };
 
-  const handleÜbernehmen = async () => {
-    if (selectedRow === null) {
-      alert("Bitte wählen Sie einen Kunden aus.");
-      return;
-    }
-
-    const selectedCustomer = searchResults[selectedRow]; // Zugriff auf den ausgewählten Kunden
-    const token = localStorage.getItem("token"); // Token aus localStorage abrufen
-
-    if (!token) {
-      alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
-        { kundenkartennummer: selectedCustomer?.kundenkartennummer }, // optional chaining für sichereren Zugriff
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      console.log("Kundenkarte erfolgreich übernommen und gescannt:", response.data);
-
-      // Kassenmodus aktualisieren und zur Kasse weiterleiten
-      onKassenModusChange({
-        kundenkartennummer: selectedCustomer?.kundenkartennummer,
-        vorname: selectedCustomer?.vorname,
-        nachname: selectedCustomer?.nachname,
-        plz: selectedCustomer?.plz,
-        ort: selectedCustomer?.ort,
-      });
-
-      navigate('/kasse');
-
-    } catch (error) {
-      console.error("Fehler beim Übernehmen der Kundenkarte:", error);
-      alert("Fehler beim Übernehmen der Kundenkarte.");
-    }
-  };
+  const handleRowClick = (index) => setSelectedRow(index);
 
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/kundenkarten', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("API Antwort:", response.data); // Debugging
-
       if (response.data.status === 'success') {
-        const allResults = response.data.kundenkarten;
-
-        console.log("Gefundene Kundenkarten:", allResults); // Debugging
-
-        // Filter nach Name und PLZ
-        const filteredResults = allResults.filter((result) => {
-          const fullName = `${result.vorname} ${result.nachname}`.toLowerCase();
-          const nameMatches = fullName.includes(formData.name.toLowerCase());
-          const plzMatches = result.plz.includes(formData.plz);
-
-          console.log(`Vergleiche: '${fullName}' mit '${formData.name.toLowerCase()}' und '${result.plz}' mit '${formData.plz}'`);
-
-          return nameMatches && plzMatches;
+        const filtered = response.data.kundenkarten.filter((item) => {
+          const fullName = `${item.vorname} ${item.nachname}`.toLowerCase();
+          return fullName.includes(formData.name.toLowerCase()) &&
+                 item.plz.includes(formData.plz);
         });
-
-        console.log("Gefilterte Kundenkarten:", filteredResults); // Debugging
-
-        setSearchResults(filteredResults); // Ergebnisse setzen
+        setSearchResults(filtered);
+        setSelectedRow(null); // Auswahl zurücksetzen
       }
     } catch (error) {
       console.error('Fehler beim Abrufen der Kundenkarten:', error);
     }
   };
 
-  // Funktion zum Markieren der Zeile
-  const handleRowClick = (index) => {
-    setSelectedRow(index); // Setzt die markierte Zeile
+  const handleÜbernehmen = async () => {
+    if (selectedRow === null) return alert("Bitte wählen Sie einen Kunden aus.");
+    const selectedCustomer = searchResults[selectedRow];
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Fehler: Kein Token gefunden. Bitte erneut anmelden.");
+
+    try {
+      await axios.post(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/products/scan",
+        { kundenkartennummer: selectedCustomer.kundenkartennummer },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      onKassenModusChange({
+        kundenkartennummer: selectedCustomer.kundenkartennummer,
+        vorname: selectedCustomer.vorname,
+        nachname: selectedCustomer.nachname,
+        plz: selectedCustomer.plz,
+        ort: selectedCustomer.ort,
+      });
+
+      navigate('/kasse');
+    } catch (error) {
+      console.error("Fehler beim Übernehmen der Kundenkarte:", error);
+      alert("Fehler beim Übernehmen der Kundenkarte.");
+    }
   };
+
+  const resetFilters = () => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' });
 
   return (
     <div className="kundensuche-container">
@@ -147,25 +119,21 @@ const KundenSuche = ({ onKassenModusChange }) => {
           <div
             key={field}
             className={`input-field ${activeField === field ? 'active' : ''}`}
-            onClick={() => setActiveField(field)} // Aktiviert das Eingabefeld
+            onClick={() => setActiveField(field)}
           >
             <label>{field.toUpperCase()}</label>
             <input
-              id={field} // Setzt das ID-Attribut für jedes Eingabefeld
+              id={field}
               type="text"
-              name={field}
               value={formData[field]}
               onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-              readOnly={true} // Alle Felder sind readonly
-              autoFocus={field === 'name'} // Setzt den Fokus auf das 'name' Feld
+              readOnly
+              autoFocus={field === 'name'}
             />
           </div>
         ))}
       </div>
 
-
-
-      {/* Ergebnistabelle */}
       <div className="result-table">
         <h3>Suchergebnisse</h3>
         <table>
@@ -184,8 +152,8 @@ const KundenSuche = ({ onKassenModusChange }) => {
               searchResults.map((result, index) => (
                 <tr
                   key={index}
-                  className={selectedRow === index ? 'selected' : ''} // Zeile hervorheben, wenn sie ausgewählt ist
-                  onClick={() => handleRowClick(index)} // Markiert die Zeile beim Klicken
+                  className={selectedRow === index ? 'selected' : ''}
+                  onClick={() => handleRowClick(index)}
                 >
                   <td>{result.kundenkartennummer}</td>
                   <td>{`${result.vorname} ${result.nachname}`}</td>
@@ -203,28 +171,21 @@ const KundenSuche = ({ onKassenModusChange }) => {
           </tbody>
         </table>
       </div>
-      <Keyboard onKeyPress={handleKeyPress} /> {/* Tastatur-Komponente */}
+
+      <Keyboard onKeyPress={handleKeyPress} />
+
       <div className="bottom-buttons">
         <button disabled className="icon-button">X</button>
         <button disabled className="icon-button">X</button>
         <button disabled className="icon-button">X</button>
         <button disabled className="icon-button">X</button>
         <button disabled className="icon-button">X</button>
-        <button onClick={() => setFormData({ kundennr: '', name: '', plz: '', ort: '', strasse: '', telnr: '' })}>
-          Filter löschen
-        </button>
+        <button onClick={resetFilters}>Filter löschen</button>
         <button disabled>Detail</button>
-        <button onClick={handleSearch}>
-          Suchen
-        </button>
-        <button onClick={handleÜbernehmen}>
-          Übernehmen
-        </button>
-        <button onClick={goToKasse}>
-          Exit
-        </button>
+        <button onClick={handleSearch}>Suchen</button>
+        <button onClick={handleÜbernehmen}>Übernehmen</button>
+        <button onClick={() => navigate('/kasse')}>Exit</button>
       </div>
-
     </div>
   );
 };
