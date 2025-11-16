@@ -34,7 +34,6 @@ const Statistik = () => {
   const [activeChart, setActiveChart] = useState("tag");
   const [activeUmsatz, setActiveUmsatz] = useState("monat");
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -60,13 +59,8 @@ const Statistik = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div className="loading">Lade Statistiken...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
+  if (loading) return <div className="loading">Lade Statistiken...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   const {
     totalKunden,
@@ -76,203 +70,33 @@ const Statistik = () => {
     geschaeftKunden,
     kontakteProTag,
     kontakteProWoche,
-    kontakteProJahrMonate,
     kontakteProMonat,
     kontakteProJahr,
+    kontakteProJahrMonate,
     kundenProLand,
+    kundenProGeschlecht,
     topDienstleistungen,
     offeneAufträge,
-    kundenProGeschlecht,
     abgeschlosseneAufträge,
-    durchschnittBewertung,
-    geschlechtVerteilung,
-    umsatzProJahr,
     umsatzProMonat,
-
+    umsatzProJahr,
+    transaktionenNachMethode,
+    transaktionenNachKartenart,
+    bewertungenPerMonth,
   } = statistikData;
 
-  // Daten für das Diagramm der Transaktionen nach Zahlungsmethode
-  const transaktionenNachMethodeData = {
-    labels: ['Bar', 'Karte'],
-    datasets: [
-      {
-        label: 'Anzahl der Transaktionen',
-        data: statistikData.transaktionenNachMethode.map(item => item.anzahl_transaktionen),
-        backgroundColor: ['#FF6347', '#42A5F5'], // Rot für Bar, Blau für Karte
-      },
-      {
-        label: 'Gesamtbetrag',
-        data: statistikData.transaktionenNachMethode.map(item => parseFloat(item.gesamtbetrag)),
-        backgroundColor: ['#FFEB3B', '#66BB6A'], // Gelb für Bar, Grün für Karte
-      },
-    ],
-  };
-
-  // Daten für das Diagramm der Transaktionen nach Kartenart
-  const transaktionenNachKartenartData = {
-    labels: ['VISA', 'MasterCard', 'Maestro', 'TWINT', 'AMEX', 'Discover'],
-    datasets: [
-      {
-        label: 'Anzahl der Transaktionen',
-        data: statistikData.transaktionenNachKartenart.map(item => item.anzahl_transaktionen),
-        backgroundColor: ['#42A5F5', '#66BB6A', '#FFCA28', '#FF7043', '#AB47BC', '#8D6E63'], // Verschiedene Farben für jede Karte
-      },
-      {
-        label: 'Gesamtbetrag',
-        data: statistikData.transaktionenNachKartenart.map(item => parseFloat(item.gesamtbetrag)),
-        backgroundColor: ['#1E88E5', '#43A047', '#FFB300', '#F4511E', '#8E24AA', '#6D4C41'], // Andere Farbtöne für den Gesamtbetrag
-      },
-    ],
-  };
-
-
-
-  // Prepare data for Pie and Bar charts
-  const pieChartDataLand = {
-    labels: kundenProLand.map(item => item.land),
-    datasets: [
-      {
-        data: kundenProLand.map(item => item.anzahl),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
-  const umsatzData = {
-    monat: {
-      title: "Umsatz pro Monat",
-      labels: umsatzProMonat.map((item) => item.monat),
-      datasets: [
-        {
-          label: "Umsatz in CHF",
-          data: umsatzProMonat.map((item) => item.umsatz),
-          backgroundColor: "#36A2EB",
-          borderColor: "#36A2EB",
-          borderWidth: 1,
-        },
-      ],
-    },
-    jahr: {
-      title: "Umsatz pro Jahr",
-      labels: umsatzProJahr.map((item) => item.jahr),
-      datasets: [
-        {
-          label: "Umsatz in CHF",
-          data: umsatzProJahr.map((item) => item.umsatz),
-          backgroundColor: "#FF6384",
-          borderColor: "#FF6384",
-          borderWidth: 1,
-        },
-      ],
-    },
-  };
-
-
-  // Beispiel für die Vorbereitung der Daten für ein Pie- und Bar-Diagramm basierend auf Geschlecht
-  const pieChartDataGeschlecht = {
-    labels: kundenProGeschlecht.map(item => item.geschlecht), // Labels für jedes Geschlecht
-    datasets: [
-      {
-        data: kundenProGeschlecht.map(item => item.anzahl), // Anzahl der Kunden pro Geschlecht
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"], // Farben für jedes Segment
-        hoverOffset: 4, // Offset, wenn das Segment mit der Maus hoveriert wird
-      },
-    ],
-  };
-
-
-
-  const barChartDataTopDienstleistungen = {
-    labels: topDienstleistungen.map(item => item.dienstleistung),
-    datasets: [
-      {
-        label: "Top Dienstleistungen",
-        data: topDienstleistungen.map(item => item.anzahl),
-        backgroundColor: "#36A2EB",
-        borderColor: "#36A2EB",
-        borderWidth: 1,
-      },
-    ],
-  };
+  // === Charts vorbereiten ===
 
   const chartData = {
     tag: {
       title: "Kontakte pro Tag",
-      labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),  // Stunden von 0 bis 23
+      labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
       datasets: [
         {
           label: "Private Kunden",
           data: Array.from({ length: 24 }, (_, i) => {
-            const data = kontakteProTag.find(item => item.stunde === i && item.art === "privat");
-            return data ? data.anzahl : 0; // Anzahl der privaten Kontakte für diese Stunde
-          }),
-          fill: false,
-          borderColor: "rgba(75, 192, 192, 1)",
-          tension: 1,
-          borderWidth: 2,
-        },
-        {
-          label: "Geschäftliche Kunden",
-          data: Array.from({ length: 24 }, (_, i) => {
-            const data = kontakteProTag.find(item => item.stunde === i && item.art === "geschäft");
-            return data ? data.anzahl : 0; // Anzahl der geschäftlichen Kontakte für diese Stunde
-          }),
-          fill: false,
-          borderColor: "rgba(255, 99, 132, 1)",
-          tension: 1,
-          borderWidth: 2,
-        },
-      ],
-    },
-    woche: {
-      title: "Kontakte pro Woche",
-      labels: kontakteProWoche.map((item) => {
-        const wochenTageDeutsch = {
-          "Monday": "Montag",
-          "Tuesday": "Dienstag",
-          "Wednesday": "Mittwoch",
-          "Thursday": "Donnerstag",
-          "Friday": "Freitag",
-          "Saturday": "Samstag",
-          "Sunday": "Sonntag",
-        };
-        return wochenTageDeutsch[item.wochentag];  // Wochentage auf Deutsch
-      }),
-      datasets: [
-        {
-          label: "Private Kunden",
-          data: kontakteProWoche.map((item) => item.privat),  // Privatwerte
-          fill: false,
-          borderColor: "rgba(75, 192, 192, 1)",
-          tension: 1,
-          borderWidth: 2,
-        },
-        {
-          label: "Geschäftliche Kunden",
-          data: kontakteProWoche.map((item) => item.geschaeft),  // Geschäftswerte
-          fill: false,
-          borderColor: "rgba(255, 99, 132, 1)",
-          tension: 1,
-          borderWidth: 2,
-        },
-      ],
-    },
-
-
-    monat: {
-      title: "Kontakte pro Monat",
-      labels: Array.from({ length: 31 }, (_, i) => {
-        const date = new Date(2024, 10, i + 1); // Annahme: November 2024
-        return date.getDate();
-      }),
-      datasets: [
-        {
-          label: "Private Kunden",
-          data: Array.from({ length: 31 }, (_, i) => {
-            const date = new Date(2024, 10, i + 1);
-            const data = kontakteProMonat.find(item => new Date(item.datum).getDate() === date.getDate() && item.art === "privat");
-            return data ? data.anzahl : 0;
+            const data = kontakteProTag.find((item) => item.stunde === i);
+            return data ? data.privat : 0;
           }),
           fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
@@ -281,11 +105,65 @@ const Statistik = () => {
         },
         {
           label: "Geschäftliche Kunden",
-          data: Array.from({ length: 31 }, (_, i) => {
-            const date = new Date(2024, 10, i + 1);
-            const data = kontakteProMonat.find(item => new Date(item.datum).getDate() === date.getDate() && item.art === "geschäft");
-            return data ? data.anzahl : 0;
+          data: Array.from({ length: 24 }, (_, i) => {
+            const data = kontakteProTag.find((item) => item.stunde === i);
+            return data ? data.geschaeft : 0;
           }),
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
+    },
+    woche: {
+      title: "Kontakte pro Woche",
+      labels: kontakteProWoche.map((item) => {
+        const wochenTageDeutsch = {
+          Monday: "Montag",
+          Tuesday: "Dienstag",
+          Wednesday: "Mittwoch",
+          Thursday: "Donnerstag",
+          Friday: "Freitag",
+          Saturday: "Samstag",
+          Sunday: "Sonntag",
+        };
+        return wochenTageDeutsch[item.wochentag];
+      }),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProWoche.map((item) => item.privat),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProWoche.map((item) => item.geschaeft),
+          fill: false,
+          borderColor: "rgba(255, 99, 132, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+      ],
+    },
+    monat: {
+      title: "Kontakte pro Monat",
+      labels: kontakteProMonat.map((item) => new Date(item.datum).getDate()),
+      datasets: [
+        {
+          label: "Private Kunden",
+          data: kontakteProMonat.map((item) => item.privat),
+          fill: false,
+          borderColor: "rgba(75, 192, 192, 1)",
+          tension: 0.1,
+          borderWidth: 2,
+        },
+        {
+          label: "Geschäftliche Kunden",
+          data: kontakteProMonat.map((item) => item.geschaeft),
           fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
@@ -295,11 +173,11 @@ const Statistik = () => {
     },
     monate: {
       title: "Kontakte pro Monat im Jahr",
-      labels: kontakteProJahrMonate.map((item) => item.monat), // Monate als Labels
+      labels: kontakteProJahrMonate.map((item) => item.monat),
       datasets: [
         {
           label: "Private Kunden",
-          data: kontakteProJahrMonate.map((item) => item.privat), // Private Daten
+          data: kontakteProJahrMonate.map((item) => item.privat),
           fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
@@ -307,7 +185,7 @@ const Statistik = () => {
         },
         {
           label: "Geschäftliche Kunden",
-          data: kontakteProJahrMonate.map((item) => item.geschaeft), // Geschäftsdaten
+          data: kontakteProJahrMonate.map((item) => item.geschaeft),
           fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
@@ -315,14 +193,16 @@ const Statistik = () => {
         },
       ],
     },
-
     jahr: {
       title: "Kontakte pro Jahr",
-      labels: kontakteProJahr.map((item) => item.jahr),
+      labels: [...new Set(kontakteProJahr.map((item) => item.jahr))],
       datasets: [
         {
           label: "Private Kunden",
-          data: kontakteProJahr.filter(item => item.art === "privat").map((item) => item.anzahl),
+          data: [...new Set(kontakteProJahr.map((item) => item.jahr))].map(
+            (jahr) =>
+              kontakteProJahr.find((item) => item.jahr === jahr && item.art === "privat")?.anzahl || 0
+          ),
           fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
@@ -330,11 +210,104 @@ const Statistik = () => {
         },
         {
           label: "Geschäftliche Kunden",
-          data: kontakteProJahr.filter(item => item.art === "geschäft").map((item) => item.anzahl),
+          data: [...new Set(kontakteProJahr.map((item) => item.jahr))].map(
+            (jahr) =>
+              kontakteProJahr.find((item) => item.jahr === jahr && item.art === "geschäft")?.anzahl || 0
+          ),
           fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
+        },
+      ],
+    },
+  };
+
+  const pieChartDataLand = {
+    labels: kundenProLand.map((item) => item.land),
+    datasets: [
+      {
+        data: kundenProLand.map((item) => item.anzahl),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const pieChartDataGeschlecht = {
+    labels: kundenProGeschlecht.map((item) => item.geschlecht),
+    datasets: [
+      {
+        data: kundenProGeschlecht.map((item) => item.anzahl),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40"],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const barChartDataTopDienstleistungen = {
+    labels: topDienstleistungen.map((item) => item.title),
+    datasets: [
+      {
+        label: "Top Dienstleistungen",
+        data: topDienstleistungen.map((item) => item.anzahl),
+        backgroundColor: "#36A2EB",
+        borderColor: "#36A2EB",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const transaktionenNachMethodeData = {
+    labels: transaktionenNachMethode.map((item) => item.method),
+    datasets: [
+      {
+        label: "Anzahl Transaktionen",
+        data: transaktionenNachMethode.map((item) => item.anzahl_transaktionen),
+        backgroundColor: ["#FF6347", "#42A5F5"],
+      },
+      {
+        label: "Gesamtbetrag",
+        data: transaktionenNachMethode.map((item) => parseFloat(item.gesamtbetrag)),
+        backgroundColor: ["#FFEB3B", "#66BB6A"],
+      },
+    ],
+  };
+
+  const transaktionenNachKartenartData = {
+    labels: transaktionenNachKartenart.map((item) => item.cardType),
+    datasets: [
+      {
+        label: "Anzahl Transaktionen",
+        data: transaktionenNachKartenart.map((item) => item.anzahl_transaktionen),
+        backgroundColor: ["#42A5F5", "#66BB6A", "#FFCA28", "#FF7043", "#AB47BC", "#8D6E63"],
+      },
+      {
+        label: "Gesamtbetrag",
+        data: transaktionenNachKartenart.map((item) => parseFloat(item.gesamtbetrag)),
+        backgroundColor: ["#1E88E5", "#43A047", "#FFB300", "#F4511E", "#8E24AA", "#6D4C41"],
+      },
+    ],
+  };
+
+  const umsatzData = {
+    monat: {
+      labels: umsatzProMonat.map((item) => item.monat),
+      datasets: [
+        {
+          label: "Umsatz in CHF",
+          data: umsatzProMonat.map((item) => item.umsatz),
+          backgroundColor: "#36A2EB",
+        },
+      ],
+    },
+    jahr: {
+      labels: umsatzProJahr.map((item) => item.jahr),
+      datasets: [
+        {
+          label: "Umsatz in CHF",
+          data: umsatzProJahr.map((item) => item.umsatz),
+          backgroundColor: "#FF6384",
         },
       ],
     },
@@ -346,7 +319,7 @@ const Statistik = () => {
     <div className="statistik-container">
       <h2 className="statistik-title">Statistik Übersicht</h2>
 
-      {/* Übersicht der wichtigsten Statistiken */}
+      {/* Übersicht */}
       <div className="statistik-summary">
         <div className="statistik-item">
           <h3>Gesamtzahl der Kunden</h3>
@@ -370,132 +343,88 @@ const Statistik = () => {
         </div>
       </div>
 
-      {/* Auswahl Buttons für die Diagramme */}
+      {/* Chart-Auswahl */}
       <div className="chart-buttons">
-        <button
-          className={activeChart === "tag" ? "active" : ""}
-          onClick={() => setActiveChart("tag")}
-        >
-          Kontakte pro Tag
-        </button>
-        <button
-          className={activeChart === "woche" ? "active" : ""}
-          onClick={() => setActiveChart("woche")}
-        >
-          Kontakte pro Woche
-        </button>
-        <button
-          className={activeChart === "monat" ? "active" : ""}
-          onClick={() => setActiveChart("monat")}
-        >
-          Kontakte pro Monat
-        </button>
-        <button
-          className={activeChart === "monate" ? "active" : ""}
-          onClick={() => setActiveChart("monate")}
-        >
-          Kontakte pro Monat im Jahr
-        </button>
-        <button
-          className={activeChart === "jahr" ? "active" : ""}
-          onClick={() => setActiveChart("jahr")}
-        >
-          Kontakte pro Jahr
-        </button>
+        {["tag", "woche", "monat", "monate", "jahr"].map((c) => (
+          <button
+            key={c}
+            className={activeChart === c ? "active" : ""}
+            onClick={() => setActiveChart(c)}
+          >
+            {c.charAt(0).toUpperCase() + c.slice(1)}
+          </button>
+        ))}
       </div>
 
-      {/* Chart Anzeige */}
       <div className="chart-container">
         <h3>{currentChart.title}</h3>
         <Line data={currentChart} />
       </div>
 
-      {/* Pie Chart für Kunden nach Land */}
       <div className="chart-container">
         <h3>Verteilung der Kunden nach Land</h3>
         <Pie data={pieChartDataLand} />
       </div>
 
-      {/* Pie Chart für Geschlecht */}
       <div className="chart-container">
         <h3>Verteilung nach Geschlecht</h3>
         <Pie data={pieChartDataGeschlecht} />
       </div>
 
-      {/* Bar Chart für Top Dienstleistungen */}
       <div className="chart-container">
         <h3>Top Dienstleistungen</h3>
         <Bar data={barChartDataTopDienstleistungen} />
       </div>
 
       <div className="umsatz-statistik-container">
-        <h2 className="umsatz-title">Umsatzstatistik</h2>
+        <h2>Umsatzstatistik</h2>
         <div className="chart-buttons">
-          <button
-            className={activeUmsatz === "monat" ? "active" : ""}
-            onClick={() => setActiveUmsatz("monat")}
-          >
-            Monat
-          </button>
-          <button
-            className={activeUmsatz === "jahr" ? "active" : ""}
-            onClick={() => setActiveUmsatz("jahr")}
-          >
-            Jahr
-          </button>
+          {["monat", "jahr"].map((u) => (
+            <button
+              key={u}
+              className={activeUmsatz === u ? "active" : ""}
+              onClick={() => setActiveUmsatz(u)}
+            >
+              {u.charAt(0).toUpperCase() + u.slice(1)}
+            </button>
+          ))}
         </div>
         <div className="chart-container">
           <Bar data={umsatzData[activeUmsatz]} options={{ responsive: true }} />
         </div>
       </div>
 
-      <div>
+      <div className="chart-container">
         <h2>Transaktionen nach Zahlungsmethode</h2>
-        <div style={{ width: '60%', margin: 'auto' }}>
-          <Bar
-            data={transaktionenNachMethodeData}
-            options={{
-              responsive: true,
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Anzahl der Transaktionen & Gesamtbetrag nach Zahlungsmethode',
-                },
-              },
-              scales: {
-                x: {
-                  title: {
-                    display: true,
-                    text: 'Zahlungsmethode',
-                  },
-                },
-                y: {
-                  title: {
-                    display: true,
-                    text: 'Wert',
-                  },
-                },
-              },
-            }}
-          />
-        </div>
+        <Bar
+          data={transaktionenNachMethodeData}
+          options={{ responsive: true }}
+        />
+      </div>
 
+      <div className="chart-container">
         <h2>Transaktionen nach Kartenart</h2>
-        <div style={{ width: '60%', margin: 'auto' }}>
-          <Pie
-            data={transaktionenNachKartenartData}
-            options={{
-              responsive: true,
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Anzahl der Transaktionen & Gesamtbetrag nach Kartenart',
-                },
+        <Pie data={transaktionenNachKartenartData} options={{ responsive: true }} />
+      </div>
+
+      <div className="chart-container">
+        <h2>Durchschnittliche Bewertungen pro Monat</h2>
+        <Line
+          data={{
+            labels: bewertungenPerMonth.labels,
+            datasets: [
+              {
+                label: "Durchschnitt",
+                data: bewertungenPerMonth.data,
+                fill: false,
+                borderColor: "rgba(75, 192, 192, 1)",
+                tension: 0.1,
+                borderWidth: 2,
               },
-            }}
-          />
-        </div>
-      </div>;
+            ],
+          }}
+        />
+      </div>
     </div>
   );
 };
