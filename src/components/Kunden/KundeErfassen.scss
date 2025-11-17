@@ -1,111 +1,157 @@
-$primary: #0052cc;
-$secondary: #007bff;
-$accent: #28a745;
-$bg: #f6f8fa;
-$text: #222;
-$input-bg: #fff;
-$input-border: #d1d5db;
-$shadow: rgba(0,0,0,0.08);
-$font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* KundeErfassen.scss */
 
+/* Grundlegende Styles */
 .kunde-erfassen {
-  background: $bg;
-  min-height: 100vh;
-  padding: 50px 80px;
-  font-family: $font;
-  color: $text;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  padding: 40px 20px;
+  background: #f7f8fa;
 
   h2 {
+    font-size: 2rem;
+    color: #004aad;
     text-align: center;
-    font-size: 2.8rem;
-    margin-bottom: 50px;
-    color: $primary;
+    margin-bottom: 30px;
+    font-weight: 700;
   }
 
   .formular {
     background: #fff;
-    padding: 35px 40px;
     border-radius: 12px;
-    box-shadow: 0 8px 20px $shadow;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
 
     .flex-row {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
-    }
 
-    .input-gruppe {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 250px;
-      gap: 6px;
+      .input-gruppe {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
 
-      label { font-weight: 600; margin-bottom: 4px; }
-      input, select, textarea {
-        padding: 14px 18px;
-        font-size: 1rem;
-        border: 1.5px solid $input-border;
-        border-radius: 8px;
-        background: $input-bg;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        label {
+          font-weight: 600;
+          margin-bottom: 6px;
+          color: #004aad;
+        }
 
-        &:focus {
-          border-color: $primary;
-          box-shadow: 0 0 8px rgba($primary,0.2);
-          outline: none;
+        input, select, textarea {
+          padding: 10px 14px;
+          border-radius: 8px;
+          border: 1px solid #ccd0d5;
+          font-size: 1rem;
+          transition: all 0.2s ease-in-out;
+
+          &:focus {
+            outline: none;
+            border-color: #004aad;
+            box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+          }
+        }
+
+        textarea {
+          min-height: 60px;
+          resize: vertical;
         }
       }
-
-      textarea { min-height: 90px; resize: vertical; }
     }
 
     .radio-gruppe {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      flex: 1;
+      span {
+        font-weight: 600;
+        color: #004aad;
+        margin-bottom: 5px;
+      }
 
-      span { font-weight: 600; margin-bottom: 6px; }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        color: #333;
 
-      label { display: flex; align-items: center; gap: 6px; font-weight: 500;
-        input[type="radio"] { accent-color: $primary; }
+        input {
+          accent-color: #004aad;
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .adresse-wrapper {
+      position: relative;
+
+      .adress-vorschlaege {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ccd0d5;
+        border-radius: 8px;
+        max-height: 180px;
+        overflow-y: auto;
+        z-index: 10;
+        padding: 0;
+        margin: 4px 0 0 0;
+        list-style: none;
+
+        li {
+          padding: 10px;
+          cursor: pointer;
+          font-size: 0.95rem;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #f0f4ff;
+          }
+        }
       }
     }
 
     .dienstleistungen-bereich {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 15px;
 
-      label { font-weight: 700; font-size: 1.2rem; color: $secondary; }
+      label {
+        font-weight: 600;
+        color: #004aad;
+        margin-bottom: 5px;
+      }
 
       .dienstleistung-gruppe {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
+
         select, textarea {
-          border-radius: 6px;
-          border: 1.5px solid $input-border;
-          padding: 12px 14px;
-          font-size: 1rem;
-          &:focus { border-color: $primary; box-shadow: 0 0 6px rgba($primary,0.2); }
+          width: 100%;
         }
-        textarea { min-height: 80px; resize: vertical; }
       }
 
       .add-dienstleistung-button {
         align-self: flex-start;
-        background: $accent;
+        padding: 8px 16px;
+        background: #004aad;
         color: #fff;
+        border: none;
+        border-radius: 8px;
         font-weight: 600;
-        padding: 10px 22px;
-        border-radius: 6px;
         cursor: pointer;
-        transition: 0.25s;
-        &:hover { background: darken($accent, 10%); }
+        transition: all 0.2s;
+
+        &:hover {
+          background: #003680;
+        }
       }
     }
 
@@ -113,72 +159,51 @@ $font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       align-items: center;
       gap: 10px;
-      input[type="checkbox"] { width: 20px; height: 20px; accent-color: $primary; }
-      label { font-size: 0.95rem; a { color: $primary; &:hover { text-decoration: underline; } } }
+      font-size: 0.95rem;
+      color: #333;
+
+      a {
+        color: #004aad;
+        text-decoration: underline;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #003680;
+        }
+      }
+
+      input[type='checkbox'] {
+        accent-color: #004aad;
+        transform: scale(1.1);
+      }
     }
 
     .submit-button {
-      background: $primary;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #004aad, #0066ff);
       color: #fff;
-      font-size: 1.25rem;
-      font-weight: 700;
-      border-radius: 8px;
-      padding: 16px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
-      letter-spacing: 0.03em;
-      transition: 0.3s;
-      &:hover { background: darken($primary, 12%); }
-    }
-  }
-  .adresse-wrapper {
-    position: relative;
-  
-    .adress-vorschlaege {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      background: #fff;
-      border: 1.5px solid $input-border;
-      border-radius: 8px;
-      box-shadow: 0 6px 14px $shadow;
-      list-style: none;
-      max-height: 200px;   // Höhe für Scrollen
-      overflow-y: auto;    // vertikales Scrollen aktivieren
-      margin-top: 4px;
-      padding: 0;
-      z-index: 999;
-  
-      li {
-        padding: 10px 14px;
-        cursor: pointer;
-        font-size: 0.95rem;
-        transition: background 0.2s ease;
-  
-        &:hover {
-          background: lighten($secondary, 45%);
-          color: $primary;
-        }
-  
-        &:not(:last-child) {
-          border-bottom: 1px solid #eee;
-        }
+      transition: all 0.2s;
+
+      &:hover {
+        background: linear-gradient(135deg, #003680, #0055cc);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     }
   }
-  
-  
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .kunde-erfassen {
-    padding: 30px 25px;
-    .formular {
-      padding: 25px 20px;
-      gap: 18px;
-      .flex-row { flex-direction: column; gap: 15px; }
-      .submit-button { font-size: 1.1rem; padding: 14px 0; }
-    }
+@media (max-width: 900px) {
+  .formular .flex-row {
+    flex-direction: column;
   }
 }
