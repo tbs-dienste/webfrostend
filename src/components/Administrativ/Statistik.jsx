@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Line, Pie, Bar } from "react-chartjs-2";
 import axios from "axios";
 import {
@@ -13,6 +13,8 @@ import {
   ArcElement,
   BarElement,
 } from "chart.js";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import "./Statistik.scss";
 
 ChartJS.register(
@@ -33,6 +35,7 @@ const Statistik = () => {
   const [error, setError] = useState(null);
   const [activeChart, setActiveChart] = useState("tag");
   const [activeUmsatz, setActiveUmsatz] = useState("monat");
+  const sectionsRef = useRef({}); // Ref für jede Sektion
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,11 +44,7 @@ const Statistik = () => {
         const token = localStorage.getItem("token");
         const response = await axios.get(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/statistik",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setStatistikData(response.data.data);
       } catch (err) {
@@ -55,7 +54,6 @@ const Statistik = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -86,7 +84,6 @@ const Statistik = () => {
   } = statistikData;
 
   // === Charts vorbereiten ===
-
   const chartData = {
     tag: {
       title: "Kontakte pro Tag",
@@ -98,7 +95,6 @@ const Statistik = () => {
             const data = kontakteProTag.find((item) => item.stunde === i);
             return data ? data.privat : 0;
           }),
-          fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -109,7 +105,6 @@ const Statistik = () => {
             const data = kontakteProTag.find((item) => item.stunde === i);
             return data ? data.geschaeft : 0;
           }),
-          fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -134,7 +129,6 @@ const Statistik = () => {
         {
           label: "Private Kunden",
           data: kontakteProWoche.map((item) => item.privat),
-          fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -142,7 +136,6 @@ const Statistik = () => {
         {
           label: "Geschäftliche Kunden",
           data: kontakteProWoche.map((item) => item.geschaeft),
-          fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -150,13 +143,12 @@ const Statistik = () => {
       ],
     },
     monat: {
-      title: "Kontakte pro Monat",
+      title: "Kontakte pro Tag im aktuellen Monat",
       labels: kontakteProMonat.map((item) => new Date(item.datum).getDate()),
       datasets: [
         {
           label: "Private Kunden",
           data: kontakteProMonat.map((item) => item.privat),
-          fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -164,7 +156,6 @@ const Statistik = () => {
         {
           label: "Geschäftliche Kunden",
           data: kontakteProMonat.map((item) => item.geschaeft),
-          fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -172,13 +163,12 @@ const Statistik = () => {
       ],
     },
     monate: {
-      title: "Kontakte pro Monat im Jahr",
+      title: "Kontakte pro Monat (letzte 12 Monate)",
       labels: kontakteProJahrMonate.map((item) => item.monat),
       datasets: [
         {
           label: "Private Kunden",
           data: kontakteProJahrMonate.map((item) => item.privat),
-          fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -186,7 +176,6 @@ const Statistik = () => {
         {
           label: "Geschäftliche Kunden",
           data: kontakteProJahrMonate.map((item) => item.geschaeft),
-          fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -203,7 +192,6 @@ const Statistik = () => {
             (jahr) =>
               kontakteProJahr.find((item) => item.jahr === jahr && item.art === "privat")?.anzahl || 0
           ),
-          fill: false,
           borderColor: "rgba(75, 192, 192, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -214,7 +202,6 @@ const Statistik = () => {
             (jahr) =>
               kontakteProJahr.find((item) => item.jahr === jahr && item.art === "geschäft")?.anzahl || 0
           ),
-          fill: false,
           borderColor: "rgba(255, 99, 132, 1)",
           tension: 0.1,
           borderWidth: 2,
@@ -315,35 +302,52 @@ const Statistik = () => {
 
   const currentChart = chartData[activeChart];
 
+  // === PDF Export Mehrseiten ===
+  const exportPDF = async () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const sectionKeys = Object.keys(sectionsRef.current);
+
+    for (let i = 0; i < sectionKeys.length; i++) {
+      const section = sectionsRef.current[sectionKeys[i]];
+      if (!section) continue;
+
+      const canvas = await html2canvas(section, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    }
+
+    pdf.save("Statistik_Report.pdf");
+  };
+
   return (
     <div className="statistik-container">
       <h2 className="statistik-title">Statistik Übersicht</h2>
+      <button className="export-pdf-btn" onClick={exportPDF}>
+        📄 PDF Exportieren
+      </button>
 
       {/* Übersicht */}
-      <div className="statistik-summary">
-        <div className="statistik-item">
-          <h3>Gesamtzahl der Kunden</h3>
-          <p>{totalKunden}</p>
-        </div>
-        <div className="statistik-item">
-          <h3>Archivierte Kunden</h3>
-          <p>{archivierteKunden}</p>
-        </div>
-        <div className="statistik-item">
-          <h3>Aktive Kunden</h3>
-          <p>{aktiveKunden}</p>
-        </div>
-        <div className="statistik-item">
-          <h3>Private Kunden</h3>
-          <p>{privatKunden}</p>
-        </div>
-        <div className="statistik-item">
-          <h3>Geschäftliche Kunden</h3>
-          <p>{geschaeftKunden}</p>
-        </div>
+      <div className="statistik-summary" ref={(el) => (sectionsRef.current["uebersicht"] = el)}>
+        {[ 
+          { title: "Gesamtzahl der Kunden", value: totalKunden },
+          { title: "Archivierte Kunden", value: archivierteKunden },
+          { title: "Aktive Kunden", value: aktiveKunden },
+          { title: "Private Kunden", value: privatKunden },
+          { title: "Geschäftliche Kunden", value: geschaeftKunden }
+        ].map((item, idx) => (
+          <div key={idx} className="statistik-item">
+            <h3>{item.title}</h3>
+            <p>{item.value}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Chart-Auswahl */}
+      {/* Charts */}
       <div className="chart-buttons">
         {["tag", "woche", "monat", "monate", "jahr"].map((c) => (
           <button
@@ -356,27 +360,28 @@ const Statistik = () => {
         ))}
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["chart_zeit"] = el)}>
         <h3>{currentChart.title}</h3>
         <Line data={currentChart} />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["kunden_land"] = el)}>
         <h3>Verteilung der Kunden nach Land</h3>
         <Pie data={pieChartDataLand} />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["kunden_geschlecht"] = el)}>
         <h3>Verteilung nach Geschlecht</h3>
         <Pie data={pieChartDataGeschlecht} />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["top_dienstleistungen"] = el)}>
         <h3>Top Dienstleistungen</h3>
         <Bar data={barChartDataTopDienstleistungen} />
       </div>
 
-      <div className="umsatz-statistik-container">
+      {/* Umsatz */}
+      <div className="umsatz-statistik-container" ref={(el) => (sectionsRef.current["umsatz"] = el)}>
         <h2>Umsatzstatistik</h2>
         <div className="chart-buttons">
           {["monat", "jahr"].map((u) => (
@@ -394,20 +399,17 @@ const Statistik = () => {
         </div>
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["transaktionen_methode"] = el)}>
         <h2>Transaktionen nach Zahlungsmethode</h2>
-        <Bar
-          data={transaktionenNachMethodeData}
-          options={{ responsive: true }}
-        />
+        <Bar data={transaktionenNachMethodeData} options={{ responsive: true }} />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["transaktionen_kartenart"] = el)}>
         <h2>Transaktionen nach Kartenart</h2>
         <Pie data={transaktionenNachKartenartData} options={{ responsive: true }} />
       </div>
 
-      <div className="chart-container">
+      <div className="chart-container" ref={(el) => (sectionsRef.current["bewertungen"] = el)}>
         <h2>Durchschnittliche Bewertungen pro Monat</h2>
         <Line
           data={{
@@ -416,8 +418,8 @@ const Statistik = () => {
               {
                 label: "Durchschnitt",
                 data: bewertungenPerMonth.data,
-                fill: false,
                 borderColor: "rgba(75, 192, 192, 1)",
+                fill: false,
                 tension: 0.1,
                 borderWidth: 2,
               },
