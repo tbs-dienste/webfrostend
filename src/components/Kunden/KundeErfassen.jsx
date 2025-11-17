@@ -26,9 +26,10 @@ const KundeErfassen = () => {
   const [datenschutzAkzeptiert, setDatenschutzAkzeptiert] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    // Lade Dienstleistungen vom Backend
     const fetchDienstleistungen = async () => {
       try {
         const response = await axios.get(
@@ -43,6 +44,7 @@ const KundeErfassen = () => {
   }, []);
 
   useEffect(() => {
+    // Klick außerhalb schließt Vorschläge
     const handleClickOutside = (e) => {
       if (!e.target.closest('.adresse-wrapper')) setShowSuggestions(false);
     };
@@ -117,8 +119,8 @@ const KundeErfassen = () => {
   };
 
   const handleKundeErfassen = async () => {
-    if (isSubmitting) return; // bereits beim Absenden → ignorieren
-  
+    if (isSubmitting) return;
+
     if (
       !kunde.vorname ||
       !kunde.nachname ||
@@ -131,27 +133,30 @@ const KundeErfassen = () => {
       alert('Bitte alle Pflichtfelder ausfüllen und AGB akzeptieren.');
       return;
     }
-  
-    setIsSubmitting(true); // Absenden blockieren
-  
+
+    setIsSubmitting(true);
+
     try {
       const ipResponse = await axios.get('https://api.ipify.org?format=json');
       const ip_adresse = ipResponse.data.ip;
-  
+
       const newKunde = {
         ...kunde,
         ip_adresse,
         dienstleistungen: ausgewaehlteDienstleistungen
-          .filter((dlId, i) => dlId && beschreibungen[i])
-          .map((dlId, i) => ({ dienstleistungsId: parseInt(dlId), beschreibung: beschreibungen[i] })),
+          .filter((dlId, i) => dlId)
+          .map((dlId, i) => ({
+            dienstleistungsId: parseInt(dlId),
+            beschreibung: beschreibungen[i] || '',
+          })),
       };
-  
+
       await axios.post('https://tbsdigitalsolutionsbackend.onrender.com/api/kunden', newKunde);
       window.location.href = '/dankesnachricht';
     } catch (error) {
       console.error(error);
       alert('Fehler beim Erfassen der Kundendaten.');
-      setIsSubmitting(false); // bei Fehler wieder aktivieren
+      setIsSubmitting(false);
     }
   };
 
@@ -159,7 +164,6 @@ const KundeErfassen = () => {
     <div className="kunde-erfassen">
       <h2>Kundendaten erfassen</h2>
       <div className="formular">
-
         {/* Kundentyp & Geschlecht */}
         <div className="flex-row">
           <div className="radio-gruppe">
@@ -200,55 +204,39 @@ const KundeErfassen = () => {
         </div>
 
         <div className="flex-row adresse-wrapper">
-  <div className="input-gruppe" style={{ flex: 1, position: 'relative' }}>
-    <label>Straße</label>
-    <input
-      type="text"
-      name="strasse"
-      value={kunde.strasse}
-      onChange={handleInputChange}
-      autoComplete="off"
-    />
-    {showSuggestions && addressSuggestions.length > 0 && (
-      <ul
-        className="adress-vorschlaege active"
-        onMouseDown={(e) => e.preventDefault()} // verhindert das sofortige Schließen beim Scrollen
-      >
-        {Array.from(new Set(addressSuggestions.map(a => a.display_name))).map((s, i) => {
-          const addr = addressSuggestions.find(a => a.display_name === s).address;
-          return (
-            <li
-              key={i}
-              onClick={() =>
-                handleSelectAddress(addressSuggestions.find(a => a.display_name === s))
-              }
-            >
-              {addr.road || ''} {addr.house_number || ''}, {addr.postcode || ''}{' '}
-              {addr.city || addr.town || addr.village || ''}
-            </li>
-          );
-        })}
-      </ul>
-    )}
-  </div>
-  <div className="input-gruppe">
-    <label>Hausnummer</label>
-    <input type="text" name="hausnummer" value={kunde.hausnummer} onChange={handleInputChange} />
-  </div>
-</div>
-<div className="flex-row">
+          <div className="input-gruppe" style={{ flex: 1, position: 'relative' }}>
+            <label>Straße</label>
+            <input type="text" name="strasse" value={kunde.strasse} onChange={handleInputChange} autoComplete="off" />
+            {showSuggestions && addressSuggestions.length > 0 && (
+              <ul className="adress-vorschlaege active">
+                {Array.from(new Set(addressSuggestions.map(a => a.display_name))).map((s, i) => {
+                  const addr = addressSuggestions.find(a => a.display_name === s).address;
+                  return (
+                    <li key={i} onClick={() => handleSelectAddress(addressSuggestions.find(a => a.display_name === s))}>
+                      {addr.road || ''} {addr.house_number || ''}, {addr.postcode || ''} {addr.city || addr.town || addr.village || ''}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+          <div className="input-gruppe">
+            <label>Hausnummer</label>
+            <input type="text" name="hausnummer" value={kunde.hausnummer} onChange={handleInputChange} />
+          </div>
+        </div>
+
+        <div className="flex-row">
           <div className="input-gruppe"><label>Postleitzahl</label><input type="text" name="postleitzahl" value={kunde.postleitzahl} onChange={handleInputChange} /></div>
           <div className="input-gruppe"><label>Ort</label><input type="text" name="ort" value={kunde.ort} onChange={handleInputChange} /></div>
           <div className="input-gruppe"><label>Land</label><input type="text" name="land" value={kunde.land} onChange={handleInputChange} /></div>
         </div>
-
 
         <div className="flex-row">
           <div className="input-gruppe"><label>Email</label><input type="text" name="email" value={kunde.email} onChange={handleInputChange} /></div>
           <div className="input-gruppe"><label>Mobil</label><input type="text" name="mobil" value={kunde.mobil} onChange={handleInputChange} /></div>
         </div>
 
-    
         {/* Dienstleistungen */}
         <div className="dienstleistungen-bereich">
           <label>Dienstleistungen</label>
@@ -271,13 +259,9 @@ const KundeErfassen = () => {
         </div>
 
         {/* Submit */}
-        <button 
-  className="submit-button" 
-  onClick={handleKundeErfassen} 
-  disabled={isSubmitting} // Button deaktivieren während Absenden
->
-  {isSubmitting ? 'Sende...' : 'Kontakt aufnehmen'}
-</button>
+        <button className="submit-button" onClick={handleKundeErfassen} disabled={isSubmitting}>
+          {isSubmitting ? 'Sende...' : 'Kontakt aufnehmen'}
+        </button>
       </div>
     </div>
   );
