@@ -255,7 +255,7 @@ const App = () => {
               <Route path="/gutscheine-liste" element={<AlleGutscheine />} />
               <Route path="/gutschein" element={<GutscheinErstellung />} />
               <Route path="/flyer" element={<Flyer />} />
-              <Route path="/sign" element={<SignComponent />} />
+              <Route path="/sign/:kundennummer" element={<SignComponent />} />
               <Route path="/team" element={<Team />} />
               <Route path="/videocall" element={<VideoCall />} />
               <Route path="/aktionen" element={<AktionenListe />} />
