@@ -18,7 +18,7 @@ const VertragsVorlageForm = () => {
   const [activeField, setActiveField] = useState({ type: null, index: null, paraIndex: null, position: 0 });
 
   useEffect(() => {
-    axios.get("/api/dienstleistung")
+    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
       .then(res => setDienstleistungen(res.data.data))
       .catch(err => console.error(err));
   }, []);
@@ -103,7 +103,7 @@ const VertragsVorlageForm = () => {
         }))
       };
 
-      const res = await axios.post("/api/vertrag/vorlagen", payload);
+      const res = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/vertrag/vorlagen", payload);
       setMessage(res.data.message);
 
       setTitel("");
