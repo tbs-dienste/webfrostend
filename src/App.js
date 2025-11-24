@@ -117,7 +117,7 @@ import InventurStartForm from './components/Administrativ/Inventur/InventurStart
 
 import "./App.css";
 import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
-import VertragsVorlageForm from './components/Kunden/VertragsVorlageForm';
+import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);

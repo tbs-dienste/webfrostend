@@ -18,17 +18,15 @@ const VertragsVorlageForm = () => {
   const [activeField, setActiveField] = useState({ type: null, index: null, paraIndex: null, position: 0 });
 
   useEffect(() => {
-    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
+    axios.get("/api/dienstleistung")
       .then(res => setDienstleistungen(res.data.data))
       .catch(err => console.error(err));
   }, []);
 
-  // Cursorposition tracken
   const handleCursor = (type, index = null, paraIndex = null) => (e) => {
     setActiveField({ type, index, paraIndex, position: e.target.selectionStart });
   };
 
-  // Variable einfügen
   const insertVariable = (variable) => {
     const pos = activeField.position || 0;
     if (activeField.type === "titel") {
@@ -60,35 +58,25 @@ const VertragsVorlageForm = () => {
     }
   };
 
-  // Abschnitt bearbeiten
   const handleAbschnittChange = (index, field, value) => {
     const newAbschnitte = [...abschnitte];
     newAbschnitte[index][field] = value;
     setAbschnitte(newAbschnitte);
   };
 
-  // Paragraph bearbeiten
   const handleParagraphChange = (absIndex, paraIndex, value) => {
     const newAbschnitte = [...abschnitte];
     newAbschnitte[absIndex].text[paraIndex] = value;
     setAbschnitte(newAbschnitte);
   };
 
-  const addAbschnitt = () => {
-    setAbschnitte([...abschnitte, { untertitel: "", text: [""] }]);
-  };
-
-  const removeAbschnitt = (index) => {
-    if (abschnitte.length === 1) return;
-    setAbschnitte(abschnitte.filter((_, i) => i !== index));
-  };
-
+  const addAbschnitt = () => setAbschnitte([...abschnitte, { untertitel: "", text: [""] }]);
+  const removeAbschnitt = (index) => abschnitte.length > 1 && setAbschnitte(abschnitte.filter((_, i) => i !== index));
   const addParagraph = (index) => {
     const newAbschnitte = [...abschnitte];
     newAbschnitte[index].text.push("");
     setAbschnitte(newAbschnitte);
   };
-
   const removeParagraph = (absIndex, paraIndex) => {
     const newAbschnitte = [...abschnitte];
     if (newAbschnitte[absIndex].text.length > 1) {
@@ -104,13 +92,20 @@ const VertragsVorlageForm = () => {
       return;
     }
     try {
-      const res = await axios.post("/api/vertraege/vorlage", {
+      // Abschnitte & Paragraphen passend für createVertragsvorlage
+      const payload = {
         titel,
         einstieg,
         dienstleistung_id: dienstleistungId,
-        abschnitte
-      });
+        abschnitte: abschnitte.map(a => ({
+          untertitel: a.untertitel,
+          text: a.text
+        }))
+      };
+
+      const res = await axios.post("/api/vertrag/vorlagen", payload);
       setMessage(res.data.message);
+
       setTitel("");
       setEinstieg("");
       setDienstleistungId("");
@@ -129,9 +124,7 @@ const VertragsVorlageForm = () => {
 
       <div className="variable-buttons">
         {VARIABLES.map(v => (
-          <button type="button" key={v} className="variable-btn" onClick={() => insertVariable(v)}>
-            {v}
-          </button>
+          <button key={v} type="button" onClick={() => insertVariable(v)} className="variable-btn">{v}</button>
         ))}
       </div>
 
@@ -167,7 +160,7 @@ const VertragsVorlageForm = () => {
           <label>Dienstleistung</label>
           <select value={dienstleistungId} onChange={(e) => setDienstleistungId(e.target.value)}>
             <option value="">Bitte auswählen</option>
-            {dienstleistungen.map((d) => (
+            {dienstleistungen.map(d => (
               <option key={d.id} value={d.id}>{d.title}</option>
             ))}
           </select>
