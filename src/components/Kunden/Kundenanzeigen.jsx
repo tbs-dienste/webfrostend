@@ -186,28 +186,45 @@ const exportToPDF = async () => {
   }
 
   // 5) Dienstleistungen
-  y += 6; doc.setFontSize(12); doc.setFont(undefined, 'bold'); doc.text('Dienstleistungen', margin + 10, y); y += 16; doc.setFont(undefined, 'normal');
+y += 6; 
+doc.setFontSize(12); 
+doc.setFont(undefined, 'bold'); 
+doc.text('Dienstleistungen', margin + 10, y); 
+y += 16; 
+doc.setFont(undefined, 'normal');
 
-  if (selectedKunde.dienstleistungen?.length) {
-    for (const d of selectedKunde.dienstleistungen) {
-      doc.setFont(undefined, 'bold'); doc.text(`• ${d.title}`, margin + 14, y); doc.setFont(undefined, 'normal');
-      const lines = doc.splitTextToSize(d.beschreibung || '-', pageW - margin * 3 - 10);
-      doc.text(lines, margin + 26, y); y += lines.length * 12 + 10;
+if (selectedKunde.dienstleistungen?.length) {
+  for (const d of selectedKunde.dienstleistungen) {
+    // Dienstleistungs-Titel
+    doc.setFont(undefined, 'bold'); 
+    doc.text(`• ${d.title}`, margin + 14, y); 
 
-      if (y > pageH - margin - 120) {
-        doc.addPage();
-        try {
-          const bg3 = await createBackgroundDataUrl(pageW, pageH);
-          doc.addImage(bg3, 'JPEG', 0, 0, pageW, pageH);
-        } catch (e) { console.warn(e); }
-        doc.setFillColor(255, 255, 255);
-        doc.rect(margin, margin + 30, pageW - 2 * margin, pageH - 2 * margin - 60, 'F');
-        y = margin + 70;
-      }
+    // Abstand nach dem Titel (Margin-Top)
+    y += 20; // <-- Abstand zwischen Titel und Beschreibung
+
+    // Beschreibung, eingerückt
+    doc.setFont(undefined, 'normal');
+    const lines = doc.splitTextToSize(d.beschreibung || '-', pageW - margin * 3 - 40); 
+    doc.text(lines, margin + 26, y); 
+    y += lines.length * 12 + 10; // Abstand nach Beschreibung
+
+    // Seitenumbruch prüfen
+    if (y > pageH - margin - 120) {
+      doc.addPage();
+      try {
+        const bg3 = await createBackgroundDataUrl(pageW, pageH);
+        doc.addImage(bg3, 'JPEG', 0, 0, pageW, pageH);
+      } catch (e) { console.warn(e); }
+      doc.setFillColor(255, 255, 255);
+      doc.rect(margin, margin + 30, pageW - 2 * margin, pageH - 2 * margin - 60, 'F');
+      y = margin + 70;
     }
-  } else {
-    doc.text('Keine Dienstleistungen vorhanden.', margin + 14, y); y += 20;
   }
+} else {
+  doc.text('Keine Dienstleistungen vorhanden.', margin + 14, y); 
+  y += 20;
+}
+
 
   // 6) Unterschrift
   if (selectedKunde.unterschrift) {
