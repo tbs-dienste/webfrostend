@@ -33,30 +33,31 @@ const MitarbeiterErfassen = () => {
 
   useEffect(() => {
     // Dienstleistungen abrufen
-    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
+    axios.get("/api/dienstleistung")
       .then(res => {
-        if (Array.isArray(res.data)) {
-          setServices(res.data);
-        } else if (Array.isArray(res.data.data)) {
-          setServices(res.data.data);
-        } else {
-          setServices([]);
-        }
+        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setServices(list);
       })
-      .catch(err => {
-        console.error(err);
-        setServices([]);
-      });
+      .catch(err => console.error(err));
   }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
-      setFormData({ ...formData, [name]: files[0] });
+      setFormData(prev => ({ ...prev, [name]: files[0] }));
       setFotoPreview(URL.createObjectURL(files[0]));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleDienstleistungChange = (id, checked) => {
+    setFormData(prev => {
+      let ids = [...prev.dienstleistung_ids];
+      if (checked) ids.push(id.toString());
+      else ids = ids.filter(i => i !== id.toString());
+      return { ...prev, dienstleistung_ids: ids };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -66,6 +67,7 @@ const MitarbeiterErfassen = () => {
 
     try {
       const data = new FormData();
+
       for (let key in formData) {
         if (key === "dienstleistung_ids") {
           formData.dienstleistung_ids.forEach(id => data.append("dienstleistung_ids[]", id));
@@ -74,36 +76,20 @@ const MitarbeiterErfassen = () => {
         }
       }
 
-      const token = localStorage.getItem("token"); 
-      const res = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      const token = localStorage.getItem("token");
+      const res = await axios.post("/api/mitarbeiter", data, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       setMessage({ type: "success", text: res.data.message });
       setFormData({
-        geschlecht: "m",
-        vorname: "",
-        nachname: "",
-        adresse: "",
-        postleitzahl: "",
-        ort: "",
-        email: "",
-        mobil: "",
-        benutzername: "",
-        passwort: "",
-        iban: "",
-        land: "",
-        geburtstagdatum: "",
-        verfügbarkeit: "vollzeit",
-        teilzeit_prozent: "",
-        fähigkeiten: "",
-        dienstleistung_ids: [],
-        foto: null,
+        geschlecht: "m", vorname: "", nachname: "", adresse: "", postleitzahl: "",
+        ort: "", email: "", mobil: "", benutzername: "", passwort: "", iban: "",
+        land: "", geburtstagdatum: "", verfügbarkeit: "vollzeit", teilzeit_prozent: "",
+        fähigkeiten: "", dienstleistung_ids: [], foto: null
       });
       setFotoPreview(null);
+
     } catch (err) {
       console.error(err);
       setMessage({ type: "error", text: err.response?.data?.error || "Fehler beim Erstellen" });
@@ -116,20 +102,30 @@ const MitarbeiterErfassen = () => {
     <div className="mitarbeiter-form-container">
       <h2>Mitarbeiter erstellen</h2>
       {message && <div className={`message ${message.type}`}>{message.text}</div>}
+
       <form className="mitarbeiter-form" onSubmit={handleSubmit}>
+
+        {/* Name */}
         <div className="input-group"><FaUser /><input type="text" name="vorname" placeholder="Vorname" value={formData.vorname} onChange={handleChange} required /></div>
         <div className="input-group"><FaUser /><input type="text" name="nachname" placeholder="Nachname" value={formData.nachname} onChange={handleChange} required /></div>
+
+        {/* Adresse */}
         <div className="input-group"><MdHome /><input type="text" name="adresse" placeholder="Adresse" value={formData.adresse} onChange={handleChange} /></div>
         <div className="input-group"><MdLocationOn /><input type="text" name="postleitzahl" placeholder="PLZ" value={formData.postleitzahl} onChange={handleChange} /></div>
         <div className="input-group"><MdLocationOn /><input type="text" name="ort" placeholder="Ort" value={formData.ort} onChange={handleChange} /></div>
+
+        {/* Kontakt */}
         <div className="input-group"><FaEnvelope /><input type="email" name="email" placeholder="E-Mail" value={formData.email} onChange={handleChange} required /></div>
         <div className="input-group"><FaPhone /><input type="text" name="mobil" placeholder="Mobil" value={formData.mobil} onChange={handleChange} /></div>
         <div className="input-group"><FaIdCard /><input type="text" name="benutzername" placeholder="Benutzername" value={formData.benutzername} onChange={handleChange} required /></div>
         <div className="input-group"><FaLock /><input type="password" name="passwort" placeholder="Passwort" value={formData.passwort} onChange={handleChange} required /></div>
+
+        {/* IBAN / Land / Geburtstag */}
         <div className="input-group"><FaGlobe /><input type="text" name="iban" placeholder="IBAN" value={formData.iban} onChange={handleChange} /></div>
         <div className="input-group"><FaGlobe /><input type="text" name="land" placeholder="Land" value={formData.land} onChange={handleChange} /></div>
         <div className="input-group"><FaBirthdayCake /><input type="date" name="geburtstagdatum" value={formData.geburtstagdatum} onChange={handleChange} /></div>
 
+        {/* Geschlecht */}
         <div className="input-group">
           <label>Geschlecht:</label>
           <select name="geschlecht" value={formData.geschlecht} onChange={handleChange}>
@@ -139,6 +135,7 @@ const MitarbeiterErfassen = () => {
           </select>
         </div>
 
+        {/* Verfügbarkeit */}
         <div className="input-group">
           <label>Verfügbarkeit:</label>
           <select name="verfügbarkeit" value={formData.verfügbarkeit} onChange={handleChange}>
@@ -154,37 +151,21 @@ const MitarbeiterErfassen = () => {
           </div>
         )}
 
+        {/* Fähigkeiten */}
         <div className="input-group"><FaBuilding /><textarea name="fähigkeiten" placeholder="Fähigkeiten" value={formData.fähigkeiten} onChange={handleChange} /></div>
 
+        {/* Dienstleistungen */}
         <div className="input-group dienstleistungen-checkboxes">
-  <label>Dienstleistungen:</label>
-  {services.map(s => (
-    <div key={s.id} className="checkbox-item">
-      <input
-        type="checkbox"
-        id={`dienst-${s.id}`}
-        value={s.id}
-        checked={formData.dienstleistung_ids.includes(s.id.toString())}
-        onChange={(e) => {
-          let newIds = [...formData.dienstleistung_ids];
-          if (e.target.checked) {
-            newIds.push(e.target.value);
-          } else {
-            newIds = newIds.filter(id => id !== e.target.value);
-          }
-          setFormData({ ...formData, dienstleistung_ids: newIds });
-        }}
-      />
-      <label htmlFor={`dienst-${s.id}`} className={!s.aktiv ? "inactive" : ""}>
-        {s.title} 
-      </label>
-    </div>
-  ))}
-</div>
+          <label>Dienstleistungen:</label>
+          {services.map(s => (
+            <div key={s.id} className="checkbox-item">
+              <input type="checkbox" id={`dienst-${s.id}`} value={s.id} checked={formData.dienstleistung_ids.includes(s.id.toString())} onChange={(e) => handleDienstleistungChange(s.id, e.target.checked)} />
+              <label htmlFor={`dienst-${s.id}`} className={!s.aktiv ? "inactive" : ""}>{s.title}</label>
+            </div>
+          ))}
+        </div>
 
-
-
-
+        {/* Foto Upload */}
         <div className="input-group">
           <label>Foto hochladen:</label>
           <input type="file" name="foto" accept="image/*" onChange={handleChange} />
