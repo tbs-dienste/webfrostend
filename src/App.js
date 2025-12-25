@@ -114,10 +114,11 @@ import NewsletterAbonnenten from './components/Content/Newsletter/NewsletterAbon
 import InventurErstellen from './components/Administrativ/Inventur/InventurErstellen';
 import InventurScan from './components/Administrativ/Inventur/InventurScan';
 import InventurStartForm from './components/Administrativ/Inventur/InventurStartForm';
-
+import InventurDifferenzen from './components/Administrativ/Inventur/InventurDifferenzen';
 import "./App.css";
 import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
 import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
+import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeigen';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -191,6 +192,27 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/game" element={<XboxPracticeGame />} />              <Route path="/antrag" element={<AntragStellen />} />
+{/* Inventur anlegen */}
+<Route path="/inventur/create" element={<InventurErstellen />} />
+
+{/* Inventur Start manuell */}
+<Route path="/inventur/start" element={<InventurStartForm />} />
+
+{/* Scannen */}
+<Route
+  path="/inventur/:inventurnummer/:lagerregalplatznr/scan"
+  element={<InventurScan />}
+/>
+
+{/* Differenzen */}
+<Route
+  path="/inventur/:inventurnummer/differenzen"
+  element={<InventurDifferenzen />}
+/>{/* Differenzen */}
+<Route
+  path="/inventur"
+  element={<InventurAnzeigen />}
+/>
 
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
               <Route path="/statistiken" element={<Statistik />} />

@@ -1,87 +1,102 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
-import './Home.scss';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import "./Home.scss";
 
 const Home = () => {
   return (
-    <div className="home">
-      {/* SEO-Meta-Tags */}
+    <main className="home-page">
       <Helmet>
-        <title>TBs Solutions – Alltag vereinfachen durch digitale Struktur</title>
-        <meta name="description" content="TBs Solutions hilft Ihnen, mit digitalen Lösungen den Alltag effizient und einfach zu gestalten. Persönlich. Praxisnah. Verlässlich." />
-        <meta name="keywords" content="Alltagshilfe, Struktur, Organisation, TBs Solutions, digitale Unterstützung, persönliche Beratung" />
+        <title>TBS Solutions – Digitale Struktur für Ihren Alltag</title>
+        <meta
+          name="description"
+          content="TBS Solutions unterstützt Sie mit klaren, digitalen Lösungen für mehr Struktur, Effizienz und Übersicht im Alltag."
+        />
         <meta name="robots" content="index, follow" />
-        <meta name="author" content="TBs Solutions" />
-
-        {/* Open Graph für Facebook / LinkedIn */}
-        <meta property="og:title" content="TBs Solutions – Struktur für Ihren Alltag" />
-        <meta property="og:description" content="Wir bieten Ihnen einfache, persönliche Lösungen zur Alltagsorganisation – ohne komplizierte Technik." />
-        <meta property="og:url" content="https://www.tbs-solutions.net" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.tbs-solutions.net/logo.png" />
-
-        {/* JSON-LD Strukturierte Daten für Google */}
-        <script type="application/ld+json">
-          {`
-            {
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "TBs Solutions",
-              "url": "https://www.tbs-solutions.net",
-              "logo": "https://www.tbs-solutions.net/logo.png",
-              "description": "Wir helfen Menschen, ihren Alltag mit digitalen Lösungen einfacher und strukturierter zu gestalten.",
-              "sameAs": []
-            }
-          `}
-        </script>
       </Helmet>
 
-      {/* Begrüßung */}
-      <section className="intro" id="start">
-        <h1>Willkommen bei TBs Solutions</h1>
-        <p>
-          Sie suchen klare Strukturen und einfache Abläufe im Alltag?  
-          Wir unterstützen Sie dabei, Ihren Alltag leichter und effizienter zu gestalten – ganz ohne komplizierte Technik.
-        </p>
-        <p>
-          Unser Angebot richtet sich an Menschen, die Wert auf Verlässlichkeit, persönlichen Service und echte Lösungen legen.  
-          Keine langen Schulungen, keine unnötigen Fachbegriffe – nur das, was Sie wirklich brauchen.
-        </p>
-        <Link to="/kontakt" className="btn-start">Jetzt Kontakt aufnehmen</Link>
+      {/* HERO */}
+      <section className="home-hero">
+        <div className="hero-inner">
+          <h1>
+            Digitale Struktur.
+            <br />
+            <span>Einfach. Persönlich. Verlässlich.</span>
+          </h1>
+
+          <p>
+            Wir helfen Ihnen, Ordnung und Effizienz in Ihren Alltag zu bringen –
+            ohne komplizierte Technik, ohne Fachchinesisch.
+          </p>
+
+          <div className="hero-actions">
+            <Link to="/kontakt" className="btn-primary">
+              Kontakt aufnehmen
+            </Link>
+            <Link to="/dienstleistungen" className="btn-secondary">
+              Leistungen entdecken
+            </Link>
+          </div>
+        </div>
       </section>
 
-      {/* Unser Angebot */}
-      <section className="angebot" id="leistungen">
-        <h2>Was wir für Sie tun</h2>
+      {/* VALUES */}
+      <section className="home-values">
+        <h2>Was TBS Solutions auszeichnet</h2>
+
+        <div className="values-grid">
+          <div className="value-card">
+            <h3>Persönliche Betreuung</h3>
+            <p>
+              Wir nehmen uns Zeit, hören zu und entwickeln Lösungen, die wirklich
+              zu Ihnen passen.
+            </p>
+          </div>
+
+          <div className="value-card">
+            <h3>Einfache Lösungen</h3>
+            <p>
+              Keine unnötige Technik – nur klare, verständliche und sofort
+              nutzbare Konzepte.
+            </p>
+          </div>
+
+          <div className="value-card">
+            <h3>Zuverlässigkeit</h3>
+            <p>
+              Sie können sich auf uns verlassen – transparent, ehrlich und
+              langfristig.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST */}
+      <section className="home-trust">
+        <div className="trust-inner">
+          <h2>Darauf können Sie sich verlassen</h2>
+
+          <ul>
+            <li>✔ Diskreter Umgang mit Ihren Anliegen</li>
+            <li>✔ Langjährige Erfahrung & Praxisnähe</li>
+            <li>✔ Verständnis für individuelle Situationen</li>
+            <li>✔ Klare Kommunikation ohne Fachbegriffe</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="home-cta">
+        <h2>Bereit für mehr Klarheit im Alltag?</h2>
         <p>
-          Ob Beratung, Organisation oder praktische Unterstützung – wir helfen Ihnen, den Überblick zu behalten und Ihre Ziele zu erreichen.
-          Mit unserem erfahrenen Team begleiten wir Sie persönlich und individuell, Schritt für Schritt.
+          Lassen Sie uns gemeinsam eine Lösung finden – unverbindlich,
+          persönlich und auf Augenhöhe.
         </p>
-        <ul>
-          <li><strong>Persönlicher Kontakt:</strong> Wir hören zu, verstehen Ihre Wünsche und finden passende Lösungen.</li>
-          <li><strong>Praxisnah:</strong> Unsere Methoden sind leicht verständlich und sofort anwendbar.</li>
-          <li><strong>Zuverlässigkeit:</strong> Wir sind für Sie da – wenn Sie uns brauchen.</li>
-        </ul>
+        <Link to="/kontakt" className="btn-primary large">
+          Jetzt unverbindlich anfragen
+        </Link>
       </section>
-
-      {/* Vertrauen */}
-      <section className="vertrauen" id="vertrauen">
-        <h2>Darauf können Sie vertrauen</h2>
-        <ul>
-          <li><strong>Diskretion:</strong> Ihre Anliegen behandeln wir vertraulich und mit Respekt.</li>
-          <li><strong>Erfahrung:</strong> Jahrelange Praxis und zufriedene Kunden sprechen für uns.</li>
-          <li><strong>Verständnis:</strong> Wir arbeiten mit Herz und Verstand für Ihren Erfolg.</li>
-        </ul>
-      </section>
-
-      {/* Aufruf */}
-      <section className="cta" id="kontakt">
-        <h2>Bereit für den nächsten Schritt?</h2>
-        <p>Vereinbaren Sie ein unverbindliches Gespräch – persönlich, individuell und auf Augenhöhe.</p>
-        <Link to="/kontakt" className="btn-kontakt">Jetzt anfragen</Link>
-      </section>
-    </div>
+    </main>
   );
 };
 

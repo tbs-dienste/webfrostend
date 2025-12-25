@@ -61,66 +61,157 @@ export default function KundenAnzeigen() {
   const copyLinkToClipboard = () => { if (!selectedKunde) return; navigator.clipboard.writeText(`${window.location.origin}/sign/${selectedKunde.kundennummer}`); alert('Link zur Unterschrift kopiert.'); };
   const updateStatus = async (newStatus) => { try { const token = localStorage.getItem('token'); await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/status`, { status: newStatus }, { headers: { Authorization: `Bearer ${token}` } }); setSelectedKunde(prev => ({ ...prev, status: newStatus })); alert('Status aktualisiert.'); } catch (err) { console.error(err); alert('Fehler beim Aktualisieren des Status.'); } };
 
-  // Hintergrund für PDF erzeugen
-  const createBackgroundDataUrl = async (widthPx, heightPx) => new Promise((resolve) => {
+ // Helper: erzeugt ein ansprechendes Hintergrundbild (Musterfoto / Logo-Fallback)
+const createBackgroundDataUrl = async (widthPx, heightPx) => {
+  return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
-    canvas.width = Math.round(widthPx); canvas.height = Math.round(heightPx);
+    canvas.width = Math.round(widthPx);
+    canvas.height = Math.round(heightPx);
     const ctx = canvas.getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, '#eaf4ff'); grad.addColorStop(1, '#f7fbff');
-    ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // sanfter diagonaler Farbverlauf
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, '#f4f9ff');
+    grad.addColorStop(1, '#ffffff');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // leichte geometrische Muster (dezent)
+    ctx.fillStyle = 'rgba(0,0,0,0.02)';
+    for (let i = 0; i < 8; i++) {
+      ctx.beginPath();
+      const r = Math.min(canvas.width, canvas.height) * (0.08 + (i * 0.01));
+      ctx.arc(canvas.width * (0.08 + i * 0.11), canvas.height * (0.2 + (i % 2) * 0.5), r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // falls Firma-Logo vorhanden -> watermark groß, sehr transparent
     const logoData = selectedKunde?.logo || selectedKunde?.logo_black || null;
     if (logoData) {
       const img = new Image();
-      img.onload = () => { const maxW = canvas.width * 0.8; const maxH = canvas.height * 0.6; let w = img.width; let h = img.height; const ratio = Math.min(maxW / w, maxH / h, 1); w *= ratio; h *= ratio; const x = (canvas.width - w) / 2; const y = (canvas.height - h) / 2; ctx.globalAlpha = 0.12; ctx.drawImage(img, x, y, w, h); ctx.globalAlpha = 1; resolve(canvas.toDataURL('image/jpeg', 0.9)); };
-      img.onerror = () => { ctx.fillStyle = 'rgba(0,0,0,0.06)'; ctx.font = `${Math.round(canvas.width / 12)}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText('MUSTERFOTO / LOGO', canvas.width / 2, canvas.height / 2); resolve(canvas.toDataURL('image/jpeg', 0.9)); };
+      img.onload = () => {
+        const maxW = canvas.width * 0.7;
+        const maxH = canvas.height * 0.45;
+        let w = img.width, h = img.height;
+        const ratio = Math.min(maxW / w, maxH / h, 1);
+        w *= ratio; h *= ratio;
+        const x = (canvas.width - w) / 2;
+        const y = (canvas.height - h) / 2;
+        ctx.globalAlpha = 0.10; // dezenter watermark-effekt
+        ctx.drawImage(img, x, y, w, h);
+        ctx.globalAlpha = 1;
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      };
+      img.onerror = () => {
+        // fallback text
+        ctx.fillStyle = 'rgba(0,0,0,0.04)';
+        ctx.font = `${Math.round(canvas.width / 18)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      };
       img.src = logoData.startsWith('data:') ? logoData : `data:image/png;base64,${logoData}`;
     } else {
-      ctx.fillStyle = 'rgba(0,0,0,0.04)';
-      for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.arc(canvas.width * (0.2 + i * 0.12), canvas.height * (0.2 + (i % 2) * 0.35), Math.min(canvas.width, canvas.height) * 0.18, 0, Math.PI * 2); ctx.fill(); }
-      ctx.fillStyle = 'rgba(0,0,0,0.06)'; ctx.font = `${Math.round(canvas.width / 14)}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2 - 10); ctx.font = `${Math.round(canvas.width / 30)}px sans-serif`; ctx.fillText('Ihr Logo / Bild hier', canvas.width / 2, canvas.height / 2 + 30); resolve(canvas.toDataURL('image/jpeg', 0.9)); 
+      // fallback: zentrierter Text + subtle shapes (already drawn)
+      ctx.fillStyle = 'rgba(0,0,0,0.03)';
+      ctx.font = `${Math.round(canvas.width / 20)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2 - 6);
+      ctx.font = `${Math.round(canvas.width / 36)}px sans-serif`;
+      ctx.fillText('Ihr Logo / Bild hier', canvas.width / 2, canvas.height / 2 + 26);
+      resolve(canvas.toDataURL('image/jpeg', 0.92));
     }
   });
-// PDF-Export
+};
+
+// PROFESSIONAL exportToPDF (KUNDEN-DOSSIER)
 const exportToPDF = async () => {
   if (!selectedKunde) return;
 
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-  const margin = 40;
+  const margin = 48; // großzügigere Ränder für Profidesign
 
-  // 1) Hintergrund
+  // ====== Hintergrund (ganze Seite) ======
   try {
     const bg = await createBackgroundDataUrl(pageW, pageH);
     doc.addImage(bg, 'JPEG', 0, 0, pageW, pageH);
-  } catch (e) { console.warn(e); }
+  } catch (e) {
+    console.warn('Background creation failed', e);
+  }
 
+  // Weißer Inhaltspanel (leicht gerundete Optik simulated by rect)
   doc.setFillColor(255, 255, 255);
-  doc.rect(margin, margin + 40, pageW - 2 * margin, pageH - 2 * margin - 80, 'F');
+  doc.rect(margin, margin + 36, pageW - 2 * margin, pageH - 2 * margin - 40, 'F');
 
-  let y = margin + 70;
+  // ====== HEADER: Logo links, Titel Mitte/links, QR rechts ======
+  let y = margin + 60;
 
-  // 2) Header + QR
-  doc.setFontSize(20); doc.setFont(undefined, 'bold'); doc.setTextColor(34, 34, 34);
-  doc.text('Kundenakte', margin + 10, y);
+  // Logo oben links (falls vorhanden)
+  if (selectedKunde?.logo) {
+    try {
+      const logoSrc = selectedKunde.logo.startsWith('data:') ? selectedKunde.logo : `data:image/png;base64,${selectedKunde.logo}`;
+      // kleine Version links oben
+      doc.addImage(logoSrc, 'PNG', margin + 8, margin + 12, 72, 36); // 2:1 ratio area
+    } catch (e) {
+      // ignore logo errors
+    }
+  }
 
+  // Title: KUNDEN-DOSSIER (professionell)
+  doc.setTextColor(20, 32, 80); // dunkles Corporate-Blau
+  doc.setFontSize(22);
+  doc.setFont(undefined, 'bold');
+  doc.text('KUNDEN-DOSSIER', margin + 96, margin + 40);
+
+  // Subline / Kurzinfo rechts unter dem QR
+  doc.setFontSize(10);
+  doc.setFont(undefined, 'normal');
+  doc.setTextColor(110);
+  const subText = selectedKunde?.firma ? `${selectedKunde.firma}` : `${selectedKunde?.vorname || ''} ${selectedKunde?.nachname || ''}`;
+  doc.text(subText, margin + 96, margin + 58);
+
+  // QR-Code oben rechts
   try {
     const qrUrl = `${window.location.origin}/sign/${selectedKunde.kundennummer}`;
-    const qrDataURL = await QRCode.toDataURL(qrUrl, { margin: 1, width: 300 });
-    const qrSize = 90;
-    doc.addImage(qrDataURL, 'PNG', pageW - margin - qrSize, margin + 20, qrSize, qrSize);
-    doc.setFontSize(8); doc.setFont(undefined, 'normal');
-    doc.text('QR: Unterschrift', pageW - margin - qrSize, margin + 20 + qrSize + 12);
-  } catch (e) { console.warn(e); }
+    const qrDataURL = await QRCode.toDataURL(qrUrl, { margin: 0, width: 400 });
+    const qrSize = 86;
+    doc.addImage(qrDataURL, 'PNG', pageW - margin - qrSize, margin + 14, qrSize, qrSize);
+    doc.setFontSize(8);
+    doc.setTextColor(110);
+    doc.text('Scan zum Signieren', pageW - margin - qrSize, margin + 14 + qrSize + 12);
+  } catch (e) {
+    console.warn('QR error', e);
+  }
 
-  y += 30;
+  // feine Trennlinie unter Header
+  doc.setDrawColor(220);
+  doc.setLineWidth(0.5);
+  doc.line(margin + 6, margin + 100, pageW - margin - 6, margin + 100);
 
-  // 3) Kundendaten
-  doc.setFontSize(12); doc.setFont(undefined, 'bold'); doc.text('Kundendaten', margin + 10, y);
-  y += 18; doc.setFont(undefined, 'normal');
+  y = margin + 110;
 
+  // ====== INFO CARD (links) + Meta Card / Status (rechts) ======
+  const cardLeftX = margin + 12;
+  const cardRightX = pageW / 2 + 6;
+  const cardWidthLeft = pageW / 2 - margin - 18;
+  const cardWidthRight = pageW / 2 - margin - 18;
+
+  // left card header
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.setTextColor(36, 41, 66);
+  doc.text('Kundendaten', cardLeftX, y);
+
+  // right card header (Status / Bewertung quick)
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'bold');
+  doc.text('Status & Bewertung', cardRightX, y);
+
+  y += 14;
+
+  // body: left column fields (use for...of to allow awaits on page break)
   const infoPairs = [
     ['Kundennummer', selectedKunde.kundennummer],
     ['Firma', selectedKunde.firma],
@@ -128,122 +219,154 @@ const exportToPDF = async () => {
     ['Nachname', selectedKunde.nachname],
     ['E-Mail', selectedKunde.email],
     ['Mobil', selectedKunde.mobil],
-    ['Adresse', `${selectedKunde.strasseHausnummer || ''}, ${selectedKunde.postleitzahl || ''} ${selectedKunde.ort || ''}`],
-    ['Status', selectedKunde.status]
+    ['Adresse', `${selectedKunde.strasseHausnummer || ''}${selectedKunde.postleitzahl ? ', ' : ''}${selectedKunde.postleitzahl || ''} ${selectedKunde.ort || ''}`],
   ];
 
-  for (const [label, value] of infoPairs) {
-    doc.setFont(undefined, 'bold'); doc.text(`${label}:`, margin + 10, y);
-    doc.setFont(undefined, 'normal');
-    const wrapped = doc.splitTextToSize(String(value || '-'), pageW - margin * 3 - 120);
-    doc.text(wrapped, margin + 140, y);
-    y += wrapped.length * 12 + 6;
+  // draw left info box background
+  doc.setFillColor(250, 252, 255);
+  doc.rect(cardLeftX - 6, y - 12, cardWidthLeft + 12, 110, 'F');
 
-    if (y > pageH - margin - 140) {
-      doc.addPage();
-      try {
-        const bg2 = await createBackgroundDataUrl(pageW, pageH);
-        doc.addImage(bg2, 'JPEG', 0, 0, pageW, pageH);
-      } catch (e) { console.warn(e); }
-      doc.setFillColor(255, 255, 255);
-      doc.rect(margin, margin + 30, pageW - 2 * margin, pageH - 2 * margin - 60, 'F');
-      y = margin + 70;
-    }
+  // draw right info box background
+  doc.setFillColor(250, 250, 250);
+  doc.rect(cardRightX - 6, y - 12, cardWidthRight + 12, 110, 'F');
+
+  // left fields
+  let leftY = y + 6;
+  doc.setFontSize(10);
+  doc.setTextColor(70);
+  for (const [label, value] of infoPairs) {
+    doc.setFont(undefined, 'bold');
+    doc.text(`${label}:`, cardLeftX, leftY);
+    doc.setFont(undefined, 'normal');
+    const wrapped = doc.splitTextToSize(String(value || '-'), cardWidthLeft - 110);
+    doc.text(wrapped, cardLeftX + 110, leftY);
+    leftY += wrapped.length * 12 + 8;
   }
 
-  // 4) Bewertung: Nur anzeigen, wenn vorhanden
-  const rating = selectedKunde.bewertung ?? selectedKunde.rating;
-  const comment = selectedKunde.bewertung_text || selectedKunde.bewertung_comment;
+  // right: Status badge + Bewertung (stars)
+  let rightY = y + 6;
+  // Status badge rectangle
+  const status = selectedKunde.status || '–';
+  // small colored badge
+  const statusColor = status === 'abgeschlossen' ? [56, 142, 60] : status === 'inBearbeitung' ? [255, 193, 7] : [120, 144, 156];
+  doc.setFillColor(...statusColor);
+  doc.rect(cardRightX, rightY - 8, 96, 18, 'F');
+  doc.setTextColor(255);
+  doc.setFont(undefined, 'bold');
+  doc.setFontSize(10);
+  doc.text(status.charAt(0).toUpperCase() + status.slice(1), cardRightX + 8, rightY + 6);
 
-  if (rating !== undefined && rating !== null) {
-    y += 6; 
-    doc.setFont(undefined, 'bold'); 
-    doc.text('Bewertung', margin + 10, y);
-    doc.setFontSize(14);
-
-    // Gelbe Sterne-Icons
-    const starSize = 12;
-    const starX = margin + 120;
+  // Bewertung (gelbe Sterne) under badge
+  rightY += 30;
+  const rating = selectedKunde.bewertung ?? selectedKunde.rating ?? null;
+  if (rating !== null && rating !== undefined) {
+    doc.setFontSize(12);
+    const starBaseX = cardRightX;
     for (let i = 0; i < 5; i++) {
       if (i < Number(rating)) {
-        doc.setTextColor(255, 193, 7); // Gelb
-        doc.text('★', starX + i * (starSize + 2), y);
+        doc.setTextColor(255, 193, 7); // gold
       } else {
-        doc.setTextColor(200); // Hellgrau
-        doc.text('★', starX + i * (starSize + 2), y);
+        doc.setTextColor(200); // light gray
+      }
+      doc.text('★', starBaseX + i * 14, rightY);
+    }
+    doc.setTextColor(80);
+    doc.setFontSize(9);
+    doc.text(`${rating}/5`, cardRightX + 88, rightY + 2);
+    rightY += 18;
+  } else {
+    // no rating -> show nothing (user requested)
+  }
+
+  // small divider
+  y = Math.max(leftY, rightY) + 12;
+  doc.setDrawColor(220);
+  doc.setLineWidth(0.4);
+  doc.line(margin + 8, y, pageW - margin - 8, y);
+
+  // ====== SERVICES (volle Breite, card style) ======
+  y += 18;
+  doc.setFont(undefined, 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(36, 41, 66);
+  doc.text('Dienstleistungen', margin + 12, y);
+  y += 12;
+
+  doc.setFont(undefined, 'normal');
+  doc.setFontSize(11);
+
+  if (selectedKunde.dienstleistungen?.length) {
+    for (const d of selectedKunde.dienstleistungen) {
+      // service card box
+      const cardHStart = y;
+      doc.setFillColor(255, 255, 255);
+      doc.rect(margin + 8, y - 6, pageW - 2 * margin - 16, 8, 'F'); // just background to ensure contrast
+
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(22, 33, 62);
+      doc.text(d.title || '–', margin + 16, y + 6);
+
+      // description
+      doc.setFont(undefined, 'normal');
+      doc.setFontSize(10);
+      const descLines = doc.splitTextToSize(d.beschreibung || '-', pageW - 2 * margin - 32);
+      doc.text(descLines, margin + 16, y + 22);
+      y += descLines.length * 12 + 28;
+
+      // small separator between services
+      doc.setDrawColor(240);
+      doc.setLineWidth(0.6);
+      doc.line(margin + 12, y - 6, pageW - margin - 12, y - 6);
+
+      // page break handling
+      if (y > pageH - margin - 120) {
+        doc.addPage();
+        try {
+          const bgN = await createBackgroundDataUrl(pageW, pageH);
+          doc.addImage(bgN, 'JPEG', 0, 0, pageW, pageH);
+        } catch (e) { /* ignore */ }
+        // redraw white content panel on new page
+        doc.setFillColor(255, 255, 255);
+        doc.rect(margin, margin + 36, pageW - 2 * margin, pageH - 2 * margin - 40, 'F');
+        y = margin + 70;
       }
     }
-    doc.setTextColor(34, 34, 34);
+  } else {
+    // nothing to show (user wanted no rating block when missing and no services if empty)
+    doc.setFontSize(11);
+    doc.setTextColor(110);
+    doc.text('Keine Dienstleistungen vorhanden.', margin + 12, y);
     y += 20;
-
-    // Kommentar, falls vorhanden
-    if (comment) {
-      doc.setFontSize(11);
-      const lines = doc.splitTextToSize(comment, pageW - 2 * margin - 20);
-      doc.text(lines, margin + 10, y);
-      y += lines.length * 12 + 8;
-    }
   }
 
-  // 5) Dienstleistungen
-y += 6; 
-doc.setFontSize(12); 
-doc.setFont(undefined, 'bold'); 
-doc.text('Dienstleistungen', margin + 10, y); 
-y += 16; 
-doc.setFont(undefined, 'normal');
-
-if (selectedKunde.dienstleistungen?.length) {
-  for (const d of selectedKunde.dienstleistungen) {
-    // Dienstleistungs-Titel
-    doc.setFont(undefined, 'bold'); 
-    doc.text(`• ${d.title}`, margin + 14, y); 
-
-    // Abstand nach dem Titel (Margin-Top)
-    y += 20; // <-- Abstand zwischen Titel und Beschreibung
-
-    // Beschreibung, eingerückt
-    doc.setFont(undefined, 'normal');
-    const lines = doc.splitTextToSize(d.beschreibung || '-', pageW - margin * 3 - 40); 
-    doc.text(lines, margin + 26, y); 
-    y += lines.length * 12 + 10; // Abstand nach Beschreibung
-
-    // Seitenumbruch prüfen
-    if (y > pageH - margin - 120) {
-      doc.addPage();
-      try {
-        const bg3 = await createBackgroundDataUrl(pageW, pageH);
-        doc.addImage(bg3, 'JPEG', 0, 0, pageW, pageH);
-      } catch (e) { console.warn(e); }
-      doc.setFillColor(255, 255, 255);
-      doc.rect(margin, margin + 30, pageW - 2 * margin, pageH - 2 * margin - 60, 'F');
-      y = margin + 70;
-    }
-  }
-} else {
-  doc.text('Keine Dienstleistungen vorhanden.', margin + 14, y); 
-  y += 20;
-}
-
-
-  // 6) Unterschrift
+  // ====== Unterschrift (unten links) ======
+  y += 10;
   if (selectedKunde.unterschrift) {
-    const sigY = Math.min(pageH - margin - 120, y + 10);
-    doc.setFont(undefined, 'bold'); doc.text('Unterschrift', margin + 10, sigY);
-    doc.addImage(`data:image/png;base64,${selectedKunde.unterschrift}`, 'PNG', margin + 10, sigY + 6, 180, 60);
+    const sigBoxY = Math.min(pageH - margin - 100, y);
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(36, 41, 66);
+    doc.text('Unterschrift', margin + 12, sigBoxY);
+    try {
+      doc.addImage(`data:image/png;base64,${selectedKunde.unterschrift}`, 'PNG', margin + 12, sigBoxY + 6, 180, 60);
+    } catch (e) { /* ignore */ }
   }
 
-  // 7) Footer
+  // ====== Footer: Datum + Seite ======
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
-    doc.setFontSize(9); doc.setTextColor(120);
-    doc.text(`Seite ${i} von ${pageCount}`, pageW - margin - 70, pageH - margin + 10);
-    doc.text(`Exportiert: ${new Date().toLocaleString()}`, margin + 10, pageH - margin + 10);
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    // left: date
+    doc.text(`Exportiert: ${new Date().toLocaleString()}`, margin + 10, pageH - margin + 8);
+    // right: page
+    doc.text(`Seite ${i} von ${pageCount}`, pageW - margin - 80, pageH - margin + 8);
   }
 
-  doc.save(`Kunde_${selectedKunde.kundennummer || 'export'}.pdf`);
+  // finalize
+  doc.save(`KundenDossier_${selectedKunde.kundennummer || 'export'}.pdf`);
 };
+
 
 
 

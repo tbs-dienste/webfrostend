@@ -1,190 +1,115 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./Navbar.scss";
-import logo from "../../logo.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSignOutAlt,
-  faHome,
-  faCogs,
-  faPhoneAlt,
-  faDollarSign,
-  faQuestionCircle,
-  faStar,
-  faBars,
-  faSignInAlt,
-  faUser,
-  faInfoCircle,
-  faChevronDown,
-  faPerson,
-  faSprayCan,
-} from "@fortawesome/free-solid-svg-icons";
 
-function Navbar() {
-  const [burgerMenuActive, setBurgerMenuActive] = useState(false);
-  const [userType, setUserType] = useState("");
+const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        if (decodedToken.exp * 1000 < Date.now()) {
-          handleLogout();
-        } else {
-          setUserType(decodedToken.userType);
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error("Ungültiger Token:", error);
+    if (!token) return;
+
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
         handleLogout();
+      } else {
+        setIsLoggedIn(true);
+        setIsAdmin(decoded.userType === "admin");
       }
+    } catch {
+      handleLogout();
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setUserType("");
     setIsLoggedIn(false);
+    setIsAdmin(false);
     navigate("/");
     window.location.reload();
   };
 
   return (
-    <nav className={`navbar ${burgerMenuActive ? "burger-menu-active" : ""}`}>
-      <div className="navbar-container">
-        <div className="logo-box">
-          <Link to="/" onClick={() => setBurgerMenuActive(false)}>
-            <img src={logo} alt="Logo" className="logo" />
-          </Link>
-        </div>
+    <nav className="navbar">
+      <div className="nav-inner">
+        <Link to="/" className="logo">TBS Solutions</Link>
 
-        <div className="menu-icon" onClick={() => setBurgerMenuActive(!burgerMenuActive)}>
-          <FontAwesomeIcon icon={faBars} />
-        </div>
+        <ul className="nav-links">
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/dienstleistungen">Dienstleistungen</Link></li>
+          <li><Link to="/preisinformationen">Preise</Link></li>
 
-        <ul className={`nav-items ${burgerMenuActive ? "active" : ""}`}>
-          <NavItem to="/" text="Home" icon={faHome} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/dienstleistungen" text="Dienstleistungen" icon={faCogs} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/kontakt" text="Kontakt" icon={faPhoneAlt} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/preisinformationen" text="Preisinformationen" icon={faDollarSign} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/faq" text="FAQ" icon={faQuestionCircle} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/bewertungen" text="Bewertungen" icon={faStar} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/ueber-uns" text="Über Uns" icon={faInfoCircle} setBurgerMenuActive={setBurgerMenuActive} />
-          <NavItem to="/gutscheinbestellung" text="Gutscheinbestellung" icon={faInfoCircle} setBurgerMenuActive={setBurgerMenuActive} />
+          <li><Link to="/kontakt">Kontakt</Link></li>
+          <li><Link to="/faq">FAQ</Link></li>
 
+          {/* ================= ADMIN ================= */}
+          {isLoggedIn && isAdmin && (
+            <li
+              className={`admin-wrapper ${adminOpen ? "active" : ""}`}
+              onMouseEnter={() => setAdminOpen(true)}
+              onMouseLeave={() => setAdminOpen(false)}
+            >
+              <span
+                className="admin-trigger"
+                onClick={() => setAdminOpen(!adminOpen)}
+              >
+                Admin ▾
+              </span>
 
+              <div className="admin-mega">
+                <div className="mega-col">
+                  <h4>Verwaltung</h4>
+                  <Link to="/mitarbeiter">Mitarbeiter</Link>
+                  <Link to="/allbewerbungen">Bewerbungen</Link>
+                  <Link to="/newsletter-subscribers">Newsletter</Link>
+                </div>
 
-          {isLoggedIn && userType === "admin" && (
-            <DropdownItem
-              text="Admin"
-              icon={faUser}
-              activeDropdown={activeDropdown}
-              setActiveDropdown={setActiveDropdown}
-              setBurgerMenuActive={setBurgerMenuActive}
-              options={[
-                { to: "/mitarbeiter", text: "Mitarbeiter" },
-                { to: "/download", text: "Download" },
-                { to: "/kundenkarten", text: "Kundenkarten" },
-                { to: "/kassenlogin", text: "Kasse" },
-                { to: "/gutscheine-liste", text: "Gutscheine" },
-                { to: "/rechnungen", text: "Rechnungen" },
-                { to: "/statistiken", text: "Statistik" },
-                { to: "/allbewerbungen", text: "Bewerbungen" },
-                { to: "/products", text: "Produkte" },
-                { to: "/aktionen", text: "Aktionen" },
-                { to: "/inventur", text: "Inventur" },
+                <div className="mega-col">
+                  <h4>Inventur</h4>
+                  <Link to="/inventur">Inventur</Link>
+                  <Link to="/products">Produkte</Link>
+                  <Link to="/aktionen">Aktionen</Link>
+                </div>
 
-                { to:   "/newsletter-subscribers", text: "Newsletter Abonennten" },
+                <div className="mega-col">
+                  <h4>Verkauf</h4>
+                  <Link to="/kassenlogin">Kasse</Link>
+                  <Link to="/kundenkarten">Kundenkarten</Link>
+                  <Link to="/gutscheine-liste">Gutscheine</Link>
+                </div>
 
-
-              ]}
-            />
+                <div className="mega-col">
+                  <h4>Abrechnung</h4>
+                  <Link to="/rechnungen">Rechnungen</Link>
+                  <Link to="/statistiken">Statistik</Link>
+                </div>
+              </div>
+            </li>
           )}
-        
+          {/* ========================================== */}
 
-          {isLoggedIn && userType === "mitarbeiter" && (
-            <DropdownItem
-              text="Abwesenheitsverwaltung"
-              icon={faUser}
-              activeDropdown={activeDropdown}
-              setActiveDropdown={setActiveDropdown}
-              setBurgerMenuActive={setBurgerMenuActive}
-              options={[
-                { to: "/createkrankmeldung", text: "Krankmeldung einreichen" },
-                { to: "/antrag", text: "Antrag stellen" },
-                { to: "/alleAntraege", text: "Meine Anträge" },
-              ]}
-            />
-          )}
-
-          {isLoggedIn && ['admin', 'mitarbeiter'].includes(userType) && (
+          {isLoggedIn && (
             <>
-              <NavItem to="/kunden" text="Kunden" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
-              <NavItem to="/inventur/start" text="Inventur" icon={faSprayCan} setBurgerMenuActive={setBurgerMenuActive} />
-
-              <NavItem to="/profile" text="Profil" icon={faUser} setBurgerMenuActive={setBurgerMenuActive} />
+              <li><Link to="/kunden">Kunden</Link></li>
+              <li><Link to="/profile">Profil</Link></li>
+              <li>
+                <button className="logout-btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
             </>
           )}
 
-          {!isLoggedIn ? (
-            <NavItem to="/login" text="Login" icon={faSignInAlt} setBurgerMenuActive={setBurgerMenuActive} />
-          ) : (
-            <button className="logout-button" onClick={handleLogout}>
-              <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-            </button>
-          )}
+          {!isLoggedIn && <li><Link to="/login">Login</Link></li>}
         </ul>
       </div>
     </nav>
   );
-}
-
-function NavItem({ to, text, icon, setBurgerMenuActive }) {
-  return (
-    <li>
-      <Link to={to} className="nav-link" onClick={() => setBurgerMenuActive(false)}>
-        <FontAwesomeIcon icon={icon} className="icon" /> {text}
-      </Link>
-    </li>
-  );
-}
-
-function DropdownItem({ text, icon, activeDropdown, setActiveDropdown, setBurgerMenuActive, options }) {
-  const isActive = activeDropdown === text;
-  return (
-    <li className="dropdown">
-      <div
-        className="nav-link dropdown-toggle"
-        onClick={() => setActiveDropdown(isActive ? null : text)}
-      >
-        <FontAwesomeIcon icon={icon} className="icon" /> {text} <FontAwesomeIcon icon={faChevronDown} />
-      </div>
-      {isActive && (
-        <ul className="dropdown-menu">
-          {options.map((option, index) => (
-            <li key={index}>
-              <Link
-                to={option.to}
-                className="dropdown-item"
-                onClick={() => {
-                  setActiveDropdown(null);
-                  setBurgerMenuActive(false);
-                }}
-              >
-                {option.text}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </li>
-  );
-}
+};
 
 export default Navbar;

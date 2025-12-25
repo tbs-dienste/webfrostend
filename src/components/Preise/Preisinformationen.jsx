@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import './Preisinformationen.scss';
-import { FaPlus } from 'react-icons/fa';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
+import "./Preisinformationen.scss";
 
 const Preisinformationen = ({ isAdmin }) => {
   const [backendPakete, setBackendPakete] = useState([]);
@@ -10,170 +10,103 @@ const Preisinformationen = ({ isAdmin }) => {
   const [dienstleistungen, setDienstleistungen] = useState([]);
 
   useEffect(() => {
-    const fetchBackendPakete = async () => {
-      try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete');
-        if (Array.isArray(response.data)) {
-          setBackendPakete(response.data);
-        } else {
-          console.error('Unerwartetes Antwortformat für Backend-Pakete:', response.data);
-        }
-        
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Backend-Pakete:', error);
-      }
-    };
+    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete")
+      .then(res => Array.isArray(res.data) && setBackendPakete(res.data));
 
-    const fetchDatenbankPakete = async () => {
-      try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/datenbankpakete');
-        if (response.data && response.data.data) {
-          setDatenbankPakete(response.data.data);
-        } else {
-          console.error('Unerwartetes Antwortformat für Datenbank-Pakete:', response.data);
-        }
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Datenbank-Pakete:', error);
-      }
-    };
+    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/datenbankpakete")
+      .then(res => res.data?.data && setDatenbankPakete(res.data.data));
 
-    const fetchDienstleistungen = async () => {
-      try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung');
-        if (response.data && response.data.data) {
-          setDienstleistungen(response.data.data);
-        }
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Dienstleistungen:', error);
-      }
-    };
-
-    fetchDienstleistungen();
-    fetchBackendPakete();
-    fetchDatenbankPakete();
+    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
+      .then(res => res.data?.data && setDienstleistungen(res.data.data));
   }, []);
 
-  const formatPreis = (preis) => {
-    const numPreis = parseFloat(preis);
-    return isNaN(numPreis) ? '0.00' : numPreis.toFixed(2);
-  };
+  const price = (v) => `${Number(v || 0).toFixed(2)} CHF`;
 
   return (
-    <div className="preisinformationen">
-      <h1>Preisinformationen</h1>
-      <p>Unsere Dienstleistungen werden zu festen Stundenpreisen angeboten. [...]</p>
+    <main className="pricing-page">
+      {/* HERO */}
+      <section className="pricing-hero">
+        <h1>Preisinformationen</h1>
+        <p>
+          Transparente Preise, klare Leistungen – ohne versteckte Kosten.
+        </p>
+      </section>
 
-      <div className="legend">
-        <h2>Legende</h2>
-        <p><strong>Empfohlen:</strong> Diese Pakete sind für die meisten Kunden die beste Wahl basierend auf Preis-Leistungs-Verhältnis.</p>
-      </div>
-
+      {/* ADMIN ACTIONS */}
       {isAdmin && (
-        <div className="action-buttons">
-          <Link to="/datenbankpaketerstellen" className="add-btn">
-            <FaPlus /> Neuer Datenbankeintrag
+        <div className="admin-actions">
+          <Link to="/datenbankpaketerstellen">
+            <FaPlus /> Datenbankpaket
           </Link>
-          <Link to="/backendpaketerstellen" className="add-btn">
-            <FaPlus /> Neuer Backendeintrag
+          <Link to="/backendpaketerstellen">
+            <FaPlus /> Backendpaket
           </Link>
         </div>
       )}
 
-      <div className="tables">
-        {/* Dienstleistungen */}
-        <div className="table-container">
-          <h2>Dienstleistungen & Preise</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Leistung</th>
-                <th>Preis</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dienstleistungen.length > 0 ? (
-                dienstleistungen.map((dienstleistung) => (
-                  <tr key={dienstleistung.id}>
-                    <td>{dienstleistung.title}</td>
-                    <td>{formatPreis(dienstleistung.preis)} CHF</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="2">Keine Dienstleistungen verfügbar</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* DIENSTLEISTUNGEN */}
+      <section className="pricing-section">
+        <h2>Dienstleistungen</h2>
+        <ul className="service-list">
+          {dienstleistungen.map(d => (
+            <li key={d.id}>
+              <span>{d.title}</span>
+              <strong>{price(d.preis)}</strong>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-        {/* Backend-Pakete */}
-        <div className="table-container">
-          <h2>Backend-Kosten</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Paket</th>
-                <th>RAM</th>
-                <th>CPU</th>
-                <th>Preis pro Monat</th>
-                <th>Preis pro Jahr</th>
-              </tr>
-            </thead>
-            <tbody>
-              {backendPakete.length > 0 ? (
-                backendPakete.map((paket) => (
-                  <tr key={paket.id} className={paket.empfohlen === 1 ? 'empfohlen' : ''}>
-                    <td>
-                      {paket.name}
-                      {paket.empfohlen === 1 && <span title="Empfohlen"> ⭐</span>}
-                    </td>
-                    <td>{paket.ram}</td>
-                    <td>{paket.cpu} CPU</td>
-                    <td>{formatPreis(paket.vk_preis)} CHF</td>
-                    <td>{formatPreis(parseFloat(paket.vk_preis) * 12)} CHF</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="5">Keine Backend-Pakete verfügbar</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* BACKEND */}
+      <section className="pricing-section">
+        <h2>Backend Pakete</h2>
 
-        {/* Datenbank-Pakete */}
-        <div className="table-container">
-          <h2>Datenbank-Kosten</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Leistung</th>
-                <th>Speicher</th>
-                <th>Memory</th>
-                <th>Preis pro Monat</th>
-                <th>Preis pro Jahr</th>
-              </tr>
-            </thead>
-            <tbody>
-              {datenbankPakete.length > 0 ? (
-                datenbankPakete.map((paket) => (
-                  <tr key={paket.id} className={paket.empfohlen === 1 ? 'empfohlen' : ''}>
-                    <td>
-                      {paket.name}
-                      {paket.empfohlen === 1 && <span title="Empfohlen"> ⭐</span>}
-                    </td>
-                    <td>{paket.maxDBSize} GB</td>
-                    <td>{paket.memory} GB</td>
-                    <td>{formatPreis(paket.vk_preis)} CHF</td>
-                    <td>{formatPreis(parseFloat(paket.vk_preis) * 12)} CHF</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="5">Keine Datenbank-Pakete verfügbar</td></tr>
-              )}
-            </tbody>
-          </table>
+        <div className="pricing-grid">
+          {backendPakete.map(p => (
+            <div
+              key={p.id}
+              className={`pricing-card ${p.empfohlen === 1 ? "recommended" : ""}`}
+            >
+              <h3>{p.name}</h3>
+              <p className="price">{price(p.vk_preis)} / Monat</p>
+
+              <ul>
+                <li>{p.cpu} CPU</li>
+                <li>{p.ram} RAM</li>
+                <li>{price(p.vk_preis * 12)} / Jahr</li>
+              </ul>
+
+              {p.empfohlen === 1 && <span className="badge">Empfohlen</span>}
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
+      </section>
+
+      {/* DATENBANK */}
+      <section className="pricing-section">
+        <h2>Datenbank Pakete</h2>
+
+        <div className="pricing-grid">
+          {datenbankPakete.map(p => (
+            <div
+              key={p.id}
+              className={`pricing-card ${p.empfohlen === 1 ? "recommended" : ""}`}
+            >
+              <h3>{p.name}</h3>
+              <p className="price">{price(p.vk_preis)} / Monat</p>
+
+              <ul>
+                <li>{p.maxDBSize} GB Speicher</li>
+                <li>{p.memory} GB Memory</li>
+                <li>{price(p.vk_preis * 12)} / Jahr</li>
+              </ul>
+
+              {p.empfohlen === 1 && <span className="badge">Empfohlen</span>}
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 };
 
