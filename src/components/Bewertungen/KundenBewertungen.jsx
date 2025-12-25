@@ -1,80 +1,113 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import ReactStars from 'react-stars';
-import { Link } from 'react-router-dom';
-import './KundenBewertungen.scss';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ReactStars from "react-stars";
+import { Link } from "react-router-dom";
+import "./KundenBewertungen.scss";
 
 const KundenBewertungen = () => {
-  const [dienstleistungen, setDienstleistungen] = useState([]);
-  const [gesamtDurchschnitt, setGesamtDurchschnitt] = useState(0);
+  const [daten, setDaten] = useState([]);
+  const [durchschnitt, setDurchschnitt] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDienstleistungen = async () => {
+    const loadBewertungen = async () => {
       try {
-        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen');
-        const data = response.data.data || [];
-        const gefiltert = data.filter(d => d.anzahl_bewertungen > 0);
-        const gesamt = calculateDurchschnitt(gefiltert);
+        const res = await axios.get(
+          "https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen"
+        );
 
-        setDienstleistungen(gefiltert);
-        setGesamtDurchschnitt(gesamt);
-      } catch (error) {
-        console.error('Fehler beim Laden der Bewertungen:', error);
-        setDienstleistungen([]);
-        setGesamtDurchschnitt(0);
+        const list = (res.data?.data || []).filter(
+          (d) => Number(d.anzahl_bewertungen) > 0
+        );
+
+        setDaten(list);
+        setDurchschnitt(berechneGesamt(list));
+      } catch (err) {
+        console.error(err);
+        setDaten([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDienstleistungen();
+    loadBewertungen();
   }, []);
 
-  const calculateDurchschnitt = (arr) => {
+  const berechneGesamt = (arr) => {
     if (!arr.length) return 0;
-    const sum = arr.reduce((total, d) => total + parseFloat(d.durchschnitt_rating_dienstleistung), 0);
+    const sum = arr.reduce(
+      (acc, d) => acc + Number(d.durchschnitt_rating_dienstleistung),
+      0
+    );
     return (sum / arr.length).toFixed(1);
   };
 
+  if (loading) {
+    return <div className="bewertung-loading">Bewertungen werden geladen …</div>;
+  }
+
   return (
-    <div className="kunden-bewertungen">
-      <section className="header">
-        <h1>⭐ Kundenbewertungen</h1>
-        <p>Wie unsere Kunden die Dienstleistungen erlebt haben</p>
+    <div className="bewertung-detail">
+      {/* HERO */}
+      <section className="bewertung-hero">
+        <h1>Kundenbewertungen</h1>
+        <span className="dienstleistung">
+          Transparente Erfahrungen mit unseren Dienstleistungen
+        </span>
       </section>
 
-      <section className="gesamt-rating-box">
-        <ReactStars 
-          count={5} 
-          value={parseFloat(gesamtDurchschnitt)} 
-          size={42} 
-          color2={'#fbbf24'} 
-          edit={false} 
-        />
-        <div className="score">{gesamtDurchschnitt} / 5 Gesamtbewertung</div>
-        <p className="info">Durchschnitt aus allen bewerteten Dienstleistungen</p>
-      </section>
+      {/* CONTENT */}
+      <section className="bewertung-content">
+        {/* GESAMT */}
+        <div className="rating-card" style={{ marginBottom: "40px" }}>
+          <div className="rating-header">
+            <h3>Gesamtbewertung</h3>
+            <ReactStars
+              count={5}
+              value={Number(durchschnitt)}
+              size={28}
+              color2="#fbbf24"
+              edit={false}
+            />
+          </div>
 
-      <section className="bewertungen-grid">
-        {dienstleistungen.map(d => (
-          <Link to={`/dienstleistung/${d.dienstleistung_id}`} className="bewertung-card" key={d.dienstleistung_id}>
-            <div className="bewertung-title">
-              <h3>{d.dienstleistung}</h3>
-              <ReactStars 
-                count={5} 
-                value={parseFloat(d.durchschnitt_rating_dienstleistung)} 
-                size={24} 
-                color2={'#fbbf24'} 
-                edit={false} 
-              />
-              <div className="score">
-                {parseFloat(d.durchschnitt_rating_dienstleistung).toFixed(1)} / 5
+          <p className="rating-text">
+            Durchschnitt aus allen abgegebenen Kundenbewertungen
+          </p>
+
+          <strong style={{ fontSize: "26px", color: "#4f46e5" }}>
+            {durchschnitt} / 5
+          </strong>
+        </div>
+
+        {/* GRID */}
+        <div className="ratings-grid">
+          {daten.map((d) => (
+            <Link
+              key={d.dienstleistung_id}
+              to={`/dienstleistung/${d.dienstleistung_id}`}
+              className="rating-card"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="rating-header">
+                <h3>{d.dienstleistung}</h3>
+                <ReactStars
+                  count={5}
+                  value={Number(d.durchschnitt_rating_dienstleistung)}
+                  size={20}
+                  color2="#fbbf24"
+                  edit={false}
+                />
               </div>
-              <div className="anzahl">
-                {d.anzahl_bewertungen} Bewertung{d.anzahl_bewertungen !== 1 ? 'en' : ''}
-              </div>
-            </div>
-            <p className="mehr">➤ Jetzt ansehen</p>
-          </Link>
-        ))}
+
+              <p className="rating-text">
+                {Number(d.durchschnitt_rating_dienstleistung).toFixed(1)} / 5
+                aus {d.anzahl_bewertungen} Bewertung
+                {d.anzahl_bewertungen !== 1 && "en"}
+              </p>
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );

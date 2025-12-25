@@ -12,64 +12,81 @@ const DienstleistungsBewertungen = () => {
   const [fehler, setFehler] = useState(null);
 
   useEffect(() => {
-    const fetchBewertungen = async () => {
+    const fetchData = async () => {
       try {
         const res = await axios.get(
           `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/dienstleistungen/${dienstleistungId}`
         );
+
         setDienstleistung(res.data.data.dienstleistung);
-        setBewertungen(res.data.data.bewertungen);
-        setLoading(false);
+        setBewertungen(res.data.data.bewertungen || []);
       } catch (err) {
-        console.error("Fehler beim Laden:", err);
-        setFehler("Fehler beim Laden der Bewertungen.");
+        console.error(err);
+        setFehler("Bewertungen konnten nicht geladen werden.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchBewertungen();
+    fetchData();
   }, [dienstleistungId]);
 
-  return (
-    <div className="bewertungen-wrapper">
-      {loading ? (
-        <div className="loading-spinner">⏳ Bewertungen werden geladen...</div>
-      ) : fehler ? (
-        <div className="error-message">{fehler}</div>
-      ) : (
-        <>
-          <h2>
-            Bewertungen für:{" "}
-            <span className="dienstleistungs-title">
-              {dienstleistung?.title || dienstleistung?.dienstleistung}
-            </span>
-          </h2>
+  if (loading) {
+    return <div className="db-loading">Bewertungen werden geladen…</div>;
+  }
 
-          {bewertungen.length === 0 ? (
-            <p className="leer">Für diese Dienstleistung wurden noch keine Bewertungen abgegeben.</p>
-          ) : (
-            <div className="bewertungen-liste">
-              {bewertungen.map((b) => (
-                <Link to={`/bewertungen/${b.id}`} className="bewertung-card" key={b.id}>
-                  <div className="rating">
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      color2={"#fbbf24"}
-                      value={b.gesamtrating}
-                      edit={false}
-                    />
-                    <span className="score">{b.gesamtrating}/5</span>
-                  </div>
-                  <p className="text">„{b.gesamttext}“</p>
-                  <span className="id">Bewertung #{b.id}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </div>
+  if (fehler) {
+    return <div className="db-error">{fehler}</div>;
+  }
+
+  return (
+    <main className="db-page">
+      {/* HEADER */}
+      <header className="db-header">
+        <h1>Bewertungen</h1>
+        <p className="db-subtitle">
+          {dienstleistung?.title || dienstleistung?.dienstleistung}
+        </p>
+      </header>
+
+      {/* CONTENT */}
+      <section className="db-content">
+        {bewertungen.length === 0 ? (
+          <div className="db-empty">
+            Für diese Dienstleistung liegen noch keine Bewertungen vor.
+          </div>
+        ) : (
+          <div className="db-grid">
+            {bewertungen.map((b) => (
+              <Link
+                to={`/bewertungen/${b.id}`}
+                className="db-card"
+                key={b.id}
+              >
+                <div className="db-card-header">
+                  <ReactStars
+                    count={5}
+                    value={b.gesamtrating}
+                    size={26}
+                    edit={false}
+                    color2="#fbbf24"
+                  />
+                  <span className="db-score">{b.gesamtrating}/5</span>
+                </div>
+
+                <p className="db-text">
+                  {b.gesamttext
+                    ? `„${b.gesamttext}“`
+                    : "Kein Kommentar vorhanden."}
+                </p>
+
+                <span className="db-id">Bewertung #{b.id}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 };
 

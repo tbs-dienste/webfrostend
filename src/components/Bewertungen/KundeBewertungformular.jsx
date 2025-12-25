@@ -1,191 +1,177 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import ReactStars from 'react-rating-stars-component';
-import './KundeBewertungformular.scss';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import ReactStars from "react-rating-stars-component";
+import "./KundeBewertungformular.scss";
 
-const BewertungFelderMapping = {
+const FIELDS = {
   arbeitsqualitaet: "Arbeitsqualität",
   tempo: "Tempo",
   freundlichkeit: "Freundlichkeit",
   zufriedenheit: "Zufriedenheit",
   kommunikation: "Kommunikation",
   zuverlaessigkeit: "Zuverlässigkeit",
-  professionalitaet: "Professionalität"
+  professionalitaet: "Professionalität",
 };
-
-const BewertungFelder = Object.keys(BewertungFelderMapping);
 
 const KundeBewertungformular = () => {
   const { kundennummer } = useParams();
 
   const [dienstleistungen, setDienstleistungen] = useState([]);
-  const [aktuelleDienstleistungIndex, setAktuelleDienstleistungIndex] = useState(0);
-  const [formValuesList, setFormValuesList] = useState([]);
-  const [fehler, setFehler] = useState('');
-  const [alleBewertungenAbgeschlossen, setAlleBewertungenAbgeschlossen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [forms, setForms] = useState([]);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDienstleistungen = async () => {
+    const load = async () => {
       try {
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${kundennummer}/dienstleistungen`);
-        const dienstList = response.data.data || [];
+        const res = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${kundennummer}/dienstleistungen`
+        );
 
-        setDienstleistungen(dienstList);
+        const list = res.data.data || [];
+        setDienstleistungen(list);
 
-        const initialFormValues = dienstList.map(() => {
-          const obj = {};
-          BewertungFelder.forEach(feld => {
-            obj[feld] = '';
-            obj[`${feld}_rating`] = 0;
-          });
-          obj['gesamttext'] = '';
-          obj['gesamtrating'] = 0;
-          return obj;
-        });
-
-        setFormValuesList(initialFormValues);
-      } catch (error) {
-        console.error(error);
-        setFehler('Fehler beim Laden der Dienstleistungsdaten.');
+        setForms(
+          list.map(() => {
+            const obj = {};
+            Object.keys(FIELDS).forEach((f) => {
+              obj[f] = "";
+              obj[`${f}_rating`] = 0;
+            });
+            obj.gesamtrating = 0;
+            obj.gesamttext = "";
+            return obj;
+          })
+        );
+      } catch (err) {
+        setError("Dienstleistungen konnten nicht geladen werden.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDienstleistungen();
+    load();
   }, [kundennummer]);
 
-  const aktuelleDienstleistung = dienstleistungen[aktuelleDienstleistungIndex];
-  const formValues = formValuesList[aktuelleDienstleistungIndex] || {};
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValuesList(prev => {
-      const copy = [...prev];
-      copy[aktuelleDienstleistungIndex] = { ...copy[aktuelleDienstleistungIndex], [name]: value };
-      return copy;
-    });
-  };
-
-  const handleRatingChange = (newRating, name) => {
-    setFormValuesList(prev => {
-      const copy = [...prev];
-      copy[aktuelleDienstleistungIndex] = { ...copy[aktuelleDienstleistungIndex], [name]: newRating };
-      return copy;
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFehler('');
-
-    const allRatingsSet = BewertungFelder.every(feld => formValues[`${feld}_rating`] > 0);
-    if (!allRatingsSet) {
-      setFehler('Bitte geben Sie für alle Felder eine Bewertung ab.');
-      return;
-    }
-
-    if (!formValues.gesamtrating || formValues.gesamtrating <= 0) {
-      setFehler('Bitte geben Sie eine Gesamtbewertung ab.');
-      return;
-    }
-
-    if (!formValues.gesamttext || formValues.gesamttext.trim() === '') {
-      setFehler('Bitte geben Sie auch einen Gesamttext ein.');
-      return;
-    }
-
-    const payload = {
-      dienstleistung_id: aktuelleDienstleistung.id,
-      ...formValues
-    };
-
-    try {
-      await axios.post(`https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`, payload);
-
-      if (aktuelleDienstleistungIndex < dienstleistungen.length - 1) {
-        setAktuelleDienstleistungIndex(prev => prev + 1);
-      } else {
-        setAlleBewertungenAbgeschlossen(true);
-      }
-    } catch (error) {
-      console.error(error);
-      setFehler(error?.response?.data?.message || 'Fehler beim Speichern der Bewertung.');
-    }
-  };
-
-  if (dienstleistungen.length === 0) {
-    return <div>Keine Dienstleistungen zum Bewerten gefunden.</div>;
+  if (loading) {
+    return <div className="kb-loading">Bewertungen werden geladen…</div>;
   }
 
-  if (alleBewertungenAbgeschlossen) {
+  if (dienstleistungen.length === 0) {
+    return <div className="kb-empty">Keine Dienstleistungen gefunden.</div>;
+  }
+
+  if (done) {
     return (
-      <div className="bewertung-container">
-        <h2>Vielen Dank für Ihre Bewertungen!</h2>
+      <div className="kb-success">
+        <h2>Vielen Dank! 🎉</h2>
+        <p>Ihre Bewertungen wurden erfolgreich übermittelt.</p>
       </div>
     );
   }
 
+  const service = dienstleistungen[index];
+  const values = forms[index];
+
+  const updateValue = (name, value) => {
+    setForms((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [name]: value };
+      return copy;
+    });
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    for (const f of Object.keys(FIELDS)) {
+      if (!values[`${f}_rating`]) {
+        return setError("Bitte alle Kategorien bewerten.");
+      }
+    }
+
+    if (!values.gesamtrating || !values.gesamttext.trim()) {
+      return setError("Gesamtbewertung und Kommentar sind erforderlich.");
+    }
+
+    try {
+      await axios.post(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/${kundennummer}`,
+        {
+          dienstleistung_id: service.id,
+          ...values,
+        }
+      );
+
+      index < dienstleistungen.length - 1
+        ? setIndex(index + 1)
+        : setDone(true);
+    } catch (err) {
+      setError("Fehler beim Speichern der Bewertung.");
+    }
+  };
+
   return (
-    <div className="bewertung-container">
-      <h2>Bewertung für Dienstleistung: {aktuelleDienstleistung.name}</h2>
-      <form onSubmit={handleSubmit} className="bewertung-form">
-        {BewertungFelder.map(feld => (
-          <div className="bewertung-feld" key={feld}>
-            <div className="label-und-rating">
-              <label htmlFor={feld}>{BewertungFelderMapping[feld]}:</label>
+    <main className="kb-page">
+      <header className="kb-header">
+        <h1>Bewertung abgeben</h1>
+        <p>{service.name || service.title}</p>
+      </header>
+
+      <form className="kb-form" onSubmit={submit}>
+        {Object.entries(FIELDS).map(([key, label]) => (
+          <section className="kb-block" key={key}>
+            <div className="kb-block-header">
+              <span>{label}</span>
               <ReactStars
                 count={5}
-                value={formValues[`${feld}_rating`] || 0}
-                onChange={(newRating) => handleRatingChange(newRating, `${feld}_rating`)}
-                size={30}
-                activeColor="#ffca2c"
-                isHalf={true}
+                value={values[`${key}_rating`]}
+                onChange={(r) => updateValue(`${key}_rating`, r)}
+                size={28}
+                isHalf
+                activeColor="#fbbf24"
               />
             </div>
+
             <textarea
-              id={feld}
-              name={feld}
-              value={formValues[feld] || ''}
-              onChange={handleChange}
-              placeholder={`Ihre Bewertung zu ${BewertungFelderMapping[feld]}`}
-              className="bewertung-input"
-              required
+              placeholder={`Ihre Meinung zu ${label}`}
+              value={values[key]}
+              onChange={(e) => updateValue(key, e.target.value)}
             />
-          </div>
+          </section>
         ))}
 
-        <div className="bewertung-feld">
-          <label>Gesamtbewertung:</label>
+        <section className="kb-total">
+          <h3>Gesamtbewertung</h3>
           <ReactStars
             count={5}
-            value={formValues.gesamtrating || 0}
-            onChange={(newRating) => handleRatingChange(newRating, 'gesamtrating')}
-            size={40}
-            activeColor="#ff5722"
-            isHalf={true}
+            value={values.gesamtrating}
+            onChange={(r) => updateValue("gesamtrating", r)}
+            size={38}
+            isHalf
+            activeColor="#f97316"
           />
-        </div>
 
-        <div className="bewertung-feld">
-          <label htmlFor="gesamttext">Zusätzlicher Kommentar:</label>
           <textarea
-            id="gesamttext"
-            name="gesamttext"
-            value={formValues.gesamttext || ''}
-            onChange={handleChange}
-            placeholder="Ihr Gesamtfazit oder sonstige Anmerkungen"
-            className="bewertung-input"
-            required
+            placeholder="Ihr Gesamtfazit"
+            value={values.gesamttext}
+            onChange={(e) => updateValue("gesamttext", e.target.value)}
           />
-        </div>
+        </section>
 
-        <button type="submit" className="submit-button">
-          {aktuelleDienstleistungIndex < dienstleistungen.length - 1 ? 'Weiter zur nächsten Dienstleistung' : 'Absenden'}
+        {error && <div className="kb-error">{error}</div>}
+
+        <button className="kb-submit">
+          {index < dienstleistungen.length - 1
+            ? "Nächste Dienstleistung"
+            : "Bewertung absenden"}
         </button>
-
-        {fehler && <div className="fehler-nachricht">{fehler}</div>}
       </form>
-    </div>
+    </main>
   );
 };
 

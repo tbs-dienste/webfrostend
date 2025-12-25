@@ -1,108 +1,164 @@
-.bewertung-page {
-  width: 100%;
-  padding: 4rem 6vw;
-  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
-  font-family: "Inter", sans-serif;
+/* ===============================
+   VARIABLES
+================================ */
+$primary: #4f46e5;
+$dark: #0f172a;
+$muted: #64748b;
+$bg: #f8fafc;
+$accent: #fbbf24;
 
-  .bewertung-header {
-    margin-bottom: 3rem;
+$radius: 20px;
+$shadow: 0 30px 60px rgba(15, 23, 42, 0.15);
 
-    .bewertung-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
-      font-size: 1rem;
-      color: #2563eb;
-      margin-bottom: 1rem;
-      transition: color 0.2s ease;
+/* ===============================
+   PAGE
+================================ */
+.bewertung-detail {
+  min-height: 100vh;
+  background: $bg;
+  font-family: "Inter", system-ui, sans-serif;
+}
 
-      &:hover {
-        color: #1e3a8a;
-      }
-    }
+/* ===============================
+   HERO
+================================ */
+.bewertung-hero {
+  background: linear-gradient(135deg, $dark, #020617);
+  padding: 110px 24px 90px;
+  text-align: center;
+  color: white;
+  position: relative;
 
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #1e3a8a;
-      margin-bottom: 0.5rem;
-    }
-
-    .dienstleistung-title {
-      font-size: 1.2rem;
-      color: #4b5563;
-    }
+  h1 {
+    font-size: clamp(34px, 5vw, 50px);
+    font-weight: 800;
+    margin-top: 20px;
   }
 
-  .bewertung-content {
-    display: grid;
-    gap: 2rem;
+  .dienstleistung {
+    display: block;
+    margin-top: 14px;
+    font-size: 18px;
+    color: #c7d2fe;
   }
 
-  .bewertung-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 1.8rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      h2 {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #111827;
-      }
-    }
-
-    .bewertung-score {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-      color: #374151;
-      font-style: italic;
-      line-height: 1.6;
-    }
-  }
-
-  .bewertung-kommentar {
-    background: #fefce8;
-    border-left: 4px solid #facc15;
-
-    h2 {
-      color: #b45309;
-    }
-
-    p {
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      color: #92400e;
-    }
-  }
-
-  .bewertung-loading {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #6b7280;
-    padding: 2rem;
-    animation: fade 1.5s ease-in-out infinite alternate;
+  .back-link {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #c7d2fe;
+    text-decoration: none;
+    font-weight: 600;
   }
 }
 
-@keyframes fade {
+/* ===============================
+   CONTENT
+================================ */
+.bewertung-content {
+  max-width: 1100px;
+  margin: -70px auto 120px;
+  padding: 40px;
+  background: white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
+
+/* GRID */
+.ratings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+/* CARD */
+.rating-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: $dark;
+    }
+  }
+
+  .rating-text {
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: $muted;
+    font-style: italic;
+  }
+}
+
+/* COMMENT */
+.comment-card {
+  margin-top: 40px;
+  padding: 28px;
+  background: linear-gradient(135deg, #fefce8, #fef3c7);
+  border-radius: 20px;
+  border-left: 6px solid $accent;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #92400e;
+  }
+
+  p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #78350f;
+    line-height: 1.7;
+  }
+}
+
+/* LOADING */
+.bewertung-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: $muted;
+  animation: pulse 1.6s infinite alternate;
+}
+
+@keyframes pulse {
   from {
     opacity: 0.6;
   }
   to {
     opacity: 1;
+  }
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .bewertung-content {
+    padding: 26px;
+  }
+
+  .bewertung-hero {
+    padding: 90px 20px 80px;
   }
 }

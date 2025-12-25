@@ -1,102 +1,162 @@
-.bewertungen-wrapper {
-  width: 100%;
-  padding: 4rem 5vw;
-  background: linear-gradient(135deg, #f9fafb, #f3f4f6);
-  font-family: "Inter", sans-serif;
+/* ===============================
+   VARIABLES
+================================ */
+$primary: #4f46e5;
+$dark: #0f172a;
+$muted: #64748b;
+$bg: #f8fafc;
+$accent: #fbbf24;
 
-  h2 {
-    font-size: 2.6rem;
+$radius: 20px;
+$shadow: 0 25px 55px rgba(15, 23, 42, 0.15);
+
+/* ===============================
+   PAGE
+================================ */
+.db-page {
+  min-height: 100vh;
+  background: $bg;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.db-header {
+  padding: 110px 24px 80px;
+  background: linear-gradient(135deg, $dark, #020617);
+  text-align: center;
+  color: white;
+
+  h1 {
+    font-size: clamp(36px, 5vw, 52px);
     font-weight: 800;
-    color: #1e3a8a;
-    margin-bottom: 2rem;
-
-    .dienstleistungs-title {
-      color: #2563eb;
-    }
   }
 
-  .leer {
-    font-size: 1.2rem;
-    color: #6b7280;
-    margin-top: 1rem;
-    font-style: italic;
-    text-align: center;
-  }
-
-  .loading-spinner {
-    font-size: 1.3rem;
-    text-align: center;
-    color: #475569;
-    padding: 2rem;
-    animation: fade 1.5s ease-in-out infinite alternate;
-  }
-
-  .error-message {
-    color: #b91c1c;
-    background: #fee2e2;
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .bewertungen-liste {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .bewertung-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-decoration: none;
-
-    &:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .rating {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-
-      .score {
-        font-size: 1rem;
-        color: #6b7280;
-      }
-    }
-
-    .text {
-      margin: 1rem 0;
-      font-size: 1.05rem;
-      color: #111827;
-      font-style: italic;
-      line-height: 1.6;
-    }
-
-    .id {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      text-align: right;
-    }
+  .db-subtitle {
+    margin-top: 12px;
+    font-size: 18px;
+    color: #c7d2fe;
   }
 }
 
-@keyframes fade {
+/* ===============================
+   CONTENT
+================================ */
+.db-content {
+  max-width: 1100px;
+  margin: -70px auto 120px;
+  padding: 40px;
+  background: white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
+
+/* ===============================
+   GRID
+================================ */
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+/* ===============================
+   CARD
+================================ */
+.db-card {
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
+  }
+
+  .db-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .db-score {
+      font-weight: 700;
+      color: $muted;
+      font-size: 15px;
+    }
+  }
+
+  .db-text {
+    margin: 16px 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: $dark;
+    font-style: italic;
+  }
+
+  .db-id {
+    text-align: right;
+    font-size: 13px;
+    color: $muted;
+  }
+}
+
+/* ===============================
+   EMPTY / ERROR / LOADING
+================================ */
+.db-empty {
+  text-align: center;
+  font-size: 17px;
+  color: $muted;
+  padding: 40px 0;
+}
+
+.db-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  color: $muted;
+  animation: pulse 1.6s infinite alternate;
+}
+
+.db-error {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* ===============================
+   ANIMATION
+================================ */
+@keyframes pulse {
   from {
-    opacity: 0.5;
+    opacity: 0.6;
   }
   to {
     opacity: 1;
+  }
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+  .db-content {
+    padding: 26px;
+  }
+
+  .db-header {
+    padding: 90px 20px 70px;
   }
 }
