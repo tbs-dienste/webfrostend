@@ -4,9 +4,11 @@ import { jwtDecode } from "jwt-decode";
 import "./Navbar.scss";
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,27 +36,40 @@ const Navbar = () => {
     window.location.reload();
   };
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setAdminOpen(false);
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <Link to="/" className="logo">TBS Solutions</Link>
+        <Link to="/" className="logo" onClick={closeMenu}>
+          TBS Solutions
+        </Link>
 
-        <ul className="nav-links">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/dienstleistungen">Dienstleistungen</Link></li>
-          <li><Link to="/preisinformationen">Preise</Link></li>
-          <li><Link to="/bewertungen">Bewertungen</Link></li>
+        {/* ===== BURGER ===== */}
+        <button
+          className={`burger ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
 
-          <li><Link to="/kontakt">Kontakt</Link></li>
-          <li><Link to="/faq">FAQ</Link></li>
+        {/* ===== LINKS ===== */}
+        <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
+          <li><Link to="/" onClick={closeMenu}>Home</Link></li>
+          <li><Link to="/dienstleistungen" onClick={closeMenu}>Dienstleistungen</Link></li>
+          <li><Link to="/preisinformationen" onClick={closeMenu}>Preise</Link></li>
+          <li><Link to="/bewertungen" onClick={closeMenu}>Bewertungen</Link></li>
+          <li><Link to="/kontakt" onClick={closeMenu}>Kontakt</Link></li>
+          <li><Link to="/faq" onClick={closeMenu}>FAQ</Link></li>
 
-          {/* ================= ADMIN ================= */}
+          {/* ===== ADMIN ===== */}
           {isLoggedIn && isAdmin && (
-            <li
-              className={`admin-wrapper ${adminOpen ? "active" : ""}`}
-              onMouseEnter={() => setAdminOpen(true)}
-              onMouseLeave={() => setAdminOpen(false)}
-            >
+            <li className={`admin-wrapper ${adminOpen ? "active" : ""}`}>
               <span
                 className="admin-trigger"
                 onClick={() => setAdminOpen(!adminOpen)}
@@ -65,39 +80,38 @@ const Navbar = () => {
               <div className="admin-mega">
                 <div className="mega-col">
                   <h4>Verwaltung</h4>
-                  <Link to="/mitarbeiter">Mitarbeiter</Link>
-                  <Link to="/allbewerbungen">Bewerbungen</Link>
-                  <Link to="/newsletter-subscribers">Newsletter</Link>
+                  <Link to="/mitarbeiter" onClick={closeMenu}>Mitarbeiter</Link>
+                  <Link to="/allbewerbungen" onClick={closeMenu}>Bewerbungen</Link>
+                  <Link to="/newsletter-subscribers" onClick={closeMenu}>Newsletter</Link>
                 </div>
 
                 <div className="mega-col">
                   <h4>Inventur</h4>
-                  <Link to="/inventur">Inventur</Link>
-                  <Link to="/products">Produkte</Link>
-                  <Link to="/aktionen">Aktionen</Link>
+                  <Link to="/inventur" onClick={closeMenu}>Inventur</Link>
+                  <Link to="/products" onClick={closeMenu}>Produkte</Link>
+                  <Link to="/aktionen" onClick={closeMenu}>Aktionen</Link>
                 </div>
 
                 <div className="mega-col">
                   <h4>Verkauf</h4>
-                  <Link to="/kassenlogin">Kasse</Link>
-                  <Link to="/kundenkarten">Kundenkarten</Link>
-                  <Link to="/gutscheine-liste">Gutscheine</Link>
+                  <Link to="/kassenlogin" onClick={closeMenu}>Kasse</Link>
+                  <Link to="/kundenkarten" onClick={closeMenu}>Kundenkarten</Link>
+                  <Link to="/gutscheine-liste" onClick={closeMenu}>Gutscheine</Link>
                 </div>
 
                 <div className="mega-col">
                   <h4>Abrechnung</h4>
-                  <Link to="/rechnungen">Rechnungen</Link>
-                  <Link to="/statistiken">Statistik</Link>
+                  <Link to="/rechnungen" onClick={closeMenu}>Rechnungen</Link>
+                  <Link to="/statistiken" onClick={closeMenu}>Statistik</Link>
                 </div>
               </div>
             </li>
           )}
-          {/* ========================================== */}
 
           {isLoggedIn && (
             <>
-              <li><Link to="/kunden">Kunden</Link></li>
-              <li><Link to="/profile">Profil</Link></li>
+              <li><Link to="/kunden" onClick={closeMenu}>Kunden</Link></li>
+              <li><Link to="/profile" onClick={closeMenu}>Profil</Link></li>
               <li>
                 <button className="logout-btn" onClick={handleLogout}>
                   Logout
@@ -106,7 +120,9 @@ const Navbar = () => {
             </>
           )}
 
-          {!isLoggedIn && <li><Link to="/login">Login</Link></li>}
+          {!isLoggedIn && (
+            <li><Link to="/login" onClick={closeMenu}>Login</Link></li>
+          )}
         </ul>
       </div>
     </nav>
