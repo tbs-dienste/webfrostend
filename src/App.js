@@ -119,6 +119,7 @@ import "./App.css";
 import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
 import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
 import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeigen';
+import SimpleChatbot from './components/Chatbot/SimpleChatbot';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -321,7 +322,8 @@ const App = () => {
           )}
         </Routes>
   
-        {!isKassenSubdomain && !isKassenModus && <Footer />}
+        {!isKassenSubdomain && !isKassenModus && <Footer /> }
+        <SimpleChatbot />
       </Router>
     </div>
   );
