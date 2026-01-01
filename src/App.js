@@ -121,6 +121,7 @@ import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
 import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeigen';
 import SimpleChatbot from './components/Chatbot/SimpleChatbot';
 import EinkaufstagePage from './components/Administrativ/Einkauf/EinkaufstagePage';
+import EinkaufstagDetailPage from './components/Administrativ/Einkauf/EinkaufstagDetailPage';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -193,7 +194,6 @@ const App = () => {
               {/* Hauptdomain Routen */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/game" element={<XboxPracticeGame />} />              <Route path="/antrag" element={<AntragStellen />} />
 {/* Inventur anlegen */}
 <Route path="/inventur/create" element={<InventurErstellen />} />
 
@@ -304,7 +304,7 @@ const App = () => {
               <Route path="/pdfmerger" element={<PdfMerger />} />
               <Route path="/vertragsvorlage-create" element={<VertragsVorlageForm />} />
               <Route path="/einkaufstage" element={<EinkaufstagePage />} />
-
+              <Route path="/einkaufstag/:datum_code" element={<EinkaufstagDetailPage />} />
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
               <Route path="/createfaq" element={<CreateFaq />} />

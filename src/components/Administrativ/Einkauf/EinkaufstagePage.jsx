@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./EinkaufstagePage.scss";
 
@@ -12,18 +13,14 @@ function EinkaufstagePage() {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-  // 🔄 Einkaufstage laden
   const fetchEinkaufstage = async () => {
     try {
       setLoading(true);
-
       const res = await axios.get(API_URL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       setEinkaufstage(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -37,38 +34,39 @@ function EinkaufstagePage() {
     fetchEinkaufstage();
   }, []);
 
-// Einkaufstag erstellen (Frontend sendet das Datum)
-const handleCreate = async () => {
+  const handleCreate = async () => {
     if (!datum) {
       setError("Bitte ein Datum auswählen");
       return;
     }
-  
+
     try {
       await axios.post(
         API_URL,
-        { datum }, // Datum vom Input
+        { datum },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       setPopupOpen(false);
       setDatum("");
       setError("");
-      fetchEinkaufstage(); // Liste neu laden
+      fetchEinkaufstage();
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.error || "Fehler beim Erstellen des Einkaufstags");
     }
   };
-  
+
+  // ➡️ Navigation über datum_code statt ID
+  const handleCardClick = (datum_code) => {
+    navigate(`/einkaufstag/${datum_code}`);
+  };
+
   return (
     <div className="shopping-page">
       <header className="shopping-header">
         <h1>Einkaufstage</h1>
-        <button
-          className="primary-action"
-          onClick={() => setPopupOpen(true)}
-        >
+        <button className="primary-action" onClick={() => setPopupOpen(true)}>
           + Neuer Einkaufstag
         </button>
       </header>
@@ -80,7 +78,12 @@ const handleCreate = async () => {
       ) : (
         <section className="shopping-grid">
           {einkaufstage.map((tag) => (
-            <article className="shopping-card" key={tag.id}>
+            <article
+              className="shopping-card"
+              key={tag.id}
+              onClick={() => handleCardClick(tag.datum_code)}
+              style={{ cursor: "pointer" }}
+            >
               <div className="card-row">
                 <span className="label">Datum-Code</span>
                 <span className="value">{tag.datum_code}</span>
@@ -97,7 +100,6 @@ const handleCreate = async () => {
         </section>
       )}
 
-      {/* 🪟 POPUP */}
       {popupOpen && (
         <div className="modal-backdrop">
           <div className="modal-window">
@@ -128,4 +130,5 @@ const handleCreate = async () => {
     </div>
   );
 }
+
 export default EinkaufstagePage;
