@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./MitarbeiterErfassen.scss";
-import { FaUser, FaEnvelope, FaPhone, FaIdCard, FaLock, FaGlobe, FaBirthdayCake, FaBuilding } from "react-icons/fa";
-import { MdHome, MdLocationOn } from "react-icons/md";
 
 const MitarbeiterErfassen = () => {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
   const [formData, setFormData] = useState({
     geschlecht: "m",
     vorname: "",
@@ -12,55 +14,44 @@ const MitarbeiterErfassen = () => {
     adresse: "",
     postleitzahl: "",
     ort: "",
+    land: "",
     email: "",
     mobil: "",
     benutzername: "",
     passwort: "",
     iban: "",
-    land: "",
     geburtstagdatum: "",
     verfügbarkeit: "vollzeit",
     teilzeit_prozent: "",
     fähigkeiten: "",
     dienstleistung_ids: [],
-    foto: null,
+    foto: null
   });
 
-  const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [fotoPreview, setFotoPreview] = useState(null);
-
   useEffect(() => {
-    // Dienstleistungen abrufen
-    axios.get("/api/dienstleistung")
-      .then(res => {
-        const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
-        setServices(list);
-      })
-      .catch(err => console.error(err));
+    axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
+      .then(res => setServices(res.data.data || res.data))
+      .catch(console.error);
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value, files } = e.target;
-    if (files) {
-      setFormData(prev => ({ ...prev, [name]: files[0] }));
-      setFotoPreview(URL.createObjectURL(files[0]));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: files ? files[0] : value
+    }));
   };
 
-  const handleDienstleistungChange = (id, checked) => {
-    setFormData(prev => {
-      let ids = [...prev.dienstleistung_ids];
-      if (checked) ids.push(id.toString());
-      else ids = ids.filter(i => i !== id.toString());
-      return { ...prev, dienstleistung_ids: ids };
-    });
+  const toggleDienstleistung = id => {
+    setFormData(prev => ({
+      ...prev,
+      dienstleistung_ids: prev.dienstleistung_ids.includes(id)
+        ? prev.dienstleistung_ids.filter(d => d !== id)
+        : [...prev.dienstleistung_ids, id]
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -68,31 +59,48 @@ const MitarbeiterErfassen = () => {
     try {
       const data = new FormData();
 
-      for (let key in formData) {
+      Object.entries(formData).forEach(([key, value]) => {
         if (key === "dienstleistung_ids") {
-          formData.dienstleistung_ids.forEach(id => data.append("dienstleistung_ids[]", id));
-        } else {
-          data.append(key, formData[key]);
+          value.forEach(id => data.append("dienstleistung_ids[]", id));
+        } else if (value !== null && value !== "") {
+          data.append(key, value);
         }
-      }
+      });
 
       const token = localStorage.getItem("token");
-      const res = await axios.post("/api/mitarbeiter", data, {
+
+      const res = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter", data, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setMessage({ type: "success", text: res.data.message });
+
       setFormData({
-        geschlecht: "m", vorname: "", nachname: "", adresse: "", postleitzahl: "",
-        ort: "", email: "", mobil: "", benutzername: "", passwort: "", iban: "",
-        land: "", geburtstagdatum: "", verfügbarkeit: "vollzeit", teilzeit_prozent: "",
-        fähigkeiten: "", dienstleistung_ids: [], foto: null
+        geschlecht: "m",
+        vorname: "",
+        nachname: "",
+        adresse: "",
+        postleitzahl: "",
+        ort: "",
+        land: "",
+        email: "",
+        mobil: "",
+        benutzername: "",
+        passwort: "",
+        iban: "",
+        geburtstagdatum: "",
+        verfügbarkeit: "vollzeit",
+        teilzeit_prozent: "",
+        fähigkeiten: "",
+        dienstleistung_ids: [],
+        foto: null
       });
-      setFotoPreview(null);
 
     } catch (err) {
-      console.error(err);
-      setMessage({ type: "error", text: err.response?.data?.error || "Fehler beim Erstellen" });
+      setMessage({
+        type: "error",
+        text: err.response?.data?.error || "Fehler beim Erstellen"
+      });
     } finally {
       setLoading(false);
     }
@@ -101,78 +109,86 @@ const MitarbeiterErfassen = () => {
   return (
     <div className="mitarbeiter-form-container">
       <h2>Mitarbeiter erstellen</h2>
+
       {message && <div className={`message ${message.type}`}>{message.text}</div>}
 
-      <form className="mitarbeiter-form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
 
-        {/* Name */}
-        <div className="input-group"><FaUser /><input type="text" name="vorname" placeholder="Vorname" value={formData.vorname} onChange={handleChange} required /></div>
-        <div className="input-group"><FaUser /><input type="text" name="nachname" placeholder="Nachname" value={formData.nachname} onChange={handleChange} required /></div>
+        {/* 👤 PERSON */}
+        <input name="vorname" placeholder="Vorname" value={formData.vorname} onChange={handleChange} required />
+        <input name="nachname" placeholder="Nachname" value={formData.nachname} onChange={handleChange} required />
 
-        {/* Adresse */}
-        <div className="input-group"><MdHome /><input type="text" name="adresse" placeholder="Adresse" value={formData.adresse} onChange={handleChange} /></div>
-        <div className="input-group"><MdLocationOn /><input type="text" name="postleitzahl" placeholder="PLZ" value={formData.postleitzahl} onChange={handleChange} /></div>
-        <div className="input-group"><MdLocationOn /><input type="text" name="ort" placeholder="Ort" value={formData.ort} onChange={handleChange} /></div>
+        <select name="geschlecht" value={formData.geschlecht} onChange={handleChange}>
+          <option value="m">Männlich</option>
+          <option value="w">Weiblich</option>
+          <option value="d">Divers</option>
+        </select>
 
-        {/* Kontakt */}
-        <div className="input-group"><FaEnvelope /><input type="email" name="email" placeholder="E-Mail" value={formData.email} onChange={handleChange} required /></div>
-        <div className="input-group"><FaPhone /><input type="text" name="mobil" placeholder="Mobil" value={formData.mobil} onChange={handleChange} /></div>
-        <div className="input-group"><FaIdCard /><input type="text" name="benutzername" placeholder="Benutzername" value={formData.benutzername} onChange={handleChange} required /></div>
-        <div className="input-group"><FaLock /><input type="password" name="passwort" placeholder="Passwort" value={formData.passwort} onChange={handleChange} required /></div>
+        {/* 🏠 ADRESSE */}
+        <input name="adresse" placeholder="Adresse" value={formData.adresse} onChange={handleChange} />
+        <input name="postleitzahl" placeholder="PLZ" value={formData.postleitzahl} onChange={handleChange} />
+        <input name="ort" placeholder="Ort" value={formData.ort} onChange={handleChange} />
+        <input name="land" placeholder="Land" value={formData.land} onChange={handleChange} />
 
-        {/* IBAN / Land / Geburtstag */}
-        <div className="input-group"><FaGlobe /><input type="text" name="iban" placeholder="IBAN" value={formData.iban} onChange={handleChange} /></div>
-        <div className="input-group"><FaGlobe /><input type="text" name="land" placeholder="Land" value={formData.land} onChange={handleChange} /></div>
-        <div className="input-group"><FaBirthdayCake /><input type="date" name="geburtstagdatum" value={formData.geburtstagdatum} onChange={handleChange} /></div>
+        {/* 📞 KONTAKT */}
+        <input name="email" type="email" placeholder="E-Mail" value={formData.email} onChange={handleChange} required />
+        <input name="mobil" placeholder="Mobilnummer" value={formData.mobil} onChange={handleChange} />
 
-        {/* Geschlecht */}
-        <div className="input-group">
-          <label>Geschlecht:</label>
-          <select name="geschlecht" value={formData.geschlecht} onChange={handleChange}>
-            <option value="m">Männlich</option>
-            <option value="w">Weiblich</option>
-            <option value="d">Divers</option>
-          </select>
-        </div>
+        {/* 🔐 LOGIN */}
+        <input name="benutzername" placeholder="Benutzername" value={formData.benutzername} onChange={handleChange} required />
+        <input name="passwort" type="password" placeholder="Passwort" value={formData.passwort} onChange={handleChange} required />
 
-        {/* Verfügbarkeit */}
-        <div className="input-group">
-          <label>Verfügbarkeit:</label>
-          <select name="verfügbarkeit" value={formData.verfügbarkeit} onChange={handleChange}>
-            <option value="vollzeit">Vollzeit</option>
-            <option value="teilzeit">Teilzeit</option>
-            <option value="flexibel">Flexibel</option>
-          </select>
-        </div>
+        {/* 💳 FINANZEN */}
+        <input name="iban" placeholder="IBAN" value={formData.iban} onChange={handleChange} />
+
+        {/* 🎂 GEBURTSTAG */}
+        <input name="geburtstagdatum" type="date" value={formData.geburtstagdatum} onChange={handleChange} />
+
+        {/* 🕒 ARBEITSZEIT */}
+        <select name="verfügbarkeit" value={formData.verfügbarkeit} onChange={handleChange}>
+          <option value="vollzeit">Vollzeit</option>
+          <option value="teilzeit">Teilzeit</option>
+          <option value="flexibel">Flexibel</option>
+        </select>
 
         {formData.verfügbarkeit === "teilzeit" && (
-          <div className="input-group">
-            <input type="number" name="teilzeit_prozent" placeholder="Teilzeit %" value={formData.teilzeit_prozent} onChange={handleChange} min={0} max={100} />
-          </div>
+          <input
+            name="teilzeit_prozent"
+            type="number"
+            placeholder="Teilzeit %"
+            value={formData.teilzeit_prozent}
+            onChange={handleChange}
+          />
         )}
 
-        {/* Fähigkeiten */}
-        <div className="input-group"><FaBuilding /><textarea name="fähigkeiten" placeholder="Fähigkeiten" value={formData.fähigkeiten} onChange={handleChange} /></div>
+        {/* 🧠 FÄHIGKEITEN */}
+        <textarea
+          name="fähigkeiten"
+          placeholder="Fähigkeiten"
+          value={formData.fähigkeiten}
+          onChange={handleChange}
+        />
 
-        {/* Dienstleistungen */}
-        <div className="input-group dienstleistungen-checkboxes">
-          <label>Dienstleistungen:</label>
-          {services.map(s => (
-            <div key={s.id} className="checkbox-item">
-              <input type="checkbox" id={`dienst-${s.id}`} value={s.id} checked={formData.dienstleistung_ids.includes(s.id.toString())} onChange={(e) => handleDienstleistungChange(s.id, e.target.checked)} />
-              <label htmlFor={`dienst-${s.id}`} className={!s.aktiv ? "inactive" : ""}>{s.title}</label>
-            </div>
-          ))}
-        </div>
+        {/* 🧾 DIENSTLEISTUNGEN */}
+        <h4>Dienstleistungen</h4>
+        {services.map(s => (
+          <label key={s.id} className="checkbox">
+            <input
+              type="checkbox"
+              checked={formData.dienstleistung_ids.includes(s.id)}
+              onChange={() => toggleDienstleistung(s.id)}
+            />
+            {s.title}
+          </label>
+        ))}
 
-        {/* Foto Upload */}
-        <div className="input-group">
-          <label>Foto hochladen:</label>
-          <input type="file" name="foto" accept="image/*" onChange={handleChange} />
-          {fotoPreview && <div className="foto-preview"><img src={fotoPreview} alt="Vorschau" /></div>}
-        </div>
+        {/* 🖼️ FOTO */}
+        <input type="file" name="foto" accept="image/*" onChange={handleChange} />
 
-        <button type="submit" disabled={loading}>{loading ? "Erstelle..." : "Mitarbeiter erstellen"}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Speichern..." : "Mitarbeiter erstellen"}
+        </button>
+
       </form>
     </div>
   );

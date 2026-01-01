@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.scss';
+import axios from 'axios';
 
 const Login = () => {
   const [benutzername, setBenutzername] = useState('');
@@ -14,43 +14,27 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/login',
         { benutzername, passwort }
       );
-    
-      const { token, userType } = response.data;
-    
-      // Token speichern, egal was passiert
+
+      const { token, userType } = res.data;
+
+      // ✅ TOKEN SAUBER SPEICHERN
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
-    
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    
-      navigate('/kunden'); // normaler Login
 
+      // ✅ TOKEN GLOBAL FÜR ALLE REQUESTS
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // ✅ WEITERLEITUNG
+      navigate('/kunden');
     } catch (err) {
-      if (err.response) {
-        const { status, data } = err.response;
-    
-        // Falls 403, aber Token im Header / Body? -> speichern und weiterleiten
-        if (status === 403) {
-          // Versuch Token aus Fehlerantwort zu lesen
-          const token = data.token || null;
-          if (token) {
-            localStorage.setItem('token', token);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          }
-          navigate('/verification');
-          return;
-        }
-    
-        if (status === 400) {
-          setError(data.error || 'Benutzername oder Passwort falsch.');
-          return;
-        }
-      }
-      setError('Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
+      setError(
+        err.response?.data?.error ||
+        'Login fehlgeschlagen'
+      );
     }
   };
 
@@ -59,24 +43,20 @@ const Login = () => {
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Login</h2>
 
-        <label htmlFor="benutzername">Benutzername</label>
         <input
           type="text"
-          id="benutzername"
+          placeholder="Benutzername"
           value={benutzername}
           onChange={(e) => setBenutzername(e.target.value)}
           required
-          autoComplete="username"
         />
 
-        <label htmlFor="passwort">Passwort</label>
         <input
           type="password"
-          id="passwort"
+          placeholder="Passwort"
           value={passwort}
           onChange={(e) => setPasswort(e.target.value)}
           required
-          autoComplete="current-password"
         />
 
         {error && <div className="error">{error}</div>}

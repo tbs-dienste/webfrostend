@@ -120,6 +120,7 @@ import XboxPracticeGame from './components/Administrativ/Applications/XboxPracti
 import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
 import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeigen';
 import SimpleChatbot from './components/Chatbot/SimpleChatbot';
+import EinkaufstagePage from './components/Administrativ/Einkauf/EinkaufstagePage';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -302,6 +303,7 @@ const App = () => {
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
               <Route path="/pdfmerger" element={<PdfMerger />} />
               <Route path="/vertragsvorlage-create" element={<VertragsVorlageForm />} />
+              <Route path="/einkaufstage" element={<EinkaufstagePage />} />
 
               <Route path="/datenbankpaketerstellen" element={<CreateDatenbankPaket />} />
               <Route path="/backendpaketerstellen" element={<CreateBackendPaket />} />
@@ -323,7 +325,6 @@ const App = () => {
         </Routes>
   
         {!isKassenSubdomain && !isKassenModus && <Footer /> }
-        <SimpleChatbot />
       </Router>
     </div>
   );
