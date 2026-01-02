@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./EinkaufstagDetailPage.scss";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import JsBarcode from "jsbarcode";
 
 const API_URL = "https://tbsdigitalsolutionsbackend.onrender.com/api/einkauftage";
 
@@ -104,7 +107,103 @@ setEinkaufstag(res.data.data
 
   const handleAddRow = () => setNewArtikel([...newArtikel, { artikel: "", menge: 1, preis_pro_stk: 0 }]);
   const handleRemoveRow = (index) => setNewArtikel(newArtikel.filter((_, i) => i !== index));
+ 
 
+  const handleGeneratePDF = () => {
+    if (!einkaufstag) return;
+  
+    const doc = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+  
+    // --- HEADER ---
+    doc.setFillColor("#2c3e50");
+    doc.rect(0, 0, pageWidth, 60, "F"); // dunkler Balken
+    doc.setFontSize(22);
+    doc.setTextColor("#ffffff");
+    doc.setFont("helvetica", "bold");
+    doc.text("Einkaufsliste / Lieferschein", pageWidth / 2, 40, { align: "center" });
+  
+    // Datum-Code und Erstellungsdatum
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor("#34495e");
+    doc.text(`Datum-Code: ${einkaufstag.datum_code}`, 40, 80);
+    doc.text(`Erstellt am: ${new Date(einkaufstag.created_at).toLocaleString()}`, 40, 95);
+  
+    // --- HORIZONTALER BARCODE OHNE ZAHLEN ---
+    const canvas = document.createElement("canvas");
+    JsBarcode(canvas, einkaufstag.datum_code, {
+      format: "CODE128",
+      displayValue: false,
+      height: 60,
+      width: 3,
+      margin: 0,
+    });
+    const barcodeImg = canvas.toDataURL("image/png");
+    doc.addImage(barcodeImg, "PNG", 40, 110, pageWidth - 80, 50);
+  
+    // --- MODERNE TABELLE OHNE STATUS ---
+    const tableColumn = ["✔️", "Artikel", "Menge", "Preis/Stk (CHF)", "Total (CHF)"];
+    const tableRows = einkaufstag.artikel.map((artikel) => [
+      "", // Platz für manuelles Abhaken
+      artikel.artikel,
+      artikel.menge,
+      artikel.preis_pro_stk.toFixed(2),
+      artikel.total.toFixed(2),
+    ]);
+  
+    doc.autoTable({
+      startY: 180,
+      head: [tableColumn],
+      body: tableRows,
+      headStyles: {
+        fillColor: "#34495e",
+        textColor: "#ffffff",
+        fontStyle: "bold",
+        halign: "center",
+      },
+      bodyStyles: {
+        fillColor: "#ffffff",
+        textColor: "#2c3e50",
+        valign: "middle",
+        lineColor: "#dfe2e5",
+        lineWidth: 0.5,
+      },
+      alternateRowStyles: { fillColor: "#f6f8fa" },
+      styles: { fontSize: 11, cellPadding: 6 },
+      columnStyles: {
+        0: { cellWidth: 20, halign: "center" },
+        1: { cellWidth: 220 },
+        2: { cellWidth: 60, halign: "center" },
+        3: { cellWidth: 80, halign: "right" },
+        4: { cellWidth: 80, halign: "right" },
+      },
+      theme: "grid",
+      margin: { left: 40, right: 40 },
+    });
+  
+    // --- GESAMTSUMME ---
+    const finalY = doc.lastAutoTable.finalY || 180;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor("#2c3e50");
+    doc.text(`Gesamt: ${einkaufstag.gesamt_total.toFixed(2)} CHF`, 40, finalY + 25);
+  
+    // --- FOOTER ---
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor("#7f8c8d");
+    doc.text("Generated with TBS Digital Solutions", pageWidth / 2, doc.internal.pageSize.getHeight() - 30, {
+      align: "center",
+    });
+  
+    // --- PDF speichern ---
+    doc.save(`Einkaufsliste${einkaufstag.datum_code}.pdf`);
+  };
+  
+  
+  
+  
   if (loading) return <p>Lade Einkaufstag…</p>;
   if (error) return <p className="alert-error">{error}</p>;
   if (!einkaufstag) return <p>Einkaufstag nicht gefunden</p>;
@@ -159,6 +258,9 @@ setEinkaufstag(res.data.data
       <button className="open-modal-btn" onClick={() => setShowModal(true)}>
         🛒 Neue Artikel hinzufügen
       </button>
+      <button className="pdf-btn" onClick={handleGeneratePDF}>
+  📄 PDF / Lieferschein herunterladen
+</button>
 
       {/* Modal */}
       {showModal && (
