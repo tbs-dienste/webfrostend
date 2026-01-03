@@ -122,6 +122,9 @@ import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeig
 import SimpleChatbot from './components/Chatbot/SimpleChatbot';
 import EinkaufstagePage from './components/Administrativ/Einkauf/EinkaufstagePage';
 import EinkaufstagDetailPage from './components/Administrativ/Einkauf/EinkaufstagDetailPage';
+import LieferscheinCreate from './components/Administrativ/Einkauf/LieferscheinCreate';
+import Lieferscheine from './components/Administrativ/Einkauf/Lieferscheine';
+import LieferscheinDetail from './components/Administrativ/Einkauf/LieferscheinDetail';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -298,6 +301,14 @@ const App = () => {
               <Route path="/lizenzen" element={<Lizenzen />} />
               <Route path="/bewerbungformular" element={<BewerbungForm />} />
               <Route path="/createkrankmeldung" element={<CreateKrankmeldung />} />
+              <Route path="/lieferschein-create" element={<LieferscheinCreate />} />
+              <Route path="/lieferscheine" element={<Lieferscheine />} />
+              <Route
+            path="/lieferschein/:lieferschein_nr"
+            element={
+                <LieferscheinDetail />
+            }
+          />
               <Route path="/profile" element={<Profile />} />
               <Route path="/rechnungen/:id" element={<RechnungDetails />} />
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode"; // ✅ korrigiert
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -8,12 +8,15 @@ const Navbar = () => {
   const [adminOpen, setAdminOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const loadAuth = () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+      return;
+    }
 
     try {
       const decoded = jwtDecode(token);
@@ -21,19 +24,26 @@ const Navbar = () => {
         handleLogout();
       } else {
         setIsLoggedIn(true);
-        setIsAdmin(decoded.userType === "admin");
+        setIsAdmin(localStorage.getItem("userType") === "admin");
       }
     } catch {
       handleLogout();
     }
+  };
+
+  useEffect(() => {
+    loadAuth();
+    window.addEventListener("authChange", loadAuth);
+    return () => window.removeEventListener("authChange", loadAuth);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userType");
     setIsLoggedIn(false);
     setIsAdmin(false);
+    window.dispatchEvent(new Event("authChange"));
     navigate("/");
-    window.location.reload();
   };
 
   const closeMenu = () => {
@@ -44,21 +54,12 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="nav-inner">
-        <Link to="/" className="logo" onClick={closeMenu}>
-          TBS Solutions
-        </Link>
+        <Link to="/" className="logo" onClick={closeMenu}>TBS Solutions</Link>
 
-        {/* ===== BURGER ===== */}
-        <button
-          className={`burger ${menuOpen ? "open" : ""}`}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span />
-          <span />
-          <span />
+        <button className={`burger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
+          <span /><span /><span />
         </button>
 
-        {/* ===== LINKS ===== */}
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           <li><Link to="/" onClick={closeMenu}>Home</Link></li>
           <li><Link to="/dienstleistungen" onClick={closeMenu}>Dienstleistungen</Link></li>
@@ -67,16 +68,9 @@ const Navbar = () => {
           <li><Link to="/kontakt" onClick={closeMenu}>Kontakt</Link></li>
           <li><Link to="/faq" onClick={closeMenu}>FAQ</Link></li>
 
-          {/* ===== ADMIN ===== */}
           {isLoggedIn && isAdmin && (
             <li className={`admin-wrapper ${adminOpen ? "active" : ""}`}>
-              <span
-                className="admin-trigger"
-                onClick={() => setAdminOpen(!adminOpen)}
-              >
-                Admin ▾
-              </span>
-
+              <span className="admin-trigger" onClick={() => setAdminOpen(!adminOpen)}>Admin ▾</span>
               <div className="admin-mega">
                 <div className="mega-col">
                   <h4>Verwaltung</h4>
@@ -84,21 +78,19 @@ const Navbar = () => {
                   <Link to="/allbewerbungen" onClick={closeMenu}>Bewerbungen</Link>
                   <Link to="/newsletter-subscribers" onClick={closeMenu}>Newsletter</Link>
                 </div>
-
                 <div className="mega-col">
                   <h4>Inventur</h4>
                   <Link to="/inventur" onClick={closeMenu}>Inventur</Link>
                   <Link to="/products" onClick={closeMenu}>Produkte</Link>
+                  <Link to="/lieferscheine" onClick={closeMenu}>Lieferscheine</Link>
                   <Link to="/aktionen" onClick={closeMenu}>Aktionen</Link>
                 </div>
-
                 <div className="mega-col">
                   <h4>Verkauf</h4>
                   <Link to="/kassenlogin" onClick={closeMenu}>Kasse</Link>
                   <Link to="/kundenkarten" onClick={closeMenu}>Kundenkarten</Link>
                   <Link to="/gutscheine-liste" onClick={closeMenu}>Gutscheine</Link>
                 </div>
-
                 <div className="mega-col">
                   <h4>Abrechnung</h4>
                   <Link to="/rechnungen" onClick={closeMenu}>Rechnungen</Link>
@@ -112,17 +104,11 @@ const Navbar = () => {
             <>
               <li><Link to="/kunden" onClick={closeMenu}>Kunden</Link></li>
               <li><Link to="/profile" onClick={closeMenu}>Profil</Link></li>
-              <li>
-                <button className="logout-btn" onClick={handleLogout}>
-                  Logout
-                </button>
-              </li>
+              <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
             </>
           )}
 
-          {!isLoggedIn && (
-            <li><Link to="/login" onClick={closeMenu}>Login</Link></li>
-          )}
+          {!isLoggedIn && <li><Link to="/login" onClick={closeMenu}>Login</Link></li>}
         </ul>
       </div>
     </nav>

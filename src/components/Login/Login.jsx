@@ -12,31 +12,29 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  
     try {
       const res = await axios.post(
         'https://tbsdigitalsolutionsbackend.onrender.com/api/login',
         { benutzername, passwort }
       );
-
+  
       const { token, userType } = res.data;
-
-      // ✅ TOKEN SAUBER SPEICHERN
+  
       localStorage.setItem('token', token);
       localStorage.setItem('userType', userType);
-
-      // ✅ TOKEN GLOBAL FÜR ALLE REQUESTS
+  
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      // ✅ WEITERLEITUNG
-      navigate('/kunden');
+  
+      // ✅ Event für Navbar
+      window.dispatchEvent(new Event("authChange"));
+  
+      navigate('/kunden'); // Weiterleitung nach Login
     } catch (err) {
-      setError(
-        err.response?.data?.error ||
-        'Login fehlgeschlagen'
-      );
+      setError(err.response?.data?.error || 'Login fehlgeschlagen');
     }
   };
+  
 
   return (
     <div className="login-container">
