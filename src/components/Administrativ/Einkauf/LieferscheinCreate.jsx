@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./LieferscheinCreate.scss";
+import { useNavigate } from "react-router-dom";
+
 
 export default function LieferscheinCreate() {
   const [lieferanten, setLieferanten] = useState([]);
   const [lieferantId, setLieferantId] = useState("");
   const [positionen, setPositionen] = useState([{ bezeichnung: "", menge: 1 }]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Bearer Token aus localStorage
   const token = localStorage.getItem("token");
@@ -67,16 +70,23 @@ export default function LieferscheinCreate() {
         positionen,
       });
 
-      alert(`✅ Lieferschein erstellt (ID: ${res.data.lieferschein_id})`);
+      // optional: Erfolg prüfen
+      if (!res.data?.success) {
+        throw new Error("Lieferschein konnte nicht erstellt werden");
+      }
 
-      // Reset Form
+      // Formular zurücksetzen
       setLieferantId("");
       setPositionen([{ bezeichnung: "", menge: 1 }]);
+
+      // ✅ RICHTIG navigieren
+      navigate("/lieferscheine");
+
     } catch (err) {
       console.error(err);
       alert(
         err.response?.data?.error ||
-        "❌ Fehler beim Erstellen des Lieferscheins (Token?)"
+        "❌ Fehler beim Erstellen des Lieferscheins"
       );
     } finally {
       setLoading(false);
@@ -133,8 +143,11 @@ export default function LieferscheinCreate() {
                   className="dn-input"
                   type="number"
                   min="1"
-                  value={pos.menge}
-                  onChange={(e) => updatePosition(index, "menge", Number(e.target.value))}
+                  value={pos.menge === 0 ? "" : pos.menge} // leer wenn 0
+                  onChange={(e) => {
+                    const value = e.target.value;          // das ist ein String
+                    updatePosition(index, "menge", value); // speichere als String, leer bleibt leer
+                  }}
                   required
                 />
 

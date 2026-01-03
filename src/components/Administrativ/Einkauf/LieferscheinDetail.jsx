@@ -73,104 +73,198 @@ export default function LieferscheinDetail() {
   const downloadPDF = () => {
     if (!lieferschein) return;
   
-    const doc = new jsPDF({ orientation: "landscape" });
+    const safe = (v) => String(v ?? "");
   
-    // ===== Erste Seite: Header =====
-    doc.setFontSize(18);
+    /* =================================================
+       SEITE 1 – QUERFORMAT (KOPFSEITE)
+    ================================================= */
+  
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+    });
+  
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60);
+  
+    /* ---------- TITEL ---------- */
+    doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.text("Lieferschein", 10, 15);
+    doc.text("LIEFERSCHEIN", 15, 20);
   
-    // Absender links oben
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    let absenderY = 25;
-    doc.text("Absender:", 10, absenderY);
-    absenderY += 7;
-    doc.text(`${lieferschein.ansprechpartner_vorname} ${lieferschein.ansprechpartner_nachname}`, 10, absenderY);
-    absenderY += 7;
-    doc.text(`${lieferschein.lieferant_name}`, 10, absenderY);
-    absenderY += 7;
-    doc.text(`${lieferschein.adresse}`, 10, absenderY);
-    absenderY += 7;
-    doc.text(`${lieferschein.plz} ${lieferschein.ort}`, 10, absenderY);
+    doc.text(
+      `Lieferscheinnr.: ${safe(lieferschein.lieferschein_nr)}`,
+      15,
+      30
+    );
+    doc.text(
+      `Auftragsnr.: ${safe(lieferschein.auftragsnummer)}`,
+      15,
+      38
+    );
+    doc.text(
+      `Datum: ${safe(new Date(lieferschein.datum).toLocaleDateString())}`,
+      15,
+      46
+    );
   
-    // Empfänger rechts oben
-    const empfaengerX = 160;
-    let empfaengerY = 25;
-    doc.setFont("helvetica", "bold");
-    doc.text("Empfänger:", empfaengerX, empfaengerY);
-    doc.setFont("helvetica", "normal");
-    empfaengerY += 7;
-    doc.text("TBS Solutions", empfaengerX, empfaengerY);
-    empfaengerY += 7;
-    doc.text("Akazienweg 2b", empfaengerX, empfaengerY);
-    empfaengerY += 7;
-    doc.text("Timo Blumer", empfaengerX, empfaengerY);
-    empfaengerY += 10;
-    doc.text(`Datum: ${new Date(lieferschein.datum).toLocaleDateString()}`, empfaengerX, empfaengerY);
-  
-    // Logo oben rechts
+    /* ---------- LOGO ---------- */
     if (lieferschein.logo_base64) {
       doc.addImage(
         `data:image/png;base64,${lieferschein.logo_base64}`,
         "PNG",
-        240,
-        10,
-        50,
+        235,
+        15,
+        45,
         25
       );
     }
   
-    // ===== Barcodes schön untereinander =====
-    const canvasToDataURL = (canvasRef) =>
-      canvasRef.current ? canvasRef.current.toDataURL("image/png") : null;
+    /* ---------- TRENNLINIE ---------- */
+    doc.setDrawColor(200);
+    doc.setLineWidth(0.5);
+    doc.line(15, 52, 285, 52);
+  
+    /* ---------- ABSENDER ---------- */
+    let y = 62;
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Absender", 15, y);
+  
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    y += 8;
+    doc.text(
+      `${safe(lieferschein.firmenname)}`,
+      15,
+      y
+    );
+    y += 6;
+    doc.text(
+      `${safe(lieferschein.adresse)}`,
+      15,
+      y
+    );
+    y += 6;
+    doc.text(
+      `${safe(lieferschein.plz)} ${safe(lieferschein.ort)}`,
+      15,
+      y
+    );
+  
+    /* ---------- WER HAT GELIEFERT ---------- */
+    y += 12;
+    doc.setFont("helvetica", "bold");
+    doc.text("Geliefert durch", 15, y);
+  
+    doc.setFont("helvetica", "normal");
+    y += 8;
+    doc.text(
+      `${safe(lieferschein.ansprechpartner_vorname)} ${safe(
+        lieferschein.ansprechpartner_nachname
+      )}`,
+      15,
+      y
+    );
+  
+    /* ---------- EMPFÄNGER ---------- */
+    let ry = 62;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Empfänger", 110, ry);
+  
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    ry += 8;
+    doc.text("TBS Solutions", 110, ry);
+    ry += 6;
+    doc.text("Akazienweg 2b", 110, ry);
+    ry += 6;
+    doc.text("Timo Blumer", 110, ry);
+  
+    /* ---------- BARCODES ---------- */
+    const canvasToDataURL = (ref) =>
+      ref?.current ? ref.current.toDataURL("image/png") : null;
   
     const barcodes = [
-      { ref: barcodeRef, label: "Lieferscheinnr" },
-      { ref: auftragRef, label: "Auftragsnr" },
+      { ref: barcodeRef, label: "Lieferscheinnummer" },
+      { ref: auftragRef, label: "Auftragsnummer" },
     ];
   
-    let barcodeY = 70;
-    const barcodeX = 10;
-    const barcodeWidth = 300;
-    const barcodeHeight = 35;
+    let barcodeY = 62;
+    const barcodeX = 200;
   
     barcodes.forEach((bc) => {
       const img = canvasToDataURL(bc.ref);
-      if (img) {
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text(bc.label, barcodeX, barcodeY - 5);
-        doc.addImage(img, "PNG", barcodeX, barcodeY, barcodeWidth, barcodeHeight);
-        barcodeY += barcodeHeight + 20; // Abstand zwischen Barcodes
-      }
+      if (!img) return;
+  
+      doc.setFontSize(11);
+      doc.setTextColor(120);
+      doc.text(bc.label, barcodeX, barcodeY - 3);
+  
+      doc.addImage(img, "PNG", barcodeX, barcodeY, 70, 25);
+      barcodeY += 35;
     });
   
-    // Linien zur Trennung
-    doc.setLineWidth(0.5);
-    doc.line(10, 65, 580, 65); // obere Linie
-    doc.line(10, barcodeY - 10, 580, barcodeY - 10); // unter Barcodes
+    /* =================================================
+       SEITE 2 – HOCHFORMAT (POSITIONEN)
+    ================================================= */
   
-    // ===== Zweite Seite: Positionen (Hochformat) =====
-    doc.addPage("p");
-    const tableColumn = ["Pos", "Bezeichnung", "Menge"];
+    doc.addPage("a4", "landscape");
+  
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(60);
+    doc.text("Positionen", 10, 15);
+  
+    doc.setFont("helvetica", "normal");
+  
     const tableRows = lieferschein.positionen.map((pos) => [
-      pos.pos,
-      pos.bezeichnung,
-      pos.menge,
+      safe(pos.pos),
+      safe(pos.bezeichnung),
+      safe(pos.menge),
     ]);
   
     doc.autoTable({
-      head: [tableColumn],
+      head: [["Pos", "Bezeichnung", "Menge"]],
       body: tableRows,
-      startY: 20,
-      styles: { fontSize: 12 },
-      headStyles: { fillColor: [220, 220, 220] },
+      startY: 25,
+      styles: {
+        fontSize: 11,
+        textColor: 60,
+        lineColor: 220,
+        lineWidth: 0.1,
+      },
+      headStyles: {
+        fillColor: [245, 245, 245],
+        textColor: 60,
+        fontStyle: "bold",
+      },
       theme: "grid",
     });
   
-    doc.save(`Lieferschein_${lieferschein.lieferschein_nr}.pdf`);
+    /* ---------- FOOTER (ALLE SEITEN) ---------- */
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      const pageHeight = doc.internal.pageSize.height;
+      doc.setFontSize(9);
+      doc.setTextColor(150);
+      doc.text(
+        "Elektronisch erstellter Lieferschein – gültig ohne Unterschrift",
+        10,
+        pageHeight - 10
+      );
+    }
+  
+    doc.save(`Lieferschein_${safe(lieferschein.lieferschein_nr)}.pdf`);
   };
+  
+
+  
   
   
   if (loading) return <p>Lieferschein wird geladen...</p>;

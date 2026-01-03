@@ -41,6 +41,9 @@ export default function Lieferscheine() {
       <div className="ls-list__header">
         <h2 className="ls-list__title">Alle Lieferscheine</h2>
       </div>
+      <Link to={`/lieferschein-create`}>
+        <button className="ls-btn ls-btn--view">+ Neuer Leiferschein</button>
+      </Link>
 
       <div className="ls-card">
         <table className="ls-table">
