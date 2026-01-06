@@ -78,7 +78,6 @@ const Footer = () => {
 
         <div className="footer-column">
           <h3>Rechtliches</h3>
-          <Link to="/impressum" className="footer-link">Impressum</Link>
           <a href={Datenschutzrichtlinien} target="_blank" rel="noopener noreferrer" className="footer-link">Datenschutzrichtlinien</a>
           <Link to="/agb" className="footer-link">AGB</Link>
         </div>
