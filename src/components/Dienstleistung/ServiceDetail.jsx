@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
 import "./ServiceDetail.scss";
+import Loading from "../Loading/Loading";
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -14,12 +15,13 @@ const ServiceDetail = () => {
   const [editing, setEditing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [status, setStatus] = useState({ type: "", text: "" });
+  const [loading, setLoading] = useState(true);
 
+  // Dienstleistung laden
   useEffect(() => {
     const loadService = async () => {
       try {
         const token = localStorage.getItem("token");
-
         if (token) {
           const decoded = jwtDecode(token);
           setIsAdmin(decoded.userType === "admin");
@@ -29,23 +31,26 @@ const ServiceDetail = () => {
           `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`
         );
 
-        setService(res.data.data);
-        setEditData(res.data.data);
+        setService(res.data || res.data.data); // Backend liefert entweder res.data oder res.data.data
+        setEditData(res.data || res.data.data);
       } catch {
         setStatus({ type: "error", text: "Dienstleistung nicht gefunden." });
+      } finally {
+        setLoading(false);
       }
     };
 
     loadService();
   }, [id]);
 
+  // Änderungen im Formular
   const handleChange = (e) =>
     setEditData({ ...editData, [e.target.name]: e.target.value });
 
+  // Speichern der Änderungen
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
-
       await axios.put(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`,
         editData,
@@ -60,38 +65,43 @@ const ServiceDetail = () => {
     }
   };
 
+  // Löschen
   const handleDelete = async () => {
     if (!window.confirm("Dienstleistung wirklich löschen?")) return;
 
     try {
       const token = localStorage.getItem("token");
-
       await axios.delete(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       navigate("/dienstleistungen");
     } catch {
       setStatus({ type: "error", text: "Löschen fehlgeschlagen." });
     }
   };
 
-  if (!service) return null;
+  if (loading) return <Loading />;
+  if (!service) return <p>Dienstleistung konnte nicht geladen werden.</p>;
 
   return (
     <main className="service-detail">
+      {/* HERO */}
       <section className="service-hero">
         <div className="hero-content">
           <h1>{service.title}</h1>
-          <span className="price">{service.preis} CHF / Stunde</span>
+          <span className="price">{service.preis} €</span>
         </div>
       </section>
 
+      {/* CONTENT */}
       <section className="service-content">
-        {service.img && (
+        {service.bild && (
           <div className="image-wrapper">
-            <img src={service.img} alt={service.title} />
+            <img
+              src={`data:image/png;base64,${service.bild}`}
+              alt={service.title}
+            />
           </div>
         )}
 
@@ -107,14 +117,12 @@ const ServiceDetail = () => {
               onChange={handleChange}
               placeholder="Titel"
             />
-
             <textarea
               name="description"
               value={editData.description}
               onChange={handleChange}
               placeholder="Beschreibung"
             />
-
             <input
               name="preis"
               type="number"
@@ -122,12 +130,11 @@ const ServiceDetail = () => {
               onChange={handleChange}
               placeholder="Preis"
             />
-
             <input
-              name="img"
-              value={editData.img}
+              name="farbe"
+              value={editData.farbe || ""}
               onChange={handleChange}
-              placeholder="Bild URL"
+              placeholder="Farbe"
             />
 
             <div className="actions">

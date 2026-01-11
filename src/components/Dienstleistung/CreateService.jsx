@@ -1,52 +1,76 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './CreateService.scss';
+import React, { useState } from "react";
+import axios from "axios";
+import "./CreateService.scss";
 
 const CreateService = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [img, setImg] = useState('');
-  const [preis, setPreis] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [preis, setPreis] = useState("");
+  const [farbe, setFarbe] = useState("");
+  const [status, setStatus] = useState("entwurf");
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
+  // Datei auswählen & Vorschau erzeugen
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewUrl(reader.result);
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setPreviewUrl("");
+    }
+  };
+
+  // Formular absenden
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
+    setError("");
+    setSuccess("");
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError("Kein Token gefunden. Bitte erneut anmelden.");
-        setLoading(false);
-        return;
-      }
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Kein Token gefunden. Bitte anmelden.");
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("preis", preis);
+      formData.append("farbe", farbe);
+      formData.append("status", status);
+      if (file) formData.append("file", file);
 
       await axios.post(
-        'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung',
-        { title, description, img, preis },
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung",
+        formData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
-      setSuccess("Dienstleistung erfolgreich erstellt.");
-      setTitle('');
-      setDescription('');
-      setImg('');
-      setPreis('');
-      setShowPreview(false);
+      setSuccess("✅ Dienstleistung erfolgreich erstellt!");
+      setTitle("");
+      setDescription("");
+      setPreis("");
+      setFarbe("");
+      setStatus("entwurf");
+      setFile(null);
+      setPreviewUrl("");
 
-      setTimeout(() => {
-        window.location.href = "/dienstleistungen";
-      }, 1500);
-
-    } catch (error) {
-      setError("Fehler beim Erstellen der Dienstleistung.");
+      setTimeout(() => window.location.href = "/dienstleistungen", 1500);
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+      setError("❌ Fehler beim Erstellen der Dienstleistung.");
     } finally {
       setLoading(false);
     }
@@ -55,14 +79,14 @@ const CreateService = () => {
   return (
     <div className="create-service-container">
       <h1>Dienstleistung erstellen</h1>
-      <form onSubmit={handleSubmit} className="create-service-form">
+      <form className="create-service-form" onSubmit={handleSubmit}>
         <label>
           <span>Titel</span>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Titel der Dienstleistung"
+            placeholder="Titel eingeben"
             required
           />
         </label>
@@ -72,18 +96,7 @@ const CreateService = () => {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Beschreibung"
-            required
-          />
-        </label>
-
-        <label>
-          <span>Bild-URL</span>
-          <input
-            type="text"
-            value={img}
-            onChange={(e) => setImg(e.target.value)}
-            placeholder="https://example.com/bild.jpg"
+            placeholder="Beschreibung der Dienstleistung"
             required
           />
         </label>
@@ -94,43 +107,57 @@ const CreateService = () => {
             type="number"
             value={preis}
             onChange={(e) => setPreis(e.target.value)}
-            placeholder="z. B. 99.99"
+            placeholder="z.B. 99.99"
             min="0"
             required
           />
         </label>
 
-        <div className="form-buttons">
-          <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? 'Wird erstellt...' : 'Erstellen'}
-          </button>
+        <label>
+          <span>Farbe (optional)</span>
+          <input
+            type="text"
+            value={farbe}
+            onChange={(e) => setFarbe(e.target.value)}
+            placeholder="z.B. #004aad"
+          />
+        </label>
 
-          <button
-            type="button"
-            className="preview-toggle-button"
-            onClick={() => setShowPreview(!showPreview)}
-          >
-            {showPreview ? 'Vorschau ausblenden' : 'Vorschau anzeigen'}
-          </button>
-        </div>
+        <label>
+          <span>Status</span>
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="entwurf">Entwurf</option>
+            <option value="offline">Offline</option>
+            <option value="online">Online</option>
+          </select>
+        </label>
 
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-      </form>
+        <label>
+          <span>Bild hochladen</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            required
+          />
+        </label>
 
-      {showPreview && (title || description || img || preis) && (
-        <div className="preview-section">
-          <h2>Vorschau</h2>
-          <div className="preview-card">
-            {img && <img src={img} alt="Dienstleistung" />}
-            <div className="preview-content">
-              <h3>{title || 'Titel fehlt'}</h3>
-              <p>{description || 'Keine Beschreibung vorhanden.'}</p>
-              <strong>{preis ? `${preis} €` : 'Kein Preis angegeben'}</strong>
-            </div>
+        {previewUrl && (
+          <div className="preview-container">
+            <p>📷 Vorschau:</p>
+            <img src={previewUrl} alt="Vorschau" />
           </div>
+        )}
+
+        <div className="form-buttons">
+          <button type="submit" disabled={loading}>
+            {loading ? "Wird erstellt..." : "Dienstleistung erstellen"}
+          </button>
         </div>
-      )}
+
+        {success && <div className="success-message">{success}</div>}
+        {error && <div className="error-message">{error}</div>}
+      </form>
     </div>
   );
 };

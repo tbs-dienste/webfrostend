@@ -2,21 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { FaTrash, FaPlus } from "react-icons/fa";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { Helmet } from "react-helmet";
-import "./Dienstleistungen.scss";
 import Loading from "../Loading/Loading";
+import "./Dienstleistungen.scss";
 
 const Dienstleistungen = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Daten laden
   useEffect(() => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         if (token) {
           const decoded = jwtDecode(token);
           setIsAdmin(decoded.userType === "admin");
@@ -25,9 +25,10 @@ const Dienstleistungen = () => {
         const res = await axios.get(
           "https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung"
         );
-        setServices(res.data.data);
+        // Backend liefert wahrscheinlich direkt array, sonst res.data.data
+        setServices(res.data || res.data.data);
       } catch (err) {
-        console.error(err);
+        console.error("Fehler beim Laden der Dienstleistungen:", err);
       } finally {
         setLoading(false);
       }
@@ -36,6 +37,7 @@ const Dienstleistungen = () => {
     loadData();
   }, []);
 
+  // Dienstleistung löschen
   const handleDelete = async (id) => {
     if (!window.confirm("Dienstleistung wirklich löschen?")) return;
 
@@ -45,10 +47,9 @@ const Dienstleistungen = () => {
         `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setServices((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
-      console.error(err);
+      console.error("Fehler beim Löschen:", err);
     }
   };
 
@@ -77,13 +78,20 @@ const Dienstleistungen = () => {
         </div>
       </section>
 
-      {/* LIST */}
+      {/* GRID */}
       <section className="services-grid">
+        {services.length === 0 && (
+          <p className="no-services">Keine Dienstleistungen verfügbar.</p>
+        )}
+
         {services.map((service) => (
           <article className="service-item" key={service.id}>
             <div className="service-media">
-              {service.img ? (
-                <img src={service.img} alt={service.title} />
+              {service.bild ? (
+                <img
+                  src={`data:image/png;base64,${service.bild}`}
+                  alt={service.title}
+                />
               ) : (
                 <div className="media-placeholder">Kein Bild</div>
               )}
@@ -99,7 +107,10 @@ const Dienstleistungen = () => {
               </p>
 
               <div className="service-footer">
-                <Link to={`/service/${service.id}`} className="details-link">
+                <Link
+                  to={`/service/${service.id}`}
+                  className="details-link"
+                >
                   Details ansehen →
                 </Link>
 
@@ -107,6 +118,7 @@ const Dienstleistungen = () => {
                   <button
                     className="admin-delete"
                     onClick={() => handleDelete(service.id)}
+                    title="Dienstleistung löschen"
                   >
                     <FaTrash />
                   </button>
