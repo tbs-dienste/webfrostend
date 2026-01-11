@@ -31,8 +31,9 @@ const ServiceDetail = () => {
           `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`
         );
 
-        setService(res.data || res.data.data); // Backend liefert entweder res.data oder res.data.data
-        setEditData(res.data || res.data.data);
+        const data = res.data.data || res.data;
+        setService(data);
+        setEditData(data);
       } catch {
         setStatus({ type: "error", text: "Dienstleistung nicht gefunden." });
       } finally {
@@ -44,24 +45,48 @@ const ServiceDetail = () => {
   }, [id]);
 
   // Änderungen im Formular
-  const handleChange = (e) =>
-    setEditData({ ...editData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files) {
+      setEditData({ ...editData, file: files[0] });
+    } else {
+      setEditData({ ...editData, [name]: value });
+    }
+  };
 
   // Speichern der Änderungen
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(
+      const formData = new FormData();
+
+      // Alle Felder hinzufügen
+      Object.entries(editData).forEach(([key, value]) => {
+        if (key !== "file") formData.append(key, value);
+      });
+
+      // Bild hinzufügen
+      if (editData.file) {
+        formData.append("bild", editData.file);
+      }
+
+      const res = await axios.put(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung/${id}`,
-        editData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
-      setService(editData);
+      setService({ ...editData, bild: editData.file ? service.bild : service.bild });
       setEditing(false);
-      setStatus({ type: "success", text: "Erfolgreich gespeichert." });
-    } catch {
-      setStatus({ type: "error", text: "Speichern fehlgeschlagen." });
+      setStatus({ type: "success", text: res.data.message || "Erfolgreich gespeichert." });
+    } catch (err) {
+      console.error(err);
+      setStatus({ type: "error", text: err.response?.data?.error || "Speichern fehlgeschlagen." });
     }
   };
 
@@ -90,7 +115,7 @@ const ServiceDetail = () => {
       <section className="service-hero">
         <div className="hero-content">
           <h1>{service.title}</h1>
-          <span className="price">{service.preis} €</span>
+          <span className="price">{service.preis} CHF</span>
         </div>
       </section>
 
@@ -98,16 +123,11 @@ const ServiceDetail = () => {
       <section className="service-content">
         {service.bild && (
           <div className="image-wrapper">
-            <img
-              src={`data:image/png;base64,${service.bild}`}
-              alt={service.title}
-            />
+            <img src={`data:image/png;base64,${service.bild}`} alt={service.title} />
           </div>
         )}
 
-        {status.text && (
-          <div className={`status ${status.type}`}>{status.text}</div>
-        )}
+        {status.text && <div className={`status ${status.type}`}>{status.text}</div>}
 
         {editing ? (
           <div className="edit-card">
@@ -130,12 +150,25 @@ const ServiceDetail = () => {
               onChange={handleChange}
               placeholder="Preis"
             />
+
+            {/* Farbpicker */}
+            <label>Farbe wählen:</label>
             <input
+              type="color"
               name="farbe"
-              value={editData.farbe || ""}
+              value={editData.farbe || "#000000"}
               onChange={handleChange}
-              placeholder="Farbe"
             />
+
+            {/* Status */}
+            <select name="status" value={editData.status} onChange={handleChange}>
+              <option value="entwurf">Entwurf</option>
+              <option value="offline">Offline</option>
+              <option value="online">Online</option>
+            </select>
+
+            {/* Bild */}
+            <input type="file" accept="image/*" onChange={handleChange} />
 
             <div className="actions">
               <button className="save" onClick={handleSave}>
