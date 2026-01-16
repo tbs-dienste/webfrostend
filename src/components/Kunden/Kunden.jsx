@@ -13,20 +13,6 @@ const Kunden = () => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [customerIdToDelete, setCustomerIdToDelete] = useState(null);
 
-  const dienstleistungsFarben = {
-    1: "#3498db", // Webseite Programmieren
-    2: "#2ecc71", // Diashow erstellen
-    3: "#e74c3c", // Gaming PC zusammenbauen
-    4: "#f1c40f", // Visitenkarten
-    5: "#9b59b6", // Flyer erstellen
-    6: "#e67e22", // IT-Support
-    7: "#1abc9c", // Eventplanung
-    8: "#34495e", // Mockup Erstellen
-    9: "#16a085", // Notentool für Lehrbetriebe und Unternehmen
-    10: "#27ae60", // Office-Kurse für Schüler
-    11: "#2980b9", // Office-Kurse für Unternehmen
-    "default": "#bdc3c7"
-  };
 
   useEffect(() => {
     const fetchKunden = async () => {
@@ -149,7 +135,7 @@ const Kunden = () => {
                     <Link to={`/zeiterfassung/${kunde.id}`} className="kunden-button">
                       <FaClock /> Arbeitszeit
                     </Link>
-                
+
                     <Link to={`/kunden/${kunde.id}`} className="kunden-button">
                       <FaUser /> Kunden anzeigen
                     </Link>
@@ -163,14 +149,20 @@ const Kunden = () => {
 
                   <div className="dienstleistungen">
                     {dienstleistungen.map((dienstleistung) => {
-                      const farbe = dienstleistungsFarben[dienstleistung.id] || dienstleistungsFarben["default"];
+                      const farbe = dienstleistung.farbe || "#cccccc"; // Fallback-Farbe
+
                       return (
-                        <div key={dienstleistung.id} className="dienstleistung" style={{ backgroundColor: farbe }}>
+                        <div
+                          key={dienstleistung.id}
+                          className="dienstleistung"
+                          style={{ backgroundColor: farbe }}
+                        >
                           {dienstleistung.title}
                         </div>
                       );
                     })}
                   </div>
+
                   <div className={`rechnungs-status ${kunde.rechnungGestellt ? (kunde.rechnungBezahlt ? 'bezahlt' : 'offen') : 'entwurf'}`}>
                     {kunde.rechnungGestellt ? (
                       kunde.rechnungBezahlt ? 'Bezahlt' : 'Offen'

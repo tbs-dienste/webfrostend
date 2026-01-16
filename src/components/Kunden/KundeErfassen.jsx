@@ -29,19 +29,22 @@ const KundeErfassen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Lade Dienstleistungen vom Backend
     const fetchDienstleistungen = async () => {
       try {
         const response = await axios.get(
           'https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung'
         );
-        setDienstleistungen(response.data.data || []);
+  
+        // ✅ WICHTIG
+        setDienstleistungen(response.data.data || response.data || []);
       } catch (error) {
         console.error('Fehler beim Laden der Dienstleistungen:', error);
       }
     };
+  
     fetchDienstleistungen();
   }, []);
+  
 
   useEffect(() => {
     // Klick außerhalb schließt Vorschläge
