@@ -50,6 +50,21 @@ const Kunden = () => {
     setCustomerIdToDelete(id);
   };
 
+  // Prüft ob eine Farbe dunkel ist
+  const isDarkColor = (hex) => {
+    if (!hex) return false;
+
+    const color = hex.replace('#', '');
+    const r = parseInt(color.substring(0, 2), 16);
+    const g = parseInt(color.substring(2, 4), 16);
+    const b = parseInt(color.substring(4, 6), 16);
+
+    // Wahrgenommene Helligkeit (WCAG-Formel)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness < 140; // Schwellenwert
+  };
+
   const handleDeleteConfirmation = async () => {
     try {
       const token = localStorage.getItem('token'); // Token aus localStorage holen
@@ -154,11 +169,12 @@ const Kunden = () => {
                       return (
                         <div
                           key={dienstleistung.id}
-                          className="dienstleistung"
+                          className={`dienstleistung ${isDarkColor(farbe) ? 'dark' : 'light'}`}
                           style={{ backgroundColor: farbe }}
                         >
                           {dienstleistung.title}
                         </div>
+
                       );
                     })}
                   </div>

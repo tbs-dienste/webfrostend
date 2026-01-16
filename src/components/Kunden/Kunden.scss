@@ -1,254 +1,291 @@
+/* ===============================
+   PAGE LAYOUT
+================================ */
 .kunden-container {
-  padding: 2rem;
-  background: #f8f9fa;
   min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
+  width: 100%;
+  background: #f4f6f9;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #1f2933;
+}
 
-  .kunden-title {
-    font-size: 2.2rem;
+/* ===============================
+   HEADER
+================================ */
+.kunden-title {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #ffffff;
+  padding: 2.8rem 4rem;
+  margin: 0;
+
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* ===============================
+   FILTER BAR
+================================ */
+.filter-bar {
+  padding: 2rem 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  align-items: center;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.search-input,
+.status-filter {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.95rem;
+  min-width: 260px;
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+}
+
+.archiv-filter {
+  font-size: 0.9rem;
+  color: #374151;
+
+  input {
+    margin-right: 0.4rem;
+    accent-color: #2563eb;
+  }
+}
+
+/* ===============================
+   LIST WRAPPER
+================================ */
+.kunden-liste {
+  padding: 2.5rem 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2rem;
+}
+
+/* ===============================
+   CUSTOMER CARD
+================================ */
+.kunden-box {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 2rem;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08);
+
+  border: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* ===============================
+   CUSTOMER INFO
+================================ */
+.kunden-nummer {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.kunden-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+/* ===============================
+   ACTION BUTTONS (UNIFORM)
+================================ */
+.kunden-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.kunden-button {
+  height: 64px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1f2933;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  svg {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  }
+}
+
+/* DELETE BUTTON EXTRA STYLE */
+.kunden-button:last-child {
+  background: #fff1f2;
+  border-color: #fecaca;
+  color: #991b1b;
+
+  &:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+  }
+}
+
+
+/* ===============================
+   SERVICES
+================================ */
+.dienstleistungen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.dienstleistung {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+
+  &.dark {
+    color: #ffffff;
+  }
+
+  &.light {
+    color: #111827;
+  }
+}
+
+
+/* ===============================
+   INVOICE STATUS
+================================ */
+.rechnungs-status {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  width: fit-content;
+
+  &.bezahlt {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.offen {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.entwurf {
+    background: #e5e7eb;
+    color: #374151;
+  }
+}
+
+/* ===============================
+   ARCHIVED LABEL
+================================ */
+.archiviert-label {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+}
+
+/* ===============================
+   CONFIRMATION MODAL
+================================ */
+.confirmation-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+
+  background-blend-mode: multiply;
+
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: #111827;
+  }
+
+  button {
+    padding: 0.7rem 1.2rem;
+    border-radius: 10px;
+    border: none;
     font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
+    cursor: pointer;
+    margin: 0 0.4rem;
 
-  .filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-
-    .search-input,
-    .status-filter {
-      padding: 0.7rem 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      min-width: 250px;
-      transition: all 0.3s ease;
-
-      &:focus {
-        border-color: #3498db;
-        outline: none;
-      }
+    &:first-of-type {
+      background: #dc2626;
+      color: #ffffff;
     }
 
-    .archiv-filter {
-      display: flex;
-      align-items: center;
-      font-size: 0.95rem;
-      color: #555;
-
-      input {
-        margin-right: 0.5rem;
-      }
-    }
-  }
-
-  .kunden-liste {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-
-    .kunden-box {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-      position: relative;
-      transition: transform 0.2s ease;
-
-      &:hover {
-        transform: translateY(-4px);
-      }
-
-      .kunden-nummer {
-        font-weight: 600;
-        font-size: 1rem;
-        color: #7f8c8d;
-        margin-bottom: 0.4rem;
-      }
-
-      .kunden-name {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 1rem;
-      }
-
-      .kunden-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-
-        .kunden-button {
-          flex: 1 1 auto;
-          background: #3498db;
-          color: white;
-          border: none;
-          padding: 0.6rem 0.8rem;
-          font-size: 0.9rem;
-          border-radius: 8px;
-          cursor: pointer;
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.4rem;
-          transition: background 0.3s ease;
-
-          &:hover {
-            background: #2980b9;
-          }
-
-          &:nth-child(3) {
-            background: #27ae60;
-
-            &:hover {
-              background: #1e8449;
-            }
-          }
-
-          &:last-child {
-            background: #e74c3c;
-
-            &:hover {
-              background: #c0392b;
-            }
-          }
-
-          svg {
-            font-size: 1rem;
-          }
-        }
-      }
-
-      .dienstleistungen {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        margin-bottom: 1rem;
-
-        .dienstleistung {
-          padding: 0.4rem 0.7rem;
-          border-radius: 6px;
-          color: white;
-          font-size: 0.85rem;
-          font-weight: 500;
-          white-space: nowrap;
-        }
-      }
-
-      .rechnungs-status {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        width: fit-content;
-
-        &.bezahlt {
-          background: #2ecc71;
-          color: white;
-        }
-
-        &.offen {
-          background: #f39c12;
-          color: white;
-        }
-
-        &.entwurf {
-          background: #95a5a6;
-          color: white;
-        }
-      }
-
-      .archiviert-label {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: #e74c3c;
-        color: white;
-        padding: 0.3rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: bold;
-      }
-    }
-
-    .no-results {
-      grid-column: 1 / -1;
-      text-align: center;
-      font-size: 1.1rem;
-      color: #999;
-      padding: 2rem 0;
-    }
-  }
-
-  .confirmation-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(52, 73, 94, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-
-    p {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      text-align: center;
-      max-width: 400px;
-    }
-
-    button {
-      margin: 1rem 0.5rem 0 0.5rem;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:first-of-type {
-        background: #e74c3c;
-        color: white;
-
-        &:hover {
-          background: #c0392b;
-        }
-      }
-
-      &:last-of-type {
-        background: #bdc3c7;
-        color: #2c3e50;
-
-        &:hover {
-          background: #95a5a6;
-        }
-      }
+    &:last-of-type {
+      background: #e5e7eb;
+      color: #111827;
     }
   }
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .kunden-buttons {
-    flex-direction: column;
-
-    .kunden-button {
-      width: 100%;
-    }
-  }
-
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
+/* ===============================
+   EMPTY STATE
+================================ */
+.no-results {
+  padding: 2rem 4rem;
+  font-size: 1.05rem;
+  color: #6b7280;
 }
