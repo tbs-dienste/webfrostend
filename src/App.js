@@ -39,7 +39,6 @@ import Vertrag from './components/Vertrag/Vertrag';
 import SignComponent from './components/Vertrag/SignComponent';
 import Infos from './components/Administrativ/Infos';
 import VideoCall from './components/VideoChat/VideoCall';
-import CookieConsent from './components/Cookies/CookieConsent';
 import CreateService from './components/Dienstleistung/CreateService';
 import Auftragsbestaetigung from './components/Auftragsbestaetigung/Auftragsbestaetigung';
 import Kontoangaben from './components/Rechnung/Kontoangaben';
@@ -63,7 +62,6 @@ import AufgabenList from './components/Kunden/Aufgaben/AufgabenList';
 import AufgabenDetail from './components/Kunden/Aufgaben/AufgabenDetail';
 import CreateUnteraufgabe from './components/Kunden/Aufgaben/CreateUnteraufgabe';
 import CreateAufgabe from './components/Kunden/Aufgaben/CreateAufgaben';
-import AntragStellen from './components/Mitarbeiter/AntragStellen';
 import AlleAntraege from './components/Mitarbeiter/AlleAntraege';
 import AntragDetail from './components/Mitarbeiter/AntragDetail';
 import Download from './components/Mitarbeiter/Documents/Download';
@@ -116,10 +114,8 @@ import InventurScan from './components/Administrativ/Inventur/InventurScan';
 import InventurStartForm from './components/Administrativ/Inventur/InventurStartForm';
 import InventurDifferenzen from './components/Administrativ/Inventur/InventurDifferenzen';
 import "./App.css";
-import XboxPracticeGame from './components/Administrativ/Applications/XboxPracticeGame';
 import VertragsVorlageForm from './components/Vertrag/VertragsVorlageForm';
 import InventurAnzeigen from './components/Administrativ/Inventur/InventurAnzeigen';
-import SimpleChatbot from './components/Chatbot/SimpleChatbot';
 import EinkaufstagePage from './components/Administrativ/Einkauf/EinkaufstagePage';
 import EinkaufstagDetailPage from './components/Administrativ/Einkauf/EinkaufstagDetailPage';
 import LieferscheinCreate from './components/Administrativ/Einkauf/LieferscheinCreate';
@@ -129,7 +125,6 @@ import LieferscheinDetail from './components/Administrativ/Einkauf/LieferscheinD
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [timer, setTimer] = useState(null); 
-  const [fullscreenMode, setFullscreenMode] = useState(false);
   const [isKassenModus, setIsKassenModus] = useState(false);
 
   const toggleKassenModus = (status) => setIsKassenModus(status);
@@ -179,7 +174,6 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-        {!fullscreenMode && !isKassenModus && !isKassenSubdomain && <Navbar />}
   
         <Routes>
           {isKassenSubdomain ? (
