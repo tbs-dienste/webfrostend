@@ -174,7 +174,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-  
+  <Navbar />
         <Routes>
           {isKassenSubdomain ? (
             <>
