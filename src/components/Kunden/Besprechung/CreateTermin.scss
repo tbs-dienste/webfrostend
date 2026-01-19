@@ -1,0 +1,114 @@
+.create-termin {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    padding: 40px;
+    background: #f4f6f8;
+    min-height: 100vh;
+  
+    &__title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #004aad;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+  
+    &__form {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+      &-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+  
+      &__label {
+        display: flex;
+        flex-direction: column;
+        font-weight: 500;
+        font-size: 14px;
+        position: relative;
+  
+        &-icon {
+          width: 20px;
+          height: 20px;
+          position: absolute;
+          top: 32px;
+          left: 10px;
+          fill: #004aad;
+          pointer-events: none;
+        }
+  
+        &__input,
+        &__select,
+        &__textarea {
+          padding: 10px 10px 10px 35px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
+          width: 100%;
+          transition: border 0.2s, box-shadow 0.2s;
+  
+          &:focus {
+            outline: none;
+            border-color: #004aad;
+            box-shadow: 0 0 5px rgba(0, 74, 173, 0.4);
+          }
+        }
+  
+        &__textarea {
+          min-height: 80px;
+          resize: vertical;
+        }
+      }
+  
+      &-adresse {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+  
+      &__submit-btn {
+        background: #004aad;
+        color: #fff;
+        font-weight: 600;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        width: 100%;
+        font-size: 16px;
+  
+        &:hover {
+          background: #003680;
+          transform: translateY(-2px);
+        }
+  
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+  
+  /* Optional: Mobile Anpassungen */
+  @media (max-width: 768px) {
+    .create-termin {
+      padding: 20px;
+  
+      &__form {
+        padding: 20px;
+  
+        &-grid {
+          gap: 15px;
+        }
+      }
+    }
+  }
+  

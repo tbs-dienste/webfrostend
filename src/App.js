@@ -121,6 +121,8 @@ import EinkaufstagDetailPage from './components/Administrativ/Einkauf/Einkaufsta
 import LieferscheinCreate from './components/Administrativ/Einkauf/LieferscheinCreate';
 import Lieferscheine from './components/Administrativ/Einkauf/Lieferscheine';
 import LieferscheinDetail from './components/Administrativ/Einkauf/LieferscheinDetail';
+import CreateTermin from './components/Kunden/Besprechung/CreateTermin';
+import GetTerminById from './components/Kunden/Besprechung/GetTerminById';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -220,6 +222,8 @@ const App = () => {
               <Route path="/last" element={<LastReceiptViewer />} />
               <Route path="/products" element={<AllProducts />} />
               <Route path="/newsletter" element={<NewsletterSubscribeForm />} />
+              <Route path="/create-termin" element={<CreateTermin />} />
+              <Route path="/beratungstermine/:id" element={<GetTerminById />} />
               <Route path="/newsletter-subscribers" element={<NewsletterAbonnenten />} />
               <Route path="/receipts" element={<Receipts />} />
               <Route path="/gs-karte" element={<GSKarteAbfrage />} />
