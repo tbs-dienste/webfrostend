@@ -1,0 +1,220 @@
+.week-calendar {
+    padding: 2rem;
+    background: #f4f6fa;
+    min-height: 100vh;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  
+  /* ================= HEADER ================= */
+  
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 1.25rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+  
+    button {
+      background: #eef2ff;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+  
+      svg {
+        font-size: 1.1rem;
+        color: #3730a3;
+      }
+  
+      &:hover:not(:disabled) {
+        background: #6366f1;
+  
+        svg {
+          color: #fff;
+        }
+      }
+  
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  
+    .calendar-title {
+      text-align: center;
+  
+      h1 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #111827;
+      }
+  
+      p {
+        margin: 0.25rem 0 0;
+        font-size: 0.85rem;
+        color: #6b7280;
+      }
+    }
+  }
+  
+  /* ================= TABLE ================= */
+  
+  .calendar-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  
+    thead {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+  
+      th {
+        padding: 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+  
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  
+    tbody tr {
+      &:nth-child(even) {
+        background: #f9fafb;
+      }
+    }
+  }
+  
+  /* ================= TIME COLUMN ================= */
+  
+  .time-col {
+    width: 90px;
+    background: #f3f4f6;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #374151;
+    text-align: center;
+    border-right: 1px solid #e5e7eb;
+  }
+  
+  /* ================= CELLS ================= */
+  
+  .calendar-cell {
+    position: relative;
+    height: 70px;
+    padding: 6px;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  
+    &:hover {
+      background: #eef2ff;
+    }
+  }
+  
+  /* ================= EVENTS ================= */
+  
+  .event {
+    border-radius: 10px;
+    padding: 0.4rem 0.5rem;
+    margin-bottom: 6px;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  
+    &:hover {
+      transform: scale(1.04);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      z-index: 2;
+    }
+  
+    .event-time {
+      font-size: 0.65rem;
+      opacity: 0.9;
+    }
+  
+    .event-title {
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+  }
+  
+  /* ================= STATUS VARIANTS ================= */
+  
+  .event--offen {
+    border-left: 4px solid #fbbf24;
+  }
+  
+  .event--bestaetigt {
+    border-left: 4px solid #22c55e;
+  }
+  
+  .event--storniert {
+    border-left: 4px solid #ef4444;
+    opacity: 0.7;
+  }
+  
+  /* ================= ERROR ================= */
+  
+  .calendar-error {
+    padding: 2rem;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  
+  @media (max-width: 1100px) {
+    .calendar-table {
+      font-size: 0.7rem;
+    }
+  
+    .event {
+      font-size: 0.65rem;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .week-calendar {
+      padding: 1rem;
+    }
+  
+    .calendar-header {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  
+    .time-col {
+      width: 70px;
+    }
+  }
+  
+  @media (max-width: 700px) {
+    .calendar-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+  

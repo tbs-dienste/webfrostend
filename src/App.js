@@ -123,6 +123,7 @@ import Lieferscheine from './components/Administrativ/Einkauf/Lieferscheine';
 import LieferscheinDetail from './components/Administrativ/Einkauf/LieferscheinDetail';
 import CreateTermin from './components/Kunden/Besprechung/CreateTermin';
 import GetTerminById from './components/Kunden/Besprechung/GetTerminById';
+import WeekCalendar from './components/Kunden/Besprechung/WeekCalendar';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -218,6 +219,8 @@ const App = () => {
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
               <Route path="/statistiken" element={<Statistik />} />
               <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
+              <Route path="/calendar" element={<WeekCalendar />} />
+
               <Route path="/alleAntraege" element={<AlleAntraege />} />
               <Route path="/last" element={<LastReceiptViewer />} />
               <Route path="/products" element={<AllProducts />} />
