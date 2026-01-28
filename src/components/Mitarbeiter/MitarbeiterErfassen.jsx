@@ -28,6 +28,7 @@ const MitarbeiterErfassen = () => {
     foto: null
   });
 
+  // Dienstleistungen vom Backend laden
   useEffect(() => {
     axios.get("https://tbsdigitalsolutionsbackend.onrender.com/api/dienstleistung")
       .then(res => setServices(res.data.data || res.data))
@@ -69,12 +70,20 @@ const MitarbeiterErfassen = () => {
 
       const token = localStorage.getItem("token");
 
-      const res = await axios.post("https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter", data, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.post(
+        "https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
 
       setMessage({ type: "success", text: res.data.message });
 
+      // Form zurücksetzen
       setFormData({
         geschlecht: "m",
         vorname: "",
@@ -115,9 +124,20 @@ const MitarbeiterErfassen = () => {
       <form onSubmit={handleSubmit} encType="multipart/form-data">
 
         {/* 👤 PERSON */}
-        <input name="vorname" placeholder="Vorname" value={formData.vorname} onChange={handleChange} required />
-        <input name="nachname" placeholder="Nachname" value={formData.nachname} onChange={handleChange} required />
-
+        <input
+          name="vorname"
+          placeholder="Vorname"
+          value={formData.vorname}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="nachname"
+          placeholder="Nachname"
+          value={formData.nachname}
+          onChange={handleChange}
+          required
+        />
         <select name="geschlecht" value={formData.geschlecht} onChange={handleChange}>
           <option value="m">Männlich</option>
           <option value="w">Weiblich</option>
@@ -131,7 +151,14 @@ const MitarbeiterErfassen = () => {
         <input name="land" placeholder="Land" value={formData.land} onChange={handleChange} />
 
         {/* 📞 KONTAKT */}
-        <input name="email" type="email" placeholder="E-Mail" value={formData.email} onChange={handleChange} required />
+        <input
+          name="email"
+          type="email"
+          placeholder="E-Mail"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
         <input name="mobil" placeholder="Mobilnummer" value={formData.mobil} onChange={handleChange} />
 
         {/* 🔐 LOGIN */}

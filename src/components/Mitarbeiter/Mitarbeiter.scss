@@ -1,174 +1,233 @@
 .mitarbeiter-container {
-  padding: 20px;
-  background-color: #f4f7fc;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+  min-height: 100vh;
 
-  h2 {
-    font-size: 1.8em;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 
-  .add-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    font-size: 1em;
-    text-decoration: none;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #0056b3;
-    }
-  }
-
-  .loading-text {
-    text-align: center;
-    font-size: 1.2em;
-    color: #777;
-  }
-
-  .mitarbeiter-tabelle {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-    th, td {
-      padding: 15px;
-      text-align: left;
-      font-size: 1em;
+    h2 {
+      font-size: 2rem;
       color: #333;
     }
 
-    th {
+    .add-button {
       background-color: #007bff;
-      color: white;
-    }
-
-    tr {
-      background-color: #fff;
-      transition: background-color 0.3s ease;
-      border-bottom: 1px solid #ddd;
-
-      &:hover {
-        background-color: #f9f9f9;
-      }
-
-      &.online {
-        background-color: #d4f7d3; /* Helle grüne Farbe für "online" */
-      }
-
-      &.birthday {
-        background-color: #fff4e1; /* Helle gelbe Farbe für "Geburtstag" */
-      }
-
-      &.krank {
-        background-color: #ba94e9; /* Helle gelbe Farbe für "krank" */
-      }
-    }
-
-    .status-icon {
-      font-size: 1.5em;
-      margin-right: 10px;
-    }
-
-    .birthday {
-      color: #ff6347;
-    }
-
-    .online {
-      color: #28a745;
-    }
-
-    .abwesend {
-      color: #dc3545;
-    }
-
-    .krank {
-      color: #7707ff;
-    }
-
-    .action-button {
-      background: none;
-      border: none;
-      color: #007bff;
-      cursor: pointer;
-      font-size: 1em;
-      margin-right: 10px;
+      color: #fff;
+      font-size: 1.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.3s;
 
       &:hover {
-        text-decoration: underline;
+        background-color: #0056b3;
       }
-    }
-
-    .delete {
-      color: #dc3545;
-
-      &:hover {
-        color: #bd2130;
-      }
-    }
-
-    .no-data {
-      text-align: center;
-      font-size: 1.2em;
-      color: #777;
     }
   }
 
-  .confirmation-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+  .loading-text, .no-data {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+  }
+
+  .mitarbeiter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .mitarbeiter-card {
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
 
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
 
-      .modal-actions {
+    .foto-container {
+      position: relative;
+      width: 100%;
+      padding-top: 100%; // quadratische Box
+      overflow: hidden;
+
+      .mitarbeiter-foto {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .placeholder {
         display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+      }
 
-        button {
-          padding: 10px 20px;
-          font-size: 1.1em;
-          cursor: pointer;
-          border-radius: 5px;
-          transition: background-color 0.3s ease;
+      .icon {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1.5rem;
+      }
+
+      .birthday {
+        color: #ffbf00;
+      }
+
+      .krank {
+        color: #e63946;
+      }
+    }
+
+    .mitarbeiter-info {
+      padding: 1rem;
+      flex-grow: 1;
+
+      h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        color: #333;
+      }
+
+      p {
+        margin: 0.25rem 0;
+        font-size: 0.95rem;
+        color: #555;
+
+        strong {
+          color: #333;
         }
 
-        .confirm-button {
+        .status-icon {
+          margin-left: 0.5rem;
+          vertical-align: middle;
+
+          &.online {
+            color: #28a745;
+          }
+
+          &.offline {
+            color: #6c757d;
+          }
+
+          &.abwesend {
+            color: #ffc107;
+          }
+        }
+      }
+    }
+
+    .mitarbeiter-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem 1rem 1rem;
+
+      .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+        text-decoration: none;
+
+        &.delete {
+          background-color: #e63946;
+          color: #fff;
+
+          &:hover {
+            background-color: #b71c1c;
+          }
+        }
+
+        &:not(.delete) {
           background-color: #007bff;
-          color: white;
+          color: #fff;
 
           &:hover {
             background-color: #0056b3;
           }
         }
+      }
+    }
+  }
+
+  // Modal für Löschbestätigung
+  .confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+
+      p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: space-around;
+
+        .confirm-button {
+          background-color: #e63946;
+          color: #fff;
+          padding: 0.5rem 1.5rem;
+          border-radius: 0.5rem;
+          border: none;
+          cursor: pointer;
+          transition: background 0.3s;
+
+          &:hover {
+            background-color: #b71c1c;
+          }
+        }
 
         .cancel-button {
           background-color: #6c757d;
-          color: white;
+          color: #fff;
+          padding: 0.5rem 1.5rem;
+          border-radius: 0.5rem;
+          border: none;
+          cursor: pointer;
 
           &:hover {
-            background-color: #5a6268;
+            background-color: #495057;
           }
         }
       }

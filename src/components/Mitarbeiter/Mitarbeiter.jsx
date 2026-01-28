@@ -14,22 +14,16 @@ const Mitarbeiter = () => {
     const fetchMitarbeiter = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get('https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter', {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (Array.isArray(response.data.data)) {
-          const updatedMitarbeiter = response.data.data.map((m) => ({
-            ...m,
-            hatGeburtstag: m.hatGeburtstag,
-          }));
-          setMitarbeiterListe(updatedMitarbeiter);
+          setMitarbeiterListe(response.data.data);
         }
       } catch (error) {
-        console.error('Error fetching employees:', error);
-        alert('Error fetching employees. Please try again later.');
+        console.error('Fehler beim Laden der Mitarbeiter:', error);
+        alert('Fehler beim Laden der Mitarbeiter.');
       } finally {
         setLoading(false);
       }
@@ -47,86 +41,73 @@ const Mitarbeiter = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/mitarbeiter/${mitarbeiterIdToDelete}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setMitarbeiterListe(mitarbeiterListe.filter((m) => m.id !== mitarbeiterIdToDelete));
       setShowConfirmationModal(false);
     } catch (error) {
-      console.error('Error deleting employee:', error);
-      alert('Error deleting employee. Please try again later.');
+      console.error('Fehler beim Löschen:', error);
+      alert('Fehler beim Löschen. Bitte erneut versuchen.');
     }
   };
 
-  const handleCancelDelete = () => {
-    setShowConfirmationModal(false);
-  };
+  const handleCancelDelete = () => setShowConfirmationModal(false);
 
   return (
     <div className="mitarbeiter-container">
-      <h2>Mitarbeiterverwaltung</h2>
-      <Link to="/mitarbeitererfassen" className="add-button">+</Link>
+      <div className="header">
+        <h2>Mitarbeiterverwaltung</h2>
+        <Link to="/mitarbeitererfassen" className="add-button">+</Link>
+      </div>
+
       {loading ? (
         <p className="loading-text">Lade Mitarbeiter...</p>
+      ) : mitarbeiterListe.length === 0 ? (
+        <p className="no-data">Keine Mitarbeiter gefunden.</p>
       ) : (
-        <table className="mitarbeiter-tabelle">
-          <thead>
-            <tr>
-              <th>Mitarbeiternummer</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mitarbeiterListe.length > 0 ? (
-              mitarbeiterListe.map((m) => (
-                <tr
-                  key={m.id}
-                  className={`mitarbeiter-row 
-                    ${m.krankGemeldet ? 'krank' : ''}
-                    ${m.status === 'online' ? 'online' : ''}
-                    ${m.hatGeburtstag ? 'birthday' : ''}
-                  `}
-                >
-                  <td>{m.mitarbeiternummer}</td>
-                  <td>{m.vorname} {m.nachname}</td>
-                  <td>
-                    {m.hatGeburtstag && (
-                      <FaBirthdayCake className="status-icon birthday" title={`Heute ist der ${m.geburtstagsInfo} von ${m.vorname}!`} />
-                    )}
-                    {m.status === 'online' && (
-                      <FaGlobe className="status-icon online" title="Mitarbeiter ist online" />
-                    )}
-                    {m.status === 'abwesend' && (
-                      <FaDoorOpen className="status-icon abwesend" title="Mitarbeiter ist abwesend" />
-                    )}
-                    {m.status === 'offline' && (
-                      <FaBan className="status-icon abwesend" title="Mitarbeiter hat sich noch nie eingloggt" />
-                    )}
-                    {m.krankGemeldet && (
-                      <FaVirus className="status-icon krank" title={`Krank gemeldet seit: ${new Date(m.krankStartdatum).toLocaleDateString()}`} />
-                    )}
-                  </td>
-                  <td>
-                    <Link to={`/mitarbeiteranzeigen/${m.id}`} className="action-button">
-                      <FaUser /> Anzeigen
-                    </Link>
-                    <button onClick={() => handleShowConfirmationModal(m.id)} className="action-button delete">
-                      <FaTrash /> Löschen
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="no-data">Keine Mitarbeiter gefunden.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <div className="mitarbeiter-grid">
+          {mitarbeiterListe.map((m) => (
+            <div key={m.id} className="mitarbeiter-card">
+              <div className="foto-container">
+                {m.foto ? (
+                  <img
+                    src={`data:image/png;base64,${m.foto}`}
+                    alt={`${m.vorname} ${m.nachname}`}
+                    className="mitarbeiter-foto"
+                  />
+                ) : (
+                  <div className="mitarbeiter-foto placeholder">
+                    {m.vorname[0]}{m.nachname[0]}
+                  </div>
+                )}
+                {m.hatGeburtstag && <FaBirthdayCake className="icon birthday" title={`${m.geburtstagsInfo} von ${m.vorname}`} />}
+                {m.krankGemeldet && <FaVirus className="icon krank" title={`Krank seit ${new Date(m.krankStartdatum).toLocaleDateString()}`} />}
+              </div>
+
+              <div className="mitarbeiter-info">
+                <h3>{m.vorname} {m.nachname}</h3>
+                <p><strong>ID:</strong> {m.mitarbeiternummer}</p>
+                <p><strong>Status:</strong> 
+                  {m.status === 'online' && <FaGlobe className="status-icon online" />}
+                  {m.status === 'offline' && <FaBan className="status-icon offline" />}
+                  {m.status === 'abwesend' && <FaDoorOpen className="status-icon abwesend" />}
+                  {m.statusInfo && ` ${m.statusInfo}`}
+                </p>
+              </div>
+
+              <div className="mitarbeiter-actions">
+                <Link to={`/mitarbeiteranzeigen/${m.id}`} className="action-button">
+                  <FaUser /> Anzeigen
+                </Link>
+                <button onClick={() => handleShowConfirmationModal(m.id)} className="action-button delete">
+                  <FaTrash /> Löschen
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
+
       {showConfirmationModal && (
         <div className="confirmation-modal">
           <div className="modal-content">
