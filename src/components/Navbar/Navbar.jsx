@@ -103,6 +103,8 @@ const Navbar = () => {
           {isLoggedIn && (
             <>
               <li><Link to="/kunden" onClick={closeMenu}>Kunden</Link></li>
+              <li><Link to="/mailbox" onClick={closeMenu}>Mail</Link></li>
+
               <li><Link to="/profile" onClick={closeMenu}>Profil</Link></li>
               <li><button className="logout-btn" onClick={handleLogout}>Logout</button></li>
             </>

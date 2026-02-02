@@ -1,0 +1,304 @@
+/* ===========================
+   ROOT
+=========================== */
+.mailbox {
+  display: flex;
+  height: 100vh;
+  background: #f4f6f9;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #1f2937;
+}
+
+/* ===========================
+   SIDEBAR
+=========================== */
+.mailbox__sidebar {
+  width: 260px;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: none;
+    color: #cbd5f5;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      font-size: 18px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    &.active {
+      background: #2563eb;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    &.compose {
+      background: #22c55e;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 12px;
+
+      &:hover {
+        background: #16a34a;
+      }
+    }
+  }
+}
+
+/* ===========================
+   CONTENT
+=========================== */
+.mailbox__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===========================
+   PANEL (LIST + VIEWER)
+=========================== */
+.mailbox__panel {
+  display: flex;
+  height: 100%;
+}
+
+/* ===========================
+   MAIL LIST
+=========================== */
+.mailbox__list {
+  width: 380px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+
+  .item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s ease;
+
+    svg {
+      margin-top: 4px;
+      color: #64748b;
+    }
+
+    strong {
+      font-size: 14px;
+      display: block;
+      color: #0f172a;
+    }
+
+    span {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    time {
+      font-size: 12px;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &.unread {
+      background: #eff6ff;
+
+      strong {
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* ===========================
+   MAIL VIEWER
+=========================== */
+.mailbox__viewer {
+  flex: 1;
+  background: #ffffff;
+  padding: 28px;
+  overflow-y: auto;
+
+  h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .meta {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 18px;
+  }
+
+  .content {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1e293b;
+
+    pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+    }
+  }
+
+  .empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 16px;
+  }
+}
+
+/* ===========================
+   COMPOSE
+=========================== */
+.compose {
+  background: #ffffff;
+  padding: 28px;
+  height: 100%;
+  overflow-y: auto;
+
+  h2 {
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 14px;
+    color: #334155;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5f5;
+    font-size: 14px;
+    transition: border 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .mail-icon {
+    font-size: 18px;
+  
+    &--read {
+      color: #94a3b8; // grau
+    }
+  
+    &--unread {
+      color: #2563eb; // blau
+    }
+  }
+  
+
+  button {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #2563eb;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+
+    &.success {
+      background: #ecfdf5;
+      color: #166534;
+    }
+
+    &.error {
+      background: #fef2f2;
+      color: #991b1b;
+    }
+  }
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 900px) {
+  .mailbox__list {
+    width: 300px;
+  }
+}
+
+@media (max-width: 700px) {
+  .mailbox {
+    flex-direction: column;
+  }
+
+  .mailbox__sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .mailbox__panel {
+    flex-direction: column;
+  }
+
+  .mailbox__list {
+    width: 100%;
+    height: 40%;
+  }
+}
