@@ -1,304 +1,290 @@
-/* ===========================
-   ROOT
-=========================== */
-.mailbox {
-  display: flex;
-  height: 100vh;
-  background: #f4f6f9;
-  font-family: "Segoe UI", system-ui, sans-serif;
+// ==============================
+// VARIABLES
+// ==============================
+$mailbox-bg: #f4f6f8;
+$sidebar-bg: #fff;
+$sidebar-border: #e5e7eb;
+$sidebar-active: #007bff;
+$sidebar-active-text: #fff;
+$button-bg: #007bff;
+$button-text: #fff;
+$item-hover: #f1f5f9;
+$item-unread: #e0f2ff;
+$font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// ==============================
+// GLOBAL
+// ==============================
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-main;
+  background: $mailbox-bg;
   color: #1f2937;
 }
 
-/* ===========================
-   SIDEBAR
-=========================== */
-.mailbox__sidebar {
-  width: 260px;
-  background: #0f172a;
+// ==============================
+// MAILBOX WRAPPER
+// ==============================
+.mailbox {
   display: flex;
-  flex-direction: column;
-  padding: 16px;
-  gap: 8px;
+  height: 100vh;
+  width: 100%;
 
-  button {
+  // ==========================
+  // SIDEBAR
+  // ==========================
+  &__sidebar {
+    width: 250px;
+    background: $sidebar-bg;
+    border-right: 1px solid $sidebar-border;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    background: transparent;
-    border: none;
-    color: #cbd5f5;
-    padding: 12px 14px;
-    border-radius: 8px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
 
-    svg {
-      font-size: 18px;
-    }
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-    }
-
-    &.active {
-      background: #2563eb;
-      color: #fff;
+    .compose {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: $button-bg;
+      color: $button-text;
+      padding: 10px 15px;
       font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      &:hover { background: darken($button-bg, 10%); }
     }
 
-    &.compose {
-      background: #22c55e;
-      color: #fff;
-      font-weight: 600;
-      margin-bottom: 12px;
-
-      &:hover {
-        background: #16a34a;
-      }
-    }
-  }
-}
-
-/* ===========================
-   CONTENT
-=========================== */
-.mailbox__content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ===========================
-   PANEL (LIST + VIEWER)
-=========================== */
-.mailbox__panel {
-  display: flex;
-  height: 100%;
-}
-
-/* ===========================
-   MAIL LIST
-=========================== */
-.mailbox__list {
-  width: 380px;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
-
-  .item {
-    display: grid;
-    grid-template-columns: 32px 1fr auto;
-    gap: 12px;
-    padding: 14px 16px;
-    cursor: pointer;
-    border-bottom: 1px solid #f1f5f9;
-    transition: background 0.15s ease;
-
-    svg {
-      margin-top: 4px;
-      color: #64748b;
-    }
-
-    strong {
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: left;
       font-size: 14px;
-      display: block;
-      color: #0f172a;
-    }
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
 
-    span {
-      font-size: 13px;
-      color: #64748b;
-    }
+      &:hover { background: $item-hover; }
 
-    time {
-      font-size: 12px;
-      color: #94a3b8;
-      white-space: nowrap;
-    }
-
-    &:hover {
-      background: #f8fafc;
-    }
-
-    &.unread {
-      background: #eff6ff;
-
-      strong {
-        font-weight: 700;
+      &.active {
+        background: $sidebar-active;
+        color: $sidebar-active-text;
       }
     }
   }
-}
 
-/* ===========================
-   MAIL VIEWER
-=========================== */
-.mailbox__viewer {
-  flex: 1;
-  background: #ffffff;
-  padding: 28px;
-  overflow-y: auto;
-
-  h2 {
-    font-size: 22px;
-    margin-bottom: 12px;
-  }
-
-  .meta {
+  // ==========================
+  // CONTENT
+  // ==========================
+  &__content {
+    flex: 1;
     display: flex;
-    gap: 20px;
-    font-size: 13px;
-    color: #475569;
-    margin-bottom: 18px;
-  }
-
-  .content {
-    font-size: 15px;
-    line-height: 1.7;
-    color: #1e293b;
-
-    pre {
-      white-space: pre-wrap;
-      font-family: inherit;
-    }
-  }
-
-  .empty {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    font-size: 16px;
-  }
-}
-
-/* ===========================
-   COMPOSE
-=========================== */
-.compose {
-  background: #ffffff;
-  padding: 28px;
-  height: 100%;
-  overflow-y: auto;
-
-  h2 {
-    font-size: 22px;
-    margin-bottom: 18px;
-  }
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 14px;
-    color: #334155;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    margin-top: 6px;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #cbd5f5;
-    font-size: 14px;
-    transition: border 0.2s;
-
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-  }
-
-  textarea {
-    resize: vertical;
-  }
-
-  .mail-icon {
-    font-size: 18px;
-  
-    &--read {
-      color: #94a3b8; // grau
-    }
-  
-    &--unread {
-      color: #2563eb; // blau
-    }
-  }
-  
-
-  button {
-    margin-top: 22px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    background: #2563eb;
-    border: none;
-    color: #fff;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover {
-      background: #1d4ed8;
-    }
-  }
-
-  .status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 14px;
-
-    &.success {
-      background: #ecfdf5;
-      color: #166534;
-    }
-
-    &.error {
-      background: #fef2f2;
-      color: #991b1b;
-    }
-  }
-}
-
-/* ===========================
-   RESPONSIVE
-=========================== */
-@media (max-width: 900px) {
-  .mailbox__list {
-    width: 300px;
-  }
-}
-
-@media (max-width: 700px) {
-  .mailbox {
     flex-direction: column;
+    overflow: hidden;
+    padding: 20px;
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-bottom: 15px;
+
+      &.success { background: #d1fae5; color: #065f46; }
+      &.error { background: #fee2e2; color: #b91c1c; }
+    }
+
+    // ==========================
+    // COMPOSE FORM
+    // ==========================
+    form.compose {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+
+      h2 {
+        margin-bottom: 15px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+
+      input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid $sidebar-border;
+        border-radius: 6px;
+        font-size: 14px;
+        resize: vertical;
+        &:focus {
+          outline: none;
+          border-color: $button-bg;
+          box-shadow: 0 0 5px rgba(0,123,255,0.3);
+        }
+      }
+
+      button {
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 6px;
+        background: $button-bg;
+        color: $button-text;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+        &:hover { background: darken($button-bg, 10%); }
+      }
+    }
+
+    // ==========================
+    // LIST + VIEWER PANEL
+    // ==========================
+    &__panel {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      margin-top: 10px;
+
+      .mailbox__list {
+        width: 300px;
+        background: #fff;
+        border-right: 1px solid $sidebar-border;
+        overflow-y: auto;
+
+        .item {
+          display: flex;
+          align-items: center;
+          padding: 12px;
+          gap: 10px;
+          border-bottom: 1px solid $sidebar-border;
+          cursor: pointer;
+          transition: background 0.2s;
+
+          &.unread { background: $item-unread; font-weight: 600; }
+
+          &:hover { background: $item-hover; }
+
+          .mail-icon { font-size: 18px; }
+
+          div {
+            flex: 1;
+            strong { display: block; font-size: 14px; }
+            span { display: block; font-size: 12px; color: #6b7280; }
+          }
+
+          time { font-size: 11px; color: #9ca3af; }
+        }
+      }
+
+      .mailbox__viewer {
+        flex: 1;
+        background: #f9fafb;
+        padding: 20px;
+        overflow-y: auto;
+        border-radius: 10px;
+
+        .empty {
+          text-align: center;
+          margin-top: 50px;
+          font-size: 18px;
+          color: #9ca3af;
+        }
+
+        h2 {
+          margin-bottom: 10px;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .meta {
+          display: flex;
+          gap: 20px;
+          font-size: 13px;
+          color: #6b7280;
+          margin-bottom: 15px;
+        }
+
+        .content {
+          background: #fff;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+          pre { white-space: pre-wrap; word-wrap: break-word; }
+        }
+
+        .actions {
+          margin-top: 15px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+
+          button, select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid $sidebar-border;
+            cursor: pointer;
+            font-size: 13px;
+          }
+
+          button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: $button-bg;
+            color: $button-text;
+            border: none;
+            &:hover { background: darken($button-bg, 10%); }
+          }
+
+          select { background: #fff; }
+        }
+      }
+    }
   }
 
-  .mailbox__sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .mailbox__panel {
+  // ==========================
+  // RESPONSIVE
+  // ==========================
+  @media (max-width: 1024px) {
     flex-direction: column;
-  }
 
-  .mailbox__list {
-    width: 100%;
-    height: 40%;
+    &__sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 10px;
+    }
+
+    &__panel { flex-direction: column; }
+
+    .mailbox__list { width: 100%; max-height: 200px; }
+
+    .mailbox__viewer { padding: 10px; }
   }
 }
