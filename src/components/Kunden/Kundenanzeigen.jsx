@@ -132,13 +132,6 @@ const createBackgroundDataUrl = async (widthPx, heightPx) => {
   });
 };
 
-const copyBewertungsLink = () => {
-  if (!selectedKunde) return;
-
-  const bewertungsLink = `${window.location.origin}/kundenbewertung/${selectedKunde.kundennummer}`;
-  navigator.clipboard.writeText(bewertungsLink);
-  alert('Bewertungs-Link kopiert.');
-};
 
 
 // PROFESSIONAL exportToPDF (KUNDEN-DOSSIER)
@@ -427,7 +420,7 @@ const exportToPDF = async () => {
             ))}
           </div>
         </div>
-        {/* Bewertungs-Link */}
+{/* Bewertungs-Mail senden */}
 {selectedKunde.status === 'abgeschlossen' && !selectedKunde.bewertung && (
   <div className="bewertung-box">
     <div className="section-title">Kundenbewertung</div>
@@ -436,9 +429,27 @@ const exportToPDF = async () => {
       Kunde kann nach Abschluss eine Bewertung abgeben.
     </p>
 
-    <button className="btn btn-edit" onClick={copyBewertungsLink}>
-      <FaStar /> Bewertungs-Link kopieren
-    </button>
+    {isAdmin && (
+      <button
+        className="btn btn-pdf"
+        onClick={async () => {
+          try {
+            const token = localStorage.getItem('token');
+            const resp = await axios.post(
+              `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen//send-mail/${selectedKunde.id}`,
+              {},
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert(resp.data.message || 'Bewertungsmail erfolgreich gesendet.');
+          } catch (err) {
+            console.error(err);
+            alert('Fehler beim Senden der Bewertungsmail.');
+          }
+        }}
+      >
+        <FaStar /> Bewertungsmail senden
+      </button>
+    )}
   </div>
 )}
 
@@ -471,7 +482,7 @@ const exportToPDF = async () => {
           <div className="section-title">Unterschrift</div>
           {selectedKunde.unterschrift ? <img src={`data:image/png;base64,${selectedKunde.unterschrift}`} alt="Unterschrift" />:<p className="muted">Keine Unterschrift hinterlegt.</p>}
         </div>
-        
+
         <div className="footer-buttons">
   {isAdmin && (
     <Link to={`/arbeitszeiten/${id}`} className="btn btn-edit">
