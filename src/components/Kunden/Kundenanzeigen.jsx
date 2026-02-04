@@ -14,6 +14,8 @@ const StarRow = ({ value = 0 }) => {
 
 export default function KundenAnzeigen() {
   const { id } = useParams();
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const [selectedKunde, setSelectedKunde] = useState(null);
   const [originalData, setOriginalData] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -46,6 +48,12 @@ export default function KundenAnzeigen() {
     fetchKunde();
     return () => { mounted = false; };
   }, [id]);
+
+  useEffect(() => {
+    const userType = localStorage.getItem("userType");
+    setIsAdmin(userType === "admin");
+  }, []);
+  
 
   const onEdit = () => { setEditMode(true); setEditedData(selectedKunde); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const handleInput = (e) => { const { name, value } = e.target; setEditedData(prev => ({ ...prev, [name]: value })); };
@@ -123,6 +131,15 @@ const createBackgroundDataUrl = async (widthPx, heightPx) => {
     }
   });
 };
+
+const copyBewertungsLink = () => {
+  if (!selectedKunde) return;
+
+  const bewertungsLink = `${window.location.origin}/kundenbewertung/${selectedKunde.kundennummer}`;
+  navigator.clipboard.writeText(bewertungsLink);
+  alert('Bewertungs-Link kopiert.');
+};
+
 
 // PROFESSIONAL exportToPDF (KUNDEN-DOSSIER)
 const exportToPDF = async () => {
@@ -410,13 +427,38 @@ const exportToPDF = async () => {
             ))}
           </div>
         </div>
+        {/* Bewertungs-Link */}
+{selectedKunde.status === 'abgeschlossen' && !selectedKunde.bewertung && (
+  <div className="bewertung-box">
+    <div className="section-title">Kundenbewertung</div>
 
-        <div className="qr-code-box">
-          <div className="section-title">QR-Code zur Unterschrift</div>
-          <QRCodeReact value={`${window.location.origin}/sign/${selectedKunde.kundennummer}`} size={150} />
-          <p>Scan den QR-Code, um direkt die Unterschrift zu hinterlegen.</p>
-          <button className="btn btn-edit" onClick={copyLinkToClipboard}><FaComments /> Link kopieren</button>
-        </div>
+    <p>
+      Kunde kann nach Abschluss eine Bewertung abgeben.
+    </p>
+
+    <button className="btn btn-edit" onClick={copyBewertungsLink}>
+      <FaStar /> Bewertungs-Link kopieren
+    </button>
+  </div>
+)}
+
+
+{!selectedKunde.unterschrift && (
+  <div className="qr-code-box">
+    <div className="section-title">QR-Code zur Unterschrift</div>
+
+    <QRCodeReact
+      value={`${window.location.origin}/sign/${selectedKunde.kundennummer}`}
+      size={150}
+    />
+
+    <p>Scan den QR-Code, um direkt die Unterschrift zu hinterlegen.</p>
+
+    <button className="btn btn-edit" onClick={copyLinkToClipboard}>
+      <FaComments /> Link kopieren
+    </button>
+  </div>
+)}
 
         <div className="section-title" style={{marginTop:'1.6rem'}}>Dienstleistungen</div>
         <div className="service-list">
@@ -429,11 +471,15 @@ const exportToPDF = async () => {
           <div className="section-title">Unterschrift</div>
           {selectedKunde.unterschrift ? <img src={`data:image/png;base64,${selectedKunde.unterschrift}`} alt="Unterschrift" />:<p className="muted">Keine Unterschrift hinterlegt.</p>}
         </div>
-
+        
         <div className="footer-buttons">
-          <Link to={`/arbeitszeiten/${id}`} className="btn btn-edit">Arbeitszeiten</Link>
-          <button className="btn btn-pdf" onClick={exportToPDF}><FaFilePdf /> Akte PDF</button>
-        </div>
+  {isAdmin && (
+    <Link to={`/arbeitszeiten/${id}`} className="btn btn-edit">
+      Arbeitszeiten
+    </Link>
+  )}
+</div>
+
       </div>
     </div>
   );
