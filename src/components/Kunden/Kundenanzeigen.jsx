@@ -133,95 +133,73 @@ const createBackgroundDataUrl = async (widthPx, heightPx) => {
 };
 
 
-
-// PROFESSIONAL exportToPDF (KUNDEN-DOSSIER)
 const exportToPDF = async () => {
   if (!selectedKunde) return;
 
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-  const margin = 48; // großzügigere Ränder für Profidesign
+  const margin = 40;
+  let y = margin;
 
-  // ====== Hintergrund (ganze Seite) ======
-  try {
-    const bg = await createBackgroundDataUrl(pageW, pageH);
-    doc.addImage(bg, 'JPEG', 0, 0, pageW, pageH);
-  } catch (e) {
-    console.warn('Background creation failed', e);
-  }
+  // ===== Hintergrund hellgrau =====
+  doc.setFillColor(245, 245, 245);
+  doc.rect(0, 0, pageW, pageH, 'F');
 
-  // Weißer Inhaltspanel (leicht gerundete Optik simulated by rect)
-  doc.setFillColor(255, 255, 255);
-  doc.rect(margin, margin + 36, pageW - 2 * margin, pageH - 2 * margin - 40, 'F');
+  // ===== HEADER =====
+  const headerH = 70;
+  doc.setFillColor(20, 32, 80); // dunkles Blau
+  doc.rect(margin, y, pageW - 2 * margin, headerH, 'F');
 
-  // ====== HEADER: Logo links, Titel Mitte/links, QR rechts ======
-  let y = margin + 60;
-
-  // Logo oben links (falls vorhanden)
+  // Logo links
   if (selectedKunde?.logo) {
     try {
-      const logoSrc = selectedKunde.logo.startsWith('data:') ? selectedKunde.logo : `data:image/png;base64,${selectedKunde.logo}`;
-      // kleine Version links oben
-      doc.addImage(logoSrc, 'PNG', margin + 8, margin + 12, 72, 36); // 2:1 ratio area
-    } catch (e) {
-      // ignore logo errors
-    }
+      const logoSrc = selectedKunde.logo.startsWith('data:')
+        ? selectedKunde.logo
+        : `data:image/png;base64,${selectedKunde.logo}`;
+      doc.addImage(logoSrc, 'PNG', margin + 10, y + 10, 70, 35);
+    } catch (e) {}
   }
 
-  // Title: KUNDEN-DOSSIER (professionell)
-  doc.setTextColor(20, 32, 80); // dunkles Corporate-Blau
+  // Titel zentriert
   doc.setFontSize(22);
   doc.setFont(undefined, 'bold');
-  doc.text('KUNDEN-DOSSIER', margin + 96, margin + 40);
+  doc.setTextColor(255, 255, 255);
+  doc.text('KUNDEN-DOSSIER', pageW / 2, y + 40, { align: 'center' });
 
-  // Subline / Kurzinfo rechts unter dem QR
+  // Subtext unter Titel
+  const subText = selectedKunde?.firma
+    ? selectedKunde.firma
+    : `${selectedKunde?.vorname || ''} ${selectedKunde?.nachname || ''}`;
   doc.setFontSize(10);
   doc.setFont(undefined, 'normal');
-  doc.setTextColor(110);
-  const subText = selectedKunde?.firma ? `${selectedKunde.firma}` : `${selectedKunde?.vorname || ''} ${selectedKunde?.nachname || ''}`;
-  doc.text(subText, margin + 96, margin + 58);
+  doc.text(subText, pageW / 2, y + 55, { align: 'center' });
 
-  // QR-Code oben rechts
+  // QR-Code rechts
   try {
     const qrUrl = `${window.location.origin}/sign/${selectedKunde.kundennummer}`;
     const qrDataURL = await QRCode.toDataURL(qrUrl, { margin: 0, width: 400 });
-    const qrSize = 86;
-    doc.addImage(qrDataURL, 'PNG', pageW - margin - qrSize, margin + 14, qrSize, qrSize);
-    doc.setFontSize(8);
-    doc.setTextColor(110);
-    doc.text('Scan zum Signieren', pageW - margin - qrSize, margin + 14 + qrSize + 12);
-  } catch (e) {
-    console.warn('QR error', e);
-  }
+    const qrSize = 60;
+    doc.addImage(qrDataURL, 'PNG', pageW - margin - qrSize, y + 5, qrSize, qrSize);
+  } catch (e) {}
 
-  // feine Trennlinie unter Header
-  doc.setDrawColor(220);
-  doc.setLineWidth(0.5);
-  doc.line(margin + 6, margin + 100, pageW - margin - 6, margin + 100);
+  y += headerH + 20;
 
-  y = margin + 110;
+  // ===== PANEL 1: Kundendaten (links) & Status (rechts) =====
+  const panelWidth = (pageW - 3 * margin) / 2;
+  const panelHeight = 130;
 
-  // ====== INFO CARD (links) + Meta Card / Status (rechts) ======
-  const cardLeftX = margin + 12;
-  const cardRightX = pageW / 2 + 6;
-  const cardWidthLeft = pageW / 2 - margin - 18;
-  const cardWidthRight = pageW / 2 - margin - 18;
-
-  // left card header
-  doc.setFontSize(12);
+  // Kundendaten
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(margin, y, panelWidth, panelHeight, 10, 10, 'F');
   doc.setFont(undefined, 'bold');
+  doc.setFontSize(12);
   doc.setTextColor(36, 41, 66);
-  doc.text('Kundendaten', cardLeftX, y);
+  doc.text('Kundendaten', margin + 12, y + 20);
 
-  // right card header (Status / Bewertung quick)
-  doc.setFontSize(12);
-  doc.setFont(undefined, 'bold');
-  doc.text('Status & Bewertung', cardRightX, y);
-
-  y += 14;
-
-  // body: left column fields (use for...of to allow awaits on page break)
+  doc.setFont(undefined, 'normal');
+  doc.setFontSize(10);
+  let leftY = y + 35;
   const infoPairs = [
     ['Kundennummer', selectedKunde.kundennummer],
     ['Firma', selectedKunde.firma],
@@ -231,151 +209,121 @@ const exportToPDF = async () => {
     ['Mobil', selectedKunde.mobil],
     ['Adresse', `${selectedKunde.strasseHausnummer || ''}${selectedKunde.postleitzahl ? ', ' : ''}${selectedKunde.postleitzahl || ''} ${selectedKunde.ort || ''}`],
   ];
-
-  // draw left info box background
-  doc.setFillColor(250, 252, 255);
-  doc.rect(cardLeftX - 6, y - 12, cardWidthLeft + 12, 110, 'F');
-
-  // draw right info box background
-  doc.setFillColor(250, 250, 250);
-  doc.rect(cardRightX - 6, y - 12, cardWidthRight + 12, 110, 'F');
-
-  // left fields
-  let leftY = y + 6;
-  doc.setFontSize(10);
-  doc.setTextColor(70);
   for (const [label, value] of infoPairs) {
     doc.setFont(undefined, 'bold');
-    doc.text(`${label}:`, cardLeftX, leftY);
+    doc.text(`${label}:`, margin + 12, leftY);
     doc.setFont(undefined, 'normal');
-    const wrapped = doc.splitTextToSize(String(value || '-'), cardWidthLeft - 110);
-    doc.text(wrapped, cardLeftX + 110, leftY);
-    leftY += wrapped.length * 12 + 8;
+    const wrapped = doc.splitTextToSize(String(value || '-'), panelWidth - 90);
+    doc.text(wrapped, margin + 90, leftY);
+    leftY += wrapped.length * 12 + 6;
   }
 
-  // right: Status badge + Bewertung (stars)
-  let rightY = y + 6;
-  // Status badge rectangle
+  // Status Panel
+  const rightX = margin * 2 + panelWidth;
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(rightX, y, panelWidth, panelHeight, 10, 10, 'F');
+
+  doc.setFont(undefined, 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(36, 41, 66);
+  doc.text('Status & Bewertung', rightX + 12, y + 20);
+
+  // Status Badge
   const status = selectedKunde.status || '–';
-  // small colored badge
-  const statusColor = status === 'abgeschlossen' ? [56, 142, 60] : status === 'inBearbeitung' ? [255, 193, 7] : [120, 144, 156];
+  const statusColor =
+    status === 'abgeschlossen'
+      ? [56, 142, 60]
+      : status === 'inBearbeitung'
+      ? [255, 193, 7]
+      : [120, 144, 156];
   doc.setFillColor(...statusColor);
-  doc.rect(cardRightX, rightY - 8, 96, 18, 'F');
+  doc.roundedRect(rightX + 12, y + 28, 90, 20, 5, 5, 'F');
   doc.setTextColor(255);
   doc.setFont(undefined, 'bold');
   doc.setFontSize(10);
-  doc.text(status.charAt(0).toUpperCase() + status.slice(1), cardRightX + 8, rightY + 6);
+  doc.text(status.charAt(0).toUpperCase() + status.slice(1), rightX + 16, y + 42);
 
-  // Bewertung (gelbe Sterne) under badge
-  rightY += 30;
-  const rating = selectedKunde.bewertung ?? selectedKunde.rating ?? null;
-  if (rating !== null && rating !== undefined) {
-    doc.setFontSize(12);
-    const starBaseX = cardRightX;
-    for (let i = 0; i < 5; i++) {
-      if (i < Number(rating)) {
-        doc.setTextColor(255, 193, 7); // gold
-      } else {
-        doc.setTextColor(200); // light gray
-      }
-      doc.text('★', starBaseX + i * 14, rightY);
-    }
-    doc.setTextColor(80);
-    doc.setFontSize(9);
-    doc.text(`${rating}/5`, cardRightX + 88, rightY + 2);
-    rightY += 18;
-  } else {
-    // no rating -> show nothing (user requested)
+  // Sterne Bewertung
+  const rating = selectedKunde.bewertung ?? selectedKunde.rating ?? 0;
+  const starY = y + 70;
+  for (let i = 0; i < 5; i++) {
+    const color = i < Number(rating) ? [255, 193, 7] : [200, 200, 200];
+    doc.setTextColor(...color);
+    doc.text('★', rightX + 12 + i * 16, starY);
   }
+  doc.setFontSize(9);
+  doc.setTextColor(80);
+  doc.text(`${rating}/5`, rightX + 90, starY + 2);
 
-  // small divider
-  y = Math.max(leftY, rightY) + 12;
-  doc.setDrawColor(220);
-  doc.setLineWidth(0.4);
-  doc.line(margin + 8, y, pageW - margin - 8, y);
+  y += panelHeight + 25;
 
-  // ====== SERVICES (volle Breite, card style) ======
-  y += 18;
+  // ===== PANEL 2: Dienstleistungen (volle Breite) =====
+  const serviceHeight = 50;
   doc.setFont(undefined, 'bold');
   doc.setFontSize(13);
   doc.setTextColor(36, 41, 66);
-  doc.text('Dienstleistungen', margin + 12, y);
-  y += 12;
-
+  doc.text('Dienstleistungen', margin, y);
+  y += 18;
   doc.setFont(undefined, 'normal');
   doc.setFontSize(11);
 
   if (selectedKunde.dienstleistungen?.length) {
     for (const d of selectedKunde.dienstleistungen) {
-      // service card box
-      const cardHStart = y;
       doc.setFillColor(255, 255, 255);
-      doc.rect(margin + 8, y - 6, pageW - 2 * margin - 16, 8, 'F'); // just background to ensure contrast
+      doc.roundedRect(margin, y, pageW - 2 * margin, serviceHeight, 8, 8, 'F');
 
       doc.setFont(undefined, 'bold');
       doc.setTextColor(22, 33, 62);
-      doc.text(d.title || '–', margin + 16, y + 6);
+      doc.text(d.title || '–', margin + 12, y + 18);
 
-      // description
       doc.setFont(undefined, 'normal');
       doc.setFontSize(10);
-      const descLines = doc.splitTextToSize(d.beschreibung || '-', pageW - 2 * margin - 32);
-      doc.text(descLines, margin + 16, y + 22);
-      y += descLines.length * 12 + 28;
+      const descLines = doc.splitTextToSize(d.beschreibung || '-', pageW - 2 * margin - 24);
+      doc.text(descLines, margin + 12, y + 34);
+      y += descLines.length * 12 + 42;
 
-      // small separator between services
       doc.setDrawColor(240);
       doc.setLineWidth(0.6);
       doc.line(margin + 12, y - 6, pageW - margin - 12, y - 6);
 
-      // page break handling
-      if (y > pageH - margin - 120) {
+      if (y > pageH - margin - 100) {
         doc.addPage();
-        try {
-          const bgN = await createBackgroundDataUrl(pageW, pageH);
-          doc.addImage(bgN, 'JPEG', 0, 0, pageW, pageH);
-        } catch (e) { /* ignore */ }
-        // redraw white content panel on new page
-        doc.setFillColor(255, 255, 255);
-        doc.rect(margin, margin + 36, pageW - 2 * margin, pageH - 2 * margin - 40, 'F');
-        y = margin + 70;
+        y = margin;
       }
     }
   } else {
-    // nothing to show (user wanted no rating block when missing and no services if empty)
     doc.setFontSize(11);
     doc.setTextColor(110);
-    doc.text('Keine Dienstleistungen vorhanden.', margin + 12, y);
-    y += 20;
+    doc.text('Keine Dienstleistungen vorhanden.', margin, y);
+    y += 30;
   }
 
-  // ====== Unterschrift (unten links) ======
-  y += 10;
+  // ===== Unterschrift & Footer =====
   if (selectedKunde.unterschrift) {
     const sigBoxY = Math.min(pageH - margin - 100, y);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(36, 41, 66);
-    doc.text('Unterschrift', margin + 12, sigBoxY);
+    doc.text('Unterschrift', margin, sigBoxY);
     try {
-      doc.addImage(`data:image/png;base64,${selectedKunde.unterschrift}`, 'PNG', margin + 12, sigBoxY + 6, 180, 60);
-    } catch (e) { /* ignore */ }
+      doc.addImage(`data:image/png;base64,${selectedKunde.unterschrift}`, 'PNG', margin, sigBoxY + 6, 180, 60);
+    } catch (e) {}
   }
 
-  // ====== Footer: Datum + Seite ======
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(9);
     doc.setTextColor(120);
-    // left: date
-    doc.text(`Exportiert: ${new Date().toLocaleString()}`, margin + 10, pageH - margin + 8);
-    // right: page
+    doc.text(`Exportiert: ${new Date().toLocaleString()}`, margin, pageH - margin + 8);
     doc.text(`Seite ${i} von ${pageCount}`, pageW - margin - 80, pageH - margin + 8);
   }
 
-  // finalize
   doc.save(`KundenDossier_${selectedKunde.kundennummer || 'export'}.pdf`);
 };
+
+
+
+
 
 
 
@@ -420,37 +368,81 @@ const exportToPDF = async () => {
             ))}
           </div>
         </div>
-{/* Bewertungs-Mail senden */}
-{selectedKunde.status === 'abgeschlossen' && !selectedKunde.bewertung && (
-  <div className="bewertung-box">
-    <div className="section-title">Kundenbewertung</div>
+{/* Bewertungs-Mail / Anzeige der Bewertung */}
+{selectedKunde.status === 'abgeschlossen' && (
+  <>
+    {!selectedKunde.bewertung ? (
+      <div className="bewertung-box">
+        <div className="section-title">Kundenbewertung</div>
+        <p>Kunde kann nach Abschluss eine Bewertung abgeben.</p>
 
-    <p>
-      Kunde kann nach Abschluss eine Bewertung abgeben.
-    </p>
+        {isAdmin && (
+          <button
+            className="btn btn-pdf"
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem('token');
+                const resp = await axios.post(
+                  `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/send-mail/${selectedKunde.id}`,
+                  {},
+                  { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert(resp.data.message || 'Bewertungsmail erfolgreich gesendet.');
+              } catch (err) {
+                console.error(err);
+                alert('Fehler beim Senden der Bewertungsmail.');
+              }
+            }}
+          >
+            <FaStar /> Bewertungsmail senden
+          </button>
+        )}
+      </div>
+    ) : (
+      <div className="bewertung-box bewertung-vorhanden">
+        <div className="section-title">Kundenbewertung</div>
 
-    {isAdmin && (
-      <button
-        className="btn btn-pdf"
-        onClick={async () => {
-          try {
-            const token = localStorage.getItem('token');
-            const resp = await axios.post(
-              `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen//send-mail/${selectedKunde.id}`,
-              {},
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-            alert(resp.data.message || 'Bewertungsmail erfolgreich gesendet.');
-          } catch (err) {
-            console.error(err);
-            alert('Fehler beim Senden der Bewertungsmail.');
-          }
-        }}
-      >
-        <FaStar /> Bewertungsmail senden
-      </button>
+        {/* Gesamtrating */}
+        <p><strong>Gesamtrating:</strong></p>
+        <StarRow value={selectedKunde.bewertung.gesamtrating || 0} />
+
+        {selectedKunde.bewertung.gesamttext && (
+          <p style={{ marginTop: '8px' }}>
+            <strong>Kommentar:</strong> {selectedKunde.bewertung.gesamttext}
+          </p>
+        )}
+
+        <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
+
+        {/* Unterbewertungen */}
+        <div className="unterbewertungen">
+          {[
+            { label: 'Arbeitsqualität', key: 'arbeitsqualitaet', ratingKey: 'arbeitsqualitaet_rating' },
+            { label: 'Tempo', key: 'tempo', ratingKey: 'tempo_rating' },
+            { label: 'Freundlichkeit', key: 'freundlichkeit', ratingKey: 'freundlichkeit_rating' },
+            { label: 'Zufriedenheit', key: 'zufriedenheit', ratingKey: 'zufriedenheit_rating' },
+            { label: 'Kommunikation', key: 'kommunikation', ratingKey: 'kommunikation_rating' },
+            { label: 'Zuverlässigkeit', key: 'zuverlaessigkeit', ratingKey: 'zuverlaessigkeit_rating' },
+            { label: 'Professionalität', key: 'professionalitaet', ratingKey: 'professionalitaet_rating' },
+          ].map(item => (
+            <div key={item.key} style={{ marginBottom: '12px' }}>
+              <p style={{ margin: 0, fontWeight: 500 }}>{item.label}:</p>
+              <StarRow value={selectedKunde.bewertung[item.ratingKey] || 0} />
+              {selectedKunde.bewertung[item.key] && (
+                <p style={{ margin: '2px 0 0 0', color: '#555' }}>{selectedKunde.bewertung[item.key]}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
+
+        <p>
+          <em>Abgegeben am: {new Date(selectedKunde.bewertung.createdAt).toLocaleDateString()}</em>
+        </p>
+      </div>
     )}
-  </div>
+  </>
 )}
 
 
