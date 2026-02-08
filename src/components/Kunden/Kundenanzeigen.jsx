@@ -9,12 +9,94 @@ import './KundenAnzeigen.scss';
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer";
 
 const pdfStyles = StyleSheet.create({
-  page: { padding: 40, fontSize: 11 },
-  title: { fontSize: 20, marginBottom: 20, textAlign: "center" },
-  sectionTitle: { fontSize: 14, marginBottom: 10, marginTop: 15 },
-  row: { flexDirection: "row", justifyContent: "space-between", borderBottom: "1 solid #ddd", paddingVertical: 6 },
-  bold: { fontWeight: "bold" },
-  footer: { position: "absolute", bottom: 30, textAlign: "center", fontSize: 9, color: "grey", width: "100%" }
+  page: {
+    padding: 40,
+    fontSize: 11,
+    fontFamily: 'Helvetica',
+    backgroundColor: '#f9f9f9'
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: '#1c3faa',
+    paddingBottom: 10,
+    marginBottom: 20
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1c3faa',
+    textTransform: 'uppercase'
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: '#555'
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#1c3faa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingBottom: 3
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 6,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ddd'
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#e6f0ff',
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1c3faa'
+  },
+  tableHeaderText: {
+    fontWeight: 'bold',
+    color: '#1c3faa'
+  },
+  bold: { fontWeight: 'bold' },
+  footer: {
+    position: 'absolute',
+    bottom: 30,
+    textAlign: 'center',
+    fontSize: 9,
+    color: '#999',
+    width: '100%'
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3
+  },
+  serviceName: {
+    fontWeight: 'bold',
+    color: '#1c3faa'
+  },
+  employeeName: {
+    fontWeight: 'bold',
+    color: '#333'
+  },
+  time: {
+    color: '#555'
+  },
+  totalHours: {
+    fontWeight: 'bold',
+    color: '#1c3faa'
+  }
 });
 
 const KundenReportPDFInline = ({ kunde, gesamtArbeitszeit, mitarbeiterArbeitszeiten, dienstleistungMitarbeiter }) => (
@@ -47,16 +129,18 @@ const KundenReportPDFInline = ({ kunde, gesamtArbeitszeit, mitarbeiterArbeitszei
       </Page>
     ))}
 
-    {/* Seite: Zusammenfassung pro Dienstleistung */}
+    {/* Zusammenfassung pro Dienstleistung */}
     <Page size="A4" style={pdfStyles.page}>
       <Text style={pdfStyles.title}>Arbeitszeit je Dienstleistung</Text>
       {dienstleistungMitarbeiter.map(dl => (
-        <View key={dl.dienstleistung} style={{ marginBottom: 20 }}>
+        <View key={dl.dienstleistung_id} style={{ marginBottom: 20 }}>
           <Text style={pdfStyles.sectionTitle}>{dl.dienstleistung}</Text>
           {dl.mitarbeiter.map(m => (
             <View key={m.mitarbeiter_id} style={pdfStyles.row}>
               <Text>{m.vorname} {m.nachname}</Text>
-              <Text style={pdfStyles.bold}>{m.gesamtArbeitszeit} h</Text>
+              <Text style={pdfStyles.bold}>
+                {m.arbeitszeiten.reduce((sum, a) => sum + Number(a.arbeitszeit), 0)} h
+              </Text>
             </View>
           ))}
         </View>
@@ -64,6 +148,7 @@ const KundenReportPDFInline = ({ kunde, gesamtArbeitszeit, mitarbeiterArbeitszei
     </Page>
   </Document>
 );
+
 
 
 const StarRow = ({ value = 0 }) => {
@@ -88,30 +173,74 @@ export default function KundenAnzeigen() {
   // Kundendaten laden
   useEffect(() => {
     let mounted = true;
-    const fetchKunde = async () => {
+    const token = localStorage.getItem('token');
+  
+    const fetchAll = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const resp = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+  
+        // 1️⃣ Kundendaten
+        const kundeResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!mounted) return;
+        setSelectedKunde(kundeResp.data.data);
+  
+        // 2️⃣ Gesamtarbeitszeit pro Dienstleistung
+        const gesamtResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
+  
+        // 3️⃣ Arbeitszeiten pro Mitarbeiter & Dienstleistung (summiert)
+        const mitarbeiterSummiertResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/arbeitszeiten/dienstleistungen`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+  
+        // 🔥 Mapping für PDF: summierte Arbeitszeiten
+        const mitarbeiterMap = {};
+        mitarbeiterSummiertResp.data.dienstleistungen.forEach(dl => {
+          dl.mitarbeiter.forEach(m => {
+            if (!mitarbeiterMap[m.mitarbeiter_id]) {
+              mitarbeiterMap[m.mitarbeiter_id] = {
+                mitarbeiter_id: m.mitarbeiter_id,
+                vorname: m.vorname,
+                nachname: m.nachname,
+                arbeitszeiten: []
+              };
+            }
+            mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
+              dienstleistung: dl.dienstleistung,
+              start_time: "-",
+              end_time: "-",
+              arbeitszeit: m.gesamtArbeitszeit
+            });
+          });
         });
-        const data = resp?.data?.data;
-        if (mounted) {
-          setSelectedKunde(data || null);
-          setOriginalData(data || null);
-          setEditedData(data || {});
-        }
+        setMitarbeiterArbeitszeiten(Object.values(mitarbeiterMap));
+  
+        // 4️⃣ Alle Stempelungen (Detail)
+        const alleStempelResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/arbeitszeiten/dienstleistungen`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setDienstleistungMitarbeiter(alleStempelResp.data.dienstleistungen || []);
+  
       } catch (err) {
-        console.error('Fehler beim Laden der Kundendaten:', err);
-        alert('Fehler beim Laden der Kundendaten.');
+        console.error(err);
+        alert("Fehler beim Laden der Daten.");
       } finally {
         if (mounted) setLoading(false);
       }
     };
-    fetchKunde();
+  
+    fetchAll();
     return () => { mounted = false; };
   }, [id]);
-
+  
   useEffect(() => {
     const userType = localStorage.getItem("userType");
     setIsAdmin(userType === "admin");
@@ -393,29 +522,28 @@ useEffect(() => {
     try {
       setLoading(true);
 
+      // Kundendaten
       const kundeResp = await axios.get(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (!mounted) return;
       setSelectedKunde(kundeResp.data.data);
 
+      // Gesamtarbeitszeit pro Dienstleistung
       const gesamtResp = await axios.get(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
 
+      // Alle Stempelungen
       const dienstMResp = await axios.get(
         `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/mitarbeiter/arbeitszeiten`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      /**
-       * 🔥 HIER DER WICHTIGE FIX
-       * Wir bauen das PDF-Format selbst
-       */
+      // 🔥 Transformieren für PDF
       const mitarbeiterMap = {};
 
       dienstMResp.data.dienstleistungen.forEach(dl => {
@@ -429,11 +557,13 @@ useEffect(() => {
             };
           }
 
-          mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
-            dienstleistung: dl.dienstleistung,
-            start_time: "-",
-            end_time: "-",
-            arbeitszeit: m.gesamtArbeitszeit
+          m.arbeitszeiten.forEach(a => {
+            mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
+              dienstleistung: dl.dienstleistung,
+              start_time: a.start_time,
+              end_time: a.end_time,
+              arbeitszeit: a.arbeitszeit
+            });
           });
         });
       });
@@ -452,6 +582,7 @@ useEffect(() => {
   fetchAll();
   return () => { mounted = false; };
 }, [id]);
+
 
 
 
