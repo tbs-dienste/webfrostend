@@ -6,6 +6,65 @@ import QRCodeReact from 'react-qr-code';
 import QRCode from 'qrcode';
 import { FaSave, FaUndo, FaEdit, FaFilePdf, FaStar, FaRegStar, FaComments } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
+import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer";
+
+const pdfStyles = StyleSheet.create({
+  page: { padding: 40, fontSize: 11 },
+  title: { fontSize: 20, marginBottom: 20, textAlign: "center" },
+  sectionTitle: { fontSize: 14, marginBottom: 10, marginTop: 15 },
+  row: { flexDirection: "row", justifyContent: "space-between", borderBottom: "1 solid #ddd", paddingVertical: 6 },
+  bold: { fontWeight: "bold" },
+  footer: { position: "absolute", bottom: 30, textAlign: "center", fontSize: 9, color: "grey", width: "100%" }
+});
+
+const KundenReportPDFInline = ({ kunde, gesamtArbeitszeit, mitarbeiterArbeitszeiten, dienstleistungMitarbeiter }) => (
+  <Document>
+    {/* Seite 1: Gesamtarbeitszeit */}
+    <Page size="A4" style={pdfStyles.page}>
+      <Text style={pdfStyles.title}>Arbeitszeitübersicht</Text>
+      <Text style={pdfStyles.sectionTitle}>Gesamtarbeitszeit pro Dienstleistung</Text>
+      {gesamtArbeitszeit.map(d => (
+        <View key={d.dienstleistung_id} style={pdfStyles.row}>
+          <Text>{d.dienstleistung}</Text>
+          <Text style={pdfStyles.bold}>{d.gesamtArbeitszeit} h</Text>
+        </View>
+      ))}
+      <Text style={pdfStyles.footer}>Kunde: {kunde.vorname} {kunde.nachname}</Text>
+    </Page>
+
+    {/* Seiten pro Mitarbeiter */}
+    {mitarbeiterArbeitszeiten.map(m => (
+      <Page key={m.mitarbeiter_id} size="A4" style={pdfStyles.page}>
+        <Text style={pdfStyles.title}>Arbeitszeiten – {m.vorname} {m.nachname}</Text>
+        {m.arbeitszeiten.map((a,i) => (
+          <View key={i} style={pdfStyles.row}>
+            <Text>{a.dienstleistung}</Text>
+            <Text>{a.start_time} – {a.end_time}</Text>
+            <Text style={pdfStyles.bold}>{a.arbeitszeit} h</Text>
+          </View>
+        ))}
+        <Text style={pdfStyles.footer}>Mitarbeiter-ID: {m.mitarbeiter_id}</Text>
+      </Page>
+    ))}
+
+    {/* Seite: Zusammenfassung pro Dienstleistung */}
+    <Page size="A4" style={pdfStyles.page}>
+      <Text style={pdfStyles.title}>Arbeitszeit je Dienstleistung</Text>
+      {dienstleistungMitarbeiter.map(dl => (
+        <View key={dl.dienstleistung} style={{ marginBottom: 20 }}>
+          <Text style={pdfStyles.sectionTitle}>{dl.dienstleistung}</Text>
+          {dl.mitarbeiter.map(m => (
+            <View key={m.mitarbeiter_id} style={pdfStyles.row}>
+              <Text>{m.vorname} {m.nachname}</Text>
+              <Text style={pdfStyles.bold}>{m.gesamtArbeitszeit} h</Text>
+            </View>
+          ))}
+        </View>
+      ))}
+    </Page>
+  </Document>
+);
+
 
 const StarRow = ({ value = 0 }) => {
   const stars = [...Array(5)].map((_, i) => i < value ? <FaStar key={i} /> : <FaRegStar key={i} />);
@@ -21,6 +80,10 @@ export default function KundenAnzeigen() {
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [loading, setLoading] = useState(true);
+    // PDF-Daten
+    const [gesamtArbeitszeit, setGesamtArbeitszeit] = useState([]);
+    const [mitarbeiterArbeitszeiten, setMitarbeiterArbeitszeiten] = useState([]);
+    const [dienstleistungMitarbeiter, setDienstleistungMitarbeiter] = useState([]);
 
   // Kundendaten laden
   useEffect(() => {
@@ -322,8 +385,73 @@ const exportToPDF = async () => {
 };
 
 
+useEffect(() => {
+  let mounted = true;
+  const token = localStorage.getItem('token');
 
+  const fetchAll = async () => {
+    try {
+      setLoading(true);
 
+      const kundeResp = await axios.get(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (!mounted) return;
+      setSelectedKunde(kundeResp.data.data);
+
+      const gesamtResp = await axios.get(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
+
+      const dienstMResp = await axios.get(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/mitarbeiter/arbeitszeiten`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      /**
+       * 🔥 HIER DER WICHTIGE FIX
+       * Wir bauen das PDF-Format selbst
+       */
+      const mitarbeiterMap = {};
+
+      dienstMResp.data.dienstleistungen.forEach(dl => {
+        dl.mitarbeiter.forEach(m => {
+          if (!mitarbeiterMap[m.mitarbeiter_id]) {
+            mitarbeiterMap[m.mitarbeiter_id] = {
+              mitarbeiter_id: m.mitarbeiter_id,
+              vorname: m.vorname,
+              nachname: m.nachname,
+              arbeitszeiten: []
+            };
+          }
+
+          mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
+            dienstleistung: dl.dienstleistung,
+            start_time: "-",
+            end_time: "-",
+            arbeitszeit: m.gesamtArbeitszeit
+          });
+        });
+      });
+
+      setMitarbeiterArbeitszeiten(Object.values(mitarbeiterMap));
+      setDienstleistungMitarbeiter(dienstMResp.data.dienstleistungen || []);
+
+    } catch (err) {
+      console.error(err);
+      alert("Fehler beim Laden der Daten");
+    } finally {
+      if (mounted) setLoading(false);
+    }
+  };
+
+  fetchAll();
+  return () => { mounted = false; };
+}, [id]);
 
 
 
@@ -481,6 +609,27 @@ const exportToPDF = async () => {
       Arbeitszeiten
     </Link>
   )}
+
+{selectedKunde?.status === "abgeschlossen" && (
+  <PDFDownloadLink
+    document={
+      <KundenReportPDFInline
+        kunde={selectedKunde}
+        gesamtArbeitszeit={gesamtArbeitszeit}
+        mitarbeiterArbeitszeiten={mitarbeiterArbeitszeiten}
+        dienstleistungMitarbeiter={dienstleistungMitarbeiter}
+      />
+    }
+    fileName={`KundenReport_${selectedKunde.kundennummer}.pdf`}
+    className="btn btn-pdf"
+  >
+    {({ loading }) => loading ? "PDF wird erstellt…" : "PDF herunterladen"}
+  </PDFDownloadLink>
+)}
+
+
+
+
 </div>
 
       </div>

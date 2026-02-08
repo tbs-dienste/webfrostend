@@ -1,171 +1,159 @@
+// Rechnung.scss
+
+$primary-color: #3672e0;
+$secondary-color: #f5f5f5;
+$text-color: #333;
+$bg-color: #fff;
+$border-color: #ddd;
+$success-color: #36b036;
+$warning-color: #e0a036;
+$danger-color: #e03636;
+
 .rechnung-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 2rem;
-  max-width: 1300px;
-  margin: 0 auto;
-  background: #f4f6f8;
+  font-family: 'Inter', sans-serif;
+  color: $text-color;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 
   .top-section {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 15px;
     align-items: center;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
 
     .add-rechnung-button {
-      background: #007bff;
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border-radius: 10px;
+      padding: 10px 20px;
       font-weight: 600;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: $primary-color;
+      color: #fff;
       text-decoration: none;
-      box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
-      transition: background 0.3s;
-
-      &:hover {
-        background: #0056b3;
-      }
     }
 
     .search-input {
-      flex-grow: 1;
-      max-width: 400px;
-      padding: 0.75rem 1rem;
-      border: 2px solid #ced4da;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-
-      &:focus {
-        border-color: #007bff;
-        outline: none;
-      }
+      padding: 10px 15px;
+      font-size: 14px;
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      flex: 1 1 200px;
     }
   }
 
   .status-filter {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
 
     .status-dropdown {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      border: 2px solid #ced4da;
-      font-size: 1rem;
-      min-width: 180px;
-
-      &:focus {
-        border-color: #007bff;
-        outline: none;
-      }
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid $border-color;
+      border-radius: 6px;
     }
 
     .checkbox-item {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 5px;
 
-      input {
-        transform: scale(1.2);
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
       }
 
       label {
-        font-size: 0.95rem;
-        color: #333;
+        font-size: 14px;
       }
     }
   }
 
   .rechnung-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    .rechnung-card {
+      background-color: $bg-color;
+      padding: 15px 20px;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+
+      .rechnung-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex: 1;
+
+        .rechnung-link {
+          font-size: 16px;
+          font-weight: 600;
+          color: $primary-color;
+          text-decoration: none;
+        }
+
+        .status-box {
+          padding: 5px 12px;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          text-align: center;
+          min-width: 100px;
+
+          &.status-entwurf {
+            background-color: $secondary-color;
+            color: $text-color;
+          }
+
+          &.status-offen {
+            background-color: $warning-color;
+            color: #fff;
+          }
+
+          &.status-bezahlt {
+            background-color: $success-color;
+            color: #fff;
+          }
+
+          &.status-1.-mahnstufe,
+          &.status-2.-mahnstufe,
+          &.status-3.-mahnstufe {
+            background-color: $danger-color;
+            color: #fff;
+          }
+
+          &.status-überfällig {
+            background-color: darken($danger-color, 10%);
+            color: #fff;
+          }
+        }
+
+        .gesendet-icon-wrapper {
+          display: flex;
+          align-items: center;
+
+          .gesendet-icon {
+            font-size: 18px;
+            color: $success-color;
+
+            &.gesendet-false {
+              color: $border-color;
+            }
+          }
+        }
+      }
+    }
   }
 
-  .rechnung-card {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    }
-
-    .rechnung-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-
-      .rechnung-link {
-        font-weight: 600;
-        color: #007bff;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      .status-box {
-        padding: 0.3rem 0.7rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: capitalize;
-
-        &.status-entwurf {
-          background-color: #ffc107;
-          color: #212529;
-        }
-
-        &.status-offen {
-          background-color: #17a2b8;
-          color: #fff;
-        }
-
-        &.status-bezahlt {
-          background-color: #28a745;
-          color: #fff;
-        }
-
-        &.status-überfällig {
-          background-color: #dc3545;
-          color: #fff;
-        }
-
-        &.status-1.-mahnstufe,
-        &.status-2.-mahnstufe,
-        &.status-3.-mahnstufe {
-          background-color: #fd7e14;
-          color: #fff;
-        }
-      }
-
-      .gesendet-icon-wrapper {
-        .gesendet-icon {
-          font-size: 1.3rem;
-          color: #28a745;
-
-          &.gesendet-false {
-            color: #dc3545;
-          }
-
-          &:hover {
-            transform: scale(1.2);
-            cursor: pointer;
-          }
-
-          transition: transform 0.2s ease;
-        }
-      }
-    }
+  p {
+    font-size: 15px;
   }
 }

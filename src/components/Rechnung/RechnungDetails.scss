@@ -1,137 +1,126 @@
+// RechnungDetails.scss
+
+$primary-color: #3672e0;
+$secondary-color: #f5f5f5;
+$text-color: #333;
+$bg-color: #fff;
+$border-color: #ddd;
+$button-bg: #3672e0;
+$button-text: #fff;
+$delete-bg: #e03636;
+
 .rechnung-detail {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', sans-serif;
+  color: $text-color;
+  background-color: $bg-color;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 
   &__title {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #2c3e50;
+    font-size: 28px;
+    font-weight: 700;
+    color: $primary-color;
+    margin-bottom: 20px;
   }
 
   &__info {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    font-size: 16px;
 
-    .rechnung-detail__label {
-      font-weight: bold;
-      color: #555;
+    & .rechnung-detail__label {
+      font-weight: 600;
     }
 
-    .rechnung-detail__value {
-      color: #333;
+    & .rechnung-detail__value {
+      font-weight: 400;
     }
   }
 
   &__status-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .status-button {
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-      background-color: #2980b9;
-    }
-  }
-
-  .delete-button {
-    background-color: #e74c3c;
-    margin-top: 1.5rem;
-
-    &:hover {
-      background-color: #c0392b;
-    }
-  }
-
-  .generate-pdf-button {
-    background-color: #2ecc71;
-    margin-top: 1.5rem;
-    margin-left: 1rem;
-
-    &:hover {
-      background-color: #27ae60;
-    }
+    gap: 10px;
+    margin: 10px 0;
   }
 
   &__tabelle {
-    margin-top: 2rem;
+    margin-top: 20px;
 
     h3 {
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
-      color: #34495e;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: $primary-color;
     }
 
-    .dienstleistung-tabelle {
+    table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.95rem;
-
-      thead {
-        background-color: #3498db;
-        color: #fff;
-      }
+      font-size: 14px;
 
       th, td {
-        padding: 0.75rem;
+        padding: 12px 10px;
+        border: 1px solid $border-color;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: $primary-color;
+        color: $button-text;
+        font-weight: 600;
       }
 
       tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
+        background-color: $secondary-color;
       }
 
-      tbody tr:hover {
-        background-color: #f1f1f1;
+      td {
+        font-weight: 400;
       }
     }
   }
 
-  &__loading,
-  &__error {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #999;
-    margin-top: 2rem;
+  .status-button,
+  .generate-pdf-button,
+  .delete-button {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: none;
+    color: $button-text;
+    background-color: $button-bg;
   }
 
-  @media (max-width: 600px) {
-    padding: 1rem;
+  .delete-button {
+    background-color: $delete-bg;
+  }
 
-    &__info {
-      flex-direction: column;
-    }
+  .generate-pdf-button {
+    margin-top: 10px;
+    background-color: $primary-color;
+  }
 
-    .status-button,
-    .delete-button,
-    .generate-pdf-button {
-      width: 100%;
-    }
+  .rechnung-detail__loading,
+  .rechnung-detail__error {
+    font-size: 18px;
+    font-weight: 500;
+    color: $text-color;
+  }
 
-    .dienstleistung-tabelle {
-      font-size: 0.85rem;
+  p {
+    margin: 5px 0;
+    font-size: 15px;
 
-      th, td {
-        padding: 0.5rem;
-      }
+    strong {
+      color: $primary-color;
     }
   }
 }
