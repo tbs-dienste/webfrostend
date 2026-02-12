@@ -1,159 +1,248 @@
-// AufgabenList.scss
+/* ==========================
+   VARIABLES
+========================== */
+$primary-color: #0052cc;
+$secondary-color: #f0f0f0;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$gray-color: #888;
+$border-radius: 8px;
+$padding: 16px;
+$modal-bg: rgba(0, 0, 0, 0.5);
 
-$primary-color: #0062cc;
-$secondary-color: #f4f6f9;
-$accent-color: #28a745;
-$border-color: #e0e0e0;
-$button-color: #007bff;
-$button-hover-color: #0056b3;
-$heading-color: #333;
-$task-background-color: #ffffff;
-$shadow-color: rgba(0, 0, 0, 0.1);
-$font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-$transition-duration: 0.3s;
-$radius: 10px;
+/* ==========================
+   GLOBAL STYLING
+========================== */
+.dashboard-container {
+  padding: $padding;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  min-height: 100vh;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  .dashboard-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: $primary-color;
+  }
+
+  .open-modal-btn {
+    background-color: $primary-color;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: $border-radius;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: $gray-color;
+  }
 }
 
-.aufgaben-list {
-  font-family: $font-family;
-  margin: 0 20px;
-  padding: 20px;
-  background-color: $secondary-color;
+/* ==========================
+   MODALS
+========================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: $modal-bg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 
-  h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: $heading-color;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-
-  .loading, .error {
-    font-size: 1.2rem;
-    color: #d9534f;
-    text-align: center;
-  }
-
-  .no-tasks {
-    font-size: 1.2rem;
-    text-align: center;
-    color: #999;
-  }
-
-  .dienstleistungen-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .dienstleistung-box {
-    background-color: $task-background-color;
-    border-radius: $radius;
-    box-shadow: 0 4px 8px $shadow-color;
-    padding: 20px;
-    border: 1px solid $border-color;
-    transition: all $transition-duration ease;
-    position: relative;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px $shadow-color;
-    }
+  .modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: $border-radius;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
     h2 {
-      font-size: 1.75rem;
-      color: $heading-color;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
+      color: $primary-color;
+      font-size: 1.5rem;
     }
 
-    .add-task-link {
-      display: inline-flex;
-      align-items: center;
-      color: $button-color;
-      text-decoration: none;
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: $border-radius;
+      border: 1px solid #ccc;
       font-size: 1rem;
-      margin-bottom: 20px;
-      border-radius: $radius;
-      padding: 8px 16px;
-      border: 1px solid $button-color;
-      background-color: transparent;
-      transition: background-color $transition-duration, color $transition-duration;
+    }
 
-      &:hover {
-        background-color: $button-color;
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+
+      .btn-submit {
+        background-color: $success-color;
         color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: $border-radius;
+        cursor: pointer;
       }
 
-      .fa-plus {
-        margin-right: 10px;
+      .btn-cancel {
+        background-color: $danger-color;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: $border-radius;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+/* ==========================
+   AUFGABEN LISTE
+========================== */
+.aufgaben-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .aufgabe-card {
+    background: #fff;
+    border-radius: $border-radius;
+    padding: $padding;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    .aufgabe-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .aufgabe-header-info {
+        .aufgabe-title {
+          font-size: 1.3rem;
+          font-weight: 600;
+          margin: 0;
+          color: $primary-color;
+        }
+
+        .aufgabe-date {
+          font-size: 0.9rem;
+          color: $gray-color;
+        }
+      }
+
+      .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &.status-offen { background-color: $warning-color; color: #fff; }
+        &.status-inbearbeitung { background-color: $primary-color; color: #fff; }
+        &.status-erledigt { background-color: $success-color; color: #fff; }
       }
     }
 
-    .task-list {
-      list-style: none;
-      padding: 0;
+    /* Fortschrittsbalken */
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
 
-      .task-item {
-        background-color: $task-background-color;
-        border-radius: $radius;
-        padding: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 6px $shadow-color;
-        transition: background-color $transition-duration, transform $transition-duration;
+      .progress-background {
+        flex: 1;
+        height: 10px;
+        background: $secondary-color;
+        border-radius: 10px;
+        overflow: hidden;
 
-        &:hover {
-          background-color: #f8f9fa;
-          transform: scale(1.02);
-        }
-
-        .task-title {
-          font-size: 1.25rem;
-          color: $heading-color;
-          font-weight: bold;
-          margin-bottom: 10px;
-        }
-
-        p {
-          font-size: 1rem;
-          color: #555;
-          margin-bottom: 15px;
-        }
-
-        .unteraufgaben-table {
-          width: 100%;
-          margin-top: 20px;
-          border-collapse: collapse;
-          table-layout: fixed;
-          overflow: hidden;
-
-          th, td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid $border-color;
-            font-size: 0.9rem;
-          }
-
-          th {
-            background-color: #f1f1f1;
-            font-weight: bold;
-          }
-
-          tr:hover {
-            background-color: #f7f7f7;
-          }
+        .progress-fill {
+          height: 100%;
+          background: $primary-color;
+          border-radius: 10px;
         }
       }
 
-      .no-tasks {
-        font-size: 1rem;
-        color: #888;
-        text-align: center;
-        padding: 15px;
+      .progress-text {
+        font-size: 0.85rem;
+        color: $gray-color;
+      }
+    }
+
+    /* Unteraufgaben */
+    .unteraufgaben-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .unteraufgabe-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: $secondary-color;
+        border-radius: $border-radius;
+
+        &.unteraufgabe-overdue {
+          border-left: 4px solid $danger-color;
+        }
+
+        .unteraufgabe-info {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .unteraufgabe-title {
+            font-size: 1rem;
+            margin: 0;
+
+            &.unteraufgabe-done {
+              text-decoration: line-through;
+              color: $gray-color;
+            }
+          }
+
+          .unteraufgabe-date {
+            font-size: 0.8rem;
+            color: $gray-color;
+          }
+        }
+
+        .checkbox {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+        }
+      }
+
+      .add-unteraufgabe-btn {
+        margin-top: 6px;
+        background-color: $primary-color;
+        color: #fff;
+        border: none;
+        border-radius: $border-radius;
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
       }
     }
   }
