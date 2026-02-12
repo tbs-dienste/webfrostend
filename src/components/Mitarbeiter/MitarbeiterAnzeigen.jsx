@@ -98,74 +98,102 @@ const MitarbeiterAnzeigen = () => {
     };
 
     const generatePDF = () => {
+        if (!selectedMitarbeiter) return;
+    
         const doc = new jsPDF();
-        
-        // Titel hinzufügen
-        doc.setFontSize(22);
+    
+        // ===== HEADER =====
+        doc.setFillColor(40, 40, 40);
+        doc.rect(0, 0, 210, 25, "F");
+    
         doc.setFont("helvetica", "bold");
-        doc.text("Mitarbeiter Personalblatt", 20, 20);
+        doc.setFontSize(18);
+        doc.setTextColor(255, 255, 255);
+        doc.text("Mitarbeiter Personalblatt", 20, 16);
     
-        // Leeres Foto Box
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text("Foto:", 20, 40);
-        doc.setDrawColor(0, 0, 0);
-        doc.rect(50, 30, 40, 40); // Eine Box für das Foto (40x40)
+        // Reset text color
+        doc.setTextColor(0, 0, 0);
     
-        // Linie unter dem Foto
-        doc.setLineWidth(0.5);
-        doc.line(20, 80, 190, 80);
+        // ===== FOTO =====
+        doc.setDrawColor(150);
+        doc.rect(150, 35, 40, 40);
     
-        // Mitarbeiterdaten hinzufügen
+        if (selectedMitarbeiter.foto) {
+            doc.addImage(
+                `data:image/png;base64,${selectedMitarbeiter.foto}`,
+                "PNG",
+                150,
+                35,
+                40,
+                40
+            );
+        } else {
+            doc.setFontSize(8);
+            doc.text("Kein Foto", 160, 57);
+        }
+    
+        // ===== TITEL =====
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
-        doc.text("Mitarbeiterdaten:", 20, 90);
+        doc.text("Persönliche Daten", 20, 40);
     
-        // Details in einem Block hinzufügen
-        const employeeDetails = [
-            { label: "Mitarbeiternummer", value: selectedMitarbeiter.mitarbeiternummer },
-            { label: "Vorname", value: selectedMitarbeiter.vorname },
-            { label: "Nachname", value: selectedMitarbeiter.nachname },
-            { label: "Adresse", value: selectedMitarbeiter.adresse },
-            { label: "PLZ", value: selectedMitarbeiter.postleitzahl },
-            { label: "Ort", value: selectedMitarbeiter.ort },
-            { label: "Email", value: selectedMitarbeiter.email },
-            { label: "Mobil", value: selectedMitarbeiter.mobil },
-            { label: "Geschlecht", value: selectedMitarbeiter.geschlecht },
-            { label: "Benutzername", value: selectedMitarbeiter.benutzername },
-            { label: "IBAN", value: selectedMitarbeiter.iban },
-            { label: "Geburtstag", value: formatDate(selectedMitarbeiter.geburtstagdatum) },
-            { label: "Verfügbar", value: selectedMitarbeiter.verfügung },
-            { label: "Teilzeit", value: `${selectedMitarbeiter.teilzeit_prozent}%` },
-            { label: "Fähigkeiten", value: selectedMitarbeiter.fähigkeiten }
+        doc.setLineWidth(0.5);
+        doc.line(20, 42, 140, 42);
+    
+        // ===== DATEN =====
+        const fields = [
+            ["Mitarbeiternummer", selectedMitarbeiter.mitarbeiternummer],
+            ["Vorname", selectedMitarbeiter.vorname],
+            ["Nachname", selectedMitarbeiter.nachname],
+            ["Geschlecht", selectedMitarbeiter.geschlecht],
+            ["Geburtstag", formatDate(selectedMitarbeiter.geburtstagdatum)],
+            ["Adresse", selectedMitarbeiter.adresse],
+            ["PLZ / Ort", `${selectedMitarbeiter.postleitzahl} ${selectedMitarbeiter.ort}`],
+            ["Email", selectedMitarbeiter.email],
+            ["Mobil", selectedMitarbeiter.mobil],
+            ["Benutzername", selectedMitarbeiter.benutzername],
+            ["IBAN", selectedMitarbeiter.iban],
+            ["Teilzeit", selectedMitarbeiter.teilzeit_prozent ? `${selectedMitarbeiter.teilzeit_prozent}%` : "—"],
+            ["Verfügbarkeit", selectedMitarbeiter.verfügung],
+            ["Fähigkeiten", selectedMitarbeiter.fähigkeiten],
         ];
     
-        let verticalPosition = 100;
-        doc.setFontSize(12);
+        let y = 50;
+    
+        doc.setFontSize(11);
         doc.setFont("helvetica", "normal");
-        
-        employeeDetails.forEach((item) => {
-            const value = item.value || "Nicht angegeben"; // Standardwert, wenn kein Wert vorhanden ist
-            doc.setFontSize(12);
-            doc.text(item.label + ":", 20, verticalPosition);
-            doc.setFontSize(12);
-            doc.text(value, 70, verticalPosition);
-            verticalPosition += 10; // Abstand zwischen den Feldern
+    
+        fields.forEach(([label, value]) => {
+            const displayValue = value || "—";
+    
+            doc.setFont("helvetica", "bold");
+            doc.text(label + ":", 20, y);
+    
+            doc.setFont("helvetica", "normal");
+            doc.text(String(displayValue), 70, y);
+    
+            y += 8;
         });
-        
     
-        // Linie unter den Daten
-        doc.line(20, verticalPosition, 190, verticalPosition);
+        // ===== TRENNLINIE =====
+        doc.setDrawColor(180);
+        doc.line(20, y + 5, 190, y + 5);
     
-        // Footer hinzufügen
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "italic");
-        doc.text("Erstellt am: " + new Date().toLocaleDateString(), 20, verticalPosition + 10);
+        // ===== FOOTER =====
+        doc.setFontSize(9);
+        doc.setTextColor(120);
+        doc.text(
+            `Erstellt am: ${new Date().toLocaleDateString("de-DE")} | TBS Digital Solutions`,
+            20,
+            285
+        );
     
-        // PDF speichern
-        doc.save("mitarbeiter_personalblatt.pdf");
+        // ===== DATEINAME =====
+        const filename = `Personalblatt_${selectedMitarbeiter.vorname}_${selectedMitarbeiter.nachname}.pdf`;
+    
+        doc.save(filename);
     };
-
+    
     if (loading) {
         return <div className="loading">Lädt...</div>;
     }
@@ -179,14 +207,27 @@ const MitarbeiterAnzeigen = () => {
         <div className="mitarbeiter-anzeigen">
             <div className="header-section">
                 <h2>Mitarbeiterdetails</h2>
+    
                 <button className="edit-button" onClick={handleEditToggle}>
                     {editMode ? 'Abbrechen' : 'Bearbeiten'} <FaEdit />
                 </button>
+    
                 <button className="generate-pdf-button" onClick={generatePDF}>
                     PDF Generieren
                 </button>
             </div>
-
+    
+            {/* FOTO ANZEIGE */}
+            {selectedMitarbeiter?.foto && (
+                <div className="foto-container">
+                    <img
+                        src={`data:image/png;base64,${selectedMitarbeiter.foto}`}
+                        alt="Mitarbeiter"
+                        className="mitarbeiter-foto"
+                    />
+                </div>
+            )}
+    
             {editMode ? (
                 <div className="form-section">
                     {Object.keys(formData).map((field) => (
@@ -194,6 +235,7 @@ const MitarbeiterAnzeigen = () => {
                             <label htmlFor={field}>
                                 {field.charAt(0).toUpperCase() + field.slice(1)}
                             </label>
+    
                             {field === 'geburtstagdatum' ? (
                                 <input
                                     type="date"
@@ -215,6 +257,7 @@ const MitarbeiterAnzeigen = () => {
                             )}
                         </div>
                     ))}
+    
                     <div className="button-group">
                         <button className="save-button" onClick={handleSave}>
                             Speichern <FaCheck />
@@ -224,24 +267,32 @@ const MitarbeiterAnzeigen = () => {
             ) : (
                 <div className="form-section">
                     {selectedMitarbeiter &&
-                        Object.keys(selectedMitarbeiter).map((field) => (
-                            <div key={field} className="info-group">
-                                <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                                {field === 'geburtstagdatum' ? (
-                                    <p>{formatDate(selectedMitarbeiter[field])}</p>
-                                ) : (
-                                    <p>{selectedMitarbeiter[field]}</p>
-                                )}
-                            </div>
-                        ))}
-
+                        Object.keys(selectedMitarbeiter).map((field) => {
+                            if (field === "foto") return null; // Foto nicht doppelt anzeigen
+    
+                            return (
+                                <div key={field} className="info-group">
+                                    <label>
+                                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                                    </label>
+    
+                                    {field === 'geburtstagdatum' && selectedMitarbeiter[field] ? (
+                                        <p>{formatDate(selectedMitarbeiter[field])}</p>
+                                    ) : (
+                                        <p>{selectedMitarbeiter[field] || "—"}</p>
+                                    )}
+                                </div>
+                            );
+                        })}
+    
                     <button className="edit-button" onClick={toggleResetPassword}>
-                        <FaEdit />Passwort zurücksetzen
+                        <FaEdit /> Passwort zurücksetzen
                     </button>
                 </div>
             )}
         </div>
     );
+    
 };
 
 export default MitarbeiterAnzeigen;

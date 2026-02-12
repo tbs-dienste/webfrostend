@@ -1,154 +1,163 @@
+/* ===== ROOT CONTAINER ===== */
 .mitarbeiter-anzeigen {
-  padding: 30px;
-  background-color: #f3f6fb;
-  border-radius: 15px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  color: #444;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-height: 100vh;
+  padding: 40px 60px;
+  background: linear-gradient(135deg, #f4f6f9, #e9eef5);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #1f2933;
+  box-sizing: border-box;
+}
 
-  .header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+/* ===== HEADER ===== */
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e5e9f2;
 
-    h2 {
-      margin: 0;
-      font-size: 26px;
-      font-weight: 600;
-      color: #2c3e50;
-    }
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
 
-    .edit-button {
-      background-color: #3498db;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 16px;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      
-      &:hover {
-        background-color: #2980b9;
-        transform: scale(1.05);
-      }
+/* ===== BUTTONS ===== */
+button {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
 
-      &:active {
-        background-color: #1f6b8c;
-      }
-    }
+/* Primary */
+.generate-pdf-button {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(79, 70, 229, 0.35);
+  }
+}
+
+/* Secondary */
+.edit-button {
+  background: #ffffff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+/* Save */
+.save-button {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(16, 185, 129, 0.35);
+  }
+}
+
+/* ===== FOTO ===== */
+.foto-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.mitarbeiter-foto {
+  width: 160px;
+  height: 160px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 4px solid white;
+}
+
+/* ===== FORM / INFO SECTION ===== */
+.form-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* ===== INPUT GROUP ===== */
+.input-group,
+.info-group {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 18px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
   }
 
-  .form-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-    margin-bottom: 30px;
-
-    label {
-      font-size: 16px;
-      font-weight: 500;
-      color: #666;
-      margin-bottom: 8px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
-      background-color: #fff;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      color: #333;
-
-      &:focus {
-        border-color: #3498db;
-        outline: none;
-        box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
-      }
-
-      &::placeholder {
-        color: #888;
-      }
-    }
-
-    .button-group {
-      grid-column: span 2;
-      display: flex;
-      justify-content: flex-end;
-      gap: 20px;
-      margin-top: 20px;
-
-      .save-button {
-        background-color: #2ecc71;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s ease;
-
-        &:hover {
-          background-color: #27ae60;
-          transform: scale(1.05);
-        }
-
-        &:active {
-          background-color: #1e7e45;
-        }
-      }
-
-      .cancel-button {
-        background-color: #e74c3c;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s ease;
-
-        &:hover {
-          background-color: #c0392b;
-          transform: scale(1.05);
-        }
-
-        &:active {
-          background-color: #9b2d1f;
-        }
-      }
-    }
+  label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-bottom: 6px;
+    font-weight: 600;
   }
 
-  .info-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-
-    label {
-      font-size: 16px;
-      font-weight: 500;
-      color: #444;
-    }
-
-    p {
-      font-size: 16px;
-      color: #666;
-      margin-top: 5px;
-    }
-  }
-
-  .loading {
-    text-align: center;
-    font-size: 18px;
-    color: #3498db;
+  p {
+    margin: 0;
+    font-size: 15px;
     font-weight: 500;
+    color: #111827;
   }
+}
+
+/* ===== INPUT FIELDS ===== */
+input {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+}
+
+/* ===== BUTTON GROUP ===== */
+.button-group {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+/* ===== LOADING ===== */
+.loading {
+  font-size: 20px;
+  text-align: center;
+  padding: 60px;
+  color: #6b7280;
 }
