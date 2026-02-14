@@ -1,290 +1,280 @@
-// ==============================
-// VARIABLES
-// ==============================
-$mailbox-bg: #f4f6f8;
-$sidebar-bg: #fff;
-$sidebar-border: #e5e7eb;
-$sidebar-active: #007bff;
-$sidebar-active-text: #fff;
-$button-bg: #007bff;
-$button-text: #fff;
-$item-hover: #f1f5f9;
-$item-unread: #e0f2ff;
-$font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+/* =========================
+   ROOT LAYOUT
+========================= */
 
-// ==============================
-// GLOBAL
-// ==============================
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: $font-main;
-  background: $mailbox-bg;
-  color: #1f2937;
-}
-
-// ==============================
-// MAILBOX WRAPPER
-// ==============================
 .mailbox {
   display: flex;
   height: 100vh;
+  background: #f3f2f1; // Outlook Hintergrund
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #323130;
+}
+
+/* =========================
+   SIDEBAR (wie Outlook)
+========================= */
+
+.mailbox__sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #edebe9;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.mailbox__sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #323130;
+  transition: background 0.15s;
+}
+
+.mailbox__sidebar button:hover {
+  background: #edebe9;
+}
+
+.mailbox__sidebar .active {
+  background: #e5f1fb;
+  color: #0078d4;
+  font-weight: 600;
+}
+
+/* Compose Button */
+.mailbox__sidebar .compose {
+  background: #0078d4;
+  color: #fff;
+  margin-bottom: 12px;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.mailbox__sidebar .compose:hover {
+  background: #106ebe;
+}
+
+/* =========================
+   CONTENT AREA
+========================= */
+
+.mailbox__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   PANEL (Liste + Viewer)
+========================= */
+
+.mailbox__panel {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* =========================
+   MAIL LIST
+========================= */
+
+.mailbox__list {
+  width: 340px;
+  background: #ffffff;
+  border-right: 1px solid #edebe9;
+  overflow-y: auto;
+}
+
+.mailbox__list .item {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f2f1;
+  transition: background 0.15s;
+}
+
+.mailbox__list .item:hover {
+  background: #f3f2f1;
+}
+
+.mailbox__list .item.unread {
+  background: #e5f1fb;
+  font-weight: 600;
+}
+
+.mailbox__list .item strong {
+  display: block;
+  font-size: 14px;
+}
+
+.mailbox__list .item span {
+  font-size: 12px;
+  color: #605e5c;
+}
+
+/* =========================
+   MAIL VIEWER
+========================= */
+
+.mailbox__viewer {
+  flex: 1;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.mailbox__viewer h2 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.mailbox__viewer .content {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #edebe9;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.actions button {
+  background: #f3f2f1;
+  border: 1px solid #edebe9;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.actions button:hover {
+  background: #edebe9;
+}
+
+/* =========================
+   COMPOSE VIEW
+========================= */
+
+.compose {
+  background: #ffffff;
+  padding: 24px;
+  max-width: 900px;
+}
+
+.compose h2 {
+  margin-bottom: 16px;
+}
+
+.compose label {
+  font-size: 13px;
+  margin-top: 12px;
+  display: block;
+}
+
+.compose input {
   width: 100%;
+  padding: 8px;
+  border: 1px solid #c8c6c4;
+  border-radius: 2px;
+  margin-top: 4px;
+}
 
-  // ==========================
-  // SIDEBAR
-  // ==========================
-  &__sidebar {
-    width: 250px;
-    background: $sidebar-bg;
-    border-right: 1px solid $sidebar-border;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    gap: 10px;
+/* =========================
+   TOOLBAR
+========================= */
 
-    .compose {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: $button-bg;
-      color: $button-text;
-      padding: 10px 15px;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s;
-      &:hover { background: darken($button-bg, 10%); }
-    }
+.toolbar {
+  display: flex;
+  gap: 6px;
+  background: #f3f2f1;
+  border: 1px solid #edebe9;
+  padding: 6px;
+  margin-top: 8px;
+}
 
-    button {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: none;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      text-align: left;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
+.toolbar button {
+  background: #ffffff;
+  border: 1px solid #edebe9;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 13px;
+}
 
-      &:hover { background: $item-hover; }
+.toolbar button:hover {
+  background: #edebe9;
+}
 
-      &.active {
-        background: $sidebar-active;
-        color: $sidebar-active-text;
-      }
-    }
-  }
+/* =========================
+   EDITOR
+========================= */
 
-  // ==========================
-  // CONTENT
-  // ==========================
-  &__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 20px;
+.editor {
+  min-height: 200px;
+  border: 1px solid #c8c6c4;
+  padding: 10px;
+  margin-top: 8px;
+  background: #ffffff;
+  outline: none;
+  font-size: 14px;
+}
 
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 15px;
-      border-radius: 6px;
-      font-weight: 600;
-      margin-bottom: 15px;
+/* =========================
+   PREVIEW
+========================= */
 
-      &.success { background: #d1fae5; color: #065f46; }
-      &.error { background: #fee2e2; color: #b91c1c; }
-    }
+.preview {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #edebe9;
+  background: #faf9f8;
+}
 
-    // ==========================
-    // COMPOSE FORM
-    // ==========================
-    form.compose {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+/* =========================
+   STATUS
+========================= */
 
-      h2 {
-        margin-bottom: 15px;
-        font-size: 20px;
-        font-weight: 600;
-      }
+.status {
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 3px;
+  font-size: 13px;
+}
 
-      label {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 600;
-        margin-top: 10px;
-      }
+.status.success {
+  background: #dff6dd;
+  color: #107c10;
+}
 
-      input, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        border: 1px solid $sidebar-border;
-        border-radius: 6px;
-        font-size: 14px;
-        resize: vertical;
-        &:focus {
-          outline: none;
-          border-color: $button-bg;
-          box-shadow: 0 0 5px rgba(0,123,255,0.3);
-        }
-      }
+.status.error {
+  background: #fde7e9;
+  color: #a4262c;
+}
 
-      button {
-        margin-top: 15px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 6px;
-        background: $button-bg;
-        color: $button-text;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background 0.2s;
-        &:hover { background: darken($button-bg, 10%); }
-      }
-    }
+/* =========================
+   EMPTY STATES
+========================= */
 
-    // ==========================
-    // LIST + VIEWER PANEL
-    // ==========================
-    &__panel {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      margin-top: 10px;
-
-      .mailbox__list {
-        width: 300px;
-        background: #fff;
-        border-right: 1px solid $sidebar-border;
-        overflow-y: auto;
-
-        .item {
-          display: flex;
-          align-items: center;
-          padding: 12px;
-          gap: 10px;
-          border-bottom: 1px solid $sidebar-border;
-          cursor: pointer;
-          transition: background 0.2s;
-
-          &.unread { background: $item-unread; font-weight: 600; }
-
-          &:hover { background: $item-hover; }
-
-          .mail-icon { font-size: 18px; }
-
-          div {
-            flex: 1;
-            strong { display: block; font-size: 14px; }
-            span { display: block; font-size: 12px; color: #6b7280; }
-          }
-
-          time { font-size: 11px; color: #9ca3af; }
-        }
-      }
-
-      .mailbox__viewer {
-        flex: 1;
-        background: #f9fafb;
-        padding: 20px;
-        overflow-y: auto;
-        border-radius: 10px;
-
-        .empty {
-          text-align: center;
-          margin-top: 50px;
-          font-size: 18px;
-          color: #9ca3af;
-        }
-
-        h2 {
-          margin-bottom: 10px;
-          font-size: 18px;
-          font-weight: 600;
-        }
-
-        .meta {
-          display: flex;
-          gap: 20px;
-          font-size: 13px;
-          color: #6b7280;
-          margin-bottom: 15px;
-        }
-
-        .content {
-          background: #fff;
-          padding: 15px;
-          border-radius: 8px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-          pre { white-space: pre-wrap; word-wrap: break-word; }
-        }
-
-        .actions {
-          margin-top: 15px;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-
-          button, select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid $sidebar-border;
-            cursor: pointer;
-            font-size: 13px;
-          }
-
-          button {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: $button-bg;
-            color: $button-text;
-            border: none;
-            &:hover { background: darken($button-bg, 10%); }
-          }
-
-          select { background: #fff; }
-        }
-      }
-    }
-  }
-
-  // ==========================
-  // RESPONSIVE
-  // ==========================
-  @media (max-width: 1024px) {
-    flex-direction: column;
-
-    &__sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      padding: 10px;
-    }
-
-    &__panel { flex-direction: column; }
-
-    .mailbox__list { width: 100%; max-height: 200px; }
-
-    .mailbox__viewer { padding: 10px; }
-  }
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: #605e5c;
 }
