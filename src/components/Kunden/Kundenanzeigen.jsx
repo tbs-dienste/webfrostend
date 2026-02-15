@@ -6,7 +6,7 @@ import QRCodeReact from 'react-qr-code';
 import QRCode from 'qrcode';
 import { FaSave, FaUndo, FaEdit, FaFilePdf, FaStar, FaRegStar, FaComments } from 'react-icons/fa';
 import './KundenAnzeigen.scss';
-import Logo from "./white.png";
+import Logo from "./black.png";
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from "@react-pdf/renderer";
 
 const pdfStyles = StyleSheet.create({
@@ -329,139 +329,207 @@ const createBackgroundDataUrl = async (widthPx, heightPx) => {
 const exportToPDF = async () => {
   if (!selectedKunde) return;
 
-  const COMPANY_LOGO_URL = Logo; // ← DEIN LOGO HIER
-
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-  const margin = 40;
-
-  // ================= HERO AREA =================
-  const heroH = 180;
-  doc.setFillColor(18, 18, 18);
-  doc.rect(0, 0, pageW, heroH, "F");
-
-  // ===== FIRMENLOGO OBEN LINKS =====
-  try {
-    const res = await fetch(COMPANY_LOGO_URL);
-    const blob = await res.blob();
-
-    const logoData = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-
-    doc.addImage(logoData, "PNG", margin, 20, 90, 45);
-  } catch (e) {
-    console.warn("Firmenlogo konnte nicht geladen werden");
-  }
-
-  // ===== QR CODE OBEN RECHTS =====
-  try {
-    const qrUrl = `${window.location.origin}/sign/${selectedKunde.kundennummer}`;
-    const qrData = await QRCode.toDataURL(qrUrl, { margin: 0, width: 300 });
-    const qrSize = 70;
-
-    doc.addImage(qrData, "PNG", pageW - margin - qrSize, 20, qrSize, qrSize);
-  } catch (e) {
-    console.warn("QR Code Fehler", e);
-  }
-
-  // ===== HERO TEXT =====
-  doc.setTextColor(255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(26);
+  const margin = 50;
 
   const name =
     selectedKunde.firma ||
     `${selectedKunde.vorname || ""} ${selectedKunde.nachname || ""}`;
 
-  doc.text(name, margin, 110);
+  let y = margin;
 
-  doc.setFontSize(12);
-  doc.setTextColor(180);
-  doc.text(`Kundennummer: ${selectedKunde.kundennummer || "-"}`, margin, 135);
+  // ================= COLORS =================
+  const colors = {
+    text: [30, 30, 30],
+    lightText: [120, 120, 120],
+    line: [220, 220, 220],
+    accent: [25, 55, 120],
+  };
 
-  let y = heroH + 20;
+  // ================= HEADER =================
+  const drawHeader = async () => {
+    // LOGO
+    try {
+      const res = await fetch(Logo);
+      const blob = await res.blob();
 
-  // ================= SIDEBAR PROFIL =================
-  const sidebarW = 170;
+      const logoData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
 
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(margin, y, sidebarW, 260, 14, 14, "F");
+      doc.addImage(logoData, "PNG", margin, 30, 80, 40);
+    } catch {}
 
-  doc.setFontSize(14);
-  doc.setTextColor(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("Profil", margin + 15, y + 30);
+    // QR CODE
+    try {
+      const qrUrl = `${window.location.origin}/sign/${selectedKunde.kundennummer}`;
+      const qrData = await QRCode.toDataURL(qrUrl, { margin: 0 });
+      doc.addImage(qrData, "PNG", pageW - margin - 60, 30, 60, 60);
+    } catch {}
 
-  doc.setFontSize(10);
-  doc.setTextColor(120);
+    // TITLE
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(...colors.text);
+    doc.text(name, margin, 110);
 
-  const profileData = [
-    ["E-Mail", selectedKunde.email],
-    ["Telefon", selectedKunde.mobil],
-    ["Ort", selectedKunde.ort],
-    ["Bewertung", `${selectedKunde.rating || 0}/5`],
-    ["Status", selectedKunde.status || "-"],
-  ];
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(...colors.lightText);
+    doc.text(
+      `Kundennummer: ${selectedKunde.kundennummer}   •   Generiert: ${new Date().toLocaleDateString()}`,
+      margin,
+      128
+    );
 
-  let py = y + 60;
-  profileData.forEach(([label, value]) => {
-    doc.text(label.toUpperCase(), margin + 15, py);
-    doc.setTextColor(30);
-    doc.text(String(value || "-"), margin + 15, py + 14);
-    doc.setTextColor(120);
-    py += 40;
-  });
+    // LINE
+    doc.setDrawColor(...colors.line);
+    doc.line(margin, 150, pageW - margin, 150);
 
-  // ================= MAIN CONTENT =================
-  const contentX = margin + sidebarW + 20;
-  const contentW = pageW - contentX - margin;
+    y = 180;
+  };
 
-  // -------- Kundendaten --------
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(contentX, y, contentW, 140, 14, 14, "F");
+  const newPage = () => {
+    doc.addPage();
+    y = margin;
+  };
 
-  doc.setFontSize(16);
-  doc.setTextColor(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("Kundendaten", contentX + 15, y + 30);
+  const section = (title) => {
+    if (y > pageH - 120) newPage();
 
-  doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(...colors.accent);
+    doc.text(title.toUpperCase(), margin, y);
 
-  const details = [
-    ["Firma", selectedKunde.firma],
-    ["Name", name],
-    [
-      "Adresse",
-      `${selectedKunde.strasseHausnummer || ""}, ${selectedKunde.postleitzahl || ""} ${selectedKunde.ort || ""}`,
-    ],
-  ];
+    y += 15;
 
-  let dy = y + 60;
-  details.forEach(([label, value]) => {
-    doc.setTextColor(130);
-    doc.text(label, contentX + 15, dy);
-    doc.setTextColor(30);
-    doc.text(String(value || "-"), contentX + 120, dy);
-    dy += 22;
-  });
+    doc.setDrawColor(...colors.line);
+    doc.line(margin, y, pageW - margin, y);
+    y += 20;
+  };
+
+  const field = (label, value, xOffset = 0) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...colors.lightText);
+    doc.text(label.toUpperCase(), margin + xOffset, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(...colors.text);
+    doc.text(String(value || "-"), margin + xOffset, y + 14);
+  };
+
+  await drawHeader();
+
+  // ================= PROFIL GRID =================
+  section("Profil");
+
+  const colW = (pageW - margin * 2) / 2;
+
+  field("E-Mail", selectedKunde.email);
+  field("Telefon", selectedKunde.mobil, colW);
+  y += 40;
+
+  field("Ort", selectedKunde.ort);
+  field("Status", selectedKunde.status, colW);
+  y += 40;
+
+  // ================= KUNDENDATEN =================
+  section("Kundendaten");
+
+  field("Firma", selectedKunde.firma);
+  y += 35;
+
+  field("Name", name);
+  y += 35;
+
+  field(
+    "Adresse",
+    `${selectedKunde.strasseHausnummer || ""}, ${selectedKunde.postleitzahl || ""} ${selectedKunde.ort || ""}`
+  );
+  y += 45;
+
+  // ================= DIENSTLEISTUNGEN =================
+  section("Dienstleistungen");
+
+  if (selectedKunde.dienstleistungen?.length) {
+    selectedKunde.dienstleistungen.forEach((dl) => {
+      if (y > pageH - 100) newPage();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...colors.text);
+      doc.text(`• ${dl.title}`, margin, y);
+
+      if (dl.beschreibung) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(...colors.lightText);
+
+        const text = doc.splitTextToSize(
+          dl.beschreibung,
+          pageW - margin * 2 - 10
+        );
+        doc.text(text, margin + 10, y + 14);
+        y += text.length * 14;
+      }
+
+      y += 20;
+    });
+  } else {
+    doc.text("Keine Dienstleistungen vorhanden.", margin, y);
+    y += 20;
+  }
+
+  // ================= UNTERSCHRIFT =================
+  if (selectedKunde.unterschrift) {
+    section("Unterschrift");
+
+    doc.addImage(
+      `data:image/png;base64,${selectedKunde.unterschrift}`,
+      "PNG",
+      margin,
+      y,
+      200,
+      80
+    );
+
+    doc.setDrawColor(...colors.line);
+    doc.rect(margin, y, 200, 80);
+
+    y += 100;
+  }
 
   // ================= FOOTER =================
-  doc.setFontSize(9);
-  doc.setTextColor(150);
-  doc.text(
-    `Generiert am ${new Date().toLocaleString()}`,
-    margin,
-    pageH - 30
-  );
+  const pageCount = doc.getNumberOfPages();
 
-  doc.text("Vertraulich", pageW - margin, pageH - 30, { align: "right" });
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setTextColor(...colors.lightText);
 
-  doc.save(`KundenDashboard_${selectedKunde.kundennummer || "export"}.pdf`);
+    doc.text(
+      "Vertraulich – Nur für interne Verwendung",
+      margin,
+      pageH - 20
+    );
+
+    doc.text(`Seite ${i} von ${pageCount}`, pageW - margin, pageH - 20, {
+      align: "right",
+    });
+  }
+
+  doc.save(`KundenReport_${selectedKunde.kundennummer}.pdf`);
 };
+
+
+
 
 
 
@@ -662,11 +730,11 @@ useEffect(() => {
     <div className="section-title">QR-Code zur Unterschrift</div>
 
     <QRCodeReact
-      value={`${window.location.origin}/sign/${selectedKunde.kundennummer}`}
+      value={`${window.location.origin}/${selectedKunde.kundenId}`}
       size={150}
     />
 
-    <p>Scan den QR-Code, um direkt die Unterschrift zu hinterlegen.</p>
+    <p>Scan den QR-Code, um direkt zum Kunden zu kommen</p>
 
     <button className="btn btn-edit" onClick={copyLinkToClipboard}>
       <FaComments /> Link kopieren
