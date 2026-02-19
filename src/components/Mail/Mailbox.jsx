@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   FiInbox, FiMail, FiSend, FiBookOpen, FiEdit,
   FiUser, FiUsers, FiLock, FiMessageCircle,
-  FiCheckCircle, FiAlertCircle, FiTrash2,
+  FiCheckCircle, FiAlertCircle, FiTrash2, FiPrinter,
   FiCornerUpLeft, FiEye
 } from 'react-icons/fi';
 import './Mailbox.scss';
@@ -51,7 +51,151 @@ export default function Mailbox() {
       setMails([]);
     }
   };
-
+  const printMail = (mail) => {
+    if (!mail) return;
+  
+    const printWindow = window.open('', '_blank', 'width=900,height=700');
+  
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+      <meta charset="UTF-8">
+      <title>${mail.subject}</title>
+      <style>
+        body {
+          font-family: "Segoe UI", Arial, sans-serif;
+          margin: 0;
+          padding: 10px;
+          color: #000;
+          font-size: 12.5px;
+          line-height: 1.1;
+          background: #fff;
+        }
+  
+        .wrapper {
+          max-width: 780px;
+          margin: 0 auto;
+        }
+  
+        .header div {
+          margin: 0px 0;
+          font-size: 12px;
+        }
+  
+        .subject {
+          font-weight: 600;
+          margin: 2px 0;
+          font-size: 13px;
+        }
+  
+        .content {
+          margin: 0;
+          padding: 0;
+        }
+  
+        .content p {
+          margin: 1px 0;
+          line-height: 1.15;
+        }
+  
+        pre {
+          margin: 0;
+          line-height: 1.15;
+          font-family: "Segoe UI", Arial, sans-serif;
+          white-space: pre-wrap;
+        }
+  
+        blockquote {
+          border-left: 2px solid #ccc;
+          padding-left: 6px;
+          margin: 2px 0;
+          color: #555;
+          font-size: 12px;
+          line-height: 1.1;
+        }
+  
+        blockquote p {
+          margin: 1px 0;
+        }
+  
+        .footer {
+          font-size: 11px;
+          color: #666;
+          border-top: 1px solid #ccc;
+          margin-top: 4px;
+          padding-top: 2px;
+          text-align: center;
+        }
+  
+        @media print {
+          body { background: #fff; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+  
+        <!-- HEADER -->
+        <div class="header">
+          <div><strong>Von:</strong> ${mail.from}</div>
+          <div><strong>An:</strong> ${mail.to}</div>
+          <div><strong>Datum:</strong> ${mail.date}</div>
+          <div class="subject"><strong>Betreff:</strong> ${mail.subject}</div>
+        </div>
+  
+        <!-- MAILTEXT DIREKT UNTER BETREFF -->
+        <div class="content">
+          ${mail.html 
+            ? mail.html.replace(/<p>/g,'<p style="margin:1px 0; line-height:1.15;">') 
+            : `<pre>${mail.text}</pre>`}
+        </div>
+  
+        <!-- ORIGINAL/REPLY KOMPAKT -->
+        ${mail.original ? `
+        <blockquote>
+          <div><strong>Von:</strong> ${mail.original.from}</div>
+          <div><strong>An:</strong> ${mail.original.to}</div>
+          <div><strong>Datum:</strong> ${mail.original.date}</div>
+          <div><strong>Betreff:</strong> ${mail.original.subject}</div>
+          <div>${mail.original.html 
+            ? mail.original.html.replace(/<p>/g,'<p style="margin:1px 0; line-height:1.15;">') 
+            : `<pre>${mail.original.text}</pre>`}</div>
+        </blockquote>
+        ` : ''}
+  
+        <!-- FOOTER -->
+        <div class="footer">
+          © ${new Date().getFullYear()} TBS Solutions · Professionelle Weblösungen für KMU
+        </div>
+  
+      </div>
+  
+      <script>
+        window.onload = function() {
+          window.focus();
+          window.print();
+          window.onafterprint = function() { window.close(); };
+        };
+      </script>
+    </body>
+    </html>
+    `;
+  
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   /* =============================
      MAIL SENDEN
   ============================== */
@@ -271,9 +415,11 @@ export default function Mailbox() {
                   </div>
 
                   <div className="actions">
-                    <button onClick={replyMail}><FiCornerUpLeft/> Antworten</button>
-                    <button onClick={deleteSelectedMail}><FiTrash2/> Löschen</button>
-                  </div>
+  <button onClick={replyMail}><FiCornerUpLeft/> Antworten</button>
+  <button onClick={deleteSelectedMail}><FiTrash2/> Löschen</button>
+  <button onClick={() => printMail(selectedMail)}><FiPrinter/> Drucken</button>
+</div>
+
                 </>
               )}
             </section>

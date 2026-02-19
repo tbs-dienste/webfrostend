@@ -149,10 +149,10 @@
   padding-top: 12px;
   border-top: 1px solid #edebe9;
 }
-
 .actions button {
-  background: #f3f2f1;
-  border: 1px solid #edebe9;
+  background: #0078d4;      /* kräftiges Blau */
+  color: #ffffff;            /* weiße Schrift */
+  border: 1px solid #005a9e; /* dunkleres Blau für Kontrast */
   padding: 6px 14px;
   border-radius: 3px;
   font-size: 13px;
@@ -160,8 +160,11 @@
 }
 
 .actions button:hover {
-  background: #edebe9;
+  background: #106ebe;      /* Hover Effekt */
+  border-color: #005a9e;
 }
+
+
 
 /* =========================================================
    EMPTY STATES
