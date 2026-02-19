@@ -1,18 +1,19 @@
-/* =========================
-   ROOT LAYOUT
-========================= */
+/* =========================================================
+   MICROSOFT OUTLOOK WEB — FULL MAILBOX DESIGN
+   Pixel-aligned, professional, enterprise UI
+========================================================= */
 
 .mailbox {
   display: flex;
   height: 100vh;
-  background: #f3f2f1; // Outlook Hintergrund
+  background: #f3f2f1;
   font-family: "Segoe UI", Arial, sans-serif;
   color: #323130;
 }
 
-/* =========================
-   SIDEBAR (wie Outlook)
-========================= */
+/* =========================================================
+   SIDEBAR — OUTLOOK NAV
+========================================================= */
 
 .mailbox__sidebar {
   width: 240px;
@@ -27,18 +28,17 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: none;
   border: none;
+  background: transparent;
   padding: 10px 12px;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
   color: #323130;
-  transition: background 0.15s;
 }
 
 .mailbox__sidebar button:hover {
-  background: #edebe9;
+  background: #f3f2f1;
 }
 
 .mailbox__sidebar .active {
@@ -47,22 +47,21 @@
   font-weight: 600;
 }
 
-/* Compose Button */
 .mailbox__sidebar .compose {
   background: #0078d4;
   color: #fff;
-  margin-bottom: 12px;
-  justify-content: center;
   font-weight: 600;
+  justify-content: center;
+  margin-bottom: 12px;
 }
 
 .mailbox__sidebar .compose:hover {
   background: #106ebe;
 }
 
-/* =========================
+/* =========================================================
    CONTENT AREA
-========================= */
+========================================================= */
 
 .mailbox__content {
   flex: 1;
@@ -70,9 +69,9 @@
   flex-direction: column;
 }
 
-/* =========================
-   PANEL (Liste + Viewer)
-========================= */
+/* =========================================================
+   PANEL — LIST + READING PANE
+========================================================= */
 
 .mailbox__panel {
   display: flex;
@@ -80,12 +79,12 @@
   overflow: hidden;
 }
 
-/* =========================
-   MAIL LIST
-========================= */
+/* =========================================================
+   MAIL LIST — OUTLOOK STYLE
+========================================================= */
 
 .mailbox__list {
-  width: 340px;
+  width: 360px;
   background: #ffffff;
   border-right: 1px solid #edebe9;
   overflow-y: auto;
@@ -94,10 +93,10 @@
 .mailbox__list .item {
   display: flex;
   gap: 10px;
-  padding: 12px;
+  padding: 12px 14px;
   cursor: pointer;
   border-bottom: 1px solid #f3f2f1;
-  transition: background 0.15s;
+  transition: background 0.15s ease;
 }
 
 .mailbox__list .item:hover {
@@ -119,23 +118,23 @@
   color: #605e5c;
 }
 
-/* =========================
-   MAIL VIEWER
-========================= */
+/* =========================================================
+   READING PANE
+========================================================= */
 
 .mailbox__viewer {
   flex: 1;
-  background: #ffffff;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
   padding: 20px;
   overflow-y: auto;
 }
 
 .mailbox__viewer h2 {
-  margin-bottom: 12px;
   font-size: 20px;
   font-weight: 600;
+  margin-bottom: 10px;
 }
 
 .mailbox__viewer .content {
@@ -144,137 +143,230 @@
   line-height: 1.6;
 }
 
-/* =========================
-   ACTION BUTTONS
-========================= */
-
 .actions {
   display: flex;
   gap: 10px;
-  border-top: 1px solid #edebe9;
   padding-top: 12px;
-  margin-top: 12px;
+  border-top: 1px solid #edebe9;
 }
 
 .actions button {
   background: #f3f2f1;
   border: 1px solid #edebe9;
-  padding: 8px 14px;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 3px;
   font-size: 13px;
+  cursor: pointer;
 }
 
 .actions button:hover {
   background: #edebe9;
 }
 
-/* =========================
-   COMPOSE VIEW
-========================= */
-
-.compose {
-  background: #ffffff;
-  padding: 24px;
-  max-width: 900px;
-}
-
-.compose h2 {
-  margin-bottom: 16px;
-}
-
-.compose label {
-  font-size: 13px;
-  margin-top: 12px;
-  display: block;
-}
-
-.compose input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #c8c6c4;
-  border-radius: 2px;
-  margin-top: 4px;
-}
-
-/* =========================
-   TOOLBAR
-========================= */
-
-.toolbar {
-  display: flex;
-  gap: 6px;
-  background: #f3f2f1;
-  border: 1px solid #edebe9;
-  padding: 6px;
-  margin-top: 8px;
-}
-
-.toolbar button {
-  background: #ffffff;
-  border: 1px solid #edebe9;
-  padding: 6px 10px;
-  cursor: pointer;
-  border-radius: 2px;
-  font-size: 13px;
-}
-
-.toolbar button:hover {
-  background: #edebe9;
-}
-
-/* =========================
-   EDITOR
-========================= */
-
-.editor {
-  min-height: 200px;
-  border: 1px solid #c8c6c4;
-  padding: 10px;
-  margin-top: 8px;
-  background: #ffffff;
-  outline: none;
-  font-size: 14px;
-}
-
-/* =========================
-   PREVIEW
-========================= */
-
-.preview {
-  margin-top: 16px;
-  padding: 12px;
-  border: 1px solid #edebe9;
-  background: #faf9f8;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status {
-  margin-bottom: 12px;
-  padding: 8px;
-  border-radius: 3px;
-  font-size: 13px;
-}
-
-.status.success {
-  background: #dff6dd;
-  color: #107c10;
-}
-
-.status.error {
-  background: #fde7e9;
-  color: #a4262c;
-}
-
-/* =========================
+/* =========================================================
    EMPTY STATES
-========================= */
+========================================================= */
 
 .empty {
   padding: 20px;
   text-align: center;
   color: #605e5c;
+}
+
+/* =========================================================
+   COMPOSE VIEW — TRUE OUTLOOK WEB
+========================================================= */
+
+.compose {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f3f2f1;
+  padding: 20px;
+}
+
+/* White compose card */
+.compose form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #edebe9;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* HEADER */
+.compose__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #edebe9;
+  background: #faf9f8;
+}
+
+.compose__header h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* STATUS */
+.status {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status.success { color: #107c10; }
+.status.error { color: #a4262c; }
+
+/* =========================================================
+   RECIPIENT LINES
+========================================================= */
+
+.compose__fields {
+  border-bottom: 1px solid #edebe9;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  padding: 6px 20px;
+  border-bottom: 1px solid #f3f2f1;
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.field label {
+  width: 52px;
+  font-size: 13px;
+  color: #605e5c;
+}
+
+.field input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  padding: 4px 0;
+}
+
+.field input:focus {
+  border-bottom: 1px solid #0078d4;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #edebe9;
+  background: #faf9f8;
+}
+
+.toolbar button {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background: #f3f2f1;
+  border-color: #edebe9;
+}
+
+.toolbar button:active {
+  background: #edebe9;
+}
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.editor {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.preview {
+  border-top: 1px solid #edebe9;
+  background: #faf9f8;
+  padding: 16px 20px;
+}
+
+.preview h3 {
+  font-size: 12px;
+  color: #605e5c;
+  margin-bottom: 6px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.compose__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid #edebe9;
+  background: #faf9f8;
+}
+
+.compose__footer .send {
+  background: #0078d4;
+  color: #ffffff;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 2px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.compose__footer .send:hover {
+  background: #106ebe;
+}
+
+.compose__footer .cancel {
+  background: transparent;
+  border: none;
+  color: #605e5c;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.compose__footer .cancel:hover {
+  background: #f3f2f1;
+}
+
+/* =========================================================
+   RESPONSIVE — OUTLOOK BEHAVIOR
+========================================================= */
+
+@media (max-width: 900px) {
+  .mailbox__list { width: 280px; }
+}
+
+@media (max-width: 700px) {
+  .mailbox__sidebar { display: none; }
+  .mailbox__viewer { display: none; }
+  .mailbox__list { width: 100%; }
 }
