@@ -119,7 +119,7 @@ const KundenReportPDFInline = ({ kunde, gesamtArbeitszeit, mitarbeiterArbeitszei
     {mitarbeiterArbeitszeiten.map(m => (
       <Page key={m.mitarbeiter_id} size="A4" style={pdfStyles.page}>
         <Text style={pdfStyles.title}>Arbeitszeiten – {m.vorname} {m.nachname}</Text>
-        {m.arbeitszeiten.map((a,i) => (
+        {m.arbeitszeiten.map((a, i) => (
           <View key={i} style={pdfStyles.row}>
             <Text>{a.dienstleistung}</Text>
             <Text>{a.start_time} – {a.end_time}</Text>
@@ -166,20 +166,20 @@ export default function KundenAnzeigen() {
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [loading, setLoading] = useState(true);
-    // PDF-Daten
-    const [gesamtArbeitszeit, setGesamtArbeitszeit] = useState([]);
-    const [mitarbeiterArbeitszeiten, setMitarbeiterArbeitszeiten] = useState([]);
-    const [dienstleistungMitarbeiter, setDienstleistungMitarbeiter] = useState([]);
+  // PDF-Daten
+  const [gesamtArbeitszeit, setGesamtArbeitszeit] = useState([]);
+  const [mitarbeiterArbeitszeiten, setMitarbeiterArbeitszeiten] = useState([]);
+  const [dienstleistungMitarbeiter, setDienstleistungMitarbeiter] = useState([]);
 
   // Kundendaten laden
   useEffect(() => {
     let mounted = true;
     const token = localStorage.getItem('token');
-  
+
     const fetchAll = async () => {
       try {
         setLoading(true);
-  
+
         // 1️⃣ Kundendaten
         const kundeResp = await axios.get(
           `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
@@ -187,20 +187,20 @@ export default function KundenAnzeigen() {
         );
         if (!mounted) return;
         setSelectedKunde(kundeResp.data.data);
-  
+
         // 2️⃣ Gesamtarbeitszeit pro Dienstleistung
         const gesamtResp = await axios.get(
           `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
-  
+
         // 3️⃣ Arbeitszeiten pro Mitarbeiter & Dienstleistung (summiert)
         const mitarbeiterSummiertResp = await axios.get(
           `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/arbeitszeiten/dienstleistungen`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-  
+
         // 🔥 Mapping für PDF: summierte Arbeitszeiten
         const mitarbeiterMap = {};
         mitarbeiterSummiertResp.data.dienstleistungen.forEach(dl => {
@@ -222,14 +222,14 @@ export default function KundenAnzeigen() {
           });
         });
         setMitarbeiterArbeitszeiten(Object.values(mitarbeiterMap));
-  
+
         // 4️⃣ Alle Stempelungen (Detail)
         const alleStempelResp = await axios.get(
           `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/arbeitszeiten/dienstleistungen`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setDienstleistungMitarbeiter(alleStempelResp.data.dienstleistungen || []);
-  
+
       } catch (err) {
         console.error(err);
         alert("Fehler beim Laden der Daten.");
@@ -237,16 +237,16 @@ export default function KundenAnzeigen() {
         if (mounted) setLoading(false);
       }
     };
-  
+
     fetchAll();
     return () => { mounted = false; };
   }, [id]);
-  
+
   useEffect(() => {
     const userType = localStorage.getItem("userType");
     setIsAdmin(userType === "admin");
   }, []);
-  
+
 
   const onEdit = () => { setEditMode(true); setEditedData(selectedKunde); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const handleInput = (e) => { const { name, value } = e.target; setEditedData(prev => ({ ...prev, [name]: value })); };
@@ -262,331 +262,346 @@ export default function KundenAnzeigen() {
   const copyLinkToClipboard = () => { if (!selectedKunde) return; navigator.clipboard.writeText(`${window.location.origin}/${selectedKunde.kundenId}`); alert('Link zur Unterschrift kopiert.'); };
   const updateStatus = async (newStatus) => { try { const token = localStorage.getItem('token'); await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/status`, { status: newStatus }, { headers: { Authorization: `Bearer ${token}` } }); setSelectedKunde(prev => ({ ...prev, status: newStatus })); alert('Status aktualisiert.'); } catch (err) { console.error(err); alert('Fehler beim Aktualisieren des Status.'); } };
 
- // Helper: erzeugt ein ansprechendes Hintergrundbild (Musterfoto / Logo-Fallback)
-const createBackgroundDataUrl = async (widthPx, heightPx) => {
-  return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(widthPx);
-    canvas.height = Math.round(heightPx);
-    const ctx = canvas.getContext('2d');
+  // Helper: erzeugt ein ansprechendes Hintergrundbild (Musterfoto / Logo-Fallback)
+  const createBackgroundDataUrl = async (widthPx, heightPx) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(widthPx);
+      canvas.height = Math.round(heightPx);
+      const ctx = canvas.getContext('2d');
 
-    // sanfter diagonaler Farbverlauf
-    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    grad.addColorStop(0, '#f4f9ff');
-    grad.addColorStop(1, '#ffffff');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // sanfter diagonaler Farbverlauf
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#f4f9ff');
+      grad.addColorStop(1, '#ffffff');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // leichte geometrische Muster (dezent)
-    ctx.fillStyle = 'rgba(0,0,0,0.02)';
-    for (let i = 0; i < 8; i++) {
-      ctx.beginPath();
-      const r = Math.min(canvas.width, canvas.height) * (0.08 + (i * 0.01));
-      ctx.arc(canvas.width * (0.08 + i * 0.11), canvas.height * (0.2 + (i % 2) * 0.5), r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // falls Firma-Logo vorhanden -> watermark groß, sehr transparent
-    const logoData = selectedKunde?.logo || selectedKunde?.logo_black || null;
-    if (logoData) {
-      const img = new Image();
-      img.onload = () => {
-        const maxW = canvas.width * 0.7;
-        const maxH = canvas.height * 0.45;
-        let w = img.width, h = img.height;
-        const ratio = Math.min(maxW / w, maxH / h, 1);
-        w *= ratio; h *= ratio;
-        const x = (canvas.width - w) / 2;
-        const y = (canvas.height - h) / 2;
-        ctx.globalAlpha = 0.10; // dezenter watermark-effekt
-        ctx.drawImage(img, x, y, w, h);
-        ctx.globalAlpha = 1;
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
-      };
-      img.onerror = () => {
-        // fallback text
-        ctx.fillStyle = 'rgba(0,0,0,0.04)';
-        ctx.font = `${Math.round(canvas.width / 18)}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
-      };
-      img.src = logoData.startsWith('data:') ? logoData : `data:image/png;base64,${logoData}`;
-    } else {
-      // fallback: zentrierter Text + subtle shapes (already drawn)
-      ctx.fillStyle = 'rgba(0,0,0,0.03)';
-      ctx.font = `${Math.round(canvas.width / 20)}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2 - 6);
-      ctx.font = `${Math.round(canvas.width / 36)}px sans-serif`;
-      ctx.fillText('Ihr Logo / Bild hier', canvas.width / 2, canvas.height / 2 + 26);
-      resolve(canvas.toDataURL('image/jpeg', 0.92));
-    }
-  });
-};
-
-
-const exportToPDF = async () => {
-  if (!selectedKunde) return;
-
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const margin = 50;
-
-  const HEADER_OFFSET = 60; // ← mehr Platz fürs Logo
-
-  const name =
-    (selectedKunde.vorname || selectedKunde.nachname)
-      ? `${selectedKunde.vorname || ""} ${selectedKunde.nachname || ""}`.trim()
-      : selectedKunde.firma || "-";
-
-  let y = margin;
-
-  const colors = {
-    text: [30, 30, 30],
-    lightText: [120, 120, 120],
-    line: [220, 220, 220],
-    accent: [25, 55, 120],
-  };
-
-  // ================= HEADER =================
-  const drawHeader = async () => {
-    // LOGO
-    try {
-      const res = await fetch(Logo);
-      const blob = await res.blob();
-
-      const logoData = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(blob);
-      });
-
-      doc.addImage(logoData, "PNG", margin, 30, 80, 80);
-    } catch {}
-
-    // QR CODE
-    try {
-      const qrUrl = `${window.location.origin}/kunden/${selectedKunde.kundenId}`;
-      const qrData = await QRCode.toDataURL(qrUrl, { margin: 0 });
-      doc.addImage(qrData, "PNG", pageW - margin - 60, 30, 60, 60);
-    } catch {}
-
-    // TITLE
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.setTextColor(...colors.text);
-    doc.text(name, margin, 110 + HEADER_OFFSET);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.setTextColor(...colors.lightText);
-    doc.text(
-      `Kundennummer: ${selectedKunde.kundennummer} • Generiert: ${new Date().toLocaleDateString()}`,
-      margin,
-      128 + HEADER_OFFSET
-    );
-
-    // LINE
-    doc.setDrawColor(...colors.line);
-    doc.line(margin, 150 + HEADER_OFFSET, pageW - margin, 150 + HEADER_OFFSET);
-
-    // 👉 Startpunkt für gesamten Inhalt
-    y = 180 + HEADER_OFFSET;
-  };
-
-  const newPage = () => {
-    doc.addPage();
-    y = margin;
-  };
-
-  const section = (title) => {
-    if (y > pageH - 120) newPage();
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.setTextColor(...colors.accent);
-    doc.text(title.toUpperCase(), margin, y);
-
-    y += 15;
-
-    doc.setDrawColor(...colors.line);
-    doc.line(margin, y, pageW - margin, y);
-    y += 20;
-  };
-
-  const field = (label, value, xOffset = 0) => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.setTextColor(...colors.lightText);
-    doc.text(label.toUpperCase(), margin + xOffset, y);
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.setTextColor(...colors.text);
-    doc.text(String(value || "-"), margin + xOffset, y + 14);
-  };
-
-  await drawHeader();
-
-  // ================= PROFIL =================
-  section("Profil");
-
-  const colW = (pageW - margin * 2) / 2;
-
-  field("E-Mail", selectedKunde.email);
-  field("Telefon", selectedKunde.mobil, colW);
-  y += 40;
-
-  field("Ort", selectedKunde.ort);
-  field("Status", selectedKunde.status, colW);
-  y += 40;
-
-  // ================= KUNDENDATEN =================
-  section("Kundendaten");
-
-  field("Firma", selectedKunde.firma);
-  y += 35;
-
-  field("Name", name);
-  y += 35;
-
-  field(
-    "Adresse",
-    `${selectedKunde.strasseHausnummer || ""}, ${selectedKunde.postleitzahl || ""} ${selectedKunde.ort || ""}`
-  );
-  y += 45;
-
-  // ================= DIENSTLEISTUNGEN =================
-  section("Dienstleistungen");
-
-  if (selectedKunde.dienstleistungen?.length) {
-    selectedKunde.dienstleistungen.forEach((dl) => {
-      if (y > pageH - 100) newPage();
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11);
-      doc.text(`• ${dl.title}`, margin, y);
-
-      if (dl.beschreibung) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(...colors.lightText);
-
-        const text = doc.splitTextToSize(
-          dl.beschreibung,
-          pageW - margin * 2 - 10
-        );
-        doc.text(text, margin + 10, y + 14);
-        y += text.length * 14;
+      // leichte geometrische Muster (dezent)
+      ctx.fillStyle = 'rgba(0,0,0,0.02)';
+      for (let i = 0; i < 8; i++) {
+        ctx.beginPath();
+        const r = Math.min(canvas.width, canvas.height) * (0.08 + (i * 0.01));
+        ctx.arc(canvas.width * (0.08 + i * 0.11), canvas.height * (0.2 + (i % 2) * 0.5), r, 0, Math.PI * 2);
+        ctx.fill();
       }
 
+      // falls Firma-Logo vorhanden -> watermark groß, sehr transparent
+      const logoData = selectedKunde?.logo || selectedKunde?.logo_black || null;
+      if (logoData) {
+        const img = new Image();
+        img.onload = () => {
+          const maxW = canvas.width * 0.7;
+          const maxH = canvas.height * 0.45;
+          let w = img.width, h = img.height;
+          const ratio = Math.min(maxW / w, maxH / h, 1);
+          w *= ratio; h *= ratio;
+          const x = (canvas.width - w) / 2;
+          const y = (canvas.height - h) / 2;
+          ctx.globalAlpha = 0.10; // dezenter watermark-effekt
+          ctx.drawImage(img, x, y, w, h);
+          ctx.globalAlpha = 1;
+          resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.onerror = () => {
+          // fallback text
+          ctx.fillStyle = 'rgba(0,0,0,0.04)';
+          ctx.font = `${Math.round(canvas.width / 18)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2);
+          resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.src = logoData.startsWith('data:') ? logoData : `data:image/png;base64,${logoData}`;
+      } else {
+        // fallback: zentrierter Text + subtle shapes (already drawn)
+        ctx.fillStyle = 'rgba(0,0,0,0.03)';
+        ctx.font = `${Math.round(canvas.width / 20)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('MUSTERFOTO', canvas.width / 2, canvas.height / 2 - 6);
+        ctx.font = `${Math.round(canvas.width / 36)}px sans-serif`;
+        ctx.fillText('Ihr Logo / Bild hier', canvas.width / 2, canvas.height / 2 + 26);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      }
+    });
+  };
+
+
+  const exportToPDF = async () => {
+    if (!selectedKunde) return;
+
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 50;
+
+    const HEADER_OFFSET = 60; // ← mehr Platz fürs Logo
+
+    // -------- Name / Firma / Ansprechpartner --------
+    const hasCompany = !!selectedKunde.firma?.trim();
+    const fullName = `${selectedKunde.vorname || ""} ${selectedKunde.nachname || ""}`.trim();
+
+    const titleLine = hasCompany
+      ? selectedKunde.firma
+      : fullName || "-";
+
+    const subLine = hasCompany && fullName
+      ? `z.H. ${fullName}`
+      : null;
+
+    let y = margin;
+
+    const colors = {
+      text: [30, 30, 30],
+      lightText: [120, 120, 120],
+      line: [220, 220, 220],
+      accent: [25, 55, 120],
+    };
+
+    // ================= HEADER =================
+    const drawHeader = async () => {
+      // LOGO
+      try {
+        const res = await fetch(Logo);
+        const blob = await res.blob();
+
+        const logoData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+
+        doc.addImage(logoData, "PNG", margin, 30, 80, 80);
+      } catch { }
+
+      // QR CODE
+      try {
+        const qrUrl = `${window.location.origin}/kunden/${id}`;
+        const qrData = await QRCode.toDataURL(qrUrl, { margin: 0 });
+        doc.addImage(qrData, "PNG", pageW - margin - 60, 30, 60, 60);
+      } catch { }
+
+      // TITLE (Firma oder Name)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.setTextColor(...colors.text);
+      doc.text(titleLine, margin, 110 + HEADER_OFFSET);
+
+      // Ansprechpartner (nur bei Firma)
+      if (subLine) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(...colors.lightText);
+        doc.text(subLine, margin, 122 + HEADER_OFFSET);
+      }
+
+      // Kundennummer & Datum
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(...colors.lightText);
+      doc.text(
+        `Kundennummer: ${selectedKunde.kundennummer} • Generiert: ${new Date().toLocaleDateString()}`,
+        margin,
+        subLine ? 138 + HEADER_OFFSET : 128 + HEADER_OFFSET
+      );
+
+      // LINE
+      doc.setDrawColor(...colors.line);
+      doc.line(margin, 150 + HEADER_OFFSET, pageW - margin, 150 + HEADER_OFFSET);
+
+      // 👉 Startpunkt für gesamten Inhalt
+      y = 180 + HEADER_OFFSET;
+    };
+
+    const newPage = () => {
+      doc.addPage();
+      y = margin;
+    };
+
+    const section = (title) => {
+      if (y > pageH - 120) newPage();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(...colors.accent);
+      doc.text(title.toUpperCase(), margin, y);
+
+      y += 15;
+
+      doc.setDrawColor(...colors.line);
+      doc.line(margin, y, pageW - margin, y);
       y += 20;
-    });
-  } else {
-    doc.text("Keine Dienstleistungen vorhanden.", margin, y);
-    y += 20;
-  }
+    };
 
-  // ================= FOOTER =================
-  const pageCount = doc.getNumberOfPages();
+    const field = (label, value, xOffset = 0) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(...colors.lightText);
+      doc.text(label.toUpperCase(), margin + xOffset, y);
 
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(9);
-    doc.setTextColor(...colors.lightText);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(...colors.text);
+      doc.text(String(value || "-"), margin + xOffset, y + 14);
+    };
 
-    doc.text("Vertraulich – Nur für interne Verwendung", margin, pageH - 20);
+    await drawHeader();
 
-    doc.text(`Seite ${i} von ${pageCount}`, pageW - margin, pageH - 20, {
-      align: "right",
-    });
-  }
+    // ================= PROFIL =================
+    section("Profil");
 
-  doc.save(`KundenReport_${selectedKunde.kundennummer}.pdf`);
-};
+    const colW = (pageW - margin * 2) / 2;
+
+    field("E-Mail", selectedKunde.email);
+    field("Telefon", selectedKunde.mobil, colW);
+    y += 40;
+
+    field("Ort", selectedKunde.ort);
+    field("Status", selectedKunde.status, colW);
+    y += 40;
+
+    // ================= KUNDENDATEN =================
+    section("Kundendaten");
+
+    field("Firma", selectedKunde.firma);
+    y += 35;
+
+    field("Name", fullName);
+    y += 35;
+
+    field(
+      "Adresse",
+      `${selectedKunde.strasseHausnummer || ""}, ${selectedKunde.postleitzahl || ""} ${selectedKunde.ort || ""}`
+    );
+    y += 45;
+
+    // ================= DIENSTLEISTUNGEN =================
+    section("Dienstleistungen");
+
+    if (selectedKunde.dienstleistungen?.length) {
+      selectedKunde.dienstleistungen.forEach((dl) => {
+        if (y > pageH - 100) newPage();
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text(`• ${dl.title}`, margin, y);
+
+        if (dl.beschreibung) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...colors.lightText);
+
+          const text = doc.splitTextToSize(
+            dl.beschreibung,
+            pageW - margin * 2 - 10
+          );
+          doc.text(text, margin + 10, y + 14);
+          y += text.length * 14;
+        }
+
+        y += 20;
+      });
+    } else {
+      doc.text("Keine Dienstleistungen vorhanden.", margin, y);
+      y += 20;
+    }
+
+    // ================= FOOTER =================
+    const pageCount = doc.getNumberOfPages();
+
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(...colors.lightText);
+
+      doc.text("Vertraulich – Nur für interne Verwendung", margin, pageH - 20);
+
+      doc.text(`Seite ${i} von ${pageCount}`, pageW - margin, pageH - 20, {
+        align: "right",
+      });
+    }
+
+    doc.save(`KundenReport_${selectedKunde.kundennummer}.pdf`);
+  };
 
 
 
 
 
+  useEffect(() => {
+    let mounted = true;
+    const token = localStorage.getItem('token');
 
-useEffect(() => {
-  let mounted = true;
-  const token = localStorage.getItem('token');
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
 
-  const fetchAll = async () => {
-    try {
-      setLoading(true);
+        // Kundendaten
+        const kundeResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!mounted) return;
+        setSelectedKunde(kundeResp.data.data);
 
-      // Kundendaten
-      const kundeResp = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!mounted) return;
-      setSelectedKunde(kundeResp.data.data);
+        // Gesamtarbeitszeit pro Dienstleistung
+        const gesamtResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
 
-      // Gesamtarbeitszeit pro Dienstleistung
-      const gesamtResp = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/gesamtarbeitszeit`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setGesamtArbeitszeit(gesamtResp.data.dienstleistungen || []);
+        // Alle Stempelungen
+        const dienstMResp = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/mitarbeiter/arbeitszeiten`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      // Alle Stempelungen
-      const dienstMResp = await axios.get(
-        `https://tbsdigitalsolutionsbackend.onrender.com/api/kunden/${id}/dienstleistungen/mitarbeiter/arbeitszeiten`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+        // 🔥 Transformieren für PDF
+        const mitarbeiterMap = {};
 
-      // 🔥 Transformieren für PDF
-      const mitarbeiterMap = {};
+        dienstMResp.data.dienstleistungen.forEach(dl => {
+          dl.mitarbeiter.forEach(m => {
+            if (!mitarbeiterMap[m.mitarbeiter_id]) {
+              mitarbeiterMap[m.mitarbeiter_id] = {
+                mitarbeiter_id: m.mitarbeiter_id,
+                vorname: m.vorname,
+                nachname: m.nachname,
+                arbeitszeiten: []
+              };
+            }
 
-      dienstMResp.data.dienstleistungen.forEach(dl => {
-        dl.mitarbeiter.forEach(m => {
-          if (!mitarbeiterMap[m.mitarbeiter_id]) {
-            mitarbeiterMap[m.mitarbeiter_id] = {
-              mitarbeiter_id: m.mitarbeiter_id,
-              vorname: m.vorname,
-              nachname: m.nachname,
-              arbeitszeiten: []
-            };
-          }
-
-          m.arbeitszeiten.forEach(a => {
-            mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
-              dienstleistung: dl.dienstleistung,
-              start_time: a.start_time,
-              end_time: a.end_time,
-              arbeitszeit: a.arbeitszeit
+            m.arbeitszeiten.forEach(a => {
+              mitarbeiterMap[m.mitarbeiter_id].arbeitszeiten.push({
+                dienstleistung: dl.dienstleistung,
+                start_time: a.start_time,
+                end_time: a.end_time,
+                arbeitszeit: a.arbeitszeit
+              });
             });
           });
         });
-      });
 
-      setMitarbeiterArbeitszeiten(Object.values(mitarbeiterMap));
-      setDienstleistungMitarbeiter(dienstMResp.data.dienstleistungen || []);
+        setMitarbeiterArbeitszeiten(Object.values(mitarbeiterMap));
+        setDienstleistungMitarbeiter(dienstMResp.data.dienstleistungen || []);
 
-    } catch (err) {
-      console.error(err);
-      alert("Fehler beim Laden der Daten");
-    } finally {
-      if (mounted) setLoading(false);
-    }
-  };
+      } catch (err) {
+        console.error(err);
+        alert("Fehler beim Laden der Daten");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
 
-  fetchAll();
-  return () => { mounted = false; };
-}, [id]);
-
+    fetchAll();
+    return () => { mounted = false; };
+  }, [id]);
 
 
 
 
-  if(loading) return <p>Lade Kundendaten…</p>;
-  if(!selectedKunde) return <p>Kunde nicht gefunden.</p>;
+
+  if (loading) return <p>Lade Kundendaten…</p>;
+  if (!selectedKunde) return <p>Kunde nicht gefunden.</p>;
 
   return (
     <div className="kunden-anzeigen-container">
@@ -601,11 +616,11 @@ useEffect(() => {
 
         <div className="section-title">Kundendaten</div>
         <div className="details-grid">
-          {['kundennummer','firma','vorname','nachname','email','mobil','strasseHausnummer','postleitzahl','ort','status'].map(name=>(
+          {['kundennummer', 'firma', 'vorname', 'nachname', 'email', 'mobil', 'strasseHausnummer', 'postleitzahl', 'ort', 'status'].map(name => (
             <div className="detail-item" key={name}>
-              <label>{name.charAt(0).toUpperCase()+name.slice(1)}</label>
-              {editMode?<input name={name} value={editedData[name]||''} onChange={handleInput}/>:
-                <div className="value">{selectedKunde[name]||'–'}</div>}
+              <label>{name.charAt(0).toUpperCase() + name.slice(1)}</label>
+              {editMode ? <input name={name} value={editedData[name] || ''} onChange={handleInput} /> :
+                <div className="value">{selectedKunde[name] || '–'}</div>}
             </div>
           ))}
         </div>
@@ -620,146 +635,146 @@ useEffect(() => {
         <div className="status-box">
           <h3>Status aktualisieren</h3>
           <div className="status-buttons">
-            {['offen','inBearbeitung','abgeschlossen'].map(s=>(
-              <button key={s} className={selectedKunde.status===s?'active':''} onClick={()=>updateStatus(s)}>{s.charAt(0).toUpperCase()+s.slice(1)}</button>
+            {['offen', 'inBearbeitung', 'abgeschlossen'].map(s => (
+              <button key={s} className={selectedKunde.status === s ? 'active' : ''} onClick={() => updateStatus(s)}>{s.charAt(0).toUpperCase() + s.slice(1)}</button>
             ))}
           </div>
         </div>
-{/* Bewertungs-Mail / Anzeige der Bewertung */}
-{selectedKunde.status === 'abgeschlossen' && (
-  <>
-    {!selectedKunde.bewertung ? (
-      <div className="bewertung-box">
-        <div className="section-title">Kundenbewertung</div>
-        <p>Kunde kann nach Abschluss eine Bewertung abgeben.</p>
+        {/* Bewertungs-Mail / Anzeige der Bewertung */}
+        {selectedKunde.status === 'abgeschlossen' && (
+          <>
+            {!selectedKunde.bewertung ? (
+              <div className="bewertung-box">
+                <div className="section-title">Kundenbewertung</div>
+                <p>Kunde kann nach Abschluss eine Bewertung abgeben.</p>
 
-        {isAdmin && (
-          <button
-            className="btn btn-pdf"
-            onClick={async () => {
-              try {
-                const token = localStorage.getItem('token');
-                const resp = await axios.post(
-                  `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/send-mail/${selectedKunde.id}`,
-                  {},
-                  { headers: { Authorization: `Bearer ${token}` } }
-                );
-                alert(resp.data.message || 'Bewertungsmail erfolgreich gesendet.');
-              } catch (err) {
-                console.error(err);
-                alert('Fehler beim Senden der Bewertungsmail.');
-              }
-            }}
-          >
-            <FaStar /> Bewertungsmail senden
-          </button>
+                {isAdmin && (
+                  <button
+                    className="btn btn-pdf"
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem('token');
+                        const resp = await axios.post(
+                          `https://tbsdigitalsolutionsbackend.onrender.com/api/bewertungen/send-mail/${selectedKunde.id}`,
+                          {},
+                          { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        alert(resp.data.message || 'Bewertungsmail erfolgreich gesendet.');
+                      } catch (err) {
+                        console.error(err);
+                        alert('Fehler beim Senden der Bewertungsmail.');
+                      }
+                    }}
+                  >
+                    <FaStar /> Bewertungsmail senden
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="bewertung-box bewertung-vorhanden">
+                <div className="section-title">Kundenbewertung</div>
+
+                {/* Gesamtrating */}
+                <p><strong>Gesamtrating:</strong></p>
+                <StarRow value={selectedKunde.bewertung.gesamtrating || 0} />
+
+                {selectedKunde.bewertung.gesamttext && (
+                  <p style={{ marginTop: '8px' }}>
+                    <strong>Kommentar:</strong> {selectedKunde.bewertung.gesamttext}
+                  </p>
+                )}
+
+                <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
+
+                {/* Unterbewertungen */}
+                <div className="unterbewertungen">
+                  {[
+                    { label: 'Arbeitsqualität', key: 'arbeitsqualitaet', ratingKey: 'arbeitsqualitaet_rating' },
+                    { label: 'Tempo', key: 'tempo', ratingKey: 'tempo_rating' },
+                    { label: 'Freundlichkeit', key: 'freundlichkeit', ratingKey: 'freundlichkeit_rating' },
+                    { label: 'Zufriedenheit', key: 'zufriedenheit', ratingKey: 'zufriedenheit_rating' },
+                    { label: 'Kommunikation', key: 'kommunikation', ratingKey: 'kommunikation_rating' },
+                    { label: 'Zuverlässigkeit', key: 'zuverlaessigkeit', ratingKey: 'zuverlaessigkeit_rating' },
+                    { label: 'Professionalität', key: 'professionalitaet', ratingKey: 'professionalitaet_rating' },
+                  ].map(item => (
+                    <div key={item.key} style={{ marginBottom: '12px' }}>
+                      <p style={{ margin: 0, fontWeight: 500 }}>{item.label}:</p>
+                      <StarRow value={selectedKunde.bewertung[item.ratingKey] || 0} />
+                      {selectedKunde.bewertung[item.key] && (
+                        <p style={{ margin: '2px 0 0 0', color: '#555' }}>{selectedKunde.bewertung[item.key]}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
+
+                <p>
+                  <em>Abgegeben am: {new Date(selectedKunde.bewertung.createdAt).toLocaleDateString()}</em>
+                </p>
+              </div>
+            )}
+          </>
         )}
-      </div>
-    ) : (
-      <div className="bewertung-box bewertung-vorhanden">
-        <div className="section-title">Kundenbewertung</div>
 
-        {/* Gesamtrating */}
-        <p><strong>Gesamtrating:</strong></p>
-        <StarRow value={selectedKunde.bewertung.gesamtrating || 0} />
 
-        {selectedKunde.bewertung.gesamttext && (
-          <p style={{ marginTop: '8px' }}>
-            <strong>Kommentar:</strong> {selectedKunde.bewertung.gesamttext}
-          </p>
+        {!selectedKunde.unterschrift && (
+          <div className="qr-code-box">
+            <div className="section-title">QR-Code zur Unterschrift</div>
+
+            <QRCodeReact
+              value={`${window.location.origin}/${selectedKunde.kundenId}`}
+              size={150}
+            />
+
+            <p>Scan den QR-Code, um direkt zum Kunden zu kommen</p>
+
+            <button className="btn btn-edit" onClick={copyLinkToClipboard}>
+              <FaComments /> Link kopieren
+            </button>
+          </div>
         )}
 
-        <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
-
-        {/* Unterbewertungen */}
-        <div className="unterbewertungen">
-          {[
-            { label: 'Arbeitsqualität', key: 'arbeitsqualitaet', ratingKey: 'arbeitsqualitaet_rating' },
-            { label: 'Tempo', key: 'tempo', ratingKey: 'tempo_rating' },
-            { label: 'Freundlichkeit', key: 'freundlichkeit', ratingKey: 'freundlichkeit_rating' },
-            { label: 'Zufriedenheit', key: 'zufriedenheit', ratingKey: 'zufriedenheit_rating' },
-            { label: 'Kommunikation', key: 'kommunikation', ratingKey: 'kommunikation_rating' },
-            { label: 'Zuverlässigkeit', key: 'zuverlaessigkeit', ratingKey: 'zuverlaessigkeit_rating' },
-            { label: 'Professionalität', key: 'professionalitaet', ratingKey: 'professionalitaet_rating' },
-          ].map(item => (
-            <div key={item.key} style={{ marginBottom: '12px' }}>
-              <p style={{ margin: 0, fontWeight: 500 }}>{item.label}:</p>
-              <StarRow value={selectedKunde.bewertung[item.ratingKey] || 0} />
-              {selectedKunde.bewertung[item.key] && (
-                <p style={{ margin: '2px 0 0 0', color: '#555' }}>{selectedKunde.bewertung[item.key]}</p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <hr style={{ margin: '15px 0', borderColor: '#ddd' }} />
-
-        <p>
-          <em>Abgegeben am: {new Date(selectedKunde.bewertung.createdAt).toLocaleDateString()}</em>
-        </p>
-      </div>
-    )}
-  </>
-)}
-
-
-{!selectedKunde.unterschrift && (
-  <div className="qr-code-box">
-    <div className="section-title">QR-Code zur Unterschrift</div>
-
-    <QRCodeReact
-      value={`${window.location.origin}/${selectedKunde.kundenId}`}
-      size={150}
-    />
-
-    <p>Scan den QR-Code, um direkt zum Kunden zu kommen</p>
-
-    <button className="btn btn-edit" onClick={copyLinkToClipboard}>
-      <FaComments /> Link kopieren
-    </button>
-  </div>
-)}
-
-        <div className="section-title" style={{marginTop:'1.6rem'}}>Dienstleistungen</div>
+        <div className="section-title" style={{ marginTop: '1.6rem' }}>Dienstleistungen</div>
         <div className="service-list">
-          {selectedKunde.dienstleistungen?.length ? selectedKunde.dienstleistungen.map(d=>(
-            <div key={d.id||d.title} className="service-card"><strong>{d.title}</strong><div>{d.beschreibung||'–'}</div></div>
-          )):<div className="service-card">Keine Dienstleistungen vorhanden.</div>}
+          {selectedKunde.dienstleistungen?.length ? selectedKunde.dienstleistungen.map(d => (
+            <div key={d.id || d.title} className="service-card"><strong>{d.title}</strong><div>{d.beschreibung || '–'}</div></div>
+          )) : <div className="service-card">Keine Dienstleistungen vorhanden.</div>}
         </div>
 
         <div className="signature-box">
           <div className="section-title">Unterschrift</div>
-          {selectedKunde.unterschrift ? <img src={`data:image/png;base64,${selectedKunde.unterschrift}`} alt="Unterschrift" />:<p className="muted">Keine Unterschrift hinterlegt.</p>}
+          {selectedKunde.unterschrift ? <img src={`data:image/png;base64,${selectedKunde.unterschrift}`} alt="Unterschrift" /> : <p className="muted">Keine Unterschrift hinterlegt.</p>}
         </div>
 
         <div className="footer-buttons">
-  {isAdmin && (
-    <Link to={`/arbeitszeiten/${id}`} className="btn btn-edit">
-      Arbeitszeiten
-    </Link>
-  )}
+          {isAdmin && (
+            <Link to={`/arbeitszeiten/${id}`} className="btn btn-edit">
+              Arbeitszeiten
+            </Link>
+          )}
 
-{selectedKunde?.status === "abgeschlossen" && (
-  <PDFDownloadLink
-    document={
-      <KundenReportPDFInline
-        kunde={selectedKunde}
-        gesamtArbeitszeit={gesamtArbeitszeit}
-        mitarbeiterArbeitszeiten={mitarbeiterArbeitszeiten}
-        dienstleistungMitarbeiter={dienstleistungMitarbeiter}
-      />
-    }
-    fileName={`KundenReport_${selectedKunde.kundennummer}.pdf`}
-    className="btn btn-pdf"
-  >
-    {({ loading }) => loading ? "PDF wird erstellt…" : "PDF herunterladen"}
-  </PDFDownloadLink>
-)}
-
-
+          {selectedKunde?.status === "abgeschlossen" && (
+            <PDFDownloadLink
+              document={
+                <KundenReportPDFInline
+                  kunde={selectedKunde}
+                  gesamtArbeitszeit={gesamtArbeitszeit}
+                  mitarbeiterArbeitszeiten={mitarbeiterArbeitszeiten}
+                  dienstleistungMitarbeiter={dienstleistungMitarbeiter}
+                />
+              }
+              fileName={`KundenReport_${selectedKunde.kundennummer}.pdf`}
+              className="btn btn-pdf"
+            >
+              {({ loading }) => loading ? "PDF wird erstellt…" : "PDF herunterladen"}
+            </PDFDownloadLink>
+          )}
 
 
-</div>
+
+
+        </div>
 
       </div>
     </div>
