@@ -334,13 +334,15 @@ const exportToPDF = async () => {
   const pageH = doc.internal.pageSize.getHeight();
   const margin = 50;
 
+  const HEADER_OFFSET = 60; // ← mehr Platz fürs Logo
+
   const name =
-    selectedKunde.firma ||
-    `${selectedKunde.vorname || ""} ${selectedKunde.nachname || ""}`;
+    (selectedKunde.vorname || selectedKunde.nachname)
+      ? `${selectedKunde.vorname || ""} ${selectedKunde.nachname || ""}`.trim()
+      : selectedKunde.firma || "-";
 
   let y = margin;
 
-  // ================= COLORS =================
   const colors = {
     text: [30, 30, 30],
     lightText: [120, 120, 120],
@@ -361,12 +363,12 @@ const exportToPDF = async () => {
         reader.readAsDataURL(blob);
       });
 
-      doc.addImage(logoData, "PNG", margin, 30, 80, 40);
+      doc.addImage(logoData, "PNG", margin, 30, 80, 80);
     } catch {}
 
     // QR CODE
     try {
-      const qrUrl = `${window.location.origin}/sign/${selectedKunde.kundennummer}`;
+      const qrUrl = `${window.location.origin}/kunden/${selectedKunde.kundenId}`;
       const qrData = await QRCode.toDataURL(qrUrl, { margin: 0 });
       doc.addImage(qrData, "PNG", pageW - margin - 60, 30, 60, 60);
     } catch {}
@@ -375,22 +377,23 @@ const exportToPDF = async () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(...colors.text);
-    doc.text(name, margin, 110);
+    doc.text(name, margin, 110 + HEADER_OFFSET);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(...colors.lightText);
     doc.text(
-      `Kundennummer: ${selectedKunde.kundennummer}   •   Generiert: ${new Date().toLocaleDateString()}`,
+      `Kundennummer: ${selectedKunde.kundennummer} • Generiert: ${new Date().toLocaleDateString()}`,
       margin,
-      128
+      128 + HEADER_OFFSET
     );
 
     // LINE
     doc.setDrawColor(...colors.line);
-    doc.line(margin, 150, pageW - margin, 150);
+    doc.line(margin, 150 + HEADER_OFFSET, pageW - margin, 150 + HEADER_OFFSET);
 
-    y = 180;
+    // 👉 Startpunkt für gesamten Inhalt
+    y = 180 + HEADER_OFFSET;
   };
 
   const newPage = () => {
@@ -427,7 +430,7 @@ const exportToPDF = async () => {
 
   await drawHeader();
 
-  // ================= PROFIL GRID =================
+  // ================= PROFIL =================
   section("Profil");
 
   const colW = (pageW - margin * 2) / 2;
@@ -464,7 +467,6 @@ const exportToPDF = async () => {
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
-      doc.setTextColor(...colors.text);
       doc.text(`• ${dl.title}`, margin, y);
 
       if (dl.beschreibung) {
@@ -487,25 +489,6 @@ const exportToPDF = async () => {
     y += 20;
   }
 
-  // ================= UNTERSCHRIFT =================
-  if (selectedKunde.unterschrift) {
-    section("Unterschrift");
-
-    doc.addImage(
-      `data:image/png;base64,${selectedKunde.unterschrift}`,
-      "PNG",
-      margin,
-      y,
-      200,
-      80
-    );
-
-    doc.setDrawColor(...colors.line);
-    doc.rect(margin, y, 200, 80);
-
-    y += 100;
-  }
-
   // ================= FOOTER =================
   const pageCount = doc.getNumberOfPages();
 
@@ -514,11 +497,7 @@ const exportToPDF = async () => {
     doc.setFontSize(9);
     doc.setTextColor(...colors.lightText);
 
-    doc.text(
-      "Vertraulich – Nur für interne Verwendung",
-      margin,
-      pageH - 20
-    );
+    doc.text("Vertraulich – Nur für interne Verwendung", margin, pageH - 20);
 
     doc.text(`Seite ${i} von ${pageCount}`, pageW - margin, pageH - 20, {
       align: "right",
@@ -527,7 +506,6 @@ const exportToPDF = async () => {
 
   doc.save(`KundenReport_${selectedKunde.kundennummer}.pdf`);
 };
-
 
 
 
