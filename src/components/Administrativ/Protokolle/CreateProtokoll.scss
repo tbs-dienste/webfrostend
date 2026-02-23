@@ -1,0 +1,113 @@
+.create-protokoll-container {
+    padding: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f9f9f9; /* leichter Hintergrund */
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  /* Überschrift */
+  .create-protokoll-container h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #222;
+  }
+  
+  /* Erfolg- und Fehlermeldungen */
+  .success-message {
+    color: #28a745;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .error-message {
+    color: #d9534f;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  /* Formular */
+  .create-protokoll-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  /* Form-Gruppe */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Label */
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+  }
+  
+  /* Inputs, Selects, Textareas */
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+    transition: none; /* Keine Hover/Focus Effekte */
+    resize: vertical; /* nur Textareas skalierbar */
+  }
+  
+  /* Textareas */
+  .form-group textarea {
+    min-height: 100px;
+    line-height: 1.5;
+  }
+  
+  /* Datum & Uhrzeit nebeneinander */
+  .date-time-group {
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* Buttons */
+  .create-protokoll-form button {
+    padding: 14px 22px;
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  /* Kein Hover/Focus */
+  .create-protokoll-form button:hover,
+  .create-protokoll-form button:focus,
+  .create-protokoll-form button:active {
+    background-color: #007bff; /* bleibt immer gleich */
+    outline: none;
+  }
+  
+  /* Optional: Textareas in zwei Spalten bei großen Formularen */
+  @media (min-width: 900px) {
+    .textareas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+  
+  /* Optional: kleine Abstände zwischen Textarea-Labels und Inputs */
+  .form-group textarea + label,
+  .form-group input + label {
+    margin-top: 8px;
+  }

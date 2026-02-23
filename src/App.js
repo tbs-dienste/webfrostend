@@ -126,6 +126,7 @@ import GetTerminById from './components/Kunden/Besprechung/GetTerminById';
 import WeekCalendar from './components/Kunden/Besprechung/WeekCalendar';
 import SendMailForm from './components/Mail/Mailbox';
 import Mailbox from './components/Mail/Mailbox';
+import CreateProtokoll from './components/Administrativ/Protokolle/CreateProtokoll';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -292,6 +293,8 @@ const App = () => {
               <Route path="/aktionen" element={<AktionenListe />} />
               <Route path="/aktionen/:id" element={<AktionDetails />} />
               <Route path="/aktion-erstellen" element={<AktionErstellen />} />
+              <Route path="/create-protokoll" element={<CreateProtokoll />} />
+
               <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />
               <Route path="/bewertungen" element={<KundenBewertungen />} />
               <Route path="/dienstleistung/:dienstleistungId" element={<DienstleistungsBewertungen />} />
