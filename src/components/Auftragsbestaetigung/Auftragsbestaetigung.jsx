@@ -154,7 +154,7 @@ const Auftragsbestaetigung = () => {
         <header>
           <img src={firmalogo} alt="Firmenlogo" className={styles['logo']} />
           <div className={styles['company-info']}>
-            <h1>TBs Solutions GmbH</h1>
+            <h1>TBs Solutions</h1>
             <p>3001 Bern</p>
           </div>
         </header>
