@@ -77,6 +77,7 @@ const Navbar = () => {
                   <Link to="/mitarbeiter" onClick={closeMenu}>Mitarbeiter</Link>
                   <Link to="/allbewerbungen" onClick={closeMenu}>Bewerbungen</Link>
                   <Link to="/newsletter-subscribers" onClick={closeMenu}>Newsletter</Link>
+                  <Link to="/download"  onClick={closeMenu}>Download</Link>
                 </div>
                 <div className="mega-col">
                   <h4>Inventur</h4>
