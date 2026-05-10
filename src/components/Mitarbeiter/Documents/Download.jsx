@@ -8,6 +8,7 @@ import {
   FaBullhorn,
   FaUsers,
   FaBriefcase,
+  FaBuilding,
 } from "react-icons/fa";
 
 import Arbeitsvertrag from "./Arbeitsvertrag.docx";
@@ -16,80 +17,66 @@ import Datenschutzrichtlinien from "./Datenschutzrichtlinien.pdf";
 import KündigungWord from "./Kündigung.docx";
 import Kündigung from "./Kündigung.pdf";
 
+import Besprechungsprotokoll from "./Besprechungsprotokoll_Kundentermin_Professional.docx";
+import NotizpapierVorlage from "./Notizpapier.docx";
+
 import LogoDark from "./Logo_black.png";
 import LogoLight from "./Logo_white.png";
 
 import "./Download.scss";
 
 function Download() {
-  const [openDocs, setOpenDocs] = useState(true);
-  const [openMarketing, setOpenMarketing] = useState(false);
-  const [openColors, setOpenColors] = useState(false);
-  const [openLogos, setOpenLogos] = useState(false);
+
+  // 🔥 EINZIGER STATE FÜR ALLE DROPDOWNS
+  const [openSection, setOpenSection] = useState("docs");
+
+  const toggleSection = (name) => {
+    setOpenSection(openSection === name ? "" : name);
+  };
+
+  const handleDownload = (url, fileName) => {
+    fetch(url)
+      .then((r) => r.blob())
+      .then((blob) => {
+        const fileUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = fileUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      })
+      .catch(() => alert("Fehler beim Download!"));
+  };
 
   const documents = [
-    {
-      category: "Mitarbeiter",
-      name: "Arbeitsvertrag",
-      url: Arbeitsvertrag,
-      icon: <FaFileWord />,
-      type: "Word",
-      description: "Offizieller Arbeitsvertrag.",
-    },
-    {
-      category: "Unternehmen",
-      name: "Unternehmensrichtlinien",
-      url: Unternehmensrichtlinien,
-      icon: <FaFilePdf />,
-      type: "PDF",
-      description: "Interne Unternehmensrichtlinien.",
-    },
-    {
-      category: "Datenschutz",
-      name: "Datenschutzrichtlinien",
-      url: Datenschutzrichtlinien,
-      icon: <FaFilePdf />,
-      type: "PDF",
-      description: "Datenschutz & DSGVO.",
-    },
-    {
-      category: "HR",
-      name: "Kündigung Word",
-      url: KündigungWord,
-      icon: <FaFileWord />,
-      type: "Word",
-      description: "Kündigung als Word-Datei.",
-    },
-    {
-      category: "HR",
-      name: "Kündigung PDF",
-      url: Kündigung,
-      icon: <FaFilePdf />,
-      type: "PDF",
-      description: "Kündigung als PDF-Datei.",
-    },
+    { name: "Arbeitsvertrag", url: Arbeitsvertrag, icon: <FaFileWord />, type: "Word", category: "Mitarbeiter", description: "Offizieller Arbeitsvertrag." },
+    { name: "Unternehmensrichtlinien", url: Unternehmensrichtlinien, icon: <FaFilePdf />, type: "PDF", category: "Unternehmen", description: "Interne Richtlinien." },
+    { name: "Datenschutzrichtlinien", url: Datenschutzrichtlinien, icon: <FaFilePdf />, type: "PDF", category: "Datenschutz", description: "DSGVO Dokument." },
+    { name: "Kündigung Word", url: KündigungWord, icon: <FaFileWord />, type: "Word", category: "HR", description: "Kündigung Word." },
+    { name: "Kündigung PDF", url: Kündigung, icon: <FaFilePdf />, type: "PDF", category: "HR", description: "Kündigung PDF." },
+  ];
+
+  const adminDocs = [
+    { name: "Handelsregisterauszug", url: "/docs/Handelsregisterauszug.pdf", icon: <FaFilePdf />, type: "PDF", category: "Administration", description: "Offiziell." },
+    { name: "Steuerunterlagen", url: "/docs/Steuerunterlagen.pdf", icon: <FaFilePdf />, type: "PDF", category: "Administration", description: "Steuern." },
+    { name: "Versicherungsnachweis", url: "/docs/Versicherungsnachweis.pdf", icon: <FaFilePdf />, type: "PDF", category: "Administration", description: "Versicherung." },
+    { name: "Bankverbindung", url: "/docs/Bankverbindung.docx", icon: <FaFileWord />, type: "Word", category: "Administration", description: "Bankdaten." },
+  ];
+
+  const templates = [
+    { name: "Besprechungsprotokoll", url: Besprechungsprotokoll, icon: <FaFileWord />, type: "Word", category: "Vorlage", description: "Meeting Vorlage." },
+    { name: "Notizpapier Vorlage", url: NotizpapierVorlage, icon: <FaFileWord />, type: "Word", category: "Vorlage", description: "Notizen." },
   ];
 
   const marketingDocs = [
-    {
-      name: "Social Media Guidelines",
-      description: "Richtlinien für Instagram, TikTok & LinkedIn.",
-    },
-    {
-      name: "Brand Voice",
-      description: "Kommunikationsstil des Startups.",
-    },
-    {
-      name: "Marketing Strategie",
-      description: "Marketing- und Kampagnenstrategie.",
-    },
-    {
-      name: "Pressemappe",
-      description: "Texte & Medieninformationen.",
-    },
+    { name: "Social Media Guidelines", description: "Instagram & TikTok Regeln." },
+    { name: "Brand Voice", description: "Kommunikationsstil." },
+    { name: "Marketing Strategie", description: "Strategie." },
+    { name: "Pressemappe", description: "PR Inhalte." },
   ];
 
-  const startupColors = [
+  const colors = [
     { name: "Primary Blue", hex: "#2563eb" },
     { name: "Dark Navy", hex: "#0f172a" },
     { name: "Accent Purple", hex: "#7c3aed" },
@@ -98,165 +85,111 @@ function Download() {
   ];
 
   const logos = [
-    {
-      name: "Dark Logo",
-      image: LogoDark,
-    },
-    {
-      name: "Light Logo",
-      image: LogoLight,
-    },
-   
+    { name: "Dark Logo", image: LogoDark },
+    { name: "Light Logo", image: LogoLight },
   ];
-
-  const handleDownload = (url, fileName) => {
-    fetch(url)
-      .then((response) => {
-        if (response.ok) {
-          return response.blob();
-        } else {
-          throw new Error("Download fehlgeschlagen");
-        }
-      })
-      .then((blob) => {
-        const fileUrl = window.URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = fileUrl;
-        a.download = fileName;
-
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch(() => {
-        alert("Fehler beim Download!");
-      });
-  };
 
   return (
     <div className="download-page">
 
+      {/* HERO */}
       <div className="hero">
         <h1>Startup Brand & Mitarbeiter Center</h1>
-        <p>
-          Alle wichtigen Dokumente, Branding-Ressourcen,
-          Marketingunterlagen und Logos zentral an einem Ort.
-        </p>
+        <p>Alle Dokumente zentral an einem Ort.</p>
       </div>
 
-      {/* DOKUMENTE */}
-      <div className="dropdown-section">
-        <button
-          className="dropdown-header"
-          onClick={() => setOpenDocs(!openDocs)}
-        >
-          <span>
-            <FaBriefcase /> Mitarbeiter & Arbeitsalltag
-          </span>
+      {/* SECTION */}
+      {[
+        { key: "docs", title: "Mitarbeiter & Arbeitsalltag", icon: <FaBriefcase />, data: documents },
+        { key: "admin", title: "Administrative Dokumente", icon: <FaBuilding />, data: adminDocs },
+        { key: "templates", title: "Vorlagen & Notizpapier", icon: <FaFileWord />, data: templates },
+      ].map((section) => (
+        <div className="dropdown-section" key={section.key}>
 
-          <FaChevronDown
-            className={openDocs ? "rotate" : ""}
-          />
-        </button>
+          <button
+            className="dropdown-header"
+            onClick={() => toggleSection(section.key)}
+          >
+            <span>
+              {section.icon} {section.title}
+            </span>
 
-        {openDocs && (
-          <div className="dropdown-content">
+            <FaChevronDown className={openSection === section.key ? "rotate" : ""} />
+          </button>
 
-            {documents.map((doc, index) => (
-              <div className="doc-card" key={index}>
+          {openSection === section.key && (
+            <div className="dropdown-content">
 
-                <div className="doc-icon">
-                  {doc.icon}
+              {section.data.map((doc, i) => (
+                <div className="doc-card" key={i}>
+
+                  <div className="doc-icon">{doc.icon}</div>
+
+                  <div className="doc-info">
+                    <h3>{doc.name}</h3>
+                    <p>{doc.description}</p>
+                    <span className="doc-type">
+                      {doc.category} • {doc.type}
+                    </span>
+                  </div>
+
+                  <button
+                    className="download-btn"
+                    onClick={() => handleDownload(doc.url, doc.name)}
+                  >
+                    <FaDownload />
+                    Download
+                  </button>
+
                 </div>
+              ))}
 
-                <div className="doc-info">
-                  <h3>{doc.name}</h3>
-                  <p>{doc.description}</p>
-
-                  <span className="doc-type">
-                    {doc.category} • {doc.type}
-                  </span>
-                </div>
-
-                <button
-                  className="download-btn"
-                  onClick={() =>
-                    handleDownload(doc.url, doc.name)
-                  }
-                >
-                  <FaDownload />
-                  Download
-                </button>
-
-              </div>
-            ))}
-
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      ))}
 
       {/* MARKETING */}
       <div className="dropdown-section">
         <button
           className="dropdown-header"
-          onClick={() => setOpenMarketing(!openMarketing)}
+          onClick={() => toggleSection("marketing")}
         >
-          <span>
-            <FaBullhorn /> Marketing & Kommunikation
-          </span>
-
-          <FaChevronDown
-            className={openMarketing ? "rotate" : ""}
-          />
+          <span><FaBullhorn /> Marketing & Kommunikation</span>
+          <FaChevronDown className={openSection === "marketing" ? "rotate" : ""} />
         </button>
 
-        {openMarketing && (
+        {openSection === "marketing" && (
           <div className="dropdown-content grid">
-
-            {marketingDocs.map((item, index) => (
-              <div className="marketing-card" key={index}>
+            {marketingDocs.map((item, i) => (
+              <div className="marketing-card" key={i}>
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
               </div>
             ))}
-
           </div>
         )}
       </div>
 
-      {/* FARBEN */}
+      {/* COLORS */}
       <div className="dropdown-section">
         <button
           className="dropdown-header"
-          onClick={() => setOpenColors(!openColors)}
+          onClick={() => toggleSection("colors")}
         >
-          <span>
-            <FaPalette /> Startup Farben
-          </span>
-
-          <FaChevronDown
-            className={openColors ? "rotate" : ""}
-          />
+          <span><FaPalette /> Farben</span>
+          <FaChevronDown className={openSection === "colors" ? "rotate" : ""} />
         </button>
 
-        {openColors && (
+        {openSection === "colors" && (
           <div className="colors-grid">
-
-            {startupColors.map((color, index) => (
-              <div className="color-card" key={index}>
-
-                <div
-                  className="color-preview"
-                  style={{ background: color.hex }}
-                />
-
-                <h4>{color.name}</h4>
-                <p>{color.hex}</p>
-
+            {colors.map((c, i) => (
+              <div className="color-card" key={i}>
+                <div className="color-preview" style={{ background: c.hex }} />
+                <h4>{c.name}</h4>
+                <p>{c.hex}</p>
               </div>
             ))}
-
           </div>
         )}
       </div>
@@ -265,44 +198,20 @@ function Download() {
       <div className="dropdown-section">
         <button
           className="dropdown-header"
-          onClick={() => setOpenLogos(!openLogos)}
+          onClick={() => toggleSection("logos")}
         >
-          <span>
-            <FaUsers /> Logos & Assets
-          </span>
-
-          <FaChevronDown
-            className={openLogos ? "rotate" : ""}
-          />
+          <span><FaUsers /> Logos & Assets</span>
+          <FaChevronDown className={openSection === "logos" ? "rotate" : ""} />
         </button>
 
-        {openLogos && (
+        {openSection === "logos" && (
           <div className="logo-grid">
-
-            {logos.map((logo, index) => (
-              <div className="logo-card" key={index}>
-
-                <img
-                  src={logo.image}
-                  alt={logo.name}
-                  className="logo-image"
-                />
-
-                <h3>{logo.name}</h3>
-
-                <button
-                  className="download-btn"
-                  onClick={() =>
-                    handleDownload(logo.image, logo.name)
-                  }
-                >
-                  <FaDownload />
-                  Logo herunterladen
-                </button>
-
+            {logos.map((l, i) => (
+              <div className="logo-card" key={i}>
+                <img src={l.image} alt={l.name} className="logo-image" />
+                <h3>{l.name}</h3>
               </div>
             ))}
-
           </div>
         )}
       </div>
