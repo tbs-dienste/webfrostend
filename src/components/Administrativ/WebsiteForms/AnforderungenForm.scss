@@ -1,0 +1,180 @@
+/* =========================
+   GLOBAL LAYOUT
+========================= */
+
+.reqForm {
+    width: 100%;
+    min-height: 100vh;
+    padding: 60px 80px;
+    background: #f5f7fb;
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    color: #111827;
+    box-sizing: border-box;
+  }
+  
+  /* =========================
+     HEADER
+  ========================= */
+  
+  .reqHeader {
+    margin-bottom: 50px;
+  
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+  
+    p {
+      font-size: 16px;
+      color: #6b7280;
+    }
+  }
+  
+  /* =========================
+     SECTIONS (CARDS)
+  ========================= */
+  
+  .reqSection {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+  
+    &:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+  
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+  }
+  
+  /* =========================
+     INPUTS / TEXTAREA
+  ========================= */
+  
+  .reqSection input,
+  .reqSection textarea {
+    width: 100%;
+    display: block;
+    margin-bottom: 12px;
+    padding: 14px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+    transition: 0.2s;
+  
+    &:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+  
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+  
+  .reqSection textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  /* =========================
+     CHECKBOX LIST (MODERN CARDS)
+  ========================= */
+  
+  .reqCheck {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #fafafa;
+  
+    cursor: pointer;
+    transition: 0.2s;
+  
+    &:hover {
+      background: #f3f4f6;
+    }
+  
+    input {
+      width: 18px;
+      height: 18px;
+      accent-color: #6366f1;
+    }
+  }
+  
+  /* =========================
+     BUTTON
+  ========================= */
+  
+  button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 20px;
+  
+    border: none;
+    border-radius: 14px;
+  
+    background: #6366f1;
+    color: white;
+  
+    font-size: 16px;
+    font-weight: 700;
+  
+    cursor: pointer;
+    transition: 0.2s;
+  
+    &:hover {
+      background: #4f46e5;
+      transform: translateY(-1px);
+    }
+  
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  /* =========================
+     RESPONSIVE DESIGN
+  ========================= */
+  
+  @media (max-width: 1024px) {
+    .reqForm {
+      padding: 40px 30px;
+    }
+  
+    .reqHeader h1 {
+      font-size: 34px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .reqForm {
+      padding: 20px 14px;
+    }
+  
+    .reqHeader h1 {
+      font-size: 26px;
+    }
+  
+    .reqSection {
+      padding: 18px;
+    }
+  }

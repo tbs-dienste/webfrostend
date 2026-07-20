@@ -68,7 +68,6 @@ import Download from './components/Mitarbeiter/Documents/Download';
 import CreateKrankmeldung from './components/Mitarbeiter/CreateKrankmeldung';
 import Statistik from './components/Administrativ/Statistik';
 import Profile from './components/Mitarbeiter/Profile';
-import GutscheinBestellung from './components/Gutschein/GutscheinBestellung';
 import Kasse from './components/Administrativ/Kasse';
 import Kassenlogin from './components/Administrativ/Kassenlogin';
 import KassenUebersicht from './components/Administrativ/KassenUebersicht';
@@ -126,7 +125,10 @@ import GetTerminById from './components/Kunden/Besprechung/GetTerminById';
 import WeekCalendar from './components/Kunden/Besprechung/WeekCalendar';
 import SendMailForm from './components/Mail/Mailbox';
 import Mailbox from './components/Mail/Mailbox';
-import CreateProtokoll from './components/Administrativ/Protokolle/CreateProtokoll';
+import VertragErstellen from './components/Administrativ/VertragAbo/VertragErstellen';
+import ProtokollForm from './components/Administrativ/Protokolle/ProtokollForm';
+import AnforderungenForm from './components/Administrativ/WebsiteForms/AnforderungenForm';
+import AccountingDashboard from './components/Administrativ/Buchhaltung/AccountingDashboard';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -220,8 +222,10 @@ const App = () => {
 />
 
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
+              <Route path="/anforderungen-form" element={<AnforderungenForm />} />
+              <Route path="/buchhaltung" element={<AccountingDashboard />} />
+
               <Route path="/statistiken" element={<Statistik />} />
-              <Route path="/gutscheinbestellung" element={<GutscheinBestellung />} />
               <Route path="/calendar" element={<WeekCalendar />} />
               <Route path="/mailbox" element={<Mailbox />} />
 
@@ -281,6 +285,8 @@ const App = () => {
               <Route path="/dienstleistungen" element={<Dienstleistungen isAdmin={isAdmin} />} />
               <Route path="/werbung" element={<WarumWerbungMachen />} />
               <Route path="/service/:id" element={<ServiceDetail />} />
+              <Route path="/vertragabo-erstellen" element={<VertragErstellen />} />
+
               <Route path="/kundenscanner" element={<KundenScanner />} />
               <Route path="/gutscheinscanner" element={<GutscheinScanner />} />
               <Route path="/warenkorb" element={<Warenkorb />} />
@@ -293,7 +299,7 @@ const App = () => {
               <Route path="/aktionen" element={<AktionenListe />} />
               <Route path="/aktionen/:id" element={<AktionDetails />} />
               <Route path="/aktion-erstellen" element={<AktionErstellen />} />
-              <Route path="/create-protokoll" element={<CreateProtokoll />} />
+              <Route path="/create-protokoll" element={<ProtokollForm />} />
 
               <Route path="/kundenbewertung/:kundennummer" element={<KundeBewertungformular />} />
               <Route path="/bewertungen" element={<KundenBewertungen />} />

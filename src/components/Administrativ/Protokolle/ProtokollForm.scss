@@ -1,0 +1,143 @@
+// =========================
+// ProtokollForm.scss (EXTERN - PRO LEVEL UI)
+// =========================
+
+:root {
+  --bg: #070b14;
+  --panel: #0c1424;
+  --panel-2: #0f1a30;
+  --border: #1f2a44;
+  --text: #e6edf7;
+  --muted: #9aa7bd;
+  --accent: #3b82f6;
+  --success: #22c55e;
+}
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 56px;
+  background: var(--bg);
+}
+
+.form {
+  width: 100%;
+  padding: 36px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 10px 0;
+  letter-spacing: 0.3px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 14px 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  outline: none;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+.block h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.row input {
+  flex: 1;
+}
+
+button {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.item span {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.message {
+  font-size: 14px;
+  color: var(--success);
+  margin-top: 6px;
+}
+
+/* RESPONSIVE GRID (NO MAX WIDTH USED) */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    padding: 24px;
+  }
+
+  .form {
+    padding: 20px;
+  }
+}

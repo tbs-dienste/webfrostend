@@ -77,7 +77,7 @@ const Auftragsbestaetigung = () => {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
 
-    addressY = addText('TBs Solutions GmbH', addressX, addressY);
+    addressY = addText('TBs Solutions', addressX, addressY);
     addressY = addText('Musterstraße 1', addressX, addressY);
     addressY = addText('12345 Musterstadt', addressX, addressY);
     addressY = addText('Deutschland', addressX, addressY);

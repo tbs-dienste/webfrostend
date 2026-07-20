@@ -72,6 +72,8 @@ const Navbar = () => {
             <li className={`admin-wrapper ${adminOpen ? "active" : ""}`}>
               <span className="admin-trigger" onClick={() => setAdminOpen(!adminOpen)}>Admin ▾</span>
               <div className="admin-mega">
+
+             
                 <div className="mega-col">
                   <h4>Verwaltung</h4>
                   <Link to="/mitarbeiter" onClick={closeMenu}>Mitarbeiter</Link>
@@ -90,16 +92,15 @@ const Navbar = () => {
                   <h4>Verkauf</h4>
                   <Link to="/kassenlogin" onClick={closeMenu}>Kasse</Link>
                   <Link to="/kundenkarten" onClick={closeMenu}>Kundenkarten</Link>
-                  <Link to="/gutscheine-liste" onClick={closeMenu}>Gutscheine</Link>
                 </div>
                 <div className="mega-col">
-                  <h4>Abrechnung</h4>
-                  <Link to="/rechnungen" onClick={closeMenu}>Rechnungen</Link>
-                  <Link to="/statistiken" onClick={closeMenu}>Statistik</Link>
+                  <h4>Buchhaltung</h4>
+                  <Link to="/buchhaltung" onClick={closeMenu}>Kasse</Link>
                 </div>
               </div>
             </li>
           )}
+          
 
           {isLoggedIn && (
             <>

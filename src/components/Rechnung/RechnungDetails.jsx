@@ -9,18 +9,21 @@ import logoBlack from "./black.png";
 const RechnungDetails = () => {
   const { id } = useParams();
   const [rechnung, setRechnung] = useState(null);
+  const [kunde, setKunde] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [kunde, setKunde] = useState(null);
 
   useEffect(() => {
     const fetchRechnung = async () => {
       try {
-        const response = await axios.get(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`);
-        const { rechnung, kunde, benutzerdefinierte_dienstleistungen } = response.data;
+        const response = await axios.get(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`
+        );
+        const { rechnung, kunde, benutzerdefinierte_dienstleistungen, dienstleistungen } =
+          response.data;
 
         if (rechnung) {
-          setRechnung({ ...rechnung, benutzerdefinierte_dienstleistungen: benutzerdefinierte_dienstleistungen || [] });
+          setRechnung({ ...rechnung, benutzerdefinierte_dienstleistungen, dienstleistungen });
           setKunde(kunde);
         } else {
           setError("Rechnung nicht gefunden.");
@@ -31,163 +34,166 @@ const RechnungDetails = () => {
         setLoading(false);
       }
     };
-
     fetchRechnung();
   }, [id]);
 
   const updateStatus = async (newStatus) => {
     try {
-      const response = await axios.put(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}/status`, { status: newStatus });
+      const response = await axios.put(
+        `https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}/status`,
+        { status: newStatus }
+      );
       if (response.status === 200) {
         setRechnung((prev) => ({ ...prev, status: newStatus }));
       }
-    } catch (error) {
-      alert(`Fehler beim Aktualisieren des Status: ${error.response?.data || error.message}`);
+    } catch (err) {
+      alert(`Fehler beim Aktualisieren des Status: ${err.response?.data || err.message}`);
     }
   };
 
   const deleteRechnung = async () => {
     if (window.confirm("Möchten Sie diese Rechnung wirklich löschen?")) {
       try {
-        const response = await axios.delete(`https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`);
-        if (response.status === 200) {
-          window.location.href = "/rechnungen";
-        }
-      } catch (error) {
-        alert(`Fehler beim Löschen der Rechnung: ${error.response?.data || error.message}`);
+        const response = await axios.delete(
+          `https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/${id}`
+        );
+        if (response.status === 200) window.location.href = "/rechnungen";
+      } catch (err) {
+        alert(`Fehler beim Löschen der Rechnung: ${err.response?.data || err.message}`);
       }
     }
   };
 
-  const generatePDF = (rechnung) => {
-    const doc = new jsPDF();
-    const blue = [54, 162, 235];
-  
-    // Logo oben links
-    doc.addImage(logoBlack, 'PNG', 14, 10, 30, 30);
-  
-    // Kundenadresse
+  const generatePDF = (rechnung = {}, kundeData, logoBlack) => {
+    if (!rechnung || !kundeData) return;
+
+    const doc = new jsPDF("p", "mm", "a4");
+    const primaryColor = [0, 123, 255];
+    const lightGray = [245, 245, 245];
+    const darkGray = [60, 60, 60];
+
+    // HEADER
+    if (logoBlack) doc.addImage(logoBlack, "PNG", 14, 10, 40, 40);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.text(`${kunde.vorname} ${kunde.nachname}`, 14, 60);
+    doc.setFontSize(16);
+    doc.setTextColor(...primaryColor);
+    doc.text("TBs Solutions", 150, 15, { align: "right" });
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(kunde.adresse || "Adresse folgt", 14, 65);
-    doc.text(`${kunde.plz || "PLZ"} ${kunde.ort || "Ort"}`, 14, 70);
-  
-    // Rechnungstitel
-    doc.setFontSize(22);
+    doc.setTextColor(50);
+    doc.text("Musterstraße 12", 150, 20, { align: "right" });
+    doc.text("8000 Zürich, Schweiz", 150, 25, { align: "right" });
+    doc.text("info@tbs-solutions.ch", 150, 30, { align: "right" });
+    doc.setDrawColor(200);
+    doc.setLineWidth(0.5);
+    doc.line(14, 45, 196, 45);
+
+    // KUNDENINFO
+    const kundenVorname = kundeData.vorname || "";
+    const kundenNachname = kundeData.nachname || "";
+    const adresse = kundeData.adresse || "";
+    const plzOrt = `${kundeData.plz || ""} ${kundeData.ort || ""}`;
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(0);
-    doc.text("RECHNUNG", 105, 90, { align: "center" });
-  
-    // Rechnungsdaten
+    doc.setFontSize(12);
+    doc.setTextColor(...darkGray);
+    doc.text(`${kundenVorname} ${kundenNachname}`, 14, 55);
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
+    doc.setFontSize(10);
+    doc.text(adresse, 14, 60);
+    doc.text(plzOrt, 14, 65);
+
+    // RECHNUNGSDATEN
     const currentDate = new Date();
     const faelligkeitsdatum = new Date(currentDate);
     faelligkeitsdatum.setDate(currentDate.getDate() + 30);
-    doc.text(`Rechnungsnummer: ${rechnung.rechnungsnummer}`, 14, 105);
-    doc.text(`Rechnungsdatum: ${currentDate.toLocaleDateString()}`, 14, 110);
-    doc.text(`Fälligkeitsdatum: ${faelligkeitsdatum.toLocaleDateString()}`, 14, 115);
-  
-    // Dienstleistungen
+    doc.text(`Rechnungsnummer: ${rechnung.rechnungsnummer || "N/A"}`, 150, 55, { align: "right" });
+    doc.text(`Rechnungsdatum: ${currentDate.toLocaleDateString()}`, 150, 60, { align: "right" });
+    doc.text(`Fälligkeitsdatum: ${faelligkeitsdatum.toLocaleDateString()}`, 150, 65, { align: "right" });
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(...primaryColor);
+    doc.text("RECHNUNG", 105, 80, { align: "center" });
+
+    // DIENSTLEISTUNGEN
     const dienstleistungen = [
       ...(rechnung.dienstleistungen || []),
-      ...(rechnung.benutzerdefinierte_dienstleistungen || [])
+      ...(rechnung.benutzerdefinierte_dienstleistungen || []),
     ];
-  
-    const tableRows = dienstleistungen.map((service, index) => {
-      const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
-      const anzahl = service.anzahl || 1;
-      const bezeichnung = service.dienstleistung || service.title || '';
-      return [
-        index + 1,
-        bezeichnung,
-        anzahl,
-        preis.toFixed(2),
-        (preis * anzahl).toFixed(2),
-      ];
+
+    const tableRows = dienstleistungen.map((s, i) => {
+      const preis = parseFloat(s.kosten) || parseFloat(s.preisProEinheit) || 0;
+      const anzahl = parseFloat(s.anzahl) || 1;
+      const bezeichnung = s.dienstleistung || s.title || "";
+      return [i + 1, bezeichnung, anzahl, preis.toFixed(2), (preis * anzahl).toFixed(2)];
     });
-  
+
     const netTotal = dienstleistungen.reduce((sum, s) => {
       const preis = parseFloat(s.kosten) || parseFloat(s.preisProEinheit) || 0;
-      const anzahl = s.anzahl || 1;
-      return sum + (preis * anzahl);
+      const anzahl = parseFloat(s.anzahl) || 1;
+      return sum + preis * anzahl;
     }, 0);
-  
+
     const mwstRate = 8.1;
     const taxAmount = (netTotal * mwstRate) / 100;
     const total = netTotal + taxAmount;
-  
+
     const summaryRows = [
-      [{ content: `MwSt (${mwstRate}%)`, colSpan: 4, styles: { halign: 'right', fontStyle: 'bold' } }, { content: `${taxAmount.toFixed(2)} CHF`, styles: { halign: 'right' } }],
-      [{ content: "Gesamtbetrag (inkl. MwSt)", colSpan: 4, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }, { content: `${total.toFixed(2)} CHF`, styles: { halign: 'right', fontStyle: 'bold', fontSize: 12 } }],
+      [
+        { content: `MwSt (${mwstRate}%)`, colSpan: 4, styles: { halign: "right", fontStyle: "bold" } },
+        { content: `${taxAmount.toFixed(2)} CHF`, styles: { halign: "right" } },
+      ],
+      [
+        {
+          content: "Gesamtbetrag (inkl. MwSt)",
+          colSpan: 4,
+          styles: { halign: "right", fontStyle: "bold", fontSize: 12 },
+        },
+        { content: `${total.toFixed(2)} CHF`, styles: { halign: "right", fontStyle: "bold", fontSize: 12 } },
+      ],
     ];
-  
-    // Tabelle mit automatischem Seitenumbruch
+
     doc.autoTable({
-      startY: 125,
+      startY: 90,
       head: [["Pos.", "Bezeichnung", "Anzahl", "Einzelpreis (CHF)", "Total (CHF)"]],
       body: [...tableRows, ...summaryRows],
-      theme: "striped",
-      headStyles: {
-        fillColor: blue,
-        textColor: 255,
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: 10,
-        cellPadding: { top: 4, bottom: 4 },
-        valign: 'middle',
-      },
-      bodyStyles: {
-        textColor: 30,
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245],
-      },
+      theme: "grid",
+      headStyles: { fillColor: primaryColor, textColor: 255, fontStyle: "bold", halign: "center" },
+      bodyStyles: { fontSize: 10, valign: "middle", textColor: darkGray },
+      alternateRowStyles: { fillColor: lightGray },
       columnStyles: {
-        0: { halign: 'center', cellWidth: 14 },
-        1: { cellWidth: 76 },
-        2: { halign: 'center', cellWidth: 20 },
-        3: { halign: 'right', cellWidth: 30 },
-        4: { halign: 'right', cellWidth: 30 },
-      }
+        0: { halign: "center", cellWidth: 14 },
+        1: { cellWidth: 80 },
+        2: { halign: "center", cellWidth: 20 },
+        3: { halign: "right", cellWidth: 30 },
+        4: { halign: "right", cellWidth: 30 },
+      },
     });
-  
-    // Fußbereich nach Tabelle
+
+    // FOOTER
     let y = doc.lastAutoTable.finalY + 20;
-    const pageHeight = doc.internal.pageSize.height;
-  
-    // Prüfen ob Platz für Fußtext ist, sonst neue Seite
-    if (y > pageHeight - 50) {
+    if (y > doc.internal.pageSize.height - 50) {
       doc.addPage();
       y = 20;
     }
-  
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
+    doc.setTextColor(...darkGray);
     doc.text("Bitte begleichen Sie den Gesamtbetrag bis zum Fälligkeitsdatum per QR-Rechnung.", 14, y);
-    y += 8;
+    y += 6;
     doc.text("Scannen Sie den QR-Code in Ihrer Banking-App, um die Zahlung zu tätigen.", 14, y);
-    y += 8;
-    doc.text("Die Rechnung muss innerhalb von 30 Tagen bezahlt werden, sonst erfolgt eine kostenpflichtige Mahnung.", 14, y);
+    y += 6;
+    doc.text("Die Rechnung muss innerhalb von 30 Tagen bezahlt werden, sonst erfolgt eine Mahnung.", 14, y);
+    y += 10;
+    doc.text("Vielen Dank für Ihr Vertrauen!", 14, y);
     y += 15;
-    doc.text("Wir danken Ihnen für Ihr Vertrauen und freuen uns auf die weitere Zusammenarbeit.", 14, y);
-  
-    // Absender
-    y += 20;
     doc.setFont("helvetica", "italic");
     doc.setFontSize(8);
-    doc.text("TBs Solutions", 14, y);
-  
-    doc.save(`${rechnung.rechnungsnummer}_Rechnung.pdf`);
+    doc.text("TBs Solutions – www.tbs-solutions.ch", 14, y);
+
+    doc.save(`${rechnung.rechnungsnummer || "Rechnung"}_Rechnung.pdf`);
   };
-  
-
-
 
   if (loading) return <div className="rechnung-detail__loading">Lade...</div>;
   if (error) return <div className="rechnung-detail__error">{error}</div>;
@@ -195,74 +201,71 @@ const RechnungDetails = () => {
   return (
     <div className="rechnung-detail">
       <h2 className="rechnung-detail__title">Rechnungsdetails</h2>
-      {rechnung && (
+
+      {rechnung && kunde && (
         <>
           <div className="rechnung-detail__info">
             <span className="rechnung-detail__label">Rechnungsnummer:</span>
             <span className="rechnung-detail__value">{rechnung.rechnungsnummer}</span>
           </div>
+
           <p><strong>Status:</strong> {rechnung.status}</p>
-          <p><strong>Gesamtkosten:</strong> {rechnung.totalKostenMitMwst} </p>
+          <p><strong>Gesamtkosten:</strong> {rechnung.totalKostenMitMwst} CHF</p>
           <p><strong>Gesamtarbeitszeit:</strong> {rechnung.gesamtArbeitszeit} Stunden</p>
 
-          <div className="rechnung-detail__status-buttons">
-            {rechnung.status === "Entwurf" && (
-              <button className="status-button" onClick={() => updateStatus("Offen")}>Offen</button>
-            )}
-            {rechnung.status === "Offen" && (
-              <>
-                <button className="status-button" onClick={() => updateStatus("Entwurf")}>Entwurf</button>
-                <button className="status-button" onClick={() => updateStatus("Bezahlt")}>Bezahlt</button>
-                <button className="status-button" onClick={() => updateStatus("1. Mahnstufe")}>1. Mahnstufe</button>
-              </>
-            )}
-            {rechnung.status === "1. Mahnstufe" && (
-              <button className="status-button" onClick={() => updateStatus("2. Mahnstufe")}>2. Mahnstufe</button>
-            )}
+          <div className="rechnung-detail__kunde">
+            <h3>Kunde</h3>
+            <p>{kunde.vorname} {kunde.nachname}</p>
+            <p>{kunde.adresse}</p>
+            <p>{kunde.plz} {kunde.ort}</p>
           </div>
 
-          {rechnung.status !== "Bezahlt" && (
-  <button className="delete-button" onClick={deleteRechnung}>Rechnung löschen</button>
-)}
-          <button className="generate-pdf-button" onClick={() => generatePDF(rechnung)}>Rechnung als PDF generieren</button>
+          <div className="rechnung-detail__status-buttons">
+            {rechnung.status === "Entwurf" && <button className="status-button" onClick={() => updateStatus("Offen")}>Offen</button>}
+            {rechnung.status === "Offen" && <>
+              <button className="status-button" onClick={() => updateStatus("Entwurf")}>Entwurf</button>
+              <button className="status-button" onClick={() => updateStatus("Bezahlt")}>Bezahlt</button>
+              <button className="status-button" onClick={() => updateStatus("1. Mahnstufe")}>1. Mahnstufe</button>
+            </>}
+            {rechnung.status === "1. Mahnstufe" && <button className="status-button" onClick={() => updateStatus("2. Mahnstufe")}>2. Mahnstufe</button>}
+          </div>
+
+          {rechnung.status !== "Bezahlt" && <button className="delete-button" onClick={deleteRechnung}>Rechnung löschen</button>}
+
+          <button className="generate-pdf-button" onClick={() => generatePDF(rechnung, kunde, logoBlack)}>Rechnung als PDF generieren</button>
+
+          <div className="rechnung-detail__tabelle">
+            <h3>Dienstleistungen</h3>
+            <table className="dienstleistung-tabelle">
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Dienstleistung</th>
+                  <th>Anzahl</th>
+                  <th>Einzelpreis (CHF)</th>
+                  <th>Total (CHF)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...(rechnung.dienstleistungen || []), ...(rechnung.benutzerdefinierte_dienstleistungen || [])].map((service, index) => {
+                  const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
+                  const anzahl = service.anzahl || 1;
+                  const total = (preis * anzahl).toFixed(2);
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{service.title}</td>
+                      <td>{anzahl}</td>
+                      <td>{preis.toFixed(2)}</td>
+                      <td>{total}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
-
-      {rechnung && (
-        <div className="rechnung-detail__tabelle">
-          <h3>Dienstleistungen</h3>
-          <table className="dienstleistung-tabelle">
-            <thead>
-              <tr>
-                <th>Pos.</th>
-                <th>Dienstleistung</th>
-                <th>Anzahl</th>
-                <th>Einzelpreis (CHF)</th>
-                <th>Total (CHF)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...(rechnung.dienstleistungen || []), ...(rechnung.benutzerdefinierte_dienstleistungen || [])].map((service, index) => {
-                const preis = parseFloat(service.kosten) || parseFloat(service.preisProEinheit) || 0;
-                const anzahl = service.anzahl || 1;
-                const total = (preis * anzahl).toFixed(2);
-
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{service.title}</td>
-                    <td>{anzahl}</td>
-                    <td>{preis.toFixed(2)}</td>
-                    <td>{total}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-
     </div>
   );
 };
