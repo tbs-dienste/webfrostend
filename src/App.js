@@ -129,6 +129,8 @@ import VertragErstellen from './components/Administrativ/VertragAbo/VertragErste
 import ProtokollForm from './components/Administrativ/Protokolle/ProtokollForm';
 import AnforderungenForm from './components/Administrativ/WebsiteForms/AnforderungenForm';
 import AccountingDashboard from './components/Administrativ/Buchhaltung/AccountingDashboard';
+import GetAllIncome from './components/Administrativ/Buchhaltung/Einnahme/GetAllIncome';
+import CreateIncome from './components/Administrativ/Buchhaltung/Einnahme/CreateIncome';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -224,6 +226,9 @@ const App = () => {
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
               <Route path="/anforderungen-form" element={<AnforderungenForm />} />
               <Route path="/buchhaltung" element={<AccountingDashboard />} />
+              <Route path="/buchhaltung/einnahmen" element={<GetAllIncome />} />
+              <Route path="/buchhaltung/einnahmen/create" element={<CreateIncome />} />
+
 
               <Route path="/statistiken" element={<Statistik />} />
               <Route path="/calendar" element={<WeekCalendar />} />
