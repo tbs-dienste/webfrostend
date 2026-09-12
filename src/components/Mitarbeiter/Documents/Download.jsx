@@ -23,6 +23,7 @@ import NotizpapierVorlage from "./Notizpapier.docx";
 import LogoDark from "./Logo_black.png";
 import LogoLight from "./Logo_white.png";
 
+
 import "./Download.scss";
 
 function Download() {

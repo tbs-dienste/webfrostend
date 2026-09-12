@@ -1,194 +1,1040 @@
-/* =====================================================
-   VARIABLES
-===================================================== */
-$primary: #4f46e5;
-$primary-dark: #4338ca;
-$bg-main: #0f172a;
-$bg-soft: #f8fafc;
-$text-main: #0f172a;
-$text-muted: #64748b;
-$danger: #ef4444;
+/* =========================================================
+   TBS SOLUTIONS
+   PREMIUM SERVICES PAGE
+========================================================= */
 
-$radius-lg: 20px;
-$radius-md: 12px;
+$blue: #2563eb;
+$blue-dark: #1d4ed8;
 
-$shadow-card: 0 25px 50px rgba(15, 23, 42, 0.15);
+$navy: #071426;
+$navy-soft: #0c1d33;
 
-/* =====================================================
+$white: #ffffff;
+$surface: #f7f8fa;
+
+$text: #101828;
+$text-soft: #475467;
+$text-muted: #98a2b3;
+
+$line: #e4e7ec;
+
+
+/* =========================================================
    PAGE
-===================================================== */
-.services-page {
-  font-family: "Inter", system-ui, sans-serif;
-  background: $bg-soft;
+========================================================= */
+
+.offer-page {
+  width: 100%;
+
   min-height: 100vh;
+
+  overflow: hidden;
+
+  background: $white;
+
+  color: $text;
+
+  font-family:
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
-/* =====================================================
-   HERO
-===================================================== */
-.services-hero {
-  background: linear-gradient(135deg, $bg-main, #020617);
-  padding: 120px 24px 100px;
-  color: white;
-  text-align: center;
+
+/* =========================================================
+   INTRODUCTION
+========================================================= */
+
+.offer-introduction {
+  position: relative;
+
+  min-height: 650px;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      125deg,
+      #061323 0%,
+      #0a1b30 55%,
+      #0e2746 100%
+    );
+
+  color: $white;
 }
 
-.hero-content {
-  max-width: 900px;
-  margin: 0 auto;
+
+/* =========================================================
+   INTRO BACKGROUND
+========================================================= */
+
+.offer-introduction::before {
+  content: "";
+
+  position: absolute;
+
+  width: 800px;
+  height: 800px;
+
+  right: -370px;
+  top: -300px;
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 100px rgba(255, 255, 255, 0.018),
+    0 0 0 200px rgba(255, 255, 255, 0.012),
+    0 0 0 300px rgba(255, 255, 255, 0.008);
+
+  pointer-events: none;
 }
 
-.hero-content h1 {
-  font-size: clamp(38px, 5vw, 56px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+
+.offer-introduction::after {
+  content: "";
+
+  position: absolute;
+
+  width: 400px;
+  height: 400px;
+
+  left: -250px;
+  bottom: -280px;
+
+  border-radius: 50%;
+
+  background: rgba(37, 99, 235, 0.13);
+
+  filter: blur(90px);
+
+  pointer-events: none;
 }
 
-.hero-content p {
-  margin-top: 18px;
-  font-size: 18px;
-  color: #cbd5f5;
+
+/* =========================================================
+   INTRO INNER
+========================================================= */
+
+.offer-introduction-inner {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+
+  padding:
+    7rem
+    8vw;
 }
 
-.hero-action {
-  margin-top: 36px;
+
+/* =========================================================
+   INTRO LABEL
+========================================================= */
+
+.offer-introduction-label {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  color: #8db9f5;
+
+  font-size: 0.67rem;
+
+  font-weight: 750;
+
+  letter-spacing: 3px;
+}
+
+
+.offer-introduction-label span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #60a5fa;
+
+  box-shadow:
+    0 0 0 5px rgba(96, 165, 250, 0.1);
+}
+
+
+/* =========================================================
+   INTRO LAYOUT
+========================================================= */
+
+.offer-introduction-layout {
+  display: grid;
+
+  grid-template-columns: 1.1fr 0.9fr;
+
+  gap: 8rem;
+
+  align-items: end;
+
+  margin-top: 3.5rem;
+}
+
+
+/* =========================================================
+   INTRO TITLE
+========================================================= */
+
+.offer-index {
+  display: block;
+
+  margin-bottom: 1.5rem;
+
+  color: rgba(255, 255, 255, 0.35);
+
+  font-size: 0.62rem;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+
+.offer-introduction-title h1 {
+  margin: 0;
+
+  font-size:
+    clamp(
+      3.5rem,
+      6vw,
+      6.5rem
+    );
+
+  line-height: 0.91;
+
+  letter-spacing: -4px;
+
+  font-weight: 720;
+}
+
+
+.offer-introduction-title h1 strong {
+  color: #8db9f5;
+
+  font-weight: 720;
+}
+
+
+/* =========================================================
+   INTRO COPY
+========================================================= */
+
+.offer-introduction-copy {
+  padding-bottom: 0.4rem;
+}
+
+
+.offer-introduction-copy p {
+  max-width: 510px;
+
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.58);
+
+  font-size: 1rem;
+
+  line-height: 1.85;
+}
+
+
+/* =========================================================
+   CREATE BUTTON
+========================================================= */
+
+.offer-create {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 26px;
-  background: linear-gradient(135deg, $primary, $primary-dark);
-  color: white;
-  font-weight: 600;
-  border-radius: $radius-md;
+
+  gap: 0.7rem;
+
+  margin-top: 2rem;
+
+  padding: 0.9rem 1.25rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  color: $white;
+
   text-decoration: none;
-  box-shadow: 0 20px 40px rgba(79, 70, 229, 0.45);
-  transition: transform 0.25s ease;
 
-  &:hover {
-    transform: translateY(-3px);
-  }
+  font-size: 0.75rem;
+
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* =====================================================
-   GRID
-===================================================== */
-.services-grid {
-  max-width: 1400px;
-  margin: -80px auto 100px;
-  padding: 0 24px;
+
+.offer-create:hover {
+  background: rgba(255, 255, 255, 0.07);
+
+  transform: translateY(-2px);
+}
+
+
+.offer-create svg {
+  color: #60a5fa;
+
+  font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   CATALOG
+========================================================= */
+
+.offer-catalog {
+  padding:
+    9rem
+    8vw;
+
+  background: $white;
+}
+
+
+/* =========================================================
+   CATALOG HEADER
+========================================================= */
+
+.offer-catalog-header {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-  gap: 40px;
+
+  grid-template-columns: 1fr 0.65fr;
+
+  gap: 7rem;
+
+  align-items: end;
+
+  margin-bottom: 5rem;
 }
 
-/* =====================================================
-   CARD
-===================================================== */
-.service-item {
-  background: white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-card;
-  transition: transform 0.35s ease;
-  display: flex;
-  flex-direction: column;
 
-  &:hover {
-    transform: translateY(-10px);
-  }
+.offer-catalog-header > div > span {
+  color: $text-muted;
+
+  font-size: 0.65rem;
+
+  font-weight: 750;
+
+  letter-spacing: 2.5px;
 }
 
-/* =====================================================
+
+.offer-catalog-header h2 {
+  margin: 1rem 0 0;
+
+  font-size:
+    clamp(
+      2.8rem,
+      4.5vw,
+      5rem
+    );
+
+  line-height: 0.98;
+
+  letter-spacing: -2.8px;
+
+  font-weight: 720;
+}
+
+
+.offer-catalog-header h2 em {
+  color: $blue;
+
+  font-style: normal;
+}
+
+
+.offer-catalog-header > p {
+  margin: 0;
+
+  color: $text-soft;
+
+  font-size: 0.95rem;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   COLLECTION
+========================================================= */
+
+.offer-collection {
+  border-top: 1px solid $line;
+}
+
+
+/* =========================================================
+   SERVICE ENTRY
+========================================================= */
+
+.offer-entry {
+  display: grid;
+
+  grid-template-columns:
+    70px
+    340px
+    1fr;
+
+  gap: 3rem;
+
+  padding:
+    3rem
+    0;
+
+  border-bottom: 1px solid $line;
+
+  transition:
+    background 0.25s ease,
+    padding 0.25s ease;
+}
+
+
+.offer-entry:hover {
+  padding-left: 1rem;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #f8fafc
+  );
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.offer-entry-number {
+  padding-top: 0.25rem;
+
+  color: $blue;
+
+  font-size: 0.68rem;
+
+  font-weight: 750;
+
+  letter-spacing: 1px;
+}
+
+
+/* =========================================================
    IMAGE
-===================================================== */
-.service-media {
-  height: 210px;
-  background: #e2e8f0;
+========================================================= */
+
+.offer-entry-image {
+  height: 230px;
+
   overflow: hidden;
+
+  background: #eef2f6;
 }
 
-.service-media img {
+
+.offer-entry-image img {
   width: 100%;
   height: 100%;
+
+  display: block;
+
   object-fit: cover;
+
+  transition:
+    transform 0.5s ease;
 }
 
-.media-placeholder {
+
+.offer-entry:hover .offer-entry-image img {
+  transform: scale(1.025);
+}
+
+
+/* =========================================================
+   EMPTY IMAGE
+========================================================= */
+
+.offer-image-empty {
+  width: 100%;
   height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: $text-muted;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf2f7,
+      #e2e8f0
+    );
 }
 
-/* =====================================================
+
+.offer-image-empty span {
+  color: #c0c8d2;
+
+  font-size: 2rem;
+
+  font-weight: 800;
+
+  letter-spacing: 3px;
+}
+
+
+/* =========================================================
    CONTENT
-===================================================== */
-.service-body {
-  padding: 26px;
+========================================================= */
+
+.offer-entry-content {
+  min-height: 230px;
+
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-}
 
-.service-body h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: $text-main;
-  margin-bottom: 14px;
-}
-
-.service-body p {
-  color: $text-muted;
-  line-height: 1.7;
-  font-size: 15px;
-  flex-grow: 1;
-}
-
-/* =====================================================
-   FOOTER
-===================================================== */
-.service-footer {
-  margin-top: 24px;
-  display: flex;
   justify-content: space-between;
-  align-items: center;
+
+  padding:
+    0.1rem
+    0
+    0.2rem;
 }
 
-.details-link {
-  color: $primary;
-  font-weight: 600;
+
+.offer-entry-category {
+  color: $text-muted;
+
+  font-size: 0.6rem;
+
+  font-weight: 750;
+
+  letter-spacing: 2px;
+}
+
+
+.offer-entry-content h3 {
+  margin: 0.7rem 0 0;
+
+  color: $text;
+
+  font-size: clamp(1.6rem, 2.5vw, 2.35rem);
+
+  line-height: 1.05;
+
+  letter-spacing: -1px;
+
+  font-weight: 720;
+}
+
+
+.offer-entry-content p {
+  max-width: 680px;
+
+  margin: 1rem 0 0;
+
+  color: $text-soft;
+
+  font-size: 0.88rem;
+
+  line-height: 1.8;
+}
+
+
+/* =========================================================
+   ENTRY BOTTOM
+========================================================= */
+
+.offer-entry-bottom {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 2rem;
+}
+
+
+/* =========================================================
+   DETAILS LINK
+========================================================= */
+
+.offer-details {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  color: $text;
+
   text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
-  }
+  font-size: 0.78rem;
+
+  font-weight: 750;
 }
 
-.admin-delete {
-  background: rgba(239, 68, 68, 0.1);
-  color: $danger;
-  border: none;
-  padding: 10px 12px;
-  border-radius: 10px;
+
+.offer-details strong {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 31px;
+  height: 31px;
+
+  border: 1px solid #d0d5dd;
+
+  color: $blue;
+
+  font-size: 0.95rem;
+
+  font-weight: 500;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.offer-details:hover strong {
+  background: $blue;
+
+  color: $white;
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+.offer-remove {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #fecaca;
+
+  background: #fffafa;
+
+  color: #dc2626;
+
   cursor: pointer;
-  transition: all 0.2s ease;
 
-  &:hover {
-    background: $danger;
-    color: white;
+  font-size: 0.75rem;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.offer-remove:hover {
+  background: #dc2626;
+
+  color: $white;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.offer-empty {
+  padding:
+    5rem
+    0;
+
+  border-top: 1px solid $line;
+
+  border-bottom: 1px solid $line;
+}
+
+
+.offer-empty > span {
+  color: $blue;
+
+  font-size: 0.65rem;
+
+  font-weight: 750;
+
+  letter-spacing: 1px;
+}
+
+
+.offer-empty h3 {
+  margin: 1rem 0 0;
+
+  font-size: 1.8rem;
+
+  letter-spacing: -0.7px;
+}
+
+
+.offer-empty p {
+  margin: 0.7rem 0 0;
+
+  color: $text-muted;
+
+  font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   STATEMENT
+========================================================= */
+
+.offer-statement {
+  position: relative;
+
+  min-height: 620px;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #061323,
+      #0d2948
+    );
+
+  color: $white;
+}
+
+
+.offer-statement::before {
+  content: "";
+
+  position: absolute;
+
+  width: 720px;
+  height: 720px;
+
+  right: -300px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 100px rgba(255, 255, 255, 0.014),
+    0 0 0 200px rgba(255, 255, 255, 0.01);
+}
+
+
+.offer-statement-inner {
+  position: relative;
+
+  z-index: 2;
+
+  padding:
+    7rem
+    8vw;
+}
+
+
+.offer-statement-inner > span {
+  color: #7ea8d8;
+
+  font-size: 0.65rem;
+
+  font-weight: 750;
+
+  letter-spacing: 2.5px;
+}
+
+
+.offer-statement h2 {
+  margin: 1.5rem 0 0;
+
+  font-size:
+    clamp(
+      3rem,
+      5.5vw,
+      6rem
+    );
+
+  line-height: 0.95;
+
+  letter-spacing: -3.5px;
+
+  font-weight: 720;
+}
+
+
+.offer-statement h2 em {
+  color: #8db9f5;
+
+  font-style: normal;
+}
+
+
+.offer-contact {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-top: 2.8rem;
+
+  padding: 1rem 1.35rem;
+
+  background: $white;
+
+  color: #101828;
+
+  text-decoration: none;
+
+  border-radius: 7px;
+
+  font-size: 0.78rem;
+
+  font-weight: 750;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.offer-contact:hover {
+  transform: translateY(-2px);
+
+  background: #eff6ff;
+}
+
+
+.offer-contact strong {
+  color: $blue;
+
+  font-size: 1rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .offer-introduction-layout {
+    gap: 4rem;
+  }
+
+
+  .offer-entry {
+    grid-template-columns:
+      50px
+      280px
+      1fr;
+
+    gap: 2rem;
+  }
+
+
+  .offer-catalog-header {
+    gap: 4rem;
   }
 }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-@media (max-width: 768px) {
-  .services-hero {
-    padding: 90px 20px 80px;
+
+@media (max-width: 850px) {
+
+  .offer-introduction {
+    min-height: auto;
   }
 
-  .services-grid {
-    margin-top: -60px;
+
+  .offer-introduction-inner {
+    padding:
+      6rem
+      1.5rem;
+  }
+
+
+  .offer-introduction-layout {
+    grid-template-columns: 1fr;
+
+    gap: 3rem;
+
+    margin-top: 3rem;
+  }
+
+
+  .offer-introduction-title h1 {
+    font-size: 4rem;
+
+    letter-spacing: -2.5px;
+  }
+
+
+  .offer-catalog {
+    padding:
+      6rem
+      1.5rem;
+  }
+
+
+  .offer-catalog-header {
+    grid-template-columns: 1fr;
+
+    gap: 1.5rem;
+
+    margin-bottom: 3.5rem;
+  }
+
+
+  .offer-entry {
+    grid-template-columns: 45px 1fr;
+
+    gap: 1.5rem;
+
+    padding:
+      2.5rem
+      0;
+  }
+
+
+  .offer-entry-image {
+    grid-column: 2;
+
+    height: 260px;
+  }
+
+
+  .offer-entry-content {
+    grid-column: 2;
+
+    min-height: auto;
+  }
+
+
+  .offer-entry-number {
+    grid-column: 1;
+
+    grid-row: 1 / span 2;
+  }
+
+
+  .offer-statement-inner {
+    padding:
+      6rem
+      1.5rem;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .offer-introduction-title h1 {
+    font-size: 3.2rem;
+
+    letter-spacing: -2px;
+  }
+
+
+  .offer-catalog-header h2 {
+    font-size: 2.8rem;
+
+    letter-spacing: -1.5px;
+  }
+
+
+  .offer-entry {
+    display: block;
+
+    padding:
+      2.5rem
+      0;
+  }
+
+
+  .offer-entry-number {
+    margin-bottom: 1rem;
+  }
+
+
+  .offer-entry-image {
+    width: 100%;
+
+    height: 220px;
+
+    margin-bottom: 1.7rem;
+  }
+
+
+  .offer-entry-content {
+    min-height: auto;
+  }
+
+
+  .offer-entry-content h3 {
+    font-size: 1.7rem;
+  }
+
+
+  .offer-entry-bottom {
+    margin-top: 1.8rem;
+  }
+
+
+  .offer-statement {
+    min-height: 520px;
+  }
+
+
+  .offer-statement h2 {
+    font-size: 3rem;
+
+    letter-spacing: -1.8px;
+  }
+}
+
+
+@media (max-width: 400px) {
+
+  .offer-introduction-title h1 {
+    font-size: 2.7rem;
+  }
+
+
+  .offer-catalog-header h2 {
+    font-size: 2.4rem;
+  }
+
+
+  .offer-entry-image {
+    height: 190px;
+  }
+
+
+  .offer-statement h2 {
+    font-size: 2.5rem;
   }
 }
