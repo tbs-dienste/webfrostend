@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Content/Footer';
@@ -131,10 +131,11 @@ import AnforderungenForm from './components/Administrativ/WebsiteForms/Anforderu
 import AccountingDashboard from './components/Administrativ/Buchhaltung/AccountingDashboard';
 import GetAllIncome from './components/Administrativ/Buchhaltung/Einnahme/GetAllIncome';
 import CreateIncome from './components/Administrativ/Buchhaltung/Einnahme/CreateIncome';
+import CookieConsent from './components/Cookies/CookieConsent';
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [timer, setTimer] = useState(null); 
+  const [timer, setTimer] = useState(null);
   const [isKassenModus, setIsKassenModus] = useState(false);
 
   const toggleKassenModus = (status) => setIsKassenModus(status);
@@ -184,7 +185,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-  <Navbar />
+        <Navbar />
         <Routes>
           {isKassenSubdomain ? (
             <>
@@ -201,27 +202,27 @@ const App = () => {
               {/* Hauptdomain Routen */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-{/* Inventur anlegen */}
-<Route path="/inventur/create" element={<InventurErstellen />} />
+              {/* Inventur anlegen */}
+              <Route path="/inventur/create" element={<InventurErstellen />} />
 
-{/* Inventur Start manuell */}
-<Route path="/inventur/start" element={<InventurStartForm />} />
+              {/* Inventur Start manuell */}
+              <Route path="/inventur/start" element={<InventurStartForm />} />
 
-{/* Scannen */}
-<Route
-  path="/inventur/:inventurnummer/:lagerregalplatznr/scan"
-  element={<InventurScan />}
-/>
+              {/* Scannen */}
+              <Route
+                path="/inventur/:inventurnummer/:lagerregalplatznr/scan"
+                element={<InventurScan />}
+              />
 
-{/* Differenzen */}
-<Route
-  path="/inventur/:inventurnummer/differenzen"
-  element={<InventurDifferenzen />}
-/>{/* Differenzen */}
-<Route
-  path="/inventur"
-  element={<InventurAnzeigen />}
-/>
+              {/* Differenzen */}
+              <Route
+                path="/inventur/:inventurnummer/differenzen"
+                element={<InventurDifferenzen />}
+              />{/* Differenzen */}
+              <Route
+                path="/inventur"
+                element={<InventurAnzeigen />}
+              />
 
               <Route path="/antragdetail/:wunschId" element={<AntragDetail />} />
               <Route path="/anforderungen-form" element={<AnforderungenForm />} />
@@ -322,11 +323,11 @@ const App = () => {
               <Route path="/lieferschein-create" element={<LieferscheinCreate />} />
               <Route path="/lieferscheine" element={<Lieferscheine />} />
               <Route
-            path="/lieferschein/:lieferschein_nr"
-            element={
-                <LieferscheinDetail />
-            }
-          />
+                path="/lieferschein/:lieferschein_nr"
+                element={
+                  <LieferscheinDetail />
+                }
+              />
               <Route path="/profile" element={<Profile />} />
               <Route path="/rechnungen/:id" element={<RechnungDetails />} />
               <Route path="/zeiterfassung/:id" element={<TimeTracker />} />
@@ -352,10 +353,10 @@ const App = () => {
             </>
           )}
         </Routes>
-  
-        {!isKassenSubdomain && !isKassenModus && <Footer /> }
+        <CookieConsent />
+        {!isKassenSubdomain && !isKassenModus && <Footer />}
       </Router>
     </div>
   );
-          };  
+};
 export default App;
