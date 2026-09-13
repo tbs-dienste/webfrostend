@@ -1,228 +1,510 @@
-/* ArbeitszeitDetails.scss – Light Version */
-/* Professionelles Layout ohne Hover-Effekte und ohne max-width */
+// ======================================================
+// TBS SOLUTIONS
+// ARBEITSZEIT DETAILS
+// PREMIUM BUSINESS DESIGN
+// ======================================================
 
-/* ===== Farb- & Typo-Setup ===== */
-$bg: #f9f9fc;
-$bg-elev: #ffffff;
-$card: #ffffff;
-$border: rgba(0, 0, 0, 0.08);
-$accent: #4f8dff;
-$accent-light: #6ea8fe;
-$text: #2b2b2b;
-$text-dim: #666e7a;
-$danger: #e63946;
-$shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+$navy: #0f172a;
+$navy-soft: #172235;
 
-$radius-xl: 20px;
-$radius-lg: 16px;
-$radius-md: 12px;
+$blue: #2563eb;
+$blue-light: #eff6ff;
 
-$gap-xxl: 28px;
-$gap-xl: 22px;
-$gap-lg: 18px;
-$gap-md: 14px;
-$gap-sm: 10px;
+$white: #ffffff;
+$background: #f8fafc;
 
-$pad-xxl: 36px;
-$pad-xl: 26px;
-$pad-lg: 20px;
-$pad-md: 14px;
-$pad-sm: 10px;
+$text: #0f172a;
+$text-soft: #475569;
+$text-muted: #64748b;
 
-$font-title: clamp(26px, 2.4vw, 36px);
-$font-h2: clamp(18px, 1.6vw, 22px);
-$font-body: clamp(14px, 1.2vw, 16px);
+$border: #dfe5ec;
+$border-light: #e9edf2;
 
-/* ===== Root Container ===== */
+$danger: #b91c1c;
+$danger-light: #fef2f2;
+
+$success: #15803d;
+
+
+// ======================================================
+// CONTAINER
+// ======================================================
+
 .arbeitszeit-container {
   width: 100%;
   min-height: 100vh;
-  padding: $pad-xxl;
-  background: linear-gradient(180deg, $bg 0%, lighten($bg, 2%) 100%);
+
+  padding: 0 6vw 80px;
+
+  background: $background;
+
   color: $text;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   display: flex;
   flex-direction: column;
-  gap: $gap-xxl;
+  gap: 38px;
 
-  /* Headline */
-  h1 {
-    display: inline-flex;
+  // ====================================================
+  // HAUPTTITEL
+  // ====================================================
+
+  > h1 {
+    width: calc(100% + 12vw);
+
+    margin: 0 -6vw;
+    padding: 70px 6vw 62px;
+
+    display: flex;
     align-items: center;
-    gap: $gap-md;
-    font-size: $font-title;
+    gap: 18px;
+
+    background: $navy;
+
+    color: $white;
+
+    font-size: clamp(32px, 4vw, 52px);
     font-weight: 700;
-    letter-spacing: 0.3px;
-    padding: $pad-md $pad-lg;
-    border-radius: $radius-lg;
-    background: $bg-elev;
-    border: 1px solid $border;
-    box-shadow: $shadow;
+
+    line-height: 1.05;
+    letter-spacing: -0.025em;
 
     svg {
-      font-size: 1.2em;
-      color: $accent;
-      flex: 0 0 auto;
+      color: #60a5fa;
+      font-size: 0.8em;
+      flex-shrink: 0;
     }
   }
 }
 
-/* ===== Dienstleistung Section ===== */
+
+// ======================================================
+// DIENSTLEISTUNG
+// ======================================================
+
 .dienstleistung-section {
-  background: $bg-elev;
-  border: 1px solid $border;
-  border-radius: $radius-xl;
-  box-shadow: $shadow;
-  padding: $pad-xl;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
-  gap: $gap-xl;
+
+  border-top: 1px solid $border;
+  border-bottom: 1px solid $border;
+
+  background: $white;
+
+  // ====================================================
+  // HEADER
+  // ====================================================
 
   .dienstleistung-header {
+    width: 100%;
+
+    padding: 28px 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $gap-lg;
-    padding-bottom: $pad-sm;
+
+    gap: 30px;
+
     border-bottom: 1px solid $border;
 
     h2 {
       margin: 0;
-      display: inline-flex;
+
+      display: flex;
       align-items: center;
-      gap: $gap-sm;
-      font-size: $font-h2;
-      font-weight: 600;
+
+      gap: 13px;
+
       color: $text;
 
-      svg {
-        color: $accent;
-        font-size: 1.1em;
-      }
-    }
+      font-size: clamp(20px, 2vw, 27px);
+      font-weight: 700;
 
-    .details-button {
-      display: inline-flex;
-      align-items: center;
-      gap: $gap-sm;
-      padding: $pad-sm $pad-lg;
-      border-radius: $radius-md;
-      border: 1px solid transparent;
-      background: linear-gradient(180deg, $accent-light 0%, $accent 100%);
-      color: white;
-      font-weight: 600;
-      font-size: $font-body;
-      cursor: pointer;
-      box-shadow: 0 6px 18px rgba(79, 141, 255, 0.25);
-
-      /* Keine Hover-Effekte – nur Fokus & Disabled */
-      &:focus-visible {
-        outline: 3px solid rgba($accent, 0.45);
-        outline-offset: 2px;
-      }
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
+      line-height: 1.3;
 
       svg {
-        font-size: 1.05em;
-      }
-    }
-  }
-
-  /* Arbeitszeit Grid */
-  .arbeitszeit-box {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: $gap-lg;
-
-    .mitarbeiter-box {
-      background: $card;
-      border: 1px solid $border;
-      border-radius: $radius-lg;
-      box-shadow: $shadow;
-      padding: $pad-lg;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: $gap-lg;
-
-      .mitarbeiter-info {
-        display: grid;
-        gap: $gap-sm;
-        p {
-          margin: 0;
-          color: $text-dim;
-          font-size: $font-body;
-          line-height: 1.35;
-
-          strong {
-            color: $text;
-            font-weight: 700;
-          }
-        }
-      }
-
-      .delete-button {
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        border: 1px solid rgba($danger, 0.3);
-        background: linear-gradient(180deg, rgba($danger, 0.12), rgba($danger, 0.06));
-        color: $danger;
-        cursor: pointer;
-        box-shadow: 0 6px 18px rgba(230, 57, 70, 0.25);
-
-        &:focus-visible {
-          outline: 3px solid rgba($danger, 0.4);
-          outline-offset: 2px;
-        }
-        &:disabled {
-          opacity: 0.55;
-          cursor: not-allowed;
-          box-shadow: none;
-        }
-
-        svg {
-          font-size: 1.05rem;
-        }
+        color: $blue;
+        font-size: 0.9em;
+        flex-shrink: 0;
       }
     }
   }
 }
 
-/* ===== Platzhaltertexte ===== */
+
+// ======================================================
+// NEUE ZEIT ERFASSEN
+// ======================================================
+
+.details-button {
+  flex-shrink: 0;
+
+  min-height: 46px;
+
+  padding: 0 22px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  background: $blue;
+
+  border: 1px solid $blue;
+  border-radius: 3px;
+
+  color: $white;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  svg {
+    font-size: 13px;
+  }
+}
+
+
+// ======================================================
+// ARBEITSZEIT-BEREICH
+// ======================================================
+
+.arbeitszeit-box {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 0;
+
+  background: $white;
+}
+
+
+// ======================================================
+// MITARBEITER
+// ======================================================
+
+.mitarbeiter-box {
+  min-width: 0;
+
+  padding: 28px 25px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  border-bottom: 1px solid $border-light;
+
+  &:nth-child(odd) {
+    border-right: 1px solid $border-light;
+  }
+
+  // ====================================================
+  // INFORMATIONEN
+  // ====================================================
+
+  .mitarbeiter-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+
+    p {
+      margin: 0;
+
+      color: $text-muted;
+
+      font-size: 14px;
+
+      line-height: 1.55;
+
+      strong {
+        display: block;
+
+        color: $text;
+
+        font-size: 16px;
+        font-weight: 700;
+
+        line-height: 1.4;
+      }
+    }
+
+    // Mitarbeiter
+    p:first-child {
+      padding-bottom: 5px;
+    }
+
+    // Zeitangabe
+    p:nth-child(2) {
+      color: $text-soft;
+    }
+
+    // Stunden
+    p:nth-child(3) {
+      display: inline-flex;
+      align-items: center;
+
+      width: fit-content;
+
+      padding: 5px 10px;
+
+      background: $blue-light;
+
+      border-left: 3px solid $blue;
+
+      color: $blue;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+}
+
+
+// ======================================================
+// LÖSCHEN BUTTON
+// ======================================================
+
+.delete-button {
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: $white;
+
+  border: 1px solid #fecaca;
+  border-radius: 3px;
+
+  color: $danger;
+
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 3px solid rgba(185, 28, 28, 0.2);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    font-size: 14px;
+  }
+}
+
+
+// ======================================================
+// KEINE DATEN
+// ======================================================
+
 .no-data {
   width: 100%;
-  padding: $pad-lg;
-  border-radius: $radius-md;
-  background: $bg;
+
+  margin: 0;
+
+  padding: 30px 20px;
+
+  background: $background;
+
   border: 1px dashed $border;
-  color: $text-dim;
-  font-size: $font-body;
+
+  color: $text-muted;
+
+  font-size: 14px;
+  line-height: 1.6;
+
   text-align: center;
 }
 
-/* ===== Responsives Spacing ===== */
-@media (max-width: 1200px) {
-  .arbeitszeit-container { padding: $pad-xl; }
-  .dienstleistung-section { padding: $pad-lg; }
-}
-@media (max-width: 720px) {
-  .arbeitszeit-container { padding: $pad-lg; }
-  .dienstleistung-section { padding: $pad-md; }
-  .dienstleistung-section .dienstleistung-header {
-    flex-direction: column;
-    align-items: stretch;
 
-    .details-button {
-      width: 100%;
-      justify-content: center;
+// ======================================================
+// TABLET
+// ======================================================
+
+@media (max-width: 900px) {
+  .arbeitszeit-container {
+    padding: 0 5vw 60px;
+
+    > h1 {
+      width: calc(100% + 10vw);
+
+      margin-left: -5vw;
+      margin-right: -5vw;
+
+      padding: 58px 5vw 52px;
+
+      font-size: 40px;
     }
+  }
+
+  .dienstleistung-section {
+    .dienstleistung-header {
+      align-items: flex-start;
+
+      h2 {
+        font-size: 22px;
+      }
+    }
+  }
+
+  .arbeitszeit-box {
+    grid-template-columns: 1fr;
+  }
+
+  .mitarbeiter-box {
+    &:nth-child(odd) {
+      border-right: 0;
+    }
+  }
+}
+
+
+// ======================================================
+// MOBILE
+// ======================================================
+
+@media (max-width: 600px) {
+  .arbeitszeit-container {
+    gap: 28px;
+
+    padding: 0 20px 50px;
+
+    > h1 {
+      width: calc(100% + 40px);
+
+      margin-left: -20px;
+      margin-right: -20px;
+
+      padding: 48px 20px 42px;
+
+      gap: 13px;
+
+      font-size: 34px;
+    }
+  }
+
+  .dienstleistung-section {
+    .dienstleistung-header {
+      flex-direction: column;
+      align-items: stretch;
+
+      gap: 20px;
+
+      padding: 23px 0;
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .details-button {
+    width: 100%;
+  }
+
+  .mitarbeiter-box {
+    padding: 23px 0;
+
+    gap: 15px;
+
+    .mitarbeiter-info {
+      p {
+        font-size: 13px;
+
+        strong {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  .delete-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .no-data {
+    padding: 24px 15px;
+  }
+}
+
+
+// ======================================================
+// SEHR KLEINE GERÄTE
+// ======================================================
+
+@media (max-width: 400px) {
+  .arbeitszeit-container {
+    padding-left: 16px;
+    padding-right: 16px;
+
+    > h1 {
+      width: calc(100% + 32px);
+
+      margin-left: -16px;
+      margin-right: -16px;
+
+      padding-left: 16px;
+      padding-right: 16px;
+
+      font-size: 30px;
+    }
+  }
+
+  .mitarbeiter-box {
+    gap: 10px;
+
+    .mitarbeiter-info {
+      p {
+        font-size: 12px;
+
+        strong {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .delete-button {
+    width: 36px;
+    height: 36px;
   }
 }
