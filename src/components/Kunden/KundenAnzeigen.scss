@@ -1,256 +1,1268 @@
+// ============================================================
+// KUNDEN ANZEIGEN
+// PREMIUM TBS DESIGN
+// ============================================================
+
+$navy: #0f172a;
+$navy-light: #172033;
+
+$blue: #2563eb;
+$blue-dark: #1d4ed8;
+
+$green: #15803d;
+$orange: #c2410c;
+$red: #b91c1c;
+
+$gold: #c8a96a;
+
+$background: #f7f8fa;
+$white: #ffffff;
+
+$text: #111827;
+$text-secondary: #475569;
+$text-muted: #64748b;
+
+$border: #dfe5ec;
+$border-light: #e9edf2;
+
+$radius: 4px;
+
+
+// ============================================================
+// BASIS
+// ============================================================
+
 .kunden-anzeigen-container {
-  width: 100%;
-  min-height: 100vh;
-  padding: 3rem;
-  background: linear-gradient(135deg, #eef2f7, #f8faff);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Inter", sans-serif;
+    width: 100%;
+    min-height: 100vh;
 
-  h2 {
-    font-size: 2.6rem;
-    font-weight: 700;
-    color: #1d2d50;
-    margin-bottom: 2.5rem;
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
+    padding: 0 0 100px;
+
+    background: $background;
+
+    color: $text;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 }
 
-/* CARD DESIGN */
+
+// ============================================================
+// HAUPT-CARD / CONTENT
+// ============================================================
+
 .customer-card {
-  width: 100%;
-  max-width: 1050px;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px);
-  padding: 2.5rem;
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  margin-bottom: 3rem;
-  animation: fadeIn 0.4s ease;
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0 5vw 100px;
+
+    background: $background;
+
+    animation: kundenFadeIn 0.45s ease;
 }
+
+
+// ============================================================
+// HEADER
+// ============================================================
+
+.header-row {
+    position: relative;
+
+    width: calc(100% + 10vw);
+
+    margin-left: -5vw;
+
+    min-height: 350px;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 40px;
+
+    padding: 90px 5vw 70px;
+
+    background: $navy;
+
+    color: $white;
+
+    overflow: hidden;
+}
+
+
+// Dekoratives Element
+
+.header-row::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    top: -250px;
+    right: 5vw;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+.header-row::after {
+    content: "";
+
+    position: absolute;
+
+    left: 5vw;
+    right: 5vw;
+    bottom: 32px;
+
+    height: 1px;
+
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+// ============================================================
+// KUNDENNAME
+// ============================================================
+
+.header-row h2 {
+    position: relative;
+
+    z-index: 2;
+
+    margin: 0;
+
+    color: $white;
+
+    font-size: clamp(40px, 5vw, 70px);
+
+    line-height: 1;
+
+    font-weight: 700;
+
+    letter-spacing: -0.045em;
+
+    text-align: left;
+}
+
+
+.header-row h2::before {
+    content: "KUNDENPROFIL";
+
+    display: block;
+
+    margin-bottom: 20px;
+
+    color: $gold;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.2em;
+}
+
+
+// ============================================================
+// HEADER BUTTONS
+// ============================================================
+
+.header-buttons {
+    position: relative;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+
+// ============================================================
+// ALLGEMEINE BUTTONS
+// ============================================================
+
+.btn {
+    min-height: 48px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 0 20px;
+
+    border: 1px solid transparent;
+
+    border-radius: $radius;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+
+.btn svg {
+    font-size: 13px;
+}
+
+
+// ============================================================
+// PDF
+// ============================================================
+
+.btn-pdf {
+    background: $red;
+
+    border-color: $red;
+
+    color: $white;
+}
+
+
+// ============================================================
+// EDIT
+// ============================================================
+
+.btn-edit {
+    background: $blue;
+
+    border-color: $blue;
+
+    color: $white;
+}
+
+
+// ============================================================
+// SAVE
+// ============================================================
+
+.btn-save {
+    background: $green;
+
+    border-color: $green;
+
+    color: $white;
+}
+
+
+// ============================================================
+// UNDO
+// ============================================================
+
+.btn-undo {
+    background: $orange;
+
+    border-color: $orange;
+
+    color: $white;
+}
+
+
+// ============================================================
+// SECTION TITLE
+// ============================================================
 
 .section-title {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  color: #1d2d50;
-  font-weight: 600;
+    position: relative;
+
+    width: 100%;
+
+    margin-top: 75px;
+    margin-bottom: 30px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid $border;
+
+    color: $navy;
+
+    font-size: 25px;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
 }
 
-/* LABEL + VALUE */
+
+.section-title::before {
+    content: "";
+
+    display: inline-block;
+
+    width: 34px;
+    height: 3px;
+
+    margin-right: 13px;
+
+    vertical-align: middle;
+
+    background: $blue;
+}
+
+
+// ============================================================
+// KUNDENDATEN
+// ============================================================
+
 .details-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+    width: 100%;
 
-  .detail-item {
-    display: flex;
-    flex-direction: column;
+    display: grid;
 
-    label {
-      font-size: 0.95rem;
-      color: #6c7a89;
-      margin-bottom: 0.3rem;
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    .value {
-      font-size: 1.2rem;
-      font-weight: 500;
-      color: #1d2d50;
-      padding: 0.9rem 1.2rem;
-      background: #ffffff;
-      border-radius: 12px;
-      border: 1px solid #e6e9ef;
-    }
+    column-gap: 60px;
 
-    input {
-      font-size: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #d8dce3;
-      transition: 0.2s;
+    row-gap: 0;
 
-      &:focus {
-        border-color: #4c8dff;
-        box-shadow: 0 0 0 4px rgba(76, 141, 255, 0.2);
-        outline: none;
-      }
-    }
-  }
+    border-top: 1px solid $border;
 }
 
-/* BUTTONS */
-.button-row {
-  margin-top: 2.5rem;
-  display: flex;
-  gap: 1.2rem;
-  justify-content: flex-end;
 
-  .btn {
-    padding: 0.9rem 2.2rem;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
+// ============================================================
+// DETAIL ITEM
+// ============================================================
+
+.detail-item {
+    min-width: 0;
+
+    padding: 25px 0;
+
+    border-bottom: 1px solid $border-light;
+}
+
+
+.detail-item label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: $text-muted;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.14em;
+
+    text-transform: uppercase;
+}
+
+
+.detail-item .value {
+    min-height: 25px;
+
     display: flex;
+
     align-items: center;
-    gap: 0.6rem;
-    transition: 0.3s ease;
 
-    svg {
-      font-size: 1.3rem;
-    }
-  }
+    padding: 0;
 
-  .btn-edit {
-    background: #4c8dff;
-    color: #fff;
+    background: transparent;
 
-    &:hover {
-      background: #3a7ae6;
-    }
-  }
+    border: none;
 
-  .btn-save {
-    background: #28c76f;
-    color: #fff;
+    border-radius: 0;
 
-    &:hover {
-      background: #22a75c;
-    }
-  }
+    color: $text;
 
-  .btn-undo {
-    background: #ff9f43;
-    color: #fff;
+    font-size: 16px;
 
-    &:hover {
-      background: #e78935;
-    }
-  }
+    line-height: 1.5;
 
-  .btn-pdf {
-    background: #ea5455;
-    color: #fff;
+    font-weight: 500;
 
-    &:hover {
-      background: #d54041;
-    }
-  }
+    overflow-wrap: anywhere;
 }
 
-/* STATUS BUTTONS */
-.status-box {
-  margin-top: 3rem;
 
-  h3 {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    color: #1d2d50;
-    font-weight: 600;
-  }
+// ============================================================
+// INPUTS
+// ============================================================
 
-  .status-buttons {
+.detail-item input {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 12px 14px;
+
+    background: $white;
+
+    border: 1px solid $border;
+
+    border-radius: $radius;
+
+    outline: none;
+
+    color: $text;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 500;
+}
+
+
+.detail-item input:focus {
+    border-color: $blue;
+}
+
+
+// ============================================================
+// BUTTON ROW
+// ============================================================
+
+.button-row {
+    width: 100%;
+
     display: flex;
-    gap: 1.2rem;
 
-    button {
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      border: 2px solid #4c8dff;
-      background: #ffffff;
-      color: #4c8dff;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s ease;
+    justify-content: flex-end;
 
-      &.active {
-        background: #4c8dff;
-        color: white;
-      }
+    gap: 10px;
 
-      &:hover {
-        background: #4c8dff;
-        color: white;
-      }
-    }
-  }
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid $border;
 }
 
-/* BEWERTUNGEN */
-.bewertungen-card {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: #ffffff;
-  border-radius: 18px;
-  border: 1px solid #e5e8ef;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
 
-  .rating-item {
-    margin-bottom: 1.2rem;
+// ============================================================
+// STATUS
+// ============================================================
 
-    strong {
-      color: #1d2d50;
-      font-size: 1.1rem;
-    }
+.status-box {
+    width: 100%;
 
-    .stars {
-      margin-left: 0.5rem;
-    }
-  }
+    margin-top: 70px;
 
-  .comment {
-    font-style: italic;
-    color: #435060;
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f0f2f7;
-    border-radius: 12px;
-  }
+    padding: 35px 0;
+
+    border-top: 1px solid $border;
+
+    border-bottom: 1px solid $border;
 }
 
-/* DIENSTLEISTUNGEN */
+
+.status-box h3 {
+    margin: 0 0 25px;
+
+    color: $navy;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.01em;
+}
+
+
+// ============================================================
+// STATUS BUTTONS
+// ============================================================
+
+.status-buttons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+
+.status-buttons button {
+    min-height: 46px;
+
+    padding: 0 20px;
+
+    background: $white;
+
+    border: 1px solid $border;
+
+    border-radius: $radius;
+
+    color: $text-secondary;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.status-buttons button.active {
+    background: $blue;
+
+    border-color: $blue;
+
+    color: $white;
+}
+
+
+.status-buttons button:nth-child(1).active {
+    background: $orange;
+
+    border-color: $orange;
+}
+
+
+.status-buttons button:nth-child(3).active {
+    background: $green;
+
+    border-color: $green;
+}
+
+
+// ============================================================
+// BEWERTUNG
+// ============================================================
+
+.bewertung-box {
+    width: 100%;
+
+    margin-top: 70px;
+
+    padding: 35px 0;
+
+    border-top: 1px solid $border;
+
+    border-bottom: 1px solid $border;
+}
+
+
+.bewertung-box .section-title {
+    margin-top: 0;
+}
+
+
+.bewertung-box > p {
+    color: $text-secondary;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+}
+
+
+// ============================================================
+// VORHANDENE BEWERTUNG
+// ============================================================
+
+.bewertung-vorhanden {
+    background: transparent;
+}
+
+
+.bewertung-vorhanden strong {
+    color: $navy;
+}
+
+
+.bewertung-vorhanden hr {
+    height: 1px;
+
+    margin: 30px 0 !important;
+
+    border: none;
+
+    border-top: 1px solid $border !important;
+}
+
+
+// ============================================================
+// STERNE
+// ============================================================
+
+.star-row {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    margin-top: 8px;
+
+    color: $gold;
+
+    font-size: 19px;
+}
+
+
+.bewertung-vorhanden > .star-row {
+    margin-bottom: 20px;
+
+    font-size: 25px;
+}
+
+
+// ============================================================
+// UNTERBEWERTUNGEN
+// ============================================================
+
+.unterbewertungen {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    column-gap: 60px;
+
+    row-gap: 0;
+}
+
+
+.unterbewertungen > div {
+    margin-bottom: 0 !important;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid $border-light;
+}
+
+
+.unterbewertungen p {
+    margin: 0;
+
+    color: $text-secondary;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+.unterbewertungen p:first-child {
+    color: $navy;
+
+    font-size: 13px;
+
+    font-weight: 700 !important;
+}
+
+
+.unterbewertungen .star-row {
+    font-size: 16px;
+
+    margin: 7px 0 3px;
+}
+
+
+// ============================================================
+// KOMMENTAR
+// ============================================================
+
+.bewertung-vorhanden > p {
+    color: $text-secondary;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+.bewertung-vorhanden em {
+    color: $text-muted;
+
+    font-size: 12px;
+}
+
+
+// ============================================================
+// QR CODE
+// ============================================================
+
+.qr-code-box {
+    width: 100%;
+
+    margin-top: 70px;
+
+    padding: 35px 0;
+
+    border-top: 1px solid $border;
+
+    border-bottom: 1px solid $border;
+}
+
+
+.qr-code-box .section-title {
+    margin-top: 0;
+}
+
+
+.qr-code-box > svg {
+    display: block;
+
+    width: 150px;
+    height: 150px;
+
+    padding: 10px;
+
+    background: $white;
+
+    border: 1px solid $border;
+}
+
+
+.qr-code-box p {
+    margin: 18px 0 22px;
+
+    color: $text-muted;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+// ============================================================
+// DIENSTLEISTUNGEN
+// ============================================================
+
 .service-list {
-  margin-top: 2rem;
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    width: 100%;
 
-  .service-card {
-    background: #fff;
-    border: 1px solid #e6e8ef;
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: 0.3s;
+    display: grid;
 
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    }
-  }
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 0;
+
+    border-top: 1px solid $border;
+
+    border-left: 1px solid $border;
 }
 
-/* SIGNATURE */
+
+.service-card {
+    min-height: 170px;
+
+    padding: 30px;
+
+    background: $white;
+
+    border-right: 1px solid $border;
+
+    border-bottom: 1px solid $border;
+
+    color: $text-secondary;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+.service-card strong {
+    display: block;
+
+    margin-bottom: 13px;
+
+    color: $navy;
+
+    font-size: 17px;
+
+    line-height: 1.3;
+
+    font-weight: 700;
+}
+
+
+// ============================================================
+// UNTERSCHRIFT
+// ============================================================
+
 .signature-box {
-  margin-top: 3rem;
+    width: 100%;
 
-  img {
-    width: 300px;
-    border-radius: 12px;
-    border: 2px solid #d1d5db;
-  }
+    margin-top: 70px;
+
+    padding: 35px 0;
+
+    border-top: 1px solid $border;
+
+    border-bottom: 1px solid $border;
 }
 
-/* ANIMATION */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+
+.signature-box .section-title {
+    margin-top: 0;
+}
+
+
+.signature-box img {
+    display: block;
+
+    width: 300px;
+
+    max-width: 100%;
+
+    padding: 20px;
+
+    background: $white;
+
+    border: 1px solid $border;
+}
+
+
+.signature-box .muted {
+    margin: 0;
+
+    color: $text-muted;
+
+    font-size: 14px;
+}
+
+
+// ============================================================
+// FOOTER BUTTONS
+// ============================================================
+
+.footer-buttons {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 70px;
+
+    padding-top: 30px;
+
+    border-top: 1px solid $border;
+}
+
+
+.footer-buttons .btn {
+    min-width: 160px;
+}
+
+
+// ============================================================
+// LOADING
+// ============================================================
+
+.kunden-anzeigen-container > p {
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0;
+
+    color: $text-muted;
+
+    font-size: 15px;
+
+    font-weight: 600;
+}
+
+
+// ============================================================
+// ANIMATION
+// ============================================================
+
+@keyframes kundenFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+// ============================================================
+// TABLET
+// ============================================================
+
+@media (max-width: 1000px) {
+
+    .customer-card {
+        padding: 0 5vw 80px;
+    }
+
+
+    .header-row {
+        width: calc(100% + 10vw);
+
+        margin-left: -5vw;
+
+        min-height: 310px;
+
+        padding: 80px 5vw 65px;
+
+        align-items: flex-end;
+    }
+
+
+    .header-row h2 {
+        font-size: clamp(38px, 7vw, 58px);
+    }
+
+
+    .details-grid {
+        column-gap: 35px;
+    }
+
+
+    .unterbewertungen {
+        column-gap: 35px;
+    }
+
+
+    .service-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+// ============================================================
+// MOBILE
+// ============================================================
+
+@media (max-width: 700px) {
+
+    .kunden-anzeigen-container {
+        padding-bottom: 60px;
+    }
+
+
+    .customer-card {
+        padding: 0 6vw 70px;
+    }
+
+
+    // --------------------------------------------------------
+    // HEADER
+    // --------------------------------------------------------
+
+    .header-row {
+        width: calc(100% + 12vw);
+
+        margin-left: -6vw;
+
+        min-height: auto;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        justify-content: flex-end;
+
+        gap: 35px;
+
+        padding: 75px 6vw 60px;
+    }
+
+
+    .header-row::after {
+        left: 6vw;
+        right: 6vw;
+
+        bottom: 28px;
+    }
+
+
+    .header-row h2 {
+        font-size: clamp(36px, 11vw, 52px);
+    }
+
+
+    .header-row h2::before {
+        margin-bottom: 16px;
+
+        font-size: 10px;
+    }
+
+
+    // --------------------------------------------------------
+    // HEADER BUTTONS
+    // --------------------------------------------------------
+
+    .header-buttons {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .header-buttons .btn {
+        width: 100%;
+    }
+
+
+    // --------------------------------------------------------
+    // SECTIONS
+    // --------------------------------------------------------
+
+    .section-title {
+        margin-top: 55px;
+
+        margin-bottom: 25px;
+
+        font-size: 21px;
+    }
+
+
+    // --------------------------------------------------------
+    // DETAILS
+    // --------------------------------------------------------
+
+    .details-grid {
+        grid-template-columns: 1fr;
+
+        column-gap: 0;
+    }
+
+
+    .detail-item {
+        padding: 21px 0;
+    }
+
+
+    .detail-item .value {
+        font-size: 15px;
+    }
+
+
+    // --------------------------------------------------------
+    // BUTTON ROW
+    // --------------------------------------------------------
+
+    .button-row {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .button-row .btn {
+        width: 100%;
+    }
+
+
+    // --------------------------------------------------------
+    // STATUS
+    // --------------------------------------------------------
+
+    .status-box {
+        margin-top: 55px;
+
+        padding: 30px 0;
+    }
+
+
+    .status-buttons {
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+
+    .status-buttons button {
+        width: 100%;
+    }
+
+
+    // --------------------------------------------------------
+    // BEWERTUNG
+    // --------------------------------------------------------
+
+    .bewertung-box {
+        margin-top: 55px;
+
+        padding: 30px 0;
+    }
+
+
+    .unterbewertungen {
+        grid-template-columns: 1fr;
+
+        column-gap: 0;
+    }
+
+
+    // --------------------------------------------------------
+    // QR
+    // --------------------------------------------------------
+
+    .qr-code-box {
+        margin-top: 55px;
+
+        padding: 30px 0;
+    }
+
+
+    // --------------------------------------------------------
+    // SERVICES
+    // --------------------------------------------------------
+
+    .service-list {
+        grid-template-columns: 1fr;
+    }
+
+
+    .service-card {
+        min-height: auto;
+
+        padding: 25px 22px;
+    }
+
+
+    // --------------------------------------------------------
+    // SIGNATURE
+    // --------------------------------------------------------
+
+    .signature-box {
+        margin-top: 55px;
+
+        padding: 30px 0;
+    }
+
+
+    .signature-box img {
+        width: 100%;
+    }
+
+
+    // --------------------------------------------------------
+    // FOOTER
+    // --------------------------------------------------------
+
+    .footer-buttons {
+        margin-top: 55px;
+
+        padding-top: 25px;
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .footer-buttons .btn {
+        width: 100%;
+    }
+}
+
+
+// ============================================================
+// KLEINES SMARTPHONE
+// ============================================================
+
+@media (max-width: 480px) {
+
+    .customer-card {
+        padding-left: 6vw;
+        padding-right: 6vw;
+    }
+
+
+    .header-row {
+        width: calc(100% + 12vw);
+
+        margin-left: -6vw;
+
+        padding: 65px 6vw 55px;
+    }
+
+
+    .header-buttons {
+        grid-template-columns: 1fr;
+    }
+
+
+    .header-buttons .btn {
+        min-height: 48px;
+    }
+
+
+    .section-title {
+        font-size: 20px;
+    }
+
+
+    .detail-item label {
+        font-size: 9px;
+    }
+
+
+    .detail-item .value {
+        font-size: 14px;
+    }
+
+
+    .detail-item input {
+        font-size: 14px;
+    }
+
+
+    .service-card strong {
+        font-size: 16px;
+    }
+
+
+    .service-card {
+        font-size: 13px;
+    }
+
+
+    .star-row {
+        font-size: 17px;
+    }
 }

@@ -1,291 +1,565 @@
-/* ===============================
-   PAGE LAYOUT
-================================ */
+$navy: #0f172a;
+$blue: #2563eb;
+$blue-light: #eff6ff;
+$white: #ffffff;
+$background: #f7f8fa;
+$border: #dfe5ec;
+$text: #111827;
+$text-muted: #64748b;
+$text-light: #94a3b8;
+$danger: #dc2626;
+$danger-light: #fef2f2;
+$success: #16a34a;
+$success-light: #f0fdf4;
+$warning: #d97706;
+$warning-light: #fffbeb;
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
 .kunden-container {
-  min-height: 100vh;
   width: 100%;
-  background: #f4f6f9;
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  color: #1f2933;
-}
-
-/* ===============================
-   HEADER
-================================ */
-.kunden-title {
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: #ffffff;
-  padding: 2.8rem 4rem;
+  min-height: 100vh;
   margin: 0;
-
-  font-size: 2.4rem;
-  font-weight: 700;
-  letter-spacing: 0.4px;
+  padding: 0;
+  box-sizing: border-box;
+  background: $background;
+  color: $text;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
-/* ===============================
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.kunden-title {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 32px 5vw 75px;
+  background: $navy;
+  color: $white;
+  font-size: clamp(46px, 7vw, 92px);
+  line-height: 0.95;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+/* =========================================================
    FILTER BAR
-================================ */
+   ========================================================= */
+
 .filter-bar {
-  padding: 2rem 4rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 220px auto;
   align-items: center;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  gap: 16px;
+  padding: 28px 5vw;
+  border-bottom: 1px solid $border;
+  background: $white;
 }
 
 .search-input,
 .status-filter {
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  font-size: 0.95rem;
-  min-width: 260px;
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+  padding: 0 15px;
+  border: 1px solid $border;
+  border-radius: 4px;
+  outline: none;
+  background: $white;
+  color: $text;
+  font-family: inherit;
+  font-size: 13px;
+}
 
-  &:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-  }
+.search-input::placeholder {
+  color: $text-light;
+}
+
+.search-input:focus,
+.status-filter:focus {
+  border-color: $blue;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 .archiv-filter {
-  font-size: 0.9rem;
-  color: #374151;
-
-  input {
-    margin-right: 0.4rem;
-    accent-color: #2563eb;
-  }
-}
-
-/* ===============================
-   LIST WRAPPER
-================================ */
-.kunden-liste {
-  padding: 2.5rem 4rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 2rem;
-}
-
-/* ===============================
-   CUSTOMER CARD
-================================ */
-.kunden-box {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 2rem;
-
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.08);
-
-  border: 1px solid #e5e7eb;
-
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow:
-      0 18px 40px rgba(0, 0, 0, 0.12);
-  }
+  align-items: center;
+  min-height: 50px;
+  color: $text-muted;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
-/* ===============================
-   CUSTOMER INFO
-================================ */
+.archiv-filter label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.archiv-filter input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: $blue;
+}
+
+/* =========================================================
+   CUSTOMER LIST
+   ========================================================= */
+
+.kunden-liste {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 50px 5vw 90px;
+}
+
+/* =========================================================
+   CUSTOMER ROW
+   ========================================================= */
+
+.kunden-box {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 190px minmax(220px, 1fr) minmax(300px, 1.2fr) 120px 100px;
+  align-items: center;
+  gap: 25px;
+  padding: 25px 0;
+  border-bottom: 1px solid $border;
+  background: transparent;
+}
+
+.kunden-box:first-child {
+  border-top: 1px solid $border;
+}
+
+/* =========================================================
+   CUSTOMER INFORMATION
+   ========================================================= */
+
 .kunden-nummer {
-  font-size: 0.8rem;
-  color: #6b7280;
+  margin: 0;
+  color: $text-muted;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .kunden-name {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
+  margin: 0;
+  color: $text;
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
-/* ===============================
-   ACTION BUTTONS (UNIFORM)
-================================ */
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
 .kunden-buttons {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.8rem;
-  margin-top: 0.8rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
 }
 
 .kunden-button {
-  height: 64px;
+  min-height: 48px;
   width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #1f2933;
+  justify-content: center;
+  gap: 7px;
+  box-sizing: border-box;
+  padding: 0 9px;
+  border: 1px solid $border;
+  border-radius: 4px;
+  background: $white;
+  color: $text-muted;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-align: center;
   text-decoration: none;
-
   cursor: pointer;
-  transition: all 0.25s ease;
-
-  svg {
-    font-size: 1.1rem;
-  }
-
-  &:hover {
-    background: #2563eb;
-    color: #ffffff;
-    border-color: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
-  }
 }
 
-/* DELETE BUTTON EXTRA STYLE */
+.kunden-button svg {
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+
 .kunden-button:last-child {
-  background: #fff1f2;
   border-color: #fecaca;
-  color: #991b1b;
-
-  &:hover {
-    background: #dc2626;
-    color: #ffffff;
-    border-color: #dc2626;
-    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
-  }
+  background: $danger-light;
+  color: $danger;
 }
 
-
-/* ===============================
+/* =========================================================
    SERVICES
-================================ */
+   ========================================================= */
+
 .dienstleistungen {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  align-items: center;
+  gap: 6px;
 }
 
 .dienstleistung {
-  padding: 0.3rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  transition: color 0.2s ease;
-
-  &.dark {
-    color: #ffffff;
-  }
-
-  &.light {
-    color: #111827;
-  }
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  box-sizing: border-box;
+  padding: 0 9px;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
+.dienstleistung.dark {
+  color: $white;
+}
 
-/* ===============================
+.dienstleistung.light {
+  color: $text;
+}
+
+/* =========================================================
    INVOICE STATUS
-================================ */
+   ========================================================= */
+
 .rechnungs-status {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  width: fit-content;
-
-  &.bezahlt {
-    background: #dcfce7;
-    color: #166534;
-  }
-
-  &.offen {
-    background: #fef3c7;
-    color: #92400e;
-  }
-
-  &.entwurf {
-    background: #e5e7eb;
-    color: #374151;
-  }
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  box-sizing: border-box;
+  padding: 0 11px;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-/* ===============================
-   ARCHIVED LABEL
-================================ */
+.rechnungs-status.bezahlt {
+  background: $success-light;
+  color: $success;
+}
+
+.rechnungs-status.offen {
+  background: $warning-light;
+  color: $warning;
+}
+
+.rechnungs-status.entwurf {
+  background: #eef1f4;
+  color: $text-muted;
+}
+
+/* =========================================================
+   ARCHIVED
+   ========================================================= */
+
 .archiviert-label {
   position: absolute;
-  top: 1.2rem;
-  right: 1.2rem;
-
-  background: #fee2e2;
-  color: #991b1b;
-  font-size: 0.75rem;
-  font-weight: 600;
-
-  padding: 0.3rem 0.65rem;
-  border-radius: 999px;
+  top: 8px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border-radius: 3px;
+  background: $danger-light;
+  color: $danger;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* ===============================
-   CONFIRMATION MODAL
-================================ */
+/* =========================================================
+   EMPTY / LOADING
+   ========================================================= */
+
+.kunden-container > p {
+  margin: 0;
+  padding: 55px 5vw;
+  color: $text-muted;
+  font-size: 14px;
+}
+
+.no-results {
+  margin: 0;
+  padding: 40px 0;
+  border-bottom: 1px solid $border;
+  color: $text-muted;
+  font-size: 14px;
+}
+
+/* =========================================================
+   DELETE MODAL
+   ========================================================= */
+
 .confirmation-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  box-sizing: border-box;
+  padding: 30px;
+  background: rgba(15, 23, 42, 0.72);
+}
 
-  background-blend-mode: multiply;
+.confirmation-modal p {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 20px;
+  padding: 25px;
+  background: $white;
+  color: $text;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 650;
+  text-align: center;
+}
 
-  p {
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-    color: #111827;
+.confirmation-modal button {
+  min-width: 120px;
+  min-height: 46px;
+  margin: 5px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.confirmation-modal button:first-of-type {
+  background: $danger;
+  color: $white;
+}
+
+.confirmation-modal button:last-of-type {
+  background: #e9edf2;
+  color: $text;
+}
+
+/* =========================================================
+   LARGE TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  .filter-bar {
+    grid-template-columns: minmax(240px, 1fr) 190px;
   }
 
-  button {
-    padding: 0.7rem 1.2rem;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 0 0.4rem;
+  .archiv-filter {
+    grid-column: 1 / -1;
+  }
 
-    &:first-of-type {
-      background: #dc2626;
-      color: #ffffff;
-    }
+  .kunden-box {
+    grid-template-columns: 150px minmax(180px, 1fr) minmax(240px, 1fr);
+    gap: 20px;
+  }
 
-    &:last-of-type {
-      background: #e5e7eb;
-      color: #111827;
-    }
+  .kunden-buttons {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .dienstleistungen {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .rechnungs-status {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .archiviert-label {
+    right: 0;
   }
 }
 
-/* ===============================
-   EMPTY STATE
-================================ */
-.no-results {
-  padding: 2rem 4rem;
-  font-size: 1.05rem;
-  color: #6b7280;
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+  .kunden-title {
+    padding: 25px 22px 60px;
+  }
+
+  .filter-bar {
+    grid-template-columns: 1fr;
+    padding: 24px 22px;
+  }
+
+  .archiv-filter {
+    grid-column: auto;
+  }
+
+  .kunden-liste {
+    padding: 40px 22px 70px;
+  }
+
+  .kunden-box {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 28px 0;
+  }
+
+  .kunden-box:first-child {
+    border-top: 1px solid $border;
+  }
+
+  .kunden-nummer {
+    order: 1;
+  }
+
+  .kunden-name {
+    order: 2;
+  }
+
+  .dienstleistungen {
+    order: 3;
+  }
+
+  .rechnungs-status {
+    order: 4;
+    align-self: flex-start;
+  }
+
+  .kunden-buttons {
+    order: 5;
+    grid-column: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .kunden-button {
+    min-height: 52px;
+    font-size: 12px;
+  }
+
+  .archiviert-label {
+    top: 22px;
+    right: 0;
+  }
 }
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .kunden-title {
+    padding: 22px 17px 50px;
+    font-size: 48px;
+  }
+
+  .filter-bar {
+    padding: 20px 17px;
+    gap: 12px;
+  }
+
+  .search-input,
+  .status-filter {
+    min-height: 48px;
+  }
+
+  .archiv-filter {
+    min-height: 44px;
+    font-size: 12px;
+  }
+
+  .kunden-liste {
+    padding: 32px 17px 55px;
+  }
+
+  .kunden-box {
+    gap: 15px;
+    padding: 25px 0;
+  }
+
+  .kunden-name {
+    font-size: 17px;
+  }
+
+  .dienstleistungen {
+    gap: 5px;
+  }
+
+  .dienstleistung {
+    min-height: 25px;
+    padding: 0 8px;
+    font-size: 9px;
+  }
+
+  .kunden-buttons {
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  .kunden-button {
+    min-height: 50px;
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  .kunden-button svg {
+    font-size: 12px;
+  }
+
+  .archiviert-label {
+    position: static;
+    align-self: flex-start;
+    order: 0;
+  }
+
+  .confirmation-modal {
+    padding: 20px;
+  }
+
+  .confirmation-modal p {
+    padding: 22px 18px;
+    font-size: 14px;
+  }
+
+  .confirmation-modal button {
+    width: 100%;
+    margin: 4px 0;
+  }
+}
+
+

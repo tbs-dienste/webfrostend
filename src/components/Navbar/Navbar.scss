@@ -1,175 +1,470 @@
-/* ===== ROOT ===== */
 .navbar {
-  background: #020617;
-  height: 72px;
-  padding: 0 28px;
-  display: flex;
-  align-items: center;
   position: relative;
   z-index: 1000;
+  width: 100%;
+  height: 76px;
+  padding: 0 5vw;
+  background: #0f172a;
+  border-bottom: 1px solid #263246;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .nav-inner {
   width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+/* =========================================================
+   LOGO
+========================================================= */
+
 .logo {
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
+  font-size: 1.2rem;
   font-weight: 700;
+  letter-spacing: -0.025em;
   text-decoration: none;
-}
+  white-space: nowrap;
 
-/* ===== BURGER ===== */
-.burger {
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  span {
-    width: 26px;
-    height: 3px;
-    background: white;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-  }
-
-  &.open span:nth-child(1) {
-    transform: rotate(45deg) translateY(9px);
-  }
-
-  &.open span:nth-child(2) {
-    opacity: 0;
-  }
-
-  &.open span:nth-child(3) {
-    transform: rotate(-45deg) translateY(-9px);
+  &::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    margin-right: 12px;
+    background: #2563eb;
   }
 }
 
-/* ===== LINKS ===== */
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
 .nav-links {
-  list-style: none;
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   li {
     position: relative;
+    display: flex;
+    align-items: center;
   }
 
   a,
   .admin-trigger {
-    color: #e5e7eb;
-    padding: 8px 14px;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.2s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: white;
-    }
+    transition: none;
   }
+
+  /* Aktive/gewählte Bereiche können weiterhin
+     über React-Klassen ergänzt werden */
 }
 
-/* ===== ADMIN ===== */
+/* =========================================================
+   ADMIN
+========================================================= */
+
 .admin-wrapper {
   position: relative;
 }
 
+.admin-trigger {
+  user-select: none;
+}
+
 .admin-mega {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 18px);
   left: 50%;
-  transform: translateX(-50%) translateY(-10px);
-  background: #020617;
-  padding: 24px;
-  border-radius: 18px;
+  transform: translateX(-50%);
+
   display: grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
-  gap: 24px;
-  width: min(95vw, 1100px);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+
+  width: 850px;
+  padding: 1px;
+
+  background: #334155;
+  border: 1px solid #334155;
+  border-radius: 3px;
+
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: all 0.25s ease;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.85);
+
+  transition: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translateX(-50%) rotate(45deg);
+    background: #111c30;
+    border-left: 1px solid #334155;
+    border-top: 1px solid #334155;
+  }
 }
 
 .admin-wrapper.active .admin-mega {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
 }
 
 .mega-col {
-  display: flex;
-  flex-direction: column;
+  min-height: 205px;
+  padding: 25px 22px;
+  background: #111c30;
 
   h4 {
-    color: white;
-    font-size: 12px;
+    margin: 0 0 20px;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    line-height: 1.4;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 10px;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 2px;
+      margin-top: 10px;
+      background: #2563eb;
+    }
   }
 
   a {
+    display: flex;
+    align-items: center;
+    min-height: 34px;
+    margin: 0 0 3px;
+    padding: 0;
     color: #94a3b8;
-    padding: 6px 8px;
-    border-radius: 6px;
+    font-size: 0.88rem;
+    text-decoration: none;
+    border: none;
+    border-radius: 0;
+    transition: none;
+  }
+}
 
-    &:hover {
-      background: rgba(37, 99, 235, 0.15);
-      color: #60a5fa;
-      padding-left: 14px;
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin-left: 7px;
+  padding: 0 17px;
+
+  border: 1px solid #7f1d1d;
+  border-radius: 3px;
+
+  background: transparent;
+  color: #fca5a5;
+
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  cursor: pointer;
+  transition: none;
+}
+
+/* =========================================================
+   BURGER
+========================================================= */
+
+.burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+
+  padding: 0;
+  border: 1px solid #334155;
+  border-radius: 3px;
+  background: transparent;
+
+  cursor: pointer;
+
+  span {
+    display: block;
+    width: 21px;
+    height: 2px;
+    background: #ffffff;
+    transition: none;
+  }
+
+  &.open {
+    span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
     }
   }
 }
 
-/* ===== LOGOUT ===== */
-.logout-btn {
-  background: #ef4444;
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+/* =========================================================
+   DESKTOP ADMIN SEPARATOR
+========================================================= */
+
+.admin-wrapper {
+  margin-left: 5px;
+  padding-left: 5px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 24px;
+    transform: translateY(-50%);
+    background: #334155;
+  }
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
+/* =========================================================
+   LARGE TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 0 3vw;
+  }
+
+  .nav-links {
+    gap: 1px;
+
+    a,
+    .admin-trigger {
+      padding: 0 10px;
+      font-size: 0.84rem;
+    }
+  }
+
+  .admin-mega {
+    width: 760px;
+  }
+}
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+  .navbar {
+    height: 72px;
+    padding: 0 5vw;
+  }
+
   .burger {
     display: flex;
   }
 
   .nav-links {
     position: fixed;
-    inset: 72px 0 0 0;
-    background: #020617;
+    top: 72px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
     flex-direction: column;
-    padding: 20px;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
+    align-items: stretch;
+    gap: 0;
+
+    margin: 0;
+    padding: 20px 5vw 40px;
+
+    background: #0f172a;
+    border-top: 1px solid #263246;
+
     overflow-y: auto;
+
+    transform: translateX(100%);
+    transition: none;
+
+    &.open {
+      transform: translateX(0);
+    }
+
+    li {
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    a,
+    .admin-trigger {
+      display: flex;
+      width: 100%;
+      min-height: 54px;
+      padding: 0;
+      border-radius: 0;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
   }
 
-  .nav-links.open {
-    transform: translateX(0);
+  .admin-wrapper {
+    margin: 0;
+    padding: 0;
+
+    &::before {
+      display: none;
+    }
   }
 
   .admin-mega {
     position: static;
-    transform: none;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    width: auto;
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background: #111c30;
+
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
+
+    transform: none;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .admin-wrapper:not(.active) .admin-mega {
+    display: none;
+  }
+
+  .mega-col {
+    min-height: auto;
+    padding: 25px 20px;
+    border-right: 1px solid #263246;
+    border-bottom: 1px solid #263246;
+
+    h4 {
+      margin-bottom: 14px;
+    }
+
+    a {
+      min-height: 35px;
+      font-size: 0.85rem;
+    }
+  }
+
+  .logout-btn {
+    width: 100%;
+    min-height: 48px;
+    margin: 14px 0 10px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 6vw;
+  }
+
+  .logo {
+    font-size: 1.05rem;
+
+    &::before {
+      width: 3px;
+      height: 21px;
+      margin-right: 10px;
+    }
+  }
+
+  .nav-links {
+    top: 72px;
+    padding: 15px 6vw 35px;
+  }
+
+  .admin-mega {
     grid-template-columns: 1fr;
-    box-shadow: none;
-    padding: 10px 0;
+  }
+
+  .mega-col {
+    border-right: none;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* =========================================================
+   VERY SMALL DEVICES
+========================================================= */
+
+@media (max-width: 400px) {
+  .navbar {
+    height: 68px;
+  }
+
+  .burger {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-links {
+    top: 68px;
+  }
+
+  .logo {
+    font-size: 0.98rem;
   }
 }

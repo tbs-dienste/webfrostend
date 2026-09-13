@@ -1,182 +1,473 @@
-/* ===============================
-   VARIABLES
-================================ */
-$primary: #4f46e5;
-$dark: #0f172a;
-$muted: #64748b;
-$bg: #f8fafc;
-$danger: #ef4444;
+
+$navy: #0f172a;
+$blue: #2563eb;
+$blue-light: #eff6ff;
+$white: #ffffff;
+$background: #f7f8fa;
+$border: #dfe5ec;
+$text: #111827;
+$text-muted: #64748b;
+$text-light: #94a3b8;
+$danger: #dc2626;
+$danger-light: #fef2f2;
 $success: #16a34a;
+$success-light: #f0fdf4;
 
-$radius: 20px;
-$shadow: 0 30px 60px rgba(15, 23, 42, 0.15);
-
-/* ===============================
-   PAGE
-================================ */
 .service-detail {
-  font-family: "Inter", system-ui, sans-serif;
-  background: $bg;
+  width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: $background;
+  color: $text;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
 
-/* ===============================
+/* =========================================================
    HERO
-================================ */
+   ========================================================= */
+
 .service-hero {
-  background: linear-gradient(135deg, $dark, #020617);
-  padding: 120px 24px 90px;
-  text-align: center;
-  color: white;
-
-  h1 {
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 800;
-  }
-
-  .price {
-    display: inline-block;
-    margin-top: 16px;
-    font-size: 18px;
-    color: #c7d2fe;
-  }
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32px 5vw 90px;
+  background: $navy;
+  color: $white;
 }
 
-/* ===============================
-   CONTENT
-================================ */
-.service-content {
-  max-width: 900px;
-  margin: -70px auto 120px;
-  background: white;
-  border-radius: $radius;
-  padding: 40px;
-  box-shadow: $shadow;
+.hero-content {
+  width: 100%;
+  padding-top: 70px;
 }
 
-/* IMAGE */
-.image-wrapper {
-  margin-bottom: 40px;
-
-  img {
-    width: 100%;
-    border-radius: $radius;
-    object-fit: cover;
-  }
+.hero-content h1 {
+  margin: 0;
+  font-size: clamp(48px, 7vw, 108px);
+  line-height: 0.92;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  word-break: break-word;
 }
 
-/* TEXT */
-.description {
+.hero-content .price {
+  display: inline-block;
+  margin-top: 32px;
+  color: #93c5fd;
   font-size: 17px;
-  line-height: 1.8;
-  color: $muted;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-/* STATUS */
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.service-content {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 70px 5vw 100px;
+}
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
+
+.image-wrapper {
+  width: 100%;
+  margin-bottom: 50px;
+  overflow: hidden;
+  background: #e9edf2;
+}
+
+.image-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 620px;
+  object-fit: cover;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
 .status {
-  margin-bottom: 20px;
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-weight: 600;
-
-  &.success {
-    background: rgba(22, 163, 74, 0.1);
-    color: $success;
-  }
-
-  &.error {
-    background: rgba(239, 68, 68, 0.1);
-    color: $danger;
-  }
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 32px;
+  padding: 17px 20px;
+  border-left: 3px solid transparent;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 650;
 }
 
-/* EDIT */
-.edit-card {
-  display: grid;
-  gap: 18px;
-
-  input,
-  textarea {
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    font-size: 15px;
-    resize: vertical;
-
-    &:focus {
-      outline: none;
-      border-color: $primary;
-    }
-  }
-
-  .actions {
-    display: flex;
-    gap: 16px;
-
-    button {
-      flex: 1;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .save {
-      background: $primary;
-      color: white;
-    }
-
-    .cancel {
-      background: #e5e7eb;
-    }
-  }
+.status.success {
+  border-left-color: $success;
+  background: $success-light;
+  color: $success;
 }
 
-/* ADMIN */
+.status.error {
+  border-left-color: $danger;
+  background: $danger-light;
+  color: $danger;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.description {
+  margin: 0;
+  color: $text-muted;
+  font-size: 18px;
+  line-height: 1.85;
+  white-space: pre-line;
+}
+
+/* =========================================================
+   ADMIN ACTIONS
+   ========================================================= */
+
 .admin-actions {
   display: flex;
-  gap: 16px;
-  margin-top: 30px;
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    background: $primary;
-    color: white;
-
-    &.danger {
-      background: $danger;
-    }
-  }
+  align-items: center;
+  gap: 12px;
+  margin-top: 42px;
+  padding-top: 28px;
+  border-top: 1px solid $border;
 }
 
-/* BACK */
+.admin-actions button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  border: 1px solid $blue;
+  border-radius: 4px;
+  background: $blue;
+  color: $white;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-actions button.danger {
+  border-color: $danger;
+  background: $danger;
+}
+
+/* =========================================================
+   EDIT MODE
+   ========================================================= */
+
+.edit-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border-top: 1px solid $border;
+}
+
+.edit-card input,
+.edit-card textarea,
+.edit-card select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid $border;
+  border-radius: 4px;
+  outline: none;
+  background: $white;
+  color: $text;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.edit-card input,
+.edit-card select {
+  min-height: 52px;
+  margin-top: 20px;
+  padding: 0 15px;
+}
+
+.edit-card textarea {
+  min-height: 180px;
+  margin-top: 20px;
+  padding: 15px;
+  resize: vertical;
+}
+
+.edit-card input::placeholder,
+.edit-card textarea::placeholder {
+  color: $text-light;
+}
+
+.edit-card input:focus,
+.edit-card textarea:focus,
+.edit-card select:focus {
+  border-color: $blue;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+/* =========================================================
+   EDIT LABEL
+   ========================================================= */
+
+.edit-card > label {
+  display: block;
+  margin-top: 28px;
+  margin-bottom: -8px;
+  color: $text;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   COLOR PICKER
+   ========================================================= */
+
+.edit-card input[type="color"] {
+  width: 100%;
+  height: 52px;
+  margin-top: 20px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.edit-card input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.edit-card input[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: 2px;
+}
+
+/* =========================================================
+   FILE UPLOAD
+   ========================================================= */
+
+.edit-card input[type="file"] {
+  min-height: auto;
+  margin-top: 20px;
+  padding: 14px;
+  border-style: dashed;
+  background: #fafbfc;
+  color: $text-muted;
+  cursor: pointer;
+}
+
+.edit-card input[type="file"]:focus {
+  box-shadow: none;
+}
+
+/* =========================================================
+   EDIT ACTIONS
+   ========================================================= */
+
+.edit-card .actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid $border;
+}
+
+.edit-card .actions button {
+  min-height: 56px;
+  border: 0;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.edit-card .actions .save {
+  background: $navy;
+  color: $white;
+}
+
+.edit-card .actions .cancel {
+  background: #e9edf2;
+  color: $text;
+}
+
+/* =========================================================
+   BACK LINK
+   ========================================================= */
+
 .back-link {
-  margin-top: 40px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: $primary;
-  font-weight: 600;
+  margin-top: 70px;
+  padding-top: 22px;
+  border-top: 1px solid $border;
+  color: $blue;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.4;
   text-decoration: none;
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (max-width: 768px) {
+/* =========================================================
+   LOADING / EMPTY STATE
+   ========================================================= */
+
+.service-detail > p {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 80px 5vw;
+  color: $text-muted;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .service-hero {
+    padding: 26px 5vw 70px;
+  }
+
+  .hero-content {
+    padding-top: 55px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(46px, 9vw, 82px);
+  }
+
   .service-content {
-    padding: 28px;
+    padding: 55px 5vw 80px;
+  }
+
+  .image-wrapper {
+    margin-bottom: 40px;
+  }
+
+  .description {
+    font-size: 17px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .service-hero {
+    padding: 20px 22px 60px;
+  }
+
+  .hero-content {
+    padding-top: 45px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(44px, 14vw, 72px);
+    letter-spacing: -0.055em;
+  }
+
+  .hero-content .price {
+    margin-top: 24px;
+    font-size: 15px;
+  }
+
+  .service-content {
+    padding: 45px 22px 65px;
+  }
+
+  .image-wrapper {
+    margin-bottom: 35px;
+  }
+
+  .image-wrapper img {
+    max-height: 450px;
+  }
+
+  .description {
+    font-size: 15px;
+    line-height: 1.75;
   }
 
   .admin-actions {
     flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 35px;
+  }
+
+  .admin-actions button {
+    width: 100%;
+  }
+
+  .edit-card .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .back-link {
+    margin-top: 50px;
   }
 }
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+  .service-hero {
+    padding-right: 17px;
+    padding-left: 17px;
+  }
+
+  .service-content {
+    padding-right: 17px;
+    padding-left: 17px;
+  }
+
+  .hero-content h1 {
+    font-size: 43px;
+  }
+
+  .hero-content .price {
+    font-size: 14px;
+  }
+
+  .service-content {
+    padding-top: 38px;
+    padding-bottom: 55px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+
+  .edit-card input,
+  .edit-card select {
+    min-height: 50px;
+  }
+
+  .edit-card textarea {
+    min-height: 150px;
+  }
+
+  .admin-actions button {
+    min-height: 52px;
+  }
+
+  .edit-card .actions button {
+    min-height: 54px;
+  }
+}
+

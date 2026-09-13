@@ -1,39 +1,65 @@
-// ======================================================
-// VARIABLES
-// ======================================================
-$primary: #2563eb;
-$primary-dark: #1d4ed8;
-$bg: #ffffff;
-$bot: #f1f5f9;
-$user: #2563eb;
+
+/* =========================================================
+   TBS SOLUTIONS — PREMIUM CHATBOT
+========================================================= */
+
+$navy: #0f172a;
+$navy-soft: #172235;
+$blue: #2563eb;
+$blue-light: #eff6ff;
+
+$white: #ffffff;
+$background: #f8fafc;
+
 $text: #0f172a;
+$text-soft: #475569;
+$text-muted: #94a3b8;
 
-$radius: 16px;
-$shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+$border: #e2e8f0;
 
-// ======================================================
-// TOGGLE BUTTON (IMMER SICHTBAR)
-// ======================================================
+/* =========================================================
+   TOGGLE BUTTON
+========================================================= */
+
 .chatbot-toggle {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: $primary;
-  color: white;
+  right: 28px;
+  bottom: 28px;
+
+  z-index: 9999;
+
+  width: 62px;
+  height: 62px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: $shadow;
-  z-index: 9999;
-  transition: transform 0.2s ease, background 0.2s ease;
 
-  &:hover {
-    background: $primary-dark;
-    transform: translateY(-2px);
+  border: 1px solid #334155;
+  border-radius: 50%;
+
+  background: $navy;
+  color: $white;
+
+  cursor: pointer;
+
+  transition: none;
+
+  &::after {
+    content: '';
+
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    top: 3px;
+    right: 4px;
+
+    border: 2px solid $navy;
+    border-radius: 50%;
+
+    background: #22c55e;
   }
 
   svg {
@@ -41,128 +67,427 @@ $shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   }
 }
 
-// ======================================================
-// CHAT WINDOW
-// ======================================================
+/* =========================================================
+   CHAT WINDOW
+========================================================= */
+
 .chatbot-window {
   position: fixed;
-  bottom: 96px;
-  right: 24px;
-  width: 360px;
-  height: 520px;
-  background: $bg;
-  border-radius: $radius;
-  box-shadow: $shadow;
+
+  right: 28px;
+  bottom: 108px;
+
+  z-index: 9998;
+
+  width: 430px;
+  height: 650px;
+
   display: flex;
   flex-direction: column;
+
+  background: $white;
+
+  border: 1px solid $border;
+  border-radius: 6px;
+
+  overflow: hidden;
+
   opacity: 0;
-  transform: translateY(20px);
+  visibility: hidden;
   pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 9998;
+
+  transform: translateY(18px);
+
+  transition: none;
 
   &.open {
     opacity: 1;
-    transform: translateY(0);
+    visibility: visible;
     pointer-events: auto;
+
+    transform: translateY(0);
   }
 }
 
-// ======================================================
-// HEADER
-// ======================================================
+/* =========================================================
+   HEADER
+========================================================= */
+
 .chatbot-header {
-  padding: 16px;
-  font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  height: 82px;
+
+  padding: 0 25px;
+
+  background: $navy;
+
+  color: $white;
+
+  font-size: 1.05rem;
+  font-weight: 650;
+
+  letter-spacing: -0.01em;
+
+  border-bottom: 3px solid $blue;
+
+  &::before {
+    content: '';
+
+    width: 4px;
+    height: 30px;
+
+    margin-right: 14px;
+
+    background: $blue;
+  }
+
+  &::after {
+    content: 'Online';
+
+    position: absolute;
+
+    right: 25px;
+
+    display: flex;
+    align-items: center;
+
+    color: #94a3b8;
+
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
 }
 
-// ======================================================
-// MESSAGES
-// ======================================================
+/* =========================================================
+   MESSAGE AREA
+========================================================= */
+
 .messages {
   flex: 1;
-  padding: 16px;
-  overflow-y: auto;
+
+  min-height: 0;
+
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 18px;
+
+  padding: 28px 22px;
+
+  overflow-y: auto;
+
+  background: $background;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
 }
 
-.message {
-  max-width: 75%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  font-size: 14px;
-  line-height: 1.4;
+/* =========================================================
+   MESSAGES
+========================================================= */
 
-  &.user {
-    align-self: flex-end;
-    background: $user;
-    color: white;
-    border-bottom-right-radius: 4px;
-  }
+.message {
+  width: fit-content;
+
+  padding: 13px 16px;
+
+  border-radius: 5px;
+
+  font-size: 0.9rem;
+  line-height: 1.65;
+
+  word-break: break-word;
 
   &.bot {
     align-self: flex-start;
-    background: $bot;
+
+    max-width: 84%;
+
+    background: $white;
+
     color: $text;
-    border-bottom-left-radius: 4px;
+
+    border: 1px solid $border;
+
+    border-left: 3px solid $blue;
+
+    border-radius: 3px 5px 5px 3px;
+  }
+
+  &.user {
+    align-self: flex-end;
+
+    max-width: 84%;
+
+    background: $navy;
+
+    color: $white;
+
+    border: 1px solid $navy;
+
+    border-radius: 5px 5px 3px 5px;
   }
 
   &.typing {
-    font-style: italic;
-    opacity: 0.6;
+    display: flex;
+    align-items: center;
+
+    min-width: 48px;
+    min-height: 38px;
+
+    padding: 0 14px;
+
+    background: $white;
+
+    color: $text-muted;
+
+    border: 1px solid $border;
+    border-left: 3px solid $blue;
+
+    font-size: 1rem;
+    letter-spacing: 4px;
   }
 }
 
-// ======================================================
-// INPUT
-// ======================================================
+/* =========================================================
+   INPUT AREA
+========================================================= */
+
 .input-area {
-  padding: 14px;
+  flex-shrink: 0;
+
   display: flex;
+  align-items: center;
+
   gap: 10px;
-  border-top: 1px solid #e5e7eb;
+
+  padding: 14px 16px;
+
+  background: $white;
+
+  border-top: 1px solid $border;
 
   input {
     flex: 1;
-    padding: 12px 16px;
-    border-radius: 999px;
-    border: 1px solid #d1d5db;
+
+    width: 100%;
+    min-width: 0;
+
+    height: 50px;
+
+    box-sizing: border-box;
+
+    padding: 0 17px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+
     outline: none;
 
+    background: #ffffff !important;
+
+    color: $text !important;
+
+    -webkit-text-fill-color: $text !important;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+
+    caret-color: $blue;
+
+    &::placeholder {
+      color: #94a3b8 !important;
+      opacity: 1;
+    }
+
     &:focus {
-      border-color: $primary;
+      border-color: $blue;
+
+      background: #ffffff !important;
+
+      color: $text !important;
+
+      -webkit-text-fill-color: $text !important;
+    }
+
+    &:disabled {
+      background: #f1f5f9 !important;
+
+      color: #64748b !important;
+
+      -webkit-text-fill-color: #64748b !important;
     }
   }
 
   button {
-    padding: 0 20px;
-    border-radius: 999px;
-    border: none;
-    background: $primary;
-    color: white;
-    font-weight: 600;
+    flex-shrink: 0;
+
+    width: 92px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid $blue;
+    border-radius: 4px;
+
+    background: $blue;
+    color: $white;
+
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 650;
+
     cursor: pointer;
 
-    &:hover {
-      background: $primary-dark;
+    transition: none;
+
+    &:disabled {
+      background: #94a3b8;
+      border-color: #94a3b8;
+
+      cursor: not-allowed;
     }
   }
 }
 
-// ======================================================
-// MOBILE
-// ======================================================
-@media (max-width: 480px) {
-  .chatbot-window {
-    width: calc(100vw - 32px);
-    height: calc(100vh - 140px);
-    right: 16px;
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .chatbot-toggle {
+    right: 18px;
+    bottom: 18px;
+
+    width: 58px;
+    height: 58px;
   }
 
-  .chatbot-toggle {
-    right: 16px;
+  .chatbot-window {
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+
+    width: auto;
+    height: auto;
+
+    border-radius: 5px;
+  }
+
+  .chatbot-header {
+    height: 70px;
+
+    padding: 0 19px;
+
+    &::after {
+      right: 19px;
+    }
+  }
+
+  .messages {
+    padding: 22px 15px;
+  }
+
+  .message {
+    font-size: 0.88rem;
+
+    &.bot,
+    &.user {
+      max-width: 88%;
+    }
+  }
+
+  .input-area {
+    gap: 8px;
+
+    padding: 12px;
+
+    input {
+      height: 48px;
+
+      padding: 0 14px;
+    }
+
+    button {
+      width: 82px;
+      height: 48px;
+    }
   }
 }
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+  .chatbot-window {
+    top: 7px;
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+  }
+
+  .chatbot-header {
+    height: 65px;
+
+    padding: 0 16px;
+
+    &::before {
+      height: 25px;
+      margin-right: 11px;
+    }
+
+    &::after {
+      right: 16px;
+      font-size: 0.68rem;
+    }
+  }
+
+  .messages {
+    padding: 18px 12px;
+  }
+
+  .input-area {
+    padding: 9px;
+
+    input {
+      height: 46px;
+
+      padding: 0 12px;
+
+      font-size: 0.86rem;
+    }
+
+    button {
+      width: 74px;
+      height: 46px;
+
+      font-size: 0.78rem;
+    }
+  }
+}
+

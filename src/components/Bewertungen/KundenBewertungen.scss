@@ -1,127 +1,557 @@
-/* ===============================
-   VARIABLES
-================================ */
-$primary: #4f46e5;
-$dark: #0f172a;
-$muted: #64748b;
-$bg: #f8fafc;
-$accent: #fbbf24;
+// ============================================================
+// KUNDENBEWERTUNGEN – PREMIUM DESIGN
+// ============================================================
 
-$radius: 20px;
-$shadow: 0 30px 60px rgba(15, 23, 42, 0.15);
+$navy: #0f172a;
+$navy-light: #172033;
+$blue: #2563eb;
+$blue-dark: #1d4ed8;
+$gold: #c8a96a;
 
-/* ===============================
-   PAGE
-================================ */
+$background: #f7f8fa;
+$white: #ffffff;
+
+$text: #111827;
+$text-secondary: #475569;
+$text-muted: #64748b;
+
+$border: #dfe5ec;
+$border-light: #e9edf2;
+
+$success: #15803d;
+$danger: #b91c1c;
+
+$radius: 4px;
+
+
+// ============================================================
+// BASIS
+// ============================================================
+
 .bewertung-detail {
-  min-height: 100vh;
-  background: $bg;
-  font-family: "Inter", system-ui, sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    background: $background;
+    color: $text;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
 }
 
-/* ===============================
-   HERO
-================================ */
+
+// ============================================================
+// TITLEBAR / HERO
+// ============================================================
+
 .bewertung-hero {
-  background: linear-gradient(135deg, $dark, #020617);
-  padding: 120px 24px 90px;
-  text-align: center;
-  color: white;
+    position: relative;
+    width: 100%;
+    min-height: 330px;
 
-  h1 {
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 800;
-  }
-
-  .dienstleistung {
-    display: block;
-    margin-top: 14px;
-    font-size: 18px;
-    color: #c7d2fe;
-  }
-}
-
-/* ===============================
-   CONTENT
-================================ */
-.bewertung-content {
-  max-width: 1100px;
-  margin: -70px auto 120px;
-  padding: 40px;
-  background: white;
-  border-radius: $radius;
-  box-shadow: $shadow;
-}
-
-/* GRID */
-.ratings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-}
-
-/* CARD */
-.rating-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  color: $dark;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  }
-
-  .rating-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 12px;
 
-    h3 {
-      font-size: 18px;
-      font-weight: 700;
-    }
-  }
+    padding: 110px 5vw 95px;
 
-  .rating-text {
-    margin-top: 14px;
+    background: $navy;
+    color: $white;
+
+    overflow: hidden;
+}
+
+.bewertung-hero::before {
+    content: "";
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    top: -130px;
+    right: 8vw;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.bewertung-hero::after {
+    content: "";
+    position: absolute;
+
+    width: 420px;
+    height: 1px;
+
+    right: 0;
+    bottom: 65px;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.bewertung-hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.bewertung-hero-kicker {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 22px;
+
+    color: $gold;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.bewertung-hero-kicker::before {
+    content: "";
+    width: 42px;
+    height: 1px;
+    background: $gold;
+}
+
+.bewertung-hero h1 {
+    margin: 0;
+    color: $white;
+
+    font-size: clamp(42px, 5vw, 76px);
+    line-height: 0.98;
+    font-weight: 700;
+    letter-spacing: -0.045em;
+}
+
+.bewertung-hero p {
+    margin: 24px 0 0;
+
+    max-width: 760px;
+
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+
+// ============================================================
+// CONTENT – WICHTIG:
+// DEUTLICHER ABSTAND ZUM TITLEBAR
+// ============================================================
+
+.bewertung-content {
+    position: relative;
+    z-index: 3;
+
+    width: 100%;
+
+    /*
+        Die Box startet bewusst deutlich unterhalb
+        des Titlebars.
+    */
+    margin-top: 85px;
+
+    padding: 0 5vw 100px;
+}
+
+
+// ============================================================
+// GESAMTBEWERTUNG
+// ============================================================
+
+.rating-card {
+    position: relative;
+
+    width: 100%;
+
+    margin: 0 0 70px;
+    padding: 42px 44px;
+
+    background: $white;
+    border: 1px solid $border;
+    border-left: 4px solid $blue;
+    border-radius: $radius;
+}
+
+.rating-card::before {
+    content: "GESAMTBEWERTUNG";
+
+    display: block;
+
+    margin-bottom: 18px;
+
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+
+.rating-card strong {
+    display: block;
+
+    margin: 0 0 10px;
+
+    color: $blue;
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+.rating-card p {
+    margin: 0;
+
+    color: $text-secondary;
     font-size: 15px;
     line-height: 1.6;
-    color: $muted;
-  }
 }
 
-/* LOADING */
+
+// ============================================================
+// STERNE
+// ============================================================
+
+.rating-card .react-stars {
+    margin-top: 18px;
+}
+
+
+// ============================================================
+// SERVICE-BEWERTUNGEN
+// ============================================================
+
+.ratings-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 1px;
+
+    background: $border;
+
+    border: 1px solid $border;
+}
+
+
+// ============================================================
+// EINZELNE BEWERTUNG
+// ============================================================
+
+.rating-service-card {
+    position: relative;
+
+    min-height: 230px;
+
+    padding: 34px 36px;
+
+    background: $white;
+}
+
+.rating-service-card::before {
+    content: "";
+
+    display: block;
+
+    width: 34px;
+    height: 3px;
+
+    margin-bottom: 25px;
+
+    background: $blue;
+}
+
+.rating-service-card h2 {
+    margin: 0 0 12px;
+
+    color: $navy;
+
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.rating-service-card p {
+    margin: 0;
+
+    color: $text-muted;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+// ============================================================
+// LINK / SERVICE NAME
+// ============================================================
+
+.rating-service-card a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+// ============================================================
+// RATING INFORMATION
+// ============================================================
+
+.rating-service-card .rating-value {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    margin-top: 24px;
+}
+
+.rating-service-card .rating-value strong {
+    color: $navy;
+
+    font-size: 34px;
+    line-height: 1;
+
+    font-weight: 700;
+}
+
+.rating-service-card .rating-value span {
+    color: $text-muted;
+
+    font-size: 13px;
+}
+
+
+// ============================================================
+// STATUS / ANZAHL
+// ============================================================
+
+.rating-service-card .rating-count {
+    display: inline-flex;
+    align-items: center;
+
+    margin-top: 20px;
+    padding-top: 15px;
+
+    border-top: 1px solid $border-light;
+
+    color: $text-muted;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+// ============================================================
+// LOADING
+// ============================================================
+
 .bewertung-loading {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  color: $muted;
-  animation: pulse 1.6s infinite alternate;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: $background;
+
+    color: $text-muted;
+
+    font-size: 15px;
+    font-weight: 600;
 }
 
-@keyframes pulse {
-  from {
-    opacity: 0.6;
-  }
-  to {
-    opacity: 1;
-  }
+
+// ============================================================
+// INLINE-STYLES AUS JSX ÜBERSCHREIBEN
+// ============================================================
+
+.rating-card[style] {
+    margin-bottom: 70px !important;
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (max-width: 768px) {
-  .bewertung-content {
-    padding: 26px;
-  }
+.rating-card:first-child strong {
+    color: $blue !important;
 
-  .bewertung-hero {
-    padding: 90px 20px 80px;
-  }
+    font-size: 52px !important;
+}
+
+
+// ============================================================
+// FALLS DIE SERVICE-KARTEN ANDERE KLASSEN HABEN
+// ============================================================
+
+.ratings-grid > div {
+    position: relative;
+
+    min-height: 230px;
+
+    padding: 34px 36px;
+
+    background: $white;
+}
+
+.ratings-grid > div h2 {
+    margin: 0 0 12px;
+
+    color: $navy;
+
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.ratings-grid > div p {
+    color: $text-secondary;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+// ============================================================
+// TABLET
+// ============================================================
+
+@media (max-width: 1000px) {
+
+    .bewertung-hero {
+        min-height: 300px;
+
+        padding: 95px 5vw 75px;
+    }
+
+    .bewertung-content {
+        margin-top: 70px;
+        padding: 0 5vw 80px;
+    }
+
+    .rating-card {
+        padding: 36px;
+        margin-bottom: 55px;
+    }
+
+    .ratings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rating-service-card,
+    .ratings-grid > div {
+        min-height: auto;
+    }
+}
+
+
+// ============================================================
+// MOBILE
+// ============================================================
+
+@media (max-width: 700px) {
+
+    .bewertung-hero {
+        min-height: 270px;
+
+        padding: 85px 6vw 65px;
+    }
+
+    .bewertung-hero-kicker {
+        margin-bottom: 18px;
+
+        font-size: 10px;
+    }
+
+    .bewertung-hero-kicker::before {
+        width: 28px;
+    }
+
+    .bewertung-hero h1 {
+        font-size: clamp(38px, 11vw, 56px);
+    }
+
+    .bewertung-hero p {
+        margin-top: 18px;
+
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .bewertung-content {
+        /*
+            Nochmals Abstand erhöhen,
+            damit absolut nichts vom Titlebar
+            überdeckt wird.
+        */
+        margin-top: 60px;
+
+        padding: 0 6vw 70px;
+    }
+
+    .rating-card {
+        padding: 30px 26px;
+        margin-bottom: 45px;
+    }
+
+    .rating-card strong {
+        font-size: 44px;
+    }
+
+    .rating-card:first-child strong {
+        font-size: 44px !important;
+    }
+
+    .rating-service-card,
+    .ratings-grid > div {
+        padding: 28px 25px;
+    }
+
+    .rating-service-card h2,
+    .ratings-grid > div h2 {
+        font-size: 21px;
+    }
+}
+
+
+// ============================================================
+// KLEINES SMARTPHONE
+// ============================================================
+
+@media (max-width: 480px) {
+
+    .bewertung-hero {
+        min-height: 245px;
+
+        padding: 75px 6vw 55px;
+    }
+
+    .bewertung-hero h1 {
+        font-size: 38px;
+    }
+
+    .bewertung-content {
+        margin-top: 50px;
+        padding: 0 6vw 60px;
+    }
+
+    .rating-card {
+        padding: 26px 22px;
+    }
+
+    .rating-card::before {
+        font-size: 10px;
+    }
+
+    .rating-card strong,
+    .rating-card:first-child strong {
+        font-size: 38px !important;
+    }
+
+    .rating-service-card,
+    .ratings-grid > div {
+        padding: 25px 21px;
+    }
+
+    .rating-service-card h2,
+    .ratings-grid > div h2 {
+        font-size: 19px;
+    }
+
+    .rating-service-card .rating-value strong {
+        font-size: 30px;
+    }
 }
