@@ -75,7 +75,6 @@ const CreateService = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="create-service-container">
       <h1>Dienstleistung erstellen</h1>
