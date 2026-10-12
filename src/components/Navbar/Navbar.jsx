@@ -95,7 +95,9 @@ const Navbar = () => {
                 </div>
                 <div className="mega-col">
                   <h4>Buchhaltung</h4>
-                  <Link to="/buchhaltung" onClick={closeMenu}>Kasse</Link>
+                  <Link to="/buchhaltung" onClick={closeMenu}>Dashboard</Link>
+                  <Link to="/rechnungen" onClick={closeMenu}>Rechnungen</Link>
+
                 </div>
               </div>
             </li>

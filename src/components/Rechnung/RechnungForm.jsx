@@ -1,410 +1,618 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './RechnungForm.scss';
+import React, { useMemo, useState } from "react";
+import "./RechnungForm.scss";
 
 const RechnungForm = () => {
+    const [customer, setCustomer] = useState("");
+    const [invoiceNumber, setInvoiceNumber] = useState("");
+    const [invoiceDate, setInvoiceDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+    const [dueDate, setDueDate] = useState("");
+    const [paymentTerms, setPaymentTerms] = useState("30 Tage");
+    const [notes, setNotes] = useState("");
 
-    const [kundenSuche, setKundenSuche] = useState('');
-    const [kundenId, setKundenId] = useState(null);
-    const [kunden, setKunden] = useState([]);
-    const [kundenVorschlaege, setKundenVorschlaege] = useState([]);
-
-    const [dienstleistungen, setDienstleistungen] = useState([
-        { title: '', anzahl: 1, preisProEinheit: 0 }
+    const [items, setItems] = useState([
+        {
+            id: Date.now(),
+            description: "",
+            quantity: 1,
+            price: "",
+            vat: 8.1,
+        },
     ]);
 
-    const [backendPakete, setBackendPakete] = useState([]);
-    const [backendPaketId, setBackendPaketId] = useState('');
-
-    const [mehrwertsteuerStatus, setMehrwertsteuerStatus] = useState('inkl');
-    const [message, setMessage] = useState('');
-
-    useEffect(() => {
-        fetchKunden();
-        fetchBackendPakete();
-    }, []);
-
-    useEffect(() => {
-        if (kundenSuche.length > 2) {
-            const vorschlaege = kunden.filter(k =>
-                `${k.vorname} ${k.nachname}`
-                    .toLowerCase()
-                    .includes(kundenSuche.toLowerCase())
-            );
-            setKundenVorschlaege(vorschlaege);
-        } else {
-            setKundenVorschlaege([]);
-        }
-    }, [kundenSuche, kunden]);
-
-    useEffect(() => {
-        if (!kundenId) return;
-        fetchDienstleistungenFürKunde(kundenId);
-    }, [kundenId]);
-
-
-    const fetchBackendPakete = async () => {
-        try {
-            const token = localStorage.getItem('token');
-
-            const res = await axios.get(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/backendpakete',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            setBackendPakete(res.data);
-        } catch (err) {
-            console.error('Fehler beim Laden der Backend-Pakete:', err);
-        }
-    };
-
-
-    const fetchKunden = async () => {
-        try {
-            const token = localStorage.getItem('token');
-
-            const res = await axios.get(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/kunden',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            setKunden(res.data.data);
-        } catch (error) {
-            console.error('Fehler beim Laden der Kunden:', error);
-        }
-    };
-
-
-    const fetchDienstleistungenFürKunde = async (id) => {
-        try {
-            const token = localStorage.getItem('token');
-
-            const res = await axios.get(
-                `https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen/arbeitszeiten/${id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            const serverDienstleistungen = res.data.dienstleistungen || [];
-
-            if (serverDienstleistungen.length === 0) return;
-
-            const umgewandelt = serverDienstleistungen.map(d => ({
-                title: d.dienstleistung,
-                anzahl: parseFloat(d.gesamtArbeitszeit).toFixed(2),
-                preisProEinheit: parseFloat(d.preisProStunde).toFixed(2)
-            }));
-
-            setDienstleistungen(prev => [...prev, ...umgewandelt]);
-
-        } catch (err) {
-            console.error('Fehler beim Laden der Arbeitszeiten:', err);
-        }
-    };
-
-
-    const handleAddDienstleistung = () => {
-        setDienstleistungen([
-            ...dienstleistungen,
-            { title: '', anzahl: 1, preisProEinheit: 0 }
+    const addItem = () => {
+        setItems((current) => [
+            ...current,
+            {
+                id: Date.now(),
+                description: "",
+                quantity: 1,
+                price: "",
+                vat: 8.1,
+            },
         ]);
     };
 
+    const removeItem = (id) => {
+        if (items.length === 1) return;
 
-    const handleUpdateDienstleistung = (index, field, value) => {
-        const updated = [...dienstleistungen];
-        updated[index][field] = value;
-        setDienstleistungen(updated);
+        setItems((current) => current.filter((item) => item.id !== id));
     };
 
-
-    const handleRemoveDienstleistung = (index) => {
-        const updated = dienstleistungen.filter((_, i) => i !== index);
-        setDienstleistungen(updated);
-    };
-
-
-    const calculateTotal = () => {
-        return dienstleistungen.reduce(
-            (sum, d) =>
-                sum +
-                (parseFloat(d.anzahl || 0) *
-                    parseFloat(d.preisProEinheit || 0)),
-            0
+    const updateItem = (id, field, value) => {
+        setItems((current) =>
+            current.map((item) =>
+                item.id === id
+                    ? {
+                        ...item,
+                        [field]: value,
+                    }
+                    : item
+            )
         );
     };
 
+    const totals = useMemo(() => {
+        let subtotal = 0;
+        let vatTotal = 0;
 
-    const calculateVAT = () => {
-        const netto = calculateTotal();
-        return mehrwertsteuerStatus === 'exkl' ? netto * 0.081 : 0;
+        items.forEach((item) => {
+            const quantity = Number(item.quantity) || 0;
+            const price = Number(item.price) || 0;
+            const vat = Number(item.vat) || 0;
+
+            const lineTotal = quantity * price;
+            const vatAmount = lineTotal * (vat / 100);
+
+            subtotal += lineTotal;
+            vatTotal += vatAmount;
+        });
+
+        return {
+            subtotal,
+            vatTotal,
+            total: subtotal + vatTotal,
+        };
+    }, [items]);
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("de-CH", {
+            style: "currency",
+            currency: "CHF",
+        }).format(value);
     };
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
 
-    const calculateGesamt = () => {
-        return (calculateTotal() + calculateVAT()).toFixed(2);
-    };
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (dienstleistungen.length === 0) {
-            setMessage('Bitte mindestens eine Dienstleistung hinzufügen.');
-            return;
-        }
-
-        const data = {
-            kundenId: kundenId || null,
-            benutzerdefinierteDienstleistungen: dienstleistungen,
-            backendPaketId: backendPaketId || null,
-            mehrwertsteuerStatus
+        const invoiceData = {
+            customer,
+            invoiceNumber,
+            invoiceDate,
+            dueDate,
+            paymentTerms,
+            notes,
+            items,
+            totals,
         };
 
-        try {
-            const token = localStorage.getItem('token');
+        console.log("Rechnung:", invoiceData);
 
-            await axios.post(
-                'https://tbsdigitalsolutionsbackend.onrender.com/api/rechnungen',
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            window.location.href = '/rechnungen';
-        } catch (err) {
-            console.error('Fehler beim Erstellen der Rechnung:', err);
-            setMessage('Fehler beim Erstellen der Rechnung.');
-        }
+        // Hier deinen bestehenden API-Aufruf einsetzen.
     };
 
-
     return (
-        <div className="rechnung-form">
-            <h2>Rechnung erstellen</h2>
+        <main className="rechnung-page">
 
-            <form onSubmit={handleSubmit}>
+            {/* HEADER */}
+            <header className="rechnung-hero">
+                <div className="rechnung-hero-meta">
+                    <span>01</span>
+                    <span>RECHNUNGSWESEN</span>
+                </div>
 
-                <div className="form-group">
-                    <label>Kunde (optional)</label>
+                <div className="rechnung-hero-content">
+                    <div className="rechnung-hero-copy">
+                        <p className="rechnung-overline">
+                            Neue Rechnung
+                        </p>
 
-                    <input
-                        type="text"
-                        value={kundenSuche}
-                        onChange={(e) => setKundenSuche(e.target.value)}
-                        placeholder="Vor- oder Nachname eingeben"
-                    />
+                        <h1>
+                            Rechnung
+                            <br />
+                            erstellen<span>.</span>
+                        </h1>
 
-                    {kundenVorschlaege.length > 0 && (
-                        <ul className="vorschlaege">
-                            {kundenVorschlaege.map(kunde => (
-                                <li
-                                    key={kunde.id}
-                                    onClick={() => {
-                                        setKundenId(kunde.id);
-                                        setKundenSuche(`${kunde.vorname} ${kunde.nachname}`);
-                                        setKundenVorschlaege([]);
-                                    }}
+                        <p className="rechnung-hero-description">
+                            Erstelle eine strukturierte und professionelle
+                            Rechnung mit allen relevanten Angaben,
+                            Leistungen und Zahlungsinformationen.
+                        </p>
+                    </div>
+
+                    <div className="rechnung-hero-number">
+                        <span>DOCUMENT</span>
+                        <strong>INV</strong>
+                    </div>
+                </div>
+            </header>
+
+            <form
+                className="rechnung-form"
+                onSubmit={handleSubmit}
+            >
+
+                {/* EMPFÄNGER */}
+                <section className="rechnung-section">
+
+                    <div className="rechnung-section-heading">
+                        <span className="rechnung-section-number">
+                            02
+                        </span>
+
+                        <div>
+                            <p className="rechnung-section-label">
+                                RECHNUNGSEMPFÄNGER
+                            </p>
+
+                            <h2>
+                                Für wen ist
+                                <br />
+                                diese Rechnung?
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="rechnung-section-body">
+
+                        <div className="rechnung-field rechnung-field-large">
+                            <label htmlFor="customer">
+                                Kunde / Unternehmen
+                            </label>
+
+                            <input
+                                id="customer"
+                                type="text"
+                                value={customer}
+                                onChange={(e) =>
+                                    setCustomer(e.target.value)
+                                }
+                                placeholder="Name des Kunden oder Unternehmens"
+                                required
+                            />
+                        </div>
+
+                        <div className="rechnung-customer-grid">
+
+                            <div className="rechnung-field">
+                                <label htmlFor="customerAddress">
+                                    Adresse
+                                </label>
+
+                                <input
+                                    id="customerAddress"
+                                    type="text"
+                                    placeholder="Strasse und Hausnummer"
+                                />
+                            </div>
+
+                            <div className="rechnung-field">
+                                <label htmlFor="customerZip">
+                                    PLZ / Ort
+                                </label>
+
+                                <input
+                                    id="customerZip"
+                                    type="text"
+                                    placeholder="PLZ / Ort"
+                                />
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* RECHNUNGSDATEN */}
+                <section className="rechnung-section">
+
+                    <div className="rechnung-section-heading">
+                        <span className="rechnung-section-number">
+                            03
+                        </span>
+
+                        <div>
+                            <p className="rechnung-section-label">
+                                RECHNUNGSDATEN
+                            </p>
+
+                            <h2>
+                                Die wichtigsten
+                                <br />
+                                Angaben.
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="rechnung-section-body">
+
+                        <div className="rechnung-data-grid">
+
+                            <div className="rechnung-field">
+                                <label htmlFor="invoiceNumber">
+                                    Rechnungsnummer
+                                </label>
+
+                                <input
+                                    id="invoiceNumber"
+                                    type="text"
+                                    value={invoiceNumber}
+                                    onChange={(e) =>
+                                        setInvoiceNumber(e.target.value)
+                                    }
+                                    placeholder="z. B. 2026-001"
+                                    required
+                                />
+                            </div>
+
+                            <div className="rechnung-field">
+                                <label htmlFor="invoiceDate">
+                                    Rechnungsdatum
+                                </label>
+
+                                <input
+                                    id="invoiceDate"
+                                    type="date"
+                                    value={invoiceDate}
+                                    onChange={(e) =>
+                                        setInvoiceDate(e.target.value)
+                                    }
+                                    required
+                                />
+                            </div>
+
+                            <div className="rechnung-field">
+                                <label htmlFor="dueDate">
+                                    Fälligkeitsdatum
+                                </label>
+
+                                <input
+                                    id="dueDate"
+                                    type="date"
+                                    value={dueDate}
+                                    onChange={(e) =>
+                                        setDueDate(e.target.value)
+                                    }
+                                />
+                            </div>
+
+                            <div className="rechnung-field">
+                                <label htmlFor="paymentTerms">
+                                    Zahlungsfrist
+                                </label>
+
+                                <select
+                                    id="paymentTerms"
+                                    value={paymentTerms}
+                                    onChange={(e) =>
+                                        setPaymentTerms(e.target.value)
+                                    }
                                 >
-                                    {kunde.vorname} {kunde.nachname}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                                    <option value="Sofort">
+                                        Sofort
+                                    </option>
 
+                                    <option value="10 Tage">
+                                        10 Tage
+                                    </option>
 
-                {kundenId && (
-                    <div className="kunden-info">
-                        {(() => {
-                            const k = kunden.find(k => k.id === kundenId);
-                            if (!k) return null;
+                                    <option value="30 Tage">
+                                        30 Tage
+                                    </option>
 
-                            return (
-                                <>
-                                    <p><strong>{k.vorname} {k.nachname}</strong></p>
-                                    <p>{k.strasseHausnummer}</p>
-                                    <p>{k.postleitzahl} {k.ort}</p>
-                                </>
-                            );
-                        })()}
+                                    <option value="60 Tage">
+                                        60 Tage
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+
                     </div>
-                )}
+                </section>
 
+                {/* LEISTUNGEN */}
+                <section className="rechnung-section rechnung-items-section">
 
-                {backendPakete.length > 0 && (
-                    <div className="form-group">
-                        <label>Backend-Paket (optional)</label>
+                    <div className="rechnung-section-heading">
+                        <span className="rechnung-section-number">
+                            04
+                        </span>
 
-                        <select
-                            value={backendPaketId}
-                            onChange={(e) => setBackendPaketId(e.target.value)}
-                        >
-                            <option value="">Kein Paket</option>
+                        <div>
+                            <p className="rechnung-section-label">
+                                LEISTUNGEN
+                            </p>
 
-                            {backendPakete.map(p => (
-                                <option key={p.id} value={p.id}>
-                                    {p.name} – {p.vk_preis} CHF
-                                </option>
-                            ))}
-                        </select>
+                            <h2>
+                                Was wird
+                                <br />
+                                verrechnet?
+                            </h2>
+                        </div>
                     </div>
-                )}
 
+                    <div className="rechnung-section-body">
 
-                <div className="form-group">
-                    <label>Mehrwertsteuer</label>
+                        <div className="rechnung-items-header">
+                            <span>POSITION</span>
+                            <span>MENGE</span>
+                            <span>PREIS</span>
+                            <span>MWST.</span>
+                            <span>TOTAL</span>
+                            <span></span>
+                        </div>
 
-                    <select
-                        value={mehrwertsteuerStatus}
-                        onChange={e => setMehrwertsteuerStatus(e.target.value)}
-                    >
-                        <option value="inkl">Inkl. MwSt.</option>
-                        <option value="exkl">Exkl. MwSt. (8.1%)</option>
-                    </select>
-                </div>
+                        <div className="rechnung-items">
 
+                            {items.map((item, index) => {
 
-                <h3>Dienstleistungen</h3>
+                                const lineTotal =
+                                    (Number(item.quantity) || 0) *
+                                    (Number(item.price) || 0);
 
-                <table className="dienstleistungen">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Bezeichnung</th>
-                            <th>Menge</th>
-                            <th>Einzelpreis</th>
-                            <th>Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {dienstleistungen.map((dienst, index) => (
-                            <tr key={index}>
-
-                                <td>{index + 1}</td>
-
-                                <td>
-                                    <input
-                                        type="text"
-                                        value={dienst.title}
-                                        placeholder="z.B. Website Design"
-                                        onChange={e =>
-                                            handleUpdateDienstleistung(
-                                                index,
-                                                'title',
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-
-                                <td>
-                                    <input
-                                        type="number"
-                                        step="0.1"
-                                        value={dienst.anzahl}
-                                        onChange={e =>
-                                            handleUpdateDienstleistung(
-                                                index,
-                                                'anzahl',
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-
-                                <td>
-                                    <input
-                                        type="number"
-                                        step="0.05"
-                                        value={dienst.preisProEinheit}
-                                        onChange={e =>
-                                            handleUpdateDienstleistung(
-                                                index,
-                                                'preisProEinheit',
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </td>
-
-                                <td>
-                                    {(dienst.anzahl * dienst.preisProEinheit).toFixed(2)} CHF
-                                </td>
-
-                                <td>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveDienstleistung(index)}
+                                return (
+                                    <div
+                                        className="rechnung-item"
+                                        key={item.id}
                                     >
-                                        ✖
-                                    </button>
-                                </td>
 
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                        <div className="rechnung-item-position">
+                                            <span className="rechnung-item-number">
+                                                {String(index + 1).padStart(2, "0")}
+                                            </span>
 
+                                            <input
+                                                type="text"
+                                                value={item.description}
+                                                onChange={(e) =>
+                                                    updateItem(
+                                                        item.id,
+                                                        "description",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Leistung oder Produkt"
+                                                required
+                                            />
+                                        </div>
 
-                <button
-                    type="button"
-                    onClick={handleAddDienstleistung}
-                    className="add-btn"
-                >
-                    + Dienstleistung hinzufügen
-                </button>
+                                        <div className="rechnung-item-input">
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={item.quantity}
+                                                onChange={(e) =>
+                                                    updateItem(
+                                                        item.id,
+                                                        "quantity",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </div>
 
+                                        <div className="rechnung-item-input">
+                                            <div className="rechnung-input-prefix">
+                                                <span>CHF</span>
 
-                <div className="summe">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={item.price}
+                                                    onChange={(e) =>
+                                                        updateItem(
+                                                            item.id,
+                                                            "price",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    placeholder="0.00"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
 
-                    <p>
-                        Zwischensumme: <strong>{calculateTotal().toFixed(2)} CHF</strong>
-                    </p>
+                                        <div className="rechnung-item-input">
+                                            <select
+                                                value={item.vat}
+                                                onChange={(e) =>
+                                                    updateItem(
+                                                        item.id,
+                                                        "vat",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            >
+                                                <option value="8.1">
+                                                    8.1%
+                                                </option>
 
-                    <p>
-                        Mehrwertsteuer: <strong>{calculateVAT().toFixed(2)} CHF</strong>
-                    </p>
+                                                <option value="2.6">
+                                                    2.6%
+                                                </option>
 
-                    <p className="gesamt">
-                        Gesamt: <strong>{calculateGesamt()} CHF</strong>
-                    </p>
+                                                <option value="3.8">
+                                                    3.8%
+                                                </option>
 
-                </div>
+                                                <option value="0">
+                                                    0%
+                                                </option>
+                                            </select>
+                                        </div>
 
+                                        <div className="rechnung-item-total">
+                                            {formatCurrency(lineTotal)}
+                                        </div>
 
-                <button
-                    type="submit"
-                    className="submit-btn"
-                >
-                    Rechnung speichern
-                </button>
+                                        <button
+                                            type="button"
+                                            className="rechnung-remove"
+                                            onClick={() =>
+                                                removeItem(item.id)
+                                            }
+                                            aria-label="Position entfernen"
+                                        >
+                                            ×
+                                        </button>
 
+                                    </div>
+                                );
+                            })}
 
-                {message && (
-                    <p className="error-msg">
-                        {message}
-                    </p>
-                )}
+                        </div>
+
+                        <button
+                            type="button"
+                            className="rechnung-add-item"
+                            onClick={addItem}
+                        >
+                            <span>+</span>
+                            Weitere Position hinzufügen
+                        </button>
+
+                    </div>
+                </section>
+
+                {/* ZUSAMMENFASSUNG */}
+                <section className="rechnung-section rechnung-summary-section">
+
+                    <div className="rechnung-section-heading">
+                        <span className="rechnung-section-number">
+                            05
+                        </span>
+
+                        <div>
+                            <p className="rechnung-section-label">
+                                ZUSAMMENFASSUNG
+                            </p>
+
+                            <h2>
+                                Der finale
+                                <br />
+                                Rechnungsbetrag.
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="rechnung-section-body">
+
+                        <div className="rechnung-summary-layout">
+
+                            <div className="rechnung-notes">
+                                <label htmlFor="notes">
+                                    Bemerkungen
+                                </label>
+
+                                <textarea
+                                    id="notes"
+                                    value={notes}
+                                    onChange={(e) =>
+                                        setNotes(e.target.value)
+                                    }
+                                    placeholder="Optionale Bemerkungen zur Rechnung..."
+                                />
+
+                                <p>
+                                    Bitte überprüfe alle Angaben vor
+                                    dem Speichern der Rechnung.
+                                </p>
+                            </div>
+
+                            <div className="rechnung-totals">
+
+                                <div className="rechnung-total-row">
+                                    <span>
+                                        Zwischensumme
+                                    </span>
+
+                                    <strong>
+                                        {formatCurrency(
+                                            totals.subtotal
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div className="rechnung-total-row">
+                                    <span>
+                                        Mehrwertsteuer
+                                    </span>
+
+                                    <strong>
+                                        {formatCurrency(
+                                            totals.vatTotal
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div className="rechnung-total-final">
+                                    <span>
+                                        TOTAL
+                                    </span>
+
+                                    <strong>
+                                        {formatCurrency(
+                                            totals.total
+                                        )}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* ABSCHLUSS */}
+                <section className="rechnung-final-section">
+
+                    <div className="rechnung-final-content">
+
+                        <div>
+                            <span className="rechnung-final-label">
+                                06 — ABSCHLUSS
+                            </span>
+
+                            <h2>
+                                Rechnung
+                                <br />
+                                speichern<span>.</span>
+                            </h2>
+
+                            <p>
+                                Die Rechnung wird mit den oben
+                                eingegebenen Angaben erstellt.
+                            </p>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="rechnung-submit"
+                        >
+                            <span>Rechnung speichern</span>
+                            <strong>↗</strong>
+                        </button>
+
+                    </div>
+
+                </section>
 
             </form>
-        </div>
+        </main>
     );
 };
 
